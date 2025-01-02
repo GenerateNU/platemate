@@ -1,20 +1,13 @@
 name: frontend
 
-permissions:
-  contents:
-    read: all
-    write: all
-
 on:
   push:
     branches:
       - "**"
-    paths:
-      - "frontend/**"
 
 jobs:
   format:
-    name: format
+    name: Format Code
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -22,11 +15,13 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
       - name: Install Dependencies
-        run: cd frontend && bun install
-      - name: Format Code
-        run: cd frontend && bun run format
+        run: bun install
+        working-directory: frontend
+      - name: Format
+        run: bun run format
+        working-directory: frontend
   lint:
-    name: lint
+    name: "Lint Code"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -34,11 +29,13 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
       - name: Install Dependencies
-        run: cd frontend && bun install
-      - name: Lint Code
-        run: cd frontend && bun run lint
+        run: bun install
+        working-directory: frontend
+      - name: Lint
+        run: bun run lint
+        working-directory: frontend
   test:
-    name: test
+    name: Test Code
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -46,6 +43,8 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
       - name: Install Dependencies
-        run: cd frontend && bun install
-      - name: Test Code
-        run: cd frontend && bun run test
+        run: bun install
+        working-directory: frontend
+      - name: Test
+        run: bun run test
+        working-directory: frontend
