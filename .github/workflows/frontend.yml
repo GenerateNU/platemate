@@ -1,0 +1,50 @@
+name: frontend
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  format:
+    name: Format Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install Dependencies
+        run: bun install
+        working-directory: frontend
+      - name: Format
+        run: bun run format
+        working-directory: frontend
+  lint:
+    name: "Lint Code"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install Dependencies
+        run: bun install
+        working-directory: frontend
+      - name: Lint
+        run: bun run lint
+        working-directory: frontend
+  test:
+    name: Test Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install Dependencies
+        run: bun install
+        working-directory: frontend
+      - name: Test
+        run: bun run test
+        working-directory: frontend
