@@ -63,6 +63,7 @@
             description = "Lints frontend code.";
             exec = ''
               cd "$DEVENV_ROOT"/frontend
+              prettier . --write
               ${pkgs.nodejs}/bin/npm run lint
             '';
           };
@@ -70,14 +71,14 @@
             description = "Runs the frontend server in development mode.";
             exec = ''
               cd "$DEVENV_ROOT"/frontend
-              ${pkgs.nodejs}/bin/npm run start
+              bunx expo start
             '';
           };
          "frontend-run-wsl" = {
             description = "Runs the frontend server in tunnel mode.";
             exec = ''
               cd "$DEVENV_ROOT"/frontend
-              ${pkgs.nodejs}/bin/npx expo start --tunnel
+              bunx expo start --tunnel
             '';
          };
         };

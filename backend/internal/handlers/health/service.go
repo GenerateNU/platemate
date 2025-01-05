@@ -2,7 +2,6 @@ package health
 
 import (
 	"context"
-	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -26,7 +25,6 @@ type PingDocument struct {
 }
 
 func (s *Service) InsertDocumentToHealth() error {
-	res, err := s.health.InsertOne(context.Background(),PingDocument{Name: "PlateMate Developer", Message: "Hello World!"})
-	fmt.Print(res)
+	_, err := s.health.InsertOne(context.Background(),PingDocument{Name: "PlateMate Developer", Message: "Hello World!"})
 	return err
 }
