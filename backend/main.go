@@ -1,22 +1,39 @@
 package main
 
 import (
-	"github.com/GenerateNU/platemate/internal/server"
+	"context"
 	"log"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/GenerateNU/platemate/internal/database"
+	"github.com/GenerateNU/platemate/internal/server"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 
-	app := server.New()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Could not load .env")
+		log.Fatal(err)
+	}
 
+	_, collections, err := database.Connect(context.Background(), os.Getenv("ATLAS_URI"))
+
+	if err != nil {
+		log.Fatalf("Failed to connect to MongoDB")
+	}
+
+	app := server.New(collections)
+	
 	go func() {
 		if err := app.Listen(":8080"); err != nil {
 			log.Fatalf("Failed to start server: %v", err)
 		}
+		slog.Info("Server Running!")
 	}()
 
 	quit := make(chan os.Signal, 1)

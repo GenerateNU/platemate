@@ -2,11 +2,18 @@ package health
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func Routes(app *fiber.App) {
+/*
+	Router maps endpoints to handlers
+*/
 
-	service := newService()
+func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 
-	app.Group("/health").Get("/", service.GetHealth)
+	service := newService(collections)
+	handler := Handler{service}
+
+	app.Group("/health").Get("/", handler.GetHealth)
+	app.Group("/health").Get("/ping", handler.Ping)
 }
