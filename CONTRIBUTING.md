@@ -8,7 +8,7 @@
 
 ### Best Practices
 
-- We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for our commit messages. This methodology ensures uniformity, clarity, and ease of understanding for all contributors.
+- We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for our commit messages for uniformity and clarity.
 - Make sure to write tests for the most complex parts of your code.
 - For manual API testing, include screenshots from Postman.
 - Go uses **TitleCase** and React Native uses **camelCase** for naming conventions.
