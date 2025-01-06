@@ -4,5 +4,10 @@
 # visual studio code files
 .vscode/
 
+<<<<<<< HEAD
 .devenv
 .env
+=======
+# macos files
+.DS_Store
+>>>>>>> cc715f8626aa73e643292775fa696f972f346c54
