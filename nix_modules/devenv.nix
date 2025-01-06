@@ -64,7 +64,7 @@
             exec = ''
               cd "$DEVENV_ROOT"/frontend
               prettier . --write
-              ${pkgs.nodejs}/bin/npm run lint
+              ${pkgs.bun}/bin/npm run lint
             '';
           };
           "frontend-run" = {
