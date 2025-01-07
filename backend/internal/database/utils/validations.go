@@ -9,6 +9,7 @@ import (
 */
 
 func get_validations() map[string]bson.M {
+
 	defaultValidator := bson.M{
 		"bsonType": "object",
 		"required": []string{"_id"},

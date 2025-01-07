@@ -62,7 +62,7 @@
           "database-script" = {
             description = "Runs a script against the connected Database";
             exec = ''
-              cd "$DEVEND_ROOT"/backend
+              cd "$DEVENV_ROOT"/backend
               ${pkgs.gum}/bin/gum spin --spinner dot --title "go mod tidy" -- go mod tidy
               ${pkgs.rubyPackages.dotenv}/bin/dotenv -i -f ""$DEVENV_ROOT"/.env" -- \
               go run internal/database/scripts/main.go

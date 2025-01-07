@@ -20,13 +20,13 @@ func main() {
 	}
 
 	// Connect to Database
-	
- 	_, db, _, err := database.Connect(context.Background(), os.Getenv("ATLAS_URI"))
+ 	client, _, _, err := database.Connect(context.Background(), os.Getenv("ATLAS_URI"))
 
 	if err != nil {
 		log.Fatalf("Failed to connect to MongoDB")
 	}
 	// Run operations 
-	utils.DropDatabase(db)
-
+	utils.BulkOperation(client,utils.DropCollection, "health")
+	utils.BulkOperation(client,utils.CreateCollection, "health")
+	
 }
