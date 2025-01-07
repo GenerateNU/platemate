@@ -31,13 +31,13 @@ jobs:
         with:
           go-version: 1.23
       - name: Create .env File
+        with:
+          working-directory: ./backend/
         env:
           ATLAS_URI: ${{ secrets.ATLAS_URI }}
         run: |
           touch .env
           echo ATLAS_URI=$ATLAS_URI >> .env
           echo ENVIRONMENT=Dev >> .env
-        with:
-          working-directory: ./backend/
       - name: Test Code
         run: cd backend && go test ./...
