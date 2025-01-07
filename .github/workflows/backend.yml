@@ -24,6 +24,7 @@ jobs:
   test:
     name: Test Code
     runs-on: ubuntu-latest
+    environment: backend
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -34,6 +35,7 @@ jobs:
           touch .env
           echo ATLAS_URI=${{ secrets.ATLAS_URI }} >> .env
           echo ENVIRONMENT=Dev >> .env
-          cat .env
+        with:
+          working-directory: backend
       - name: Test Code
         run: cd backend && go test ./...

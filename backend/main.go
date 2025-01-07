@@ -17,14 +17,13 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Could not load .env")
-		log.Fatal(err)
+		log.Fatal("Unable to load .env file.")
 	}
 
 	_, _, collections, err := database.Connect(context.Background(), os.Getenv("ATLAS_URI"))
 
 	if err != nil {
-		log.Fatalf("Failed to connect to MongoDB")
+		log.Fatalf("Failed to connect to MongoDB.")
 	}
 
 	app := server.New(collections)
