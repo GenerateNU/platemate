@@ -28,8 +28,7 @@ func Connect(ctx context.Context, uri string) (*mongo.Client, *mongo.Database, m
 	// Ping the database to ensure the connection is working
 	var result bson.M
 	if err := client.Database("admin").RunCommand(ctx, bson.D{{Key: "ping", Value: 1}}).Decode(&result); err != nil {
-		log.Fatal("Ping Failed")
-		panic(err)
+		log.Fatal("Ping Failed: ", err)
 	}
 
 	// Validate Environment Passed is Valid
