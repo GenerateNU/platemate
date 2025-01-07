@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - "**"
-    paths:
-      - "backend/**"
 
 jobs:
   lint:
