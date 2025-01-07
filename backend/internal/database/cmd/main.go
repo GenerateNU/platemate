@@ -17,7 +17,6 @@ func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Could not load .env")
-		log.Fatal(err)
 	}
 
 	// Connect to Database
