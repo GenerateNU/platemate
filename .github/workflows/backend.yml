@@ -23,16 +23,17 @@ jobs:
   test:
     name: Test Code
     runs-on: ubuntu-latest
-    environment: backend
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version: 1.23
       - name: Create .env File
+        env:
+          ATLAS_URI: ${{ secrets.ATLAS_URI }}
         run: |
           touch .env
-          echo ATLAS_URI=${{ secrets.ATLAS_URI }} >> .env
+          echo ATLAS_URI=$ATLAS_URI >> .env
           echo ENVIRONMENT=Dev >> .env
         with:
           working-directory: ./backend/
