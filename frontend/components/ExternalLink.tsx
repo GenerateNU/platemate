@@ -22,14 +22,13 @@ export function ExternalLink({ href, ...rest }: Props) {
             href={href}
             onPress={async (event) => {
                 if (Platform.OS !== "web") {
-
                     event.preventDefault();
 
                     if (!isValidUrl(href)) {
                         Alert.alert("Invalid URL", "An invalid URL was provided.");
                         return;
                     }
-                    
+
                     await openBrowserAsync(href);
                 }
             }}
