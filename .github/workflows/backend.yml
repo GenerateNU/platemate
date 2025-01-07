@@ -29,5 +29,11 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: 1.23
+      - name: Create .env File
+        run: |
+          touch .env
+          echo ATLAS_URI=${{ secrets.ATLAS_URI }} >> .env
+          echo ENVIRONMENT=Dev >> .env
+          cat .env
       - name: Test Code
         run: cd backend && go test ./...
