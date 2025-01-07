@@ -11,10 +11,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
-
 func main() {
 
-	// Load Environment Variables 
+	// Load Environment Variables
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Could not load .env")
@@ -22,23 +21,23 @@ func main() {
 	}
 
 	// Connect to Database
- 	client, db, collections, err := database.Connect(context.Background(), os.Getenv("ATLAS_URI"))
+	client, db, collections, err := database.Connect(context.Background(), os.Getenv("ATLAS_URI"))
 
 	if err != nil {
 		log.Fatalf("Failed to connect to MongoDB")
 	}
-	// Run operations 
+	// Run operations
 	s := scripts.Scripts{
 		Db: db, Client: client, Collections: collections,
 	}
 
 	err = s.CreateExampleFields("users")
-	
+
 	if err != nil {
 		fmt.Println("Error Running Script")
 		fmt.Print(err)
 	}
 
 	fmt.Println("Finished Executing Database Script")
-	
+
 }

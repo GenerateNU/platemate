@@ -5,7 +5,7 @@ import (
 )
 
 /*
-	Handler to execute business logic for Health Endpoint
+Handler to execute business logic for Health Endpoint
 */
 type Handler struct {
 	service *Service
@@ -18,7 +18,7 @@ func (h *Handler) GetHealth(c *fiber.Ctx) error {
 func (h *Handler) Ping(c *fiber.Ctx) error {
 	err := h.service.InsertDocumentToHealth()
 	if err != nil {
-		return err	
+		return err
 	}
 	return c.SendStatus(fiber.StatusOK)
 }

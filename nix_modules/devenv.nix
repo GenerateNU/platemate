@@ -9,8 +9,7 @@
       ];
       shells.default = {
         enterShell = ''
-          printf "Welcome to PlateMate\n" | ${pkgs.lolcat}/bin/lolcat
-          printf "\033[0;1;36mDEVSHELL ACTIVATED\033[0m\n"
+          printf "\033[0;1;36mPLATEMATE DEVELOPMENT ENVIRONMENT\033[0m\n"
           env-help
         '';
 
@@ -36,10 +35,10 @@
             description = "Lints backend code.";
             exec = ''
               cd "$DEVENV_ROOT"/backend
-              ${pkgs.gum}/bin/gum spin --spinner dot --title "go mod tidy" -- go mod tidy
-              ${pkgs.gum}/bin/gum spin --spinner dot --title "go fmt" -- go fmt ./...
-              ${pkgs.gum}/bin/gum spin --spinner dot --title "go vet" -- go vet ./...
-              ${pkgs.gum}/bin/gum spin --spinner dot --title "golangci-lint" -- ${pkgs.golangci-lint}/bin/golangci-lint run ./...
+              go mod tidy
+              go fmt ./...
+              go vet ./...
+              ${pkgs.golangci-lint}/bin/golangci-lint run ./...
             '';
           };
           "backend-run" = {
@@ -56,7 +55,7 @@
             description = "Tests backend code.";
             exec = ''
               cd "$DEVENV_ROOT"/backend
-              ${pkgs.gum}/bin/gum spin --spinner dot --title "go test" -- go test ./...
+              go test ./...
             '';
           };
           "database-script" = {
@@ -88,6 +87,13 @@
             exec = ''
               cd "$DEVENV_ROOT"/frontend
               bunx expo start --tunnel
+            '';
+         };
+        "frontend-test" = {
+            description = "Runs the frontend tests.";
+            exec = ''
+              cd "$DEVENV_ROOT"/frontend
+              bun run test
             '';
          };
         };

@@ -1,8 +1,8 @@
 package server
 
 import (
+	"github.com/GenerateNU/platemate/errs"
 	"github.com/GenerateNU/platemate/internal/handlers/health"
-	"github.com/GenerateNU/platemate/xerrors"
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
@@ -25,7 +25,7 @@ func setupApp() *fiber.App {
 	app := fiber.New(fiber.Config{
 		JSONEncoder:  gojson.Marshal,
 		JSONDecoder:  gojson.Unmarshal,
-		ErrorHandler: xerrors.ErrorHandler,
+		ErrorHandler: errs.ErrorHandler,
 	})
 	app.Use(recover.New())
 	app.Use(requestid.New())
@@ -36,6 +36,8 @@ func setupApp() *fiber.App {
 	app.Use(compress.New(compress.Config{
 		Level: compress.LevelBestSpeed,
 	}))
-
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusOK).SendString("Welcome to PlateMate!")
+	})
 	return app
 }

@@ -28,7 +28,7 @@ func main() {
 	}
 
 	app := server.New(collections)
-	
+
 	go func() {
 		if err := app.Listen(":8080"); err != nil {
 			log.Fatalf("Failed to start server: %v", err)

@@ -1,5 +1,5 @@
 {
-  description = "Platnm: The one stop shop for all musical discourse";
+  description = "PlateMate: empowering restaurants to make data driven decisions based on raw data and customer sentiment.";
 
   inputs = {
     devenv = {

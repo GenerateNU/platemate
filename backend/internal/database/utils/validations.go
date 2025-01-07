@@ -11,29 +11,29 @@ import (
 func get_validations() map[string]bson.M {
 
 	defaultValidator := bson.M{
-		"bsonType": "object",
-		"required": []string{"_id"},
-		"additionalProperties": true, // generally bad, 
+		"bsonType":             "object",
+		"required":             []string{"_id"},
+		"additionalProperties": true, // generally bad,
 		"properties": bson.M{
 			"_id": bson.M{
-					"bsonType":    "ObjectId",
-					"description": "must be an ObjectID string and is required",
+				"bsonType":    "ObjectId",
+				"description": "must be an ObjectID string and is required",
 			},
 		},
 	}
 
 	healthValidator := defaultValidator
 	usersValidator := bson.M{
-		"bsonType": "object",
-		"required": []string{"_id", "name"},
-		"additionalProperties": true, // generally bad, 
+		"bsonType":             "object",
+		"required":             []string{"_id", "name"},
+		"additionalProperties": true, // generally bad,
 		"properties": bson.M{
 			"_id": bson.M{
-					"bsonType":    "ObjectId",
-					"description": "must be an ObjectID string and is required",
+				"bsonType":    "ObjectId",
+				"description": "must be an ObjectID string and is required",
 			},
 			"name": bson.M{
-				"bson.type": "string",
+				"bson.type":   "string",
 				"description": "must be a string and is required",
 			},
 		},
@@ -41,7 +41,7 @@ func get_validations() map[string]bson.M {
 
 	validations := map[string]bson.M{
 		"health": healthValidator,
-		"users": usersValidator,
+		"users":  usersValidator,
 	}
 
 	return validations
