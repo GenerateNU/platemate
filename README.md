@@ -5,7 +5,7 @@ PlateMate is helping empower resturants using data driven insights
 # Tech Stack
 
 -   The back end is written in Go and uses Fiber as a web framework for efficient routing.
--   The database utilized MongoDB Atlas
+-   The database utilizes MongoDB Atlas
 -   The front end is React Native written with TypeScript using Expo as a build tool to support both iOS and Android users
 
 # Environment Setup
@@ -39,4 +39,4 @@ nix develop --impure
 ### If NIX does not work (Ask TL first)
 
 -   Ask Tech Lead for Help first if Nix is not working
--   If all else fails follow the steps in ManualInstall.md
+-   If all else fails follow the steps in docs/ManualInstall.md

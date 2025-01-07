@@ -21,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_, collections, err := database.Connect(context.Background(), os.Getenv("ATLAS_URI"))
+	_, _, collections, err := database.Connect(context.Background(), os.Getenv("ATLAS_URI"))
 
 	if err != nil {
 		log.Fatalf("Failed to connect to MongoDB")

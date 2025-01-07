@@ -59,6 +59,15 @@
               ${pkgs.gum}/bin/gum spin --spinner dot --title "go test" -- go test ./...
             '';
           };
+          "database-script" = {
+            description = "Runs a script against the connected Database";
+            exec = ''
+              cd "$DEVEND_ROOT"/backend
+              ${pkgs.gum}/bin/gum spin --spinner dot --title "go mod tidy" -- go mod tidy
+              ${pkgs.rubyPackages.dotenv}/bin/dotenv -i -f ""$DEVENV_ROOT"/.env" -- \
+              go run internal/database/scripts/main.go
+            '';
+          };
           "frontend-lint" = {
             description = "Lints frontend code.";
             exec = ''

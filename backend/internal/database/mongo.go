@@ -13,7 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func Connect(ctx context.Context, uri string) (*mongo.Database, map[string]*mongo.Collection, error) {
+func Connect(ctx context.Context, uri string) (*mongo.Client, *mongo.Database, map[string]*mongo.Collection, error) {
 
 	// Setup Client 
   serverAPI := options.ServerAPI(options.ServerAPIVersion1)
@@ -63,7 +63,8 @@ func Connect(ctx context.Context, uri string) (*mongo.Database, map[string]*mong
 	for _, name := range collectionNames {
 		collections[name] = db.Collection(name)
 	}
-
-	return db, collections, err
+	return client, db, collections, err
+	
 }
+
 
