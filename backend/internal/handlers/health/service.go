@@ -20,11 +20,11 @@ func newService(collections map[string]*mongo.Collection) *Service {
 }
 
 type PingDocument struct {
-	Name string `bson:"name"`
+	Name    string `bson:"name"`
 	Message string `bson:"message"`
 }
 
 func (s *Service) InsertDocumentToHealth() error {
-	_, err := s.health.InsertOne(context.Background(),PingDocument{Name: "PlateMate Developer", Message: "Hello World!"})
+	_, err := s.health.InsertOne(context.Background(), PingDocument{Name: "PlateMate Developer", Message: "Hello World!"})
 	return err
 }

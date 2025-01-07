@@ -30,21 +30,21 @@ func BulkOperation(client *mongo.Client, operation CollectionOperation, arg stri
 type CollectionOperation func(db *mongo.Database, name string)
 
 /*
-	Tool for creating collections with default values
+Tool for creating collections with default values
 */
 func CreateCollection(db *mongo.Database, name string) {
 	validationLevel := "warn"
 	schemaValidator := get_validations()[name]
-	
+
 	options := options.CreateCollectionOptions{
 		ValidationAction: &validationLevel,
-		Validator: &schemaValidator,
+		Validator:        &schemaValidator,
 	}
 
 	err := db.CreateCollection(context.Background(), name, &options)
-	
+
 	if err != nil {
-		fmt.Printf("Unable to Create Collection `%s` in %s \n%s\n", name,db.Name(), err)
+		fmt.Printf("Unable to Create Collection `%s` in %s \n%s\n", name, db.Name(), err)
 	} else {
 		fmt.Printf("Collection `%s` Created in %s\n", name, db.Name())
 	}
@@ -54,7 +54,7 @@ func CreateCollection(db *mongo.Database, name string) {
 	Drop Collection
 */
 
-func DropCollection(db *mongo.Database, name string) { 
+func DropCollection(db *mongo.Database, name string) {
 	err := db.Collection(name).Drop(context.Background())
 	if err != nil {
 		fmt.Printf("Unable to Drop Collection `%s` \n%s\n", name, err)
@@ -63,15 +63,15 @@ func DropCollection(db *mongo.Database, name string) {
 	}
 }
 
-/* 
-	Modify a collection by applying a schema specified in ./validations.go
-	pass in name of collection to apply new schema
+/*
+Modify a collection by applying a schema specified in ./validations.go
+pass in name of collection to apply new schema
 */
 func ApplySchema(db *mongo.Database, name string) {
 	command := bson.D{
-			{"collMod", name},
-			{"validator", get_validations()[name]},
-		}
+		{Key: "collMod", Value: name},
+		{Key: "validator", Value: get_validations()[name]},
+	}
 	db.RunCommand(context.Background(), command)
 	fmt.Printf("Schema Applied to %s\n", name)
 }
@@ -82,14 +82,21 @@ func ApplySchema(db *mongo.Database, name string) {
 */
 
 func Clone(collections map[string]*mongo.Collection, name string) {
-	for collName, collection := range collections{
-	pipeline := []bson.M{
-		bson.M{"$match": bson.M{}},	
-		bson.M{"$out": bson.M{
-			"db": name, "coll": collName,
-		}},
-	}
-	collection.Aggregate(context.Background(), pipeline);
+	for collName, collection := range collections {
+		pipeline := []bson.M{
+			bson.M{"$match": bson.M{}},
+			bson.M{"$out": bson.M{
+				"db": name, "coll": collName,
+			}},
+		}
+
+		_, err := collection.Aggregate(context.Background(), pipeline)
+
+		if err != nil {
+			fmt.Printf("Error Cloning %s\n", collName)
+		} else {
+			fmt.Printf("Cloned %s\n", collName)
+		}
 	}
 }
 

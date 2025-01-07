@@ -8,12 +8,11 @@
 
 ### Best Practices
 
-- We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for our commit messages. This methodology ensures uniformity, clarity, and ease of understanding for all contributors.
+- We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for our commit messages for uniformity and clarity.
 - Make sure to write tests for the most complex parts of your code.
 - For manual API testing, include screenshots from Postman.
 - Go uses **TitleCase** and React Native uses **camelCase** for naming conventions.
 
 ### If you have time...
-
 - *Want to go that extra level?* — Consider checking out [act](https://github.com/nektos/act).
 - If you're *real interested* in industry-level commit practices, consider [GPG/PGP signing](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) your commits.
