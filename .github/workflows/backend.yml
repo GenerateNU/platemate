@@ -9,6 +9,7 @@ on:
 
 env:
   GH_TOKEN: ${{ github.token }}
+  ATLAS_URI: ${{ secrets.ATLAS_URI }}
 
 jobs:
   lint:
@@ -28,7 +29,6 @@ jobs:
   test:
     name: Test Code
     runs-on: ubuntu-latest
-    environment: CI
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -38,7 +38,7 @@ jobs:
         working-directory: ./backend/
         run: |
           touch .env
-          echo ATLAS_URI=${{ secrets.ATLAS_URI }} >> .env
+          echo ATLAS_URI=$ATLAS_URI >> .env
           echo ENVIRONMENT=Dev >> .env
       - name: Test Code
         run: cd backend && go test ./...
