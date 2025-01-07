@@ -34,7 +34,7 @@ func get_validations() map[string]bson.M {
 			},
 			"name": bson.M{
 				"bson.type": "string",
-				"description": "must be a name and is required",
+				"description": "must be a string and is required",
 			},
 		},
 	}
