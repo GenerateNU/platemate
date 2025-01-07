@@ -35,6 +35,6 @@ jobs:
           echo ATLAS_URI=${{ secrets.ATLAS_URI }} >> .env
           echo ENVIRONMENT=Dev >> .env
         with:
-          working-directory: backend
+          working-directory: ./backend/
       - name: Test Code
         run: cd backend && go test ./...
