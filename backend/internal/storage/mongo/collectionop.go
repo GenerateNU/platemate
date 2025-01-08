@@ -1,5 +1,5 @@
 package mongo
 
-import "go.mongodb.org/mongo-driver/mongo"
+import "context"
 
-type CollectionOperation func(db *mongo.Database, name string) error
+type CollectionOperation func(ctx context.Context, name string) error
