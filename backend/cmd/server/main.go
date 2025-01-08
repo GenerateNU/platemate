@@ -32,7 +32,6 @@ func run(stderr io.Writer, args []string) {
 	slog.SetDefault(logger)
 
 	ctx := context.Background()
-	// var for collection name
 
 	config, err := config.Load()
 	if err != nil {
