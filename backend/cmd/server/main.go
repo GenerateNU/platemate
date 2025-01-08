@@ -46,7 +46,7 @@ func run(stderr io.Writer, args []string) {
 	app := server.New(db.Collections)
 
 	go func() {
-		if err := app.Listen(":8080"); err != nil {
+		if err := app.Listen(":" + config.App.Port); err != nil {
 			fatal(ctx, "Failed to start server", err)
 		}
 	}()
