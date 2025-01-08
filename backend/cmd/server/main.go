@@ -70,8 +70,6 @@ func run(stderr io.Writer, args []string) {
 		slog.LevelInfo,
 		"Server shutdown",
 	)
-
-	return
 }
 
 func newLogger(logLevel string, verbose bool, stderr io.Writer) *slog.Logger {

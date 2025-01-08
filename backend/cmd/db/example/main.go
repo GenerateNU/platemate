@@ -1,4 +1,4 @@
-package scripts
+package main
 
 import (
 	"context"
@@ -35,6 +35,9 @@ func main() {
 	}
 
 	db, err := mongo.New(ctx, config.Atlas)
+	if err != nil {
+		fatal(ctx, "Failed to connect to MongoDB", err)
+	}
 
 	if err := db.CreateExampleFields(ctx, *collection); err != nil {
 		fatal(ctx, "Failed to add example fields", err)
