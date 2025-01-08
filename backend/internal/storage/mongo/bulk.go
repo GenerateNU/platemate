@@ -20,7 +20,6 @@ func (db *DB) BulkOperation(ctx context.Context, operation CollectionOperation, 
 		return fmt.Errorf("failed to list databases: %w", err)
 	}
 	for _, name := range databaseNames {
-		fmt.Print(name)
 		if err := operation(ctx, arg); err != nil {
 			return fmt.Errorf("failed to perform operation on %s: %w", name, err)
 		}
