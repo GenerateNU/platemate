@@ -1,8 +1,9 @@
 package server
 
 import (
-	"github.com/GenerateNU/platemate/errs"
 	"github.com/GenerateNU/platemate/internal/handlers/health"
+	"github.com/GenerateNU/platemate/internal/xerr"
+
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
@@ -25,7 +26,7 @@ func setupApp() *fiber.App {
 	app := fiber.New(fiber.Config{
 		JSONEncoder:  gojson.Marshal,
 		JSONDecoder:  gojson.Unmarshal,
-		ErrorHandler: errs.ErrorHandler,
+		ErrorHandler: xerr.ErrorHandler,
 	})
 	app.Use(recover.New())
 	app.Use(requestid.New())

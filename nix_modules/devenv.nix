@@ -48,7 +48,7 @@
               ${pkgs.gum}/bin/gum spin --spinner dot --title "go mod tidy" -- go mod tidy
               ${pkgs.rubyPackages.dotenv}/bin/dotenv -i -f ""$DEVENV_ROOT"/.env" -- \
               ${pkgs.watchexec}/bin/watchexec -r -e go -- \
-              go run main.go
+              go run cmd/server/main.go
             '';
           };
           "backend-test" = {
@@ -64,7 +64,7 @@
               cd "$DEVENV_ROOT"/backend
               ${pkgs.gum}/bin/gum spin --spinner dot --title "go mod tidy" -- go mod tidy
               ${pkgs.rubyPackages.dotenv}/bin/dotenv -i -f ""$DEVENV_ROOT"/.env" -- \
-              go run internal/database/cmd/main.go
+              go run cmd/db/example/main.go
             '';
           };
           "frontend-lint" = {
