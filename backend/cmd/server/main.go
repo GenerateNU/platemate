@@ -23,7 +23,7 @@ func main() {
 func run(stderr io.Writer, args []string) {
 	cmd := flag.NewFlagSet("", flag.ExitOnError)
 	verboseFlag := cmd.Bool("v", false, "")
-	logLevelFlag := cmd.String("log-level", "info", "")
+	logLevelFlag := cmd.String("log-level", slog.LevelDebug.String(), "")
 	if err := cmd.Parse(args); err != nil {
 		fmt.Fprint(stderr, err)
 		os.Exit(1)
