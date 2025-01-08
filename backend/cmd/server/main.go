@@ -100,4 +100,5 @@ func fatal(ctx context.Context, msg string, err error) {
 		msg,
 		xslog.Error(err),
 	)
+	os.Exit(1)
 }

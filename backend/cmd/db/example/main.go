@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"log/slog"
+	"os"
 
 	"github.com/GenerateNU/platemate/internal/config"
 	"github.com/GenerateNU/platemate/internal/storage/mongo"
@@ -47,4 +48,5 @@ func fatal(ctx context.Context, msg string, err error) {
 		msg,
 		xslog.Error(err),
 	)
+	os.Exit(1)
 }
