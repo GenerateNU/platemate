@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"path/filepath"
 	"testing"
 
 	"github.com/GenerateNU/platemate/internal/config"
@@ -74,7 +75,7 @@ func TestIndexRoute(t *testing.T) {
 
 func setup(t *testing.T) *fiber.App {
 	t.Helper()
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load(filepath.Join("..", "..", ".env")); err != nil {
 		t.Fatal("Failed to load .env")
 	}
 	cfg := config.Atlas{
