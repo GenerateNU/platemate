@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/GenerateNU/platemate/internal/xutils"
 	"log"
 	"log/slog"
 	"os"
@@ -20,7 +21,10 @@ func main() {
 		log.Fatal("Unable to load .env file.")
 	}
 
-	_, _, collections, err := database.Connect(context.Background(), os.Getenv("ATLAS_URI"))
+	user, pass, cluster := os.Getenv("ATLAS_USER"), os.Getenv("ATLAS_PASS"), os.Getenv("ATLAS_CLUSTER")
+	uri := xutils.GenerateAtlasURI(user, pass, cluster)
+
+	_, _, collections, err := database.Connect(context.Background(), uri, os.Getenv("ATLAS_ENVIRONMENT"))
 
 	if err != nil {
 		log.Fatalf("Failed to connect to MongoDB.")

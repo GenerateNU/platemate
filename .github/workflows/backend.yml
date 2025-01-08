@@ -7,10 +7,6 @@ on:
   pull_request:
     types: [ opened, synchronize, reopened, ready_for_review ]
 
-env:
-  GH_TOKEN: ${{ github.token }}
-  ATLAS_URI: ${{ secrets.ATLAS_URI }}
-
 jobs:
   lint:
     name: Lint Code
@@ -29,6 +25,11 @@ jobs:
   test:
     name: Test Code
     runs-on: ubuntu-latest
+    env:
+      A_USER: test
+      A_PASSWORD: platemate-test-pw
+      A_CLUSTER: Development
+      A_ENVIRONMENT: Test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -38,7 +39,9 @@ jobs:
         working-directory: ./backend/
         run: |
           touch .env
-          echo ATLAS_URI=$ATLAS_URI >> .env
-          echo ENVIRONMENT=Dev >> .env
+          echo ATLAS_USER=$A_USER >> .env
+          echo ATLAS_PASS=$A_PASS >> .env
+          echo ATLAS_CLUSTER=$A_CLUSTER >> .env
+          echo ATLAS_ENVIRONMENT=$A_ENVIRONMENT >> .env
       - name: Test Code
         run: cd backend && go test ./...

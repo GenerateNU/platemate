@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/GenerateNU/platemate/internal/xutils"
 	"log"
 	"os"
 
@@ -20,7 +21,10 @@ func main() {
 	}
 
 	// Connect to Database
-	client, db, collections, err := database.Connect(context.Background(), os.Getenv("ATLAS_URI"))
+	user, pass, cluster := os.Getenv("ATLAS_USER"), os.Getenv("ATLAS_PASS"), os.Getenv("ATLAS_CLUSTER")
+	uri := xutils.GenerateAtlasURI(user, pass, cluster)
+
+	client, db, collections, err := database.Connect(context.Background(), uri, os.Getenv("ATLAS_ENVIRONMENT"))
 
 	if err != nil {
 		log.Fatalf("Failed to connect to MongoDB")

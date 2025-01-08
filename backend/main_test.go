@@ -4,12 +4,12 @@ import (
 	"context"
 	"github.com/GenerateNU/platemate/internal/database"
 	"github.com/GenerateNU/platemate/internal/server"
+	"github.com/GenerateNU/platemate/internal/xutils"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"log"
 	"net/http"
-	"os"
 	"testing"
 )
 
@@ -36,7 +36,10 @@ func TestIndexRoute(t *testing.T) {
 		log.Fatal("Could not load .env")
 	}
 
-	_, _, collections, err := database.Connect(context.Background(), os.Getenv("ATLAS_URI"))
+	user, pass, cluster, environment := "test", "platemate-test-pw", "Development", "Test"
+	uri := xutils.GenerateAtlasURI(user, pass, cluster)
+
+	_, _, collections, err := database.Connect(context.Background(), uri, environment)
 
 	if err != nil {
 		log.Fatalf("Failed to connect to MongoDB")

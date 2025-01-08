@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
-	"os"
 	"slices"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func Connect(ctx context.Context, uri string) (*mongo.Client, *mongo.Database, map[string]*mongo.Collection, error) {
+func Connect(ctx context.Context, uri string, environment string) (*mongo.Client, *mongo.Database, map[string]*mongo.Collection, error) {
 
 	// Setup Client
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
@@ -32,14 +31,13 @@ func Connect(ctx context.Context, uri string) (*mongo.Client, *mongo.Database, m
 	}
 
 	// Validate Environment Passed is Valid
-	env := os.Getenv("ENVIRONMENT")
 	envList, err := client.ListDatabaseNames(context.Background(), bson.D{})
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if !slices.Contains(envList, env) {
+	if !slices.Contains(envList, environment) {
 		fmt.Println("Invalid Database Environment passed")
 		fmt.Println("Please choose from the following: ")
 		for i, v := range envList {
@@ -49,7 +47,7 @@ func Connect(ctx context.Context, uri string) (*mongo.Client, *mongo.Database, m
 	}
 
 	// Create Map of Collections
-	db := client.Database(env)
+	db := client.Database(environment)
 	collectionNames, err := db.ListCollectionNames(context.Background(), bson.D{})
 	if err != nil {
 		slog.Error("Unable to fetch collections")
