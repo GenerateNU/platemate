@@ -14,6 +14,7 @@ import (
 	"github.com/GenerateNU/platemate/internal/server"
 	"github.com/GenerateNU/platemate/internal/storage/mongo"
 	"github.com/GenerateNU/platemate/internal/xslog"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -33,6 +34,10 @@ func run(stderr io.Writer, args []string) {
 
 	ctx := context.Background()
 
+	if err := godotenv.Load(); err != nil {
+		fatal(ctx, "Failed to load .env", err)
+	}
+	
 	config, err := config.Load()
 	if err != nil {
 		fatal(ctx, "Failed to load config", err)
