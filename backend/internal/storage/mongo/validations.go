@@ -1,16 +1,16 @@
-package utils
+package mongo
 
-import (
-	"go.mongodb.org/mongo-driver/bson"
-)
+import "go.mongodb.org/mongo-driver/bson"
 
 /*
-	Enforcing base validations against doucments added to database
+Enforcing base validations against doucments added to database
 */
-
-func get_validations() map[string]bson.M {
-
-	defaultValidator := bson.M{
+var (
+	validations = map[string]bson.M{
+		"health": healthValidator,
+		"users":  usersValidator,
+	}
+	defaultValidator = bson.M{
 		"bsonType":             "object",
 		"required":             []string{"_id"},
 		"additionalProperties": true, // generally bad,
@@ -21,9 +21,9 @@ func get_validations() map[string]bson.M {
 			},
 		},
 	}
+	healthValidator = defaultValidator
 
-	healthValidator := defaultValidator
-	usersValidator := bson.M{
+	usersValidator = bson.M{
 		"bsonType":             "object",
 		"required":             []string{"_id", "name"},
 		"additionalProperties": true, // generally bad,
@@ -38,11 +38,4 @@ func get_validations() map[string]bson.M {
 			},
 		},
 	}
-
-	validations := map[string]bson.M{
-		"health": healthValidator,
-		"users":  usersValidator,
-	}
-
-	return validations
-}
+)
