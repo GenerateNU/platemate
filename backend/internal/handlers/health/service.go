@@ -7,10 +7,9 @@ import (
 )
 
 /*
-	Health Service to be used by Health Handler to interact with the
-	Database layer of the application
+Health Service to be used by Health Handler to interact with the
+Database layer of the application
 */
-
 type Service struct {
 	health *mongo.Collection
 }
