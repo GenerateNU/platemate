@@ -44,6 +44,7 @@
           "backend-run" = {
             description = "Runs the backend server in development mode.";
             exec = ''
+              kill -9 $(lsof -t -i:8080 -sTCP:LISTEN)
               cd "$DEVENV_ROOT"/backend
               ${pkgs.gum}/bin/gum spin --spinner dot --title "go mod tidy" -- go mod tidy
               ${pkgs.rubyPackages.dotenv}/bin/dotenv -i -f ""$DEVENV_ROOT"/.env" -- \
