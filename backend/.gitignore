@@ -1,0 +1,5 @@
+# environment variables
+.env
+
+# mongo crypt
+./internal/storage/mongo/crypt_mac
