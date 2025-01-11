@@ -37,3 +37,6 @@ yarn-error.*
 
 # jetbrains files
 ../.idea/
+
+# environment variables
+.env

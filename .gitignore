@@ -3,3 +3,9 @@
 
 # visual studio code files
 .vscode/
+
+# macos files
+.DS_Store
+.devenv
+
+./backend/internal/storage/mongo/crypt_mac
