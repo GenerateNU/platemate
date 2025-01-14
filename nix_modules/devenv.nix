@@ -67,6 +67,13 @@
               go run cmd/db/script/main.go
             '';
           };
+          "database-clone" = {
+            description = "Clone the production database for testing";
+            exec = ''
+              cd "$DEVENV_ROOT"/backend
+              sh ./cmd/db/clone_prod/script.sh
+            '';
+          };
           "frontend-lint" = {
             description = "Lints frontend code.";
             exec = ''
