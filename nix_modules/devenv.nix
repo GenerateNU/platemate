@@ -64,7 +64,21 @@
               cd "$DEVENV_ROOT"/backend
               ${pkgs.gum}/bin/gum spin --spinner dot --title "go mod tidy" -- go mod tidy
               ${pkgs.rubyPackages.dotenv}/bin/dotenv -i -f ""$DEVENV_ROOT"/.env" -- \
-              go run cmd/db/example/main.go
+              go run cmd/db/script/main.go
+            '';
+          };
+          "database-clone" = {
+            description = "Clone the production database for testing";
+            exec = ''
+              cd "$DEVENV_ROOT"/backend
+              sh ./cmd/db/clone_prod/script.sh
+            '';
+          };
+          "database-apply-schema" = {
+            description = "Apply a schema to a given collection";
+            exec = ''
+              cd "$DEVENV_ROOT"/backend
+              sh ./cmd/db/apply_schema/script.sh
             '';
           };
           "frontend-lint" = {

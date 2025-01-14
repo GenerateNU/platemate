@@ -20,10 +20,11 @@ Applies empty strings as default values
 */
 func main() {
 	ctx := context.Background()
-	collection := flag.String("collection", "users", "collection to add example fields to")
+	name := flag.String("name", "users", "name of the new copy of production")
+
 	flag.Parse()
-	if *collection == "" {
-		fatal(ctx, "collection flag is required", nil)
+	if *name == "" {
+		fatal(ctx, "name flag is required", nil)
 	}
 
 	if err := godotenv.Load(); err != nil {
@@ -34,12 +35,14 @@ func main() {
 		fatal(ctx, "Failed to load config", err)
 	}
 
+	config.Atlas.Environment = "Production"
+
 	db, err := mongo.New(ctx, config.Atlas)
 	if err != nil {
-		fatal(ctx, "Failed to connect to MongoDB", err)
+		fatal(ctx, "Failed to connect to MongoDB in main", err)
 	}
 
-	if err := db.CreateExampleFields(ctx, *collection); err != nil {
+	if err := db.Clone(ctx, db.Collections, *name, 200); err != nil {
 		fatal(ctx, "Failed to add example fields", err)
 	}
 }
