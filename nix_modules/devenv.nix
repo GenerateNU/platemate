@@ -74,6 +74,13 @@
               sh ./cmd/db/clone_prod/script.sh
             '';
           };
+          "database-apply-shema" = {
+            description = "Apply a schema to a given collection";
+            exec = ''
+              cd "$DEVENV_ROOT"/backend
+              sh ./cmd/db/apply_schema/script.sh
+            '';
+          };
           "frontend-lint" = {
             description = "Lints frontend code.";
             exec = ''
