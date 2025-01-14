@@ -64,7 +64,7 @@
               cd "$DEVENV_ROOT"/backend
               ${pkgs.gum}/bin/gum spin --spinner dot --title "go mod tidy" -- go mod tidy
               ${pkgs.rubyPackages.dotenv}/bin/dotenv -i -f ""$DEVENV_ROOT"/.env" -- \
-              go run cmd/db/example/main.go
+              go run cmd/db/script/main.go
             '';
           };
           "frontend-lint" = {
