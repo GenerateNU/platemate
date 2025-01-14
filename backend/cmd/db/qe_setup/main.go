@@ -39,9 +39,16 @@ func main() {
 		fatal(ctx, "Failed to connect to MongoDB", err)
 	}
 
-if err := db.Clone(ctx, *&db.Collections, "dev-qe", 10); err != nil {
-		fatal(ctx, "Failed to add example fields", err)
+	if err := db.DropCollection(ctx, "users"); err != nil {
+		fatal(ctx, "Failed to drop collection", err)
 	}
+
+	if err := db.CreateEncryptedCollection(ctx,"users"); err != nil {
+		fatal(ctx, "Failed to create encrypted collection", err)
+	}
+	// if err := db.Clone(ctx, *&db.Collections, "dev-qe", 10); err != nil {
+	// 	fatal(ctx, "Failed to add example fields", err)
+	// }
 }
 
 func fatal(ctx context.Context, msg string, err error) {

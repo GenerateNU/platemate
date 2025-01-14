@@ -13,10 +13,10 @@ import (
 )
 
 /*
-Adds two example fields to the collection passed via
-the collection flag.
-Example usage: go run cmd/db/example/main.go -collection=collectionName
-Applies empty strings as default values
+	Adds two example fields to the collection passed via
+	the collection flag.
+	Example usage: go run cmd/db/example/main.go -collection=collectionName
+	Applies empty strings as default values
 */
 func main() {
 	ctx := context.Background()
@@ -39,10 +39,12 @@ func main() {
 		fatal(ctx, "Failed to connect to MongoDB", err)
 	}
 
-
-	if err := db.CreateExampleFields(ctx, *collection); err != nil {
-		fatal(ctx, "Failed to add example fields", err)
+	if err := db.BulkOperation(ctx, db.DropCollection, "users"); err != nil {	
+		fatal(ctx, "Failed to drop collection", err)
 	}
+	if err := db.BulkOperation(ctx, db.CreateEncryptedCollection, "users"); err != nil {
+		fatal(ctx, "Failed to create encrypted collection", err)
+	}	
 }
 
 func fatal(ctx context.Context, msg string, err error) {

@@ -26,7 +26,7 @@ var (
 		"fields": []bson.M{
 			bson.M{
 				"keyId":    nil,
-				"path":     "patientRecord.ssn",
+				"path":     "password",
 				"bsonType": "string",
 				"queries": []bson.M{
 					{

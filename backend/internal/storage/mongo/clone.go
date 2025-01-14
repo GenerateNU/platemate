@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 
+	"slices"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/sync/errgroup"
@@ -18,10 +20,16 @@ func (db *DB) Clone(ctx context.Context, collections map[string]*mongo.Collectio
 	eg, egCtx := errgroup.WithContext(ctx)
 	eg.SetLimit(int(limit))
 
+	encryptedCollections := []string{"users","enxcol_.users.esc","enxcol_.users.ecoc"}
+
 	for collName, collection := range collections {
+		if slices.Contains(encryptedCollections, collName) {continue}
+		
 		eg.Go(func() error {
 			pipeline := []bson.M{
-				{"$match": bson.M{}},
+				{"$match": bson.M{
+					"name": bson.M{"$nin": bson.A{encryptedCollections}},
+				}},
 				{"$out": bson.M{
 					"db": name, "coll": collName,
 				}},

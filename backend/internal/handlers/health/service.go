@@ -15,15 +15,16 @@ type Service struct {
 }
 
 func newService(collections map[string]*mongo.Collection) *Service {
-	return &Service{collections["health"]}
+	return &Service{collections["users"]}
 }
 
 type PingDocument struct {
 	Name    string `bson:"name"`
+	Password string `bson:"password"`
 	Message string `bson:"message"`
 }
 
 func (s *Service) InsertDocumentToHealth() error {
-	_, err := s.health.InsertOne(context.Background(), PingDocument{Name: "PlateMate Developer", Message: "Hello World!"})
+	_, err := s.health.InsertOne(context.Background(), PingDocument{Name: "PlateMate Developer", Password: "bob", Message: "Hello World!"})
 	return err
 }

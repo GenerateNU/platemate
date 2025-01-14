@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"os"
 	"slices"
@@ -25,7 +26,7 @@ func New(ctx context.Context, cfg config.Atlas) (*DB, error) {
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch customer key: %w", err)
-	}
+	} 
 
 	client, clientEncryption, err := connectClient(ctx, cfg.URI(), key)
 	if err != nil {
@@ -49,14 +50,16 @@ func New(ctx context.Context, cfg config.Atlas) (*DB, error) {
 }
 
 func connectClient(ctx context.Context, uri string, key []byte) (*mongo.Client, *mongo.ClientEncryption, error) {
-
 	keyVaultDatabaseName := "encryption"
 	keyVaultCollectionName := "__keyVault"
 	keyVaultNamespace := keyVaultDatabaseName + "." + keyVaultCollectionName
+  decodedKey, err := base64.StdEncoding.DecodeString(string(key))
 
-	kmsProviderCredentials := map[string]map[string]interface{}{"local": {"key": key}}
+	kmsProviderCredentials := map[string]map[string]interface{}{
+		"local": {"key": decodedKey},
+	}
 	cryptSharedLibraryPath := map[string]interface{}{
-		"cryptSharedLibPath": "./internal/storage/mongo/crypt_mac/lib/mongo_crypt_v1.dylib", // Path to your Automatic Encryption Shared Library
+		"cryptSharedLibPath": "internal/storage/mongo/crypt_mac/mongo_crypt_v1.dylib", // Path to your Automatic Encryption Shared Library
 	}
 
 	autoEncryptionOptions := options.AutoEncryption().
@@ -68,11 +71,14 @@ func connectClient(ctx context.Context, uri string, key []byte) (*mongo.Client, 
 		SetKeyVaultNamespace(keyVaultNamespace).
 		SetKmsProviders(kmsProviderCredentials)
 
-	
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI).SetAutoEncryptionOptions(autoEncryptionOptions)
 	
 	client, err := mongo.Connect(ctx, opts)
+
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to connect to database: %w", err)
+	}
 
 	clientEncryption, err := mongo.NewClientEncryption(client, encOpts)
 

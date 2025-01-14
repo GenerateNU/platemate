@@ -38,15 +38,18 @@ func (db *DB) CreateEncryptedCollection(ctx context.Context, name string) error 
 	kmsProviderName := "local"
 
 	createCollectionOptions := options.CreateCollection().SetEncryptedFields(encryptedFieldsMap)
+
 	_, _, err :=
 		db.ClientEncryption.CreateEncryptedCollection(
-			context.TODO(),
+			ctx,
 			db.DB,
 			name,
 			createCollectionOptions,
 			kmsProviderName,
-			db.Key,
+			nil,
 		)
+
+		fmt.Println(&err)
 	
 	return err
 
