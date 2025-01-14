@@ -74,7 +74,7 @@
               sh ./cmd/db/clone_prod/script.sh
             '';
           };
-          "database-apply-shema" = {
+          "database-apply-schema" = {
             description = "Apply a schema to a given collection";
             exec = ''
               cd "$DEVENV_ROOT"/backend
