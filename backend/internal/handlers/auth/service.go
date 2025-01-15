@@ -14,13 +14,6 @@ import (
 Health Service to be used by Health Handler to interact with the
 Database layer of the application
 */
-type Service struct {
-	users *mongo.Collection
-}
-
-func newService(collections map[string]*mongo.Collection) *Service {
-	return &Service{collections["users"]}
-}
 
 func (s *Service) GenerateAccessToken(id string) (string, error){
 	t :=	jwt.NewWithClaims(jwt.SigningMethodHS256, 

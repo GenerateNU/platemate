@@ -7,32 +7,15 @@ import (
 )
 
 /*
-Handler to execute business logic for Health Endpoint
+	Handler to execute business logic for Health Endpoint
 */
-type Handler struct {
-	service *Service
-}
-
-type TokenResponse struct {
-	AccessToken string `json:"access_token"`
-	RefreshToken   string `json:"refresh_token"`
-	User        string `json:"user"`
-}
-
-var errorToken = TokenResponse{
-	AccessToken: "",
-	RefreshToken:   "",
-	User:        "",
-}
 
 /*
-	Given an email/username and password, check if the credentials are valid and return 
-	both an access token and a refresh token. 
+	Given an email/username and password, check if the credentials are valid and return
+	both an access token and a refresh token.
 */
 
 func (h *Handler) Login(c *fiber.Ctx) (error) { 
-	// do some validation to make sure the user doesn't exist already
-
 	var req LoginRequest
 	if err := c.BodyParser(&req); err != nil {
 		return err
