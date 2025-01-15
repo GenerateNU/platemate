@@ -10,6 +10,8 @@ require (
 	go.mongodb.org/mongo-driver v1.17.1
 )
 
+require github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
+
 require (
 	github.com/andybalholm/brotli v1.1.1 // indirect
 	github.com/caarlos0/env/v11 v11.3.1

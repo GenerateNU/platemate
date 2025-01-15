@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/GenerateNU/platemate/internal/handlers/auth"
 	"github.com/GenerateNU/platemate/internal/handlers/health"
 	"github.com/GenerateNU/platemate/internal/xerr"
 
@@ -18,6 +19,7 @@ func New(collections map[string]*mongo.Collection) *fiber.App {
 	app := setupApp()
 
 	health.Routes(app, collections)
+	auth.Routes(app, collections)
 
 	return app
 }

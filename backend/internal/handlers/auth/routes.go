@@ -1,4 +1,4 @@
-package health
+package auth
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -13,7 +13,8 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	handler := Handler{service}
 
 	app.Group("/auth").Get("/login", handler.Login)
-	app.Group("/health").Get("/logout", handler.Logout)
-	app.Group("/health").Get("/forgotPassword", handler.ForgotPassword)
-	app.Group("/health").Get("/changePassword", handler.ChangePassword)
+	app.Group("/auth").Get("/register", handler.Register)
+	app.Group("/auth").Get("/logout", handler.Logout)
+	app.Group("/auth").Get("/forgotPassword", handler.ForgotPassword)
+	app.Group("/auth").Get("/changePassword", handler.ChangePassword)
 }
