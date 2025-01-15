@@ -1,10 +1,12 @@
 package auth
 
 import (
+	"context"
 	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -45,4 +47,23 @@ func (s *Service) GenerateRefreshToken(id string) (string, error){
 		"exp": time.Now().Add(time.Hour * toMonth).Unix(),  // valid for one month
 	})
 	return t.SignedString([]byte(os.Getenv("AUTH_SECRET"))) // TODO: change to use config
+}
+
+func (s *Service) GenerateTokens(id string) (string, string, error) {
+	access, nil := s.GenerateAccessToken(id)
+	refresh, nil := s.GenerateRefreshToken(id)
+	return access, refresh, nil
+}
+
+/*
+		Check if a user exists in the database by email
+*/
+func (s *Service) UserExists(email string) (bool,error) {
+	if err := s.users.FindOne(context.Background(), bson.M{"email": email}).Err() ; err != nil {
+		if err == mongo.ErrNoDocuments {
+			return false, nil // user doesn't exist and there is no error
+		} 
+		return false, err // there is an error
+	}
+	return true, nil // user exists and no error
 }

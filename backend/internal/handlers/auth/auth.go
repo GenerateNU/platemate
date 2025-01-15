@@ -1,6 +1,10 @@
 package auth
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"strings"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 /*
 Handler to execute business logic for Health Endpoint
@@ -27,8 +31,17 @@ var errorToken = TokenResponse{
 */
 
 func (h *Handler) Login(c *fiber.Ctx) (error) { 
-	access, err := h.service.GenerateAccessToken("bob") 
-	refresh, err := h.service.GenerateRefreshToken("bob") 
+	// do some validation to make sure the user doesn't exist already
+
+	var req LoginRequest
+	if err := c.BodyParser(&req); err != nil {
+		return err
+	}
+
+	h.service.UserExists(req.Email)
+
+
+	access, refresh, err := h.service.GenerateTokens("bob")
 	c.Response().Header.Add("access_token", access)
 	c.Response().Header.Add("access_token", refresh)
 	return err
@@ -40,6 +53,23 @@ func (h *Handler) Login(c *fiber.Ctx) (error) {
 */	
 
 func (h *Handler) Authenticate(c *fiber.Ctx) error {
+	header :=c.Get("Authorization")
+	refreshToken :=c.Get("refresh_token")
+
+	if len(header) == 0 {
+		return fiber.NewError(400, "Not Authorized")
+	}
+
+	split := strings.Split(header, " ")
+	tokenType, accessToken := split[0], split[1]
+
+	if tokenType != "Bearer" {
+		return fiber.NewError(400, "Not Authorized")
+	}
+
+	h.service.GenerateTokens(accessToken +refreshToken)
+
+
 	return fiber.NewError(400, "Not Implemented")
 }
 
