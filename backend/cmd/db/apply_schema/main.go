@@ -20,10 +20,11 @@ Applies empty strings as default values
 */
 func main() {
 	ctx := context.Background()
-	collection := flag.String("collection", "users", "collection to add example fields to")
+	name := flag.String("coll", "users", "name of the collection to apply schema to")
+
 	flag.Parse()
-	if *collection == "" {
-		fatal(ctx, "collection flag is required", nil)
+	if *name == "" {
+		fatal(ctx, "name flag is required", nil)
 	}
 
 	if err := godotenv.Load(); err != nil {
@@ -36,13 +37,13 @@ func main() {
 
 	db, err := mongo.New(ctx, config.Atlas)
 	if err != nil {
-		fatal(ctx, "Failed to connect to MongoDB", err)
+		fatal(ctx, "Failed to connect to MongoDB in main", err)
 	}
 
-	if err := db.CreateCollection(ctx, "users"); err != nil {
-		fatal(ctx, "Failed to create collection", err)
+	if err := db.ApplySchema(ctx, *name); err != nil {
+		fatal(ctx, "Failed to apply schema", err)
 	} else {
-		slog.LogAttrs(ctx, slog.LevelInfo, "Collection created", slog.String("Collection", "users"), slog.String("Environment", db.DB.Name()))
+		slog.LogAttrs(ctx, slog.LevelInfo, "Schema applied to", slog.String("collection", *name), slog.String("Environment", db.DB.Name()))
 	}
 }
 
