@@ -11,19 +11,20 @@ type Service struct {
 func newService(collections map[string]*mongo.Collection) *Service {
 	return &Service{collections["users"]}
 }
+
 type Handler struct {
 	service *Service
 }
 type TokenResponse struct {
-	AccessToken string `json:"access_token"`
-	RefreshToken   string `json:"refresh_token"`
-	User        string `json:"user"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	User         string `json:"user"`
 }
 
 type User struct {
-	Email string `bson:"email"`
-	Password string `bson:"password"`
-	ID string `bson:"_id"`
+	Email        string `bson:"email"`
+	Password     string `bson:"password"`
+	ID           string `bson:"_id"`
 	RefreshToken string `bson:"refresh_token"`
 }
 type LoginRequest struct {

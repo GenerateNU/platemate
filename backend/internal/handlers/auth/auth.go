@@ -16,17 +16,16 @@ import (
 	both an access token and a refresh token.
 */
 
-func (h *Handler) Login(c *fiber.Ctx) (error) {
+func (h *Handler) Login(c *fiber.Ctx) error {
 	var req LoginRequest
 
 	if err := c.BodyParser(&req); err != nil {
 		return err
 	}
-	
-	if err := req.Validate();err!= nil {
+
+	if err := req.Validate(); err != nil {
 		return err
 	}
-
 
 	access, refresh, err := h.service.GenerateTokens(req.Email)
 	c.Response().Header.Add("access_token", access)
@@ -34,13 +33,13 @@ func (h *Handler) Login(c *fiber.Ctx) (error) {
 	return err
 }
 
-func (h *Handler) Register(c *fiber.Ctx) (error) {
+func (h *Handler) Register(c *fiber.Ctx) error {
 	var req RegisterRequest
 	if err := c.BodyParser(&req); err != nil {
 		return err
 	}
 
-	if err := req.Validate();err!= nil {
+	if err := req.Validate(); err != nil {
 		return err
 	}
 
@@ -50,35 +49,40 @@ func (h *Handler) Register(c *fiber.Ctx) (error) {
 		return fiber.NewError(400, "User already exists")
 	}
 
-	id := primitive.NewObjectID().Hex();
+	id := primitive.NewObjectID().Hex()
 
 	access, refresh, err := h.service.GenerateTokens(id)
+
+	if err != nil {
+		return err
+	}
+
 	c.Response().Header.Add("access_token", access)
 	c.Response().Header.Add("refresh_token", refresh)
 
 	user := User{
-		Email: req.Email,
-		Password: req.Password,
-		ID: id,
+		Email:        req.Email,
+		Password:     req.Password,
+		ID:           id,
 		RefreshToken: refresh,
 	}
 
 	if err = user.Validate(); err != nil {
-		return fiber.NewError(400, "Error Constructing User")
+		return fiber.NewError(400, "Error Constructing User ")
 	}
 
 	err = h.service.CreateUser(user)
-	return err;
+	return err
 }
 
 /*
-	Given an access and refresh token, check if they are valid 
+	Given an access and refresh token, check if they are valid
 	and return a new pair of tokens if refresh token is valid.
-*/	
+*/
 
 func (h *Handler) Authenticate(c *fiber.Ctx) error {
-	header :=c.Get("Authorization")
-	refreshToken :=c.Get("refresh_token")
+	header := c.Get("Authorization")
+	refreshToken := c.Get("refresh_token")
 
 	if len(header) == 0 {
 		return fiber.NewError(400, "Not Authorized")
@@ -91,7 +95,10 @@ func (h *Handler) Authenticate(c *fiber.Ctx) error {
 		return fiber.NewError(400, "Not Authorized")
 	}
 
-	h.service.GenerateTokens(accessToken +refreshToken)
+	_, _, err := h.service.GenerateTokens(accessToken + refreshToken)
+	if err != nil {
+		return fiber.NewError(400, "Not Implemented")
+	}
 
 	return fiber.NewError(400, "Not Implemented")
 }
@@ -101,17 +108,16 @@ func (h *Handler) Authenticate(c *fiber.Ctx) error {
 	Invalidate the token by increasing the "count" field by one.
 */
 
-func (h *Handler) Logout(c *fiber.Ctx) error { 
-	return fiber.NewError(400,"Not Implemented")
+func (h *Handler) Logout(c *fiber.Ctx) error {
+	return fiber.NewError(400, "Not Implemented")
 }
 
 /*
-
-*/
-func (h *Handler) ForgotPassword(c *fiber.Ctx) error { 
-	return fiber.NewError(400,"Not Implemented")
+ */
+func (h *Handler) ForgotPassword(c *fiber.Ctx) error {
+	return fiber.NewError(400, "Not Implemented")
 }
 
-func (h *Handler) ChangePassword(c *fiber.Ctx) error {	
-	return fiber.NewError(400,"Not Implemented")	
+func (h *Handler) ChangePassword(c *fiber.Ctx) error {
+	return fiber.NewError(400, "Not Implemented")
 }

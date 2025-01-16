@@ -10,19 +10,18 @@ import (
 func (r *RegisterRequest) Validate() error {
 	required := []string{"Email", "Password"}
 	err := VerifyRequiredFieldsPresent(required, r)
-	return err;
+	return err
 }
 func (r *LoginRequest) Validate() error {
 	required := []string{"Email", "Password"}
 	err := VerifyRequiredFieldsPresent(required, r)
-	return err;
+	return err
 }
-
 
 func (r *User) Validate() error {
 	required := []string{"Email", "Password", "ID", "RefreshToken"}
 	err := VerifyRequiredFieldsPresent(required, r)
-	return err;
+	return err
 }
 
 func VerifyRequiredFieldsPresent(r []string, item interface{}) error {
