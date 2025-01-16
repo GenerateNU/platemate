@@ -56,13 +56,18 @@ func (h *Handler) Register(c *fiber.Ctx) (error) {
 	c.Response().Header.Add("access_token", access)
 	c.Response().Header.Add("refresh_token", refresh)
 
-	err = h.service.CreateUser(User{
+	user := User{
 		Email: req.Email,
 		Password: req.Password,
 		ID: id,
 		RefreshToken: refresh,
-	})
-	
+	}
+
+	if err = user.Validate(); err != nil {
+		return fiber.NewError(400, "Error Constructing User")
+	}
+
+	err = h.service.CreateUser(user)
 	return err;
 }
 
