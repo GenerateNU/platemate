@@ -10,23 +10,23 @@ import (
 )
 
 type ReviewDocument struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" 		json:"_id,omitempty"`
-	Rating    Rating             `bson:"rating"        		json:"rating"`
-	Picture   string             `bson:"picture"       		json:"picture"`
-	Content   string             `bson:"content"       		json:"content"`
-	Reviewer  Reviewer           `bson:"reviewer"     		json:"reviewer"`
-	Timestamp time.Time          `bson:"timestamp"     		json:"timestamp"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	Rating    Rating             `bson:"rating" json:"rating"`
+	Picture   string             `bson:"picture" json:"picture"`
+	Content   string             `bson:"content" json:"content"`
+	Reviewer  Reviewer           `bson:"reviewer" json:"reviewer"`
+	Timestamp time.Time          `bson:"timestamp" json:"timestamp"`
 	Comments  []interface{}      `bson:"comments,omitempty" json:"comments,omitempty"`
-	MenuItem  string             `bson:"menuItem"      		json:"menuItem"`
+	MenuItem  string             `bson:"menuItem" json:"menuItem"`
 }
 
 // Rating is a nested struct in ReviewDocument.
 type Rating struct {
-	Portion int `bson:"portion" 			json:"portion"`
-	Taste   int `bson:"taste"   			json:"taste"`
-	Value   int `bson:"value"   			json:"value"`
-	Overall int `bson:"overall" 			json:"overall"`
-	Return  int `bson:"return,omitempty" 	json:"return,omitempty"`
+	Portion int `bson:"portion" json:"portion"`
+	Taste   int `bson:"taste" json:"taste"`
+	Value   int `bson:"value" json:"value"`
+	Overall int `bson:"overall" json:"overall"`
+	Return  int `bson:"return,omitempty" json:"return,omitempty"`
 }
 
 // Reviewer is a nested struct in ReviewDocument.
@@ -101,13 +101,13 @@ func (s *Service) UpdateReview(id primitive.ObjectID, updated ReviewDocument) er
 	filter := bson.M{"_id": id}
 
 	// Keep original timestamp if not updating
-    if updated.Timestamp.IsZero() {
-        original, err := s.GetReviewByID(id)
-        if err != nil {
-            return err
-        }
-        updated.Timestamp = original.Timestamp
-    }
+	if updated.Timestamp.IsZero() {
+		original, err := s.GetReviewByID(id)
+		if err != nil {
+			return err
+		}
+		updated.Timestamp = original.Timestamp
+	}
 
 	updateFields := bson.M{
 		"rating":    updated.Rating,
