@@ -15,10 +15,8 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	review := app.Group("/review")
 
 	review.Post("/", handler.CreateReview)
-	review.Get("/", handler.GetAllReviews)
+	review.Get("/", handler.GetReviews)
 	review.Get("/:id", handler.GetReview)
 	review.Put("/:id", handler.UpdateReview)
 	review.Delete("/:id", handler.DeleteReview)
-
-	review.Get("/ping", handler.Ping)
 }

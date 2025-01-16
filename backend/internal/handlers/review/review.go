@@ -13,7 +13,7 @@ type Handler struct {
 
 // Create a review
 func (h *Handler) CreateReview(c *fiber.Ctx) error {
-	review, err := h.service.CreateReview(c.Body())
+	review, err := h.service.InsertReview(c.Body())
 
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
@@ -33,7 +33,7 @@ func (h *Handler) GetReviews(c *fiber.Ctx) error {
 
 // Get a single review
 func (h *Handler) GetReview(c *fiber.Ctx) error {
-	review, err := h.service.GetReview(c.Params("id"))
+	review, err := h.service.GetReviewByID(c.Params("id"))
 
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
@@ -59,9 +59,4 @@ func (h *Handler) DeleteReview(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 	return c.SendStatus(fiber.StatusNoContent)
-}
-
-// Ping the review endpoint
-func (h *Hander) Ping(c *fiber.Ctx) error {
-	return c.SendStatus(fiber.StatusOK)
 }
