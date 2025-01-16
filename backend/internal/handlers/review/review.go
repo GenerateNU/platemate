@@ -33,6 +33,7 @@ func (h *Handler) GetReviews(c *fiber.Ctx) error {
 	reviews, err := h.service.GetAllReviews()
 
 	if err != nil {
+		println("Error fetching reviews:", err)
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(reviews)
