@@ -60,3 +60,8 @@ func (h *Handler) DeleteReview(c *fiber.Ctx) error {
 	}
 	return c.SendStatus(fiber.StatusNoContent)
 }
+
+// Ping the review endpoint
+func (h *Hander) Ping(c *fiber.Ctx) error {
+	return c.SendStatus(fiber.StatusOK)
+}
