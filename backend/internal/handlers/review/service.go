@@ -1,0 +1,126 @@
+package review
+
+import (
+	"context"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+)
+
+type ReviewDocument struct {
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	Rating    Rating             `bson:"rating"        json:"rating"`
+	Picture   string             `bson:"picture"       json:"picture"`
+	Content   string             `bson:"content"       json:"content"`
+	Reviewer  Reviewer           `bson:"reviewer"      json:"reviewer"`
+	Timestamp time.Time          `bson:"timestamp"     json:"timestamp"`
+	Comments  []interface{}      `bson:"comments,omitempty" json:"comments,omitempty"`
+	MenuItem  string             `bson:"menuItem"      json:"menuItem"`
+}
+
+// Rating is a nested struct in ReviewDocument.
+type Rating struct {
+	Portion int `bson:"portion" json:"portion"`
+	Taste   int `bson:"taste"   json:"taste"`
+	Value   int `bson:"value"   json:"value"`
+	Overall int `bson:"overall" json:"overall"`
+	Return  int `bson:"return,omitempty" json:"return,omitempty"`
+}
+
+// Reviewer is a nested struct in ReviewDocument.
+type Reviewer struct {
+	ID       string `bson:"id"       json:"id"`
+	PFP      string `bson:"pfp"      json:"pfp"`
+	Username string `bson:"username" json:"username"`
+}
+
+/*
+Review Service to be used by Review Handler to interact with the
+Database layer of the application
+*/
+type Service struct {
+	reviews *mongo.Collection
+}
+
+// newService receives the map of collections and picks out reviews
+func newService(collections map[string]*mongo.Collection) *Service {
+	return &Service{
+		reviews: collections["reviews"],
+	}
+}
+
+// GetAllReviews fetches all review documents from MongoDB
+func (s *Service) GetAllReviews() ([]ReviewDocument, error) {
+	ctx := context.Background()
+	cursor, err := s.reviews.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var results []ReviewDocument
+	if err := cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
+// GetReviewByID returns a single review document by its ObjectID
+func (s *Service) GetReviewByID(id primitive.ObjectID) (*ReviewDocument, error) {
+	ctx := context.Background()
+	filter := bson.M{"_id": id}
+
+	var review ReviewDocument
+	err := s.reviews.FindOne(ctx, filter).Decode(&review)
+	if err != nil {
+		return nil, err
+	}
+	return &review, nil
+}
+
+// InsertReview adds a new review document
+func (s *Service) InsertReview(r ReviewDocument) (*ReviewDocument, error) {
+	ctx := context.Background()
+
+	// Insert the document into the collection
+	result, err := s.reviews.InsertOne(ctx, r)
+	if err != nil {
+		return nil, err
+	}
+
+	// Cast the inserted ID to ObjectID
+	r.ID = result.InsertedID.(primitive.ObjectID)
+	return &r, nil
+}
+
+// UpdateReview updates an existing review document by ObjectID.
+func (s *Service) UpdateReview(id primitive.ObjectID, updated ReviewDocument) error {
+	ctx := context.Background()
+	filter := bson.M{"_id": id}
+
+	updateFields := bson.M{
+		"rating":    updated.Rating,
+		"picture":   updated.Picture,
+		"content":   updated.Content,
+		"reviewer":  updated.Reviewer,
+		"comments":  updated.Comments,
+		"menuItem":  updated.MenuItem,
+		"timestamp": updated.Timestamp,
+	}
+
+	update := bson.M{"$set": updateFields}
+
+	_, err := s.reviews.UpdateOne(ctx, filter, update)
+	return err
+}
+
+// DeleteReview removes a review document by ObjectID.
+func (s *Service) DeleteReview(id primitive.ObjectID) error {
+	ctx := context.Background()
+	filter := bson.M{"_id": id}
+
+	_, err := s.reviews.DeleteOne(ctx, filter)
+	return err
+}
