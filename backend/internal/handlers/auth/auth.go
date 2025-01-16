@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 /*
@@ -15,19 +16,54 @@ import (
 	both an access token and a refresh token.
 */
 
-func (h *Handler) Login(c *fiber.Ctx) (error) { 
+func (h *Handler) Login(c *fiber.Ctx) (error) {
 	var req LoginRequest
+
+	if err := c.BodyParser(&req); err != nil {
+		return err
+	}
+	
+	if err := req.Validate();err!= nil {
+		return err
+	}
+
+
+	access, refresh, err := h.service.GenerateTokens(req.Email)
+	c.Response().Header.Add("access_token", access)
+	c.Response().Header.Add("refresh_token", refresh)
+	return err
+}
+
+func (h *Handler) Register(c *fiber.Ctx) (error) {
+	var req RegisterRequest
 	if err := c.BodyParser(&req); err != nil {
 		return err
 	}
 
-	h.service.UserExists(req.Email)
+	if err := req.Validate();err!= nil {
+		return err
+	}
 
+	if exists, err := h.service.UserExists(req.Email); err != nil {
+		return err
+	} else if exists {
+		return fiber.NewError(400, "User already exists")
+	}
 
-	access, refresh, err := h.service.GenerateTokens("bob")
+	id := primitive.NewObjectID().Hex();
+
+	access, refresh, err := h.service.GenerateTokens(id)
 	c.Response().Header.Add("access_token", access)
-	c.Response().Header.Add("access_token", refresh)
-	return err
+	c.Response().Header.Add("refresh_token", refresh)
+
+	err = h.service.CreateUser(User{
+		Email: req.Email,
+		Password: req.Password,
+		ID: id,
+		RefreshToken: refresh,
+	})
+	
+	return err;
 }
 
 /*
@@ -52,7 +88,6 @@ func (h *Handler) Authenticate(c *fiber.Ctx) error {
 
 	h.service.GenerateTokens(accessToken +refreshToken)
 
-
 	return fiber.NewError(400, "Not Implemented")
 }
 
@@ -74,8 +109,4 @@ func (h *Handler) ForgotPassword(c *fiber.Ctx) error {
 
 func (h *Handler) ChangePassword(c *fiber.Ctx) error {	
 	return fiber.NewError(400,"Not Implemented")	
-}
-
-func (h *Handler) Register(c *fiber.Ctx) (error) {
-	return nil
 }

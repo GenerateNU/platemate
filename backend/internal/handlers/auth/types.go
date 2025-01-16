@@ -1,6 +1,8 @@
 package auth
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type Service struct {
 	users *mongo.Collection
@@ -20,9 +22,16 @@ type TokenResponse struct {
 
 type User struct {
 	Email string `bson:"email"`
+	Password string `bson:"password"`
+	ID string `bson:"_id"`
+	RefreshToken string `bson:"refresh_token"`
 }
 type LoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
+type RegisterRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

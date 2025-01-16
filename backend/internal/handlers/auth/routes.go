@@ -13,10 +13,10 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	handler := Handler{service}
 
 	route := app.Group("/auth")
-	
-	route.Get("/login", handler.Login)
-	route.Get("/register", handler.Register)
-	route.Get("/logout", handler.Logout)
-	route.Get("/forgotPassword", handler.ForgotPassword)
-	route.Get("/changePassword", handler.ChangePassword)
+
+	route.Post("/login", handler.Login)
+	route.Post("/register", handler.Register)
+	route.Post("/logout", handler.Logout)
+	route.Post("/forgotPassword", handler.ForgotPassword)
+	route.Post("/changePassword", handler.ChangePassword)
 }

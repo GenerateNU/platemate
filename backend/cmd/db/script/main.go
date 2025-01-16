@@ -39,7 +39,7 @@ func main() {
 		fatal(ctx, "Failed to connect to MongoDB", err)
 	}
 
-	if err := db.CreateCollection(ctx, "reviews"); err != nil {
+	if err := db.CreateCollection(ctx, "users"); err != nil {
 		fatal(ctx, "Failed to create collection", err)
 	} else {
 		slog.LogAttrs(ctx, slog.LevelInfo, "Collection created", slog.String("Collection", "users"), slog.String("Environment", db.DB.Name()))
