@@ -57,16 +57,16 @@ func ValidateMenuItemRequest(menuItem MenuItemRequest) error {
 func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
 	// Ensure all ratings are []
 	if avgRating.Portion < 1 || avgRating.Portion > 5 {
-		return errors.New("portion rating must be between 0 and 5")
+		return errors.New("portion rating must be between 1 and 5")
 	}
 	if avgRating.Taste < 1 || avgRating.Taste > 5 {
-		return errors.New("taste rating must be between 0 and 5")
+		return errors.New("taste rating must be between 1 and 5")
 	}
 	if avgRating.Value < 1 || avgRating.Value > 5 {
-		return errors.New("value rating must be between 0 and 5")
+		return errors.New("value rating must be between 1 and 5")
 	}
 	if avgRating.Overall < 1 || avgRating.Overall > 5 {
-		return errors.New("overall rating must be between 0 and 5")
+		return errors.New("overall rating must be between 1 and 5")
 	}
 	return nil
 }
