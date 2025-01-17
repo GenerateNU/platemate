@@ -27,7 +27,7 @@ func newService(collections map[string]*mongo.Collection) *Service {
 type MenuItemDocument struct {
     Name string`bson:"name"`
     Picture string`bson:"picture"`
-    AvgRating *AvgRating `bson:"avgRating,omitempty"`
+    AvgRating AvgRating `bson:"avgRating,omitempty"`
 	Reviews []string `bson:"reviews"`
 	Description string `bson:"description"`
 	Location []float64 `bson:"location"`
@@ -36,34 +36,32 @@ type MenuItemDocument struct {
 }
 
 type AvgRating struct {
-	Portion float64 `bson:"portion"`
-	Taste float64 `bson:"taste"`
-	Value float64 `bson:"value"`
-	Overall float64 `bson:"overall"`
-	Return bool `bson:"return"` // @TODO: figure out if boolean or number
+	Portion *float64 `bson:"portion"`
+	Taste *float64 `bson:"taste"`
+	Value *float64 `bson:"value"`
+	Overall *float64 `bson:"overall"`
+	Return *bool `bson:"return"` // @TODO: figure out if boolean or number
 }
 
 func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument) {
+	avgRatingDoc := AvgRating{
+		Portion: menuItemRequest.AvgRating.Portion,
+		Taste: menuItemRequest.AvgRating.Taste,
+		Value: menuItemRequest.AvgRating.Value,
+		Overall: menuItemRequest.AvgRating.Overall,
+		Return: menuItemRequest.AvgRating.Return,
+	}
 	menuItemDoc := MenuItemDocument{
 		Name: menuItemRequest.Name,
 		Picture: menuItemRequest.Picture,
+		AvgRating: avgRatingDoc,
 		Reviews: menuItemRequest.Reviews,
 		Description: menuItemRequest.Description,
 		Location: menuItemRequest.Location,
 		Tags: menuItemRequest.Tags,
 		DietaryRestrictions: menuItemRequest.DietaryRestrictions,
 	}
-	var avgRatingDoc *AvgRating
-	if menuItemRequest.AvgRating != nil {
-		avgRatingDoc = &AvgRating{
-			Portion: menuItemRequest.AvgRating.Portion,
-			Taste: menuItemRequest.AvgRating.Taste,
-			Value: menuItemRequest.AvgRating.Value,
-			Overall: menuItemRequest.AvgRating.Overall,
-			Return: menuItemRequest.AvgRating.Return,
-		}
-		menuItemDoc.AvgRating = avgRatingDoc
-	}
+
 	return menuItemDoc
 }
 
@@ -77,7 +75,6 @@ func (s *Service) UpdateMenuItem(id string, menuItemRequest MenuItemRequest) (Me
 	errUpdate := s.menuItems.FindOneAndUpdate(
 		context.Background(), 
 		bson.M{"_id": idObj}, // filter to match the document
-		bson.M{"$set": menuItemDoc}, // update the document
 		options.FindOneAndUpdate().SetReturnDocument(options.After), // return the updated document
 	).Decode(&menuItemDoc)
 
