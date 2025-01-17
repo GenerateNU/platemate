@@ -65,13 +65,8 @@ func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument) {
 	return menuItemDoc
 }
 
-func (s *Service) UpdateMenuItem(id string, menuItemRequest MenuItemRequest) (MenuItemResponse, error) {
+func (s *Service) UpdateMenuItem(idObj primitive.ObjectID, menuItemRequest MenuItemRequest) (MenuItemResponse, error) {
 	menuItemDoc := ParseMenuItemRequest(menuItemRequest)
-	idObj, errID := primitive.ObjectIDFromHex(id)
-	if errID != nil {
-		slog.Error("Invalid ID", "error", errID)
-		return MenuItemResponse{}, errID
-	}
 	errUpdate := s.menuItems.FindOneAndUpdate(
 		context.Background(), 
 		bson.M{"_id": idObj}, // filter to match the document
@@ -85,7 +80,7 @@ func (s *Service) UpdateMenuItem(id string, menuItemRequest MenuItemRequest) (Me
 	}
 
 	updatedMenuItemResponse := MenuItemResponse{
-		ID: id,
+		ID: idObj.Hex(),
 		MenuItemRequest: menuItemRequest,
 	}
 	return updatedMenuItemResponse, nil
@@ -110,3 +105,38 @@ func (s *Service) CreateMenuItem(menuItemRequest MenuItemRequest) (MenuItemRespo
 	}
 	return menuItemResponse, nil
 }
+
+func (s *Service) GetMenuItemById(idObj primitive.ObjectID) (MenuItemResponse, error) {
+	var menuItemDoc MenuItemDocument
+
+	//TODO see if i can directly decode into response struct
+	errGet := s.menuItems.FindOne(context.Background(), bson.M{"_id": idObj}).Decode(&menuItemDoc)
+	if errGet != nil {
+		slog.Error("Error finding document", "error", errGet)
+		return MenuItemResponse{}, errGet
+	}
+	menuItem := MenuItemResponse{
+		ID: idObj.Hex(),
+		MenuItemRequest: MenuItemRequest{
+			Name: menuItemDoc.Name,
+			Picture: menuItemDoc.Picture,
+			AvgRating: AvgRatingRequest{
+				Portion: menuItemDoc.AvgRating.Portion,
+				Taste: menuItemDoc.AvgRating.Taste,
+				Value: menuItemDoc.AvgRating.Value,
+				Overall: menuItemDoc.AvgRating.Overall,
+				Return: menuItemDoc.AvgRating.Return,
+			},
+			Reviews: menuItemDoc.Reviews,
+			Description: menuItemDoc.Description,
+			Location: menuItemDoc.Location,
+			Tags: menuItemDoc.Tags,
+			DietaryRestrictions: menuItemDoc.DietaryRestrictions,
+		},
+	}
+
+
+	return menuItem, nil
+		
+} 
+

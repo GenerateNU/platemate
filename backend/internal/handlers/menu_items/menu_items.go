@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"errors"    
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 )
 
@@ -79,15 +80,16 @@ func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
 	}
 	return nil
 }
-// func (h *Handler) GetMenuItem(c *fiber.Ctx) error {
+// func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 // 	/*
-// 	Min rating, max rating
+// 	Min rating, max rating for all fields - figure out how to avoid nulls in db
+// 		return bool=true/false
 // 	radius, longitude and latitude
 // 	limit
 // 	pageination
 // 	tags that should be present
-// 	name should match completely?
-// 	how to filter by words in description/name
+// 	key words - check if present in name, description ?
+
 // 	*/
 // 	err := h.service.GetMenuItem()
 // 	if err != nil {
@@ -95,6 +97,23 @@ func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
 // 	}
 // 	return c.SendStatus(fiber.StatusOK)
 // }
+
+func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
+	id := c.Params("id")
+	objID, errID := primitive.ObjectIDFromHex(id)
+	if errID != nil {
+        // Invalid ID format
+        return c.Status(fiber.StatusBadRequest).SendString("Invalid ID format")
+    }
+	menuItem, err := h.service.GetMenuItemById(objID)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return c.Status(fiber.StatusNotFound).SendString("Menu item not found")
+		}
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(menuItem)
+}
 
 func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 	var menuItem MenuItemRequest
@@ -117,13 +136,20 @@ func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
 	var menuItem MenuItemRequest
 	id := c.Params("id")
+
+	objID, errID := primitive.ObjectIDFromHex(id)
+	if errID != nil {
+        // Invalid ID format
+        return c.Status(fiber.StatusBadRequest).SendString("Invalid ID format")
+    }
+
 	if err := c.BodyParser(&menuItem); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid request body")
 	}
 	if err := ValidateMenuItemRequest(menuItem); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	} 
-	updatedMenuItem, err := h.service.UpdateMenuItem(id, menuItem)
+	updatedMenuItem, err := h.service.UpdateMenuItem(objID, menuItem)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
             return c.Status(fiber.StatusNotFound).SendString("Menu item not found")
