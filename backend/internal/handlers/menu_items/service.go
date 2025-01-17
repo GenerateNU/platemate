@@ -75,6 +75,7 @@ func (s *Service) UpdateMenuItem(id string, menuItemRequest MenuItemRequest) (Me
 	errUpdate := s.menuItems.FindOneAndUpdate(
 		context.Background(), 
 		bson.M{"_id": idObj}, // filter to match the document
+		bson.M{"$set": menuItemDoc}, // update the document 
 		options.FindOneAndUpdate().SetReturnDocument(options.After), // return the updated document
 	).Decode(&menuItemDoc)
 

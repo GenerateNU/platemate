@@ -26,7 +26,7 @@ type AvgRatingRequest struct {
 type MenuItemRequest struct {	
 	Name string `json:"name"`
 	Picture string `json:"picture"`
-	AvgRating AvgRatingRequest `json:"avgRating,omitempty"` // set as omitempty for initial menu item addition where there are no reviews
+	AvgRating AvgRatingRequest `json:"avgRating"`
 	Reviews []string `json:"reviews"`
 	Description string `json:"description"`
 	Location []float64 `json:"location"`
