@@ -10,14 +10,14 @@ import (
 )
 
 type ReviewDocument struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	Rating    Rating             `bson:"rating" json:"rating"`
-	Picture   string             `bson:"picture" json:"picture"`
-	Content   string             `bson:"content" json:"content"`
-	Reviewer  Reviewer           `bson:"reviewer" json:"reviewer"`
-	Timestamp time.Time          `bson:"timestamp" json:"timestamp"`
-	Comments  []interface{}      `bson:"comments,omitempty" json:"comments,omitempty"`
-	MenuItem  string             `bson:"menuItem" json:"menuItem"`
+	ID        primitive.ObjectID       `bson:"_id,omitempty" json:"_id,omitempty"`
+	Rating    Rating                   `bson:"rating" json:"rating"`
+	Picture   string                   `bson:"picture" json:"picture"`
+	Content   string                   `bson:"content" json:"content"`
+	Reviewer  Reviewer                 `bson:"reviewer" json:"reviewer"`
+	Timestamp time.Time                `bson:"timestamp" json:"timestamp"`
+	Comments  []map[string]interface{} `bson:"comments,omitempty" json:"comments,omitempty"`
+	MenuItem  string                   `bson:"menuItem" json:"menuItem"`
 }
 
 // Rating is a nested struct in ReviewDocument.
