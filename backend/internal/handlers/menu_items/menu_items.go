@@ -3,6 +3,7 @@ package menu_items
 import (
 	"github.com/gofiber/fiber/v2"
 	"log/slog"
+	"errors"
 
 )
 
@@ -24,7 +25,7 @@ type AvgRatingRequest struct {
 type MenuItemRequest struct {	
 	Name string `json:"name"`
 	Picture string `json:"picture"`
-	AvgRating AvgRatingRequest `json:"avgRating"`
+	AvgRating *AvgRatingRequest `json:"avgRating,omitempty"` // set as omitempty for initial menu item addition where there are no reviews
 	Reviews []string `json:"reviews"`
 	Description string `json:"description"`
 	Location []float64 `json:"location"`
@@ -37,6 +38,38 @@ type MenuItemResponse struct {
 	MenuItemRequest
 }
 
+
+func ValidateMenuItemRequest(menuItem MenuItemRequest) error {
+		// Ensure "Name" is not empty
+		if menuItem.Name == "" {
+			return errors.New("name is required")
+		}
+		// Ensure "Location" contains exactly two elements (latitude and longitude)
+		if len(menuItem.Location) != 2 {
+			return errors.New("location must contain exactly 2 values (latitude, longitude)")
+		}
+		if err := ValidateAvgRatingRequest(*menuItem.AvgRating); err != nil {
+			return err
+		}
+		return nil
+}
+
+func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
+	// Ensure all ratings are []
+	if avgRating.Portion < 1 || avgRating.Portion > 5 {
+		return errors.New("portion rating must be between 0 and 5")
+	}
+	if avgRating.Taste < 1 || avgRating.Taste > 5 {
+		return errors.New("taste rating must be between 0 and 5")
+	}
+	if avgRating.Value < 1 || avgRating.Value > 5 {
+		return errors.New("value rating must be between 0 and 5")
+	}
+	if avgRating.Overall < 1 || avgRating.Overall > 5 {
+		return errors.New("overall rating must be between 0 and 5")
+	}
+	return nil
+}
 // func (h *Handler) GetMenuItem(c *fiber.Ctx) error {
 // 	/*
 // 	Min rating, max rating
@@ -59,6 +92,9 @@ func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 	if err := c.BodyParser(&menuItem); err != nil { // if parsing fails, return a 400
 		// TODO: add in data validation
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid request body")
+	}
+	if err := ValidateMenuItemRequest(menuItem); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
 	slog.Info("Received MenuItemRequest", "menuItem", menuItem)
 

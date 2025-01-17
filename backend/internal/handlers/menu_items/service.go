@@ -25,7 +25,7 @@ func newService(collections map[string]*mongo.Collection) *Service {
 type MenuItemDocument struct {
     Name string`bson:"name"`
     Picture string`bson:"picture"`
-    AvgRating AvgRating `bson:"avgRating"`
+    AvgRating *AvgRating `bson:"avgRating,omitempty"`
 	Reviews []string `bson:"reviews"`
 	Description string `bson:"description"`
 	Location []float64 `bson:"location"`
@@ -43,22 +43,25 @@ type AvgRating struct {
 
 
 func (s *Service) CreateMenuItem(menuItemRequest MenuItemRequest) (MenuItemResponse, error) {
-	avgRatingDoc := AvgRating{
-		Portion: menuItemRequest.AvgRating.Portion,
-		Taste: menuItemRequest.AvgRating.Taste,
-		Value: menuItemRequest.AvgRating.Value,
-		Overall: menuItemRequest.AvgRating.Overall,
-		Return: menuItemRequest.AvgRating.Return,
-	}
 	menuItemDoc := MenuItemDocument{
 		Name: menuItemRequest.Name,
 		Picture: menuItemRequest.Picture,
-		AvgRating: avgRatingDoc,
 		Reviews: menuItemRequest.Reviews,
 		Description: menuItemRequest.Description,
 		Location: menuItemRequest.Location,
 		Tags: menuItemRequest.Tags,
 		DietaryRestrictions: menuItemRequest.DietaryRestrictions,
+	}
+	var avgRatingDoc *AvgRating
+	if menuItemRequest.AvgRating != nil {
+		avgRatingDoc = &AvgRating{
+			Portion: menuItemRequest.AvgRating.Portion,
+			Taste: menuItemRequest.AvgRating.Taste,
+			Value: menuItemRequest.AvgRating.Value,
+			Overall: menuItemRequest.AvgRating.Overall,
+			Return: menuItemRequest.AvgRating.Return,
+		}
+		menuItemDoc.AvgRating = avgRatingDoc
 	}
 	slog.Info("doc", "menuItemDocument", menuItemDoc)
 
