@@ -22,11 +22,11 @@ type ReviewDocument struct {
 
 // Rating is a nested struct in ReviewDocument.
 type Rating struct {
-	Portion int `bson:"portion" json:"portion"`
-	Taste   int `bson:"taste" json:"taste"`
-	Value   int `bson:"value" json:"value"`
-	Overall int `bson:"overall" json:"overall"`
-	Return  int `bson:"return,omitempty" json:"return,omitempty"`
+	Portion int  `bson:"portion" json:"portion"`
+	Taste   int  `bson:"taste" json:"taste"`
+	Value   int  `bson:"value" json:"value"`
+	Overall int  `bson:"overall" json:"overall"`
+	Return  bool `bson:"return,omitempty" json:"return,omitempty"`
 }
 
 // Reviewer is a nested struct in ReviewDocument.
