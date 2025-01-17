@@ -2,7 +2,7 @@ package menu_items
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"log/slog"
+	// "log/slog"
 	"errors"    
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -19,9 +19,9 @@ type Handler struct {
 type AvgRatingRequest struct {
 	Portion *float64 `json:"portion"`
 	Taste *float64 `json:"taste"`
-	Value *float64 `json:"value"` // implement the validation for ranges
+	Value *float64 `json:"value"`
 	Overall *float64 `json:"overall"`
-	Return *bool `json:"return"` // @TODO: figure out if boolean or number
+	Return *bool `json:"return"`
 }
 
 type MenuItemRequest struct {	
@@ -40,7 +40,19 @@ type MenuItemResponse struct {
 	MenuItemRequest
 }
 
-
+func PreprocessMenuItemRequest(menuItem MenuItemRequest) (MenuItemRequest) {
+	// Default nil arrays to empty 
+	if menuItem.Reviews == nil {
+		menuItem.Reviews = []string{}
+	}
+	if menuItem.Tags == nil {
+		menuItem.Tags = []string{}
+	}
+	if menuItem.DietaryRestrictions == nil {
+		menuItem.DietaryRestrictions = []string{}
+	}
+	return menuItem
+}
 func ValidateMenuItemRequest(menuItem MenuItemRequest) error {
 		// Ensure name is not empty
 		if menuItem.Name == "" {
@@ -50,6 +62,15 @@ func ValidateMenuItemRequest(menuItem MenuItemRequest) error {
 		if len(menuItem.Location) != 2 {
 			return errors.New("location must contain exactly 2 values (latitude, longitude)")
 		}
+
+		latitude, longitude := menuItem.Location[0], menuItem.Location[1]
+		if latitude < -90.0 || latitude > 90.0 {
+			return errors.New("latitude must be between -90 and 90")
+		}
+		if longitude < -180.0 || longitude > 180.0 {
+			return errors.New("longitude must be between -180 and 180")
+		}
+
 		if err := ValidateAvgRatingRequest(menuItem.AvgRating); err != nil {
 			return err
 		}
@@ -80,23 +101,23 @@ func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
 	}
 	return nil
 }
-// func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
-// 	/*
-// 	Min rating, max rating for all fields - figure out how to avoid nulls in db
-// 		return bool=true/false
-// 	radius, longitude and latitude
-// 	limit
-// 	pageination
-// 	tags that should be present
-// 	key words - check if present in name, description ?
+func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
+	/*
+	Min rating, max rating for all fields - figure out how to avoid nulls in db
+		return true/false
+	radius, longitude and latitude
+	limit
+	pageination
+	tags that should be present - and vs or?
+	key words - check if present in name, description ? - and vs or?
 
-// 	*/
-// 	err := h.service.GetMenuItem()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return c.SendStatus(fiber.StatusOK)
-// }
+	*/
+	// err := h.service.GetMenuItem()
+	// if err != nil {
+	// 	return err
+	// }
+	return c.SendStatus(fiber.StatusOK)
+}
 
 func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -123,7 +144,7 @@ func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 	if err := ValidateMenuItemRequest(menuItem); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
-	slog.Info("Received MenuItemRequest", "menuItem", menuItem)
+	menuItem = PreprocessMenuItemRequest(menuItem)
 
 	createdMenuItem, err := h.service.CreateMenuItem(menuItem)
 	if err != nil {
@@ -149,6 +170,7 @@ func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
 	if err := ValidateMenuItemRequest(menuItem); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	} 
+	menuItem = PreprocessMenuItemRequest(menuItem)
 	updatedMenuItem, err := h.service.UpdateMenuItem(objID, menuItem)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {

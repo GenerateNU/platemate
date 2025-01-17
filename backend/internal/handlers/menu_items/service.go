@@ -96,7 +96,6 @@ func (s *Service) CreateMenuItem(menuItemRequest MenuItemRequest) (MenuItemRespo
 		slog.Error("Error inserting document", "error", err)
 		return MenuItemResponse{}, err
 	}
-	slog.Info("Inserted document", "result", result)
 	// set the ID of the menuItem to the ID of the inserted document
 	menuItemID := result.InsertedID.(primitive.ObjectID).Hex()
 	menuItemResponse := MenuItemResponse{
@@ -109,7 +108,6 @@ func (s *Service) CreateMenuItem(menuItemRequest MenuItemRequest) (MenuItemRespo
 func (s *Service) GetMenuItemById(idObj primitive.ObjectID) (MenuItemResponse, error) {
 	var menuItemDoc MenuItemDocument
 
-	//TODO see if i can directly decode into response struct
 	errGet := s.menuItems.FindOne(context.Background(), bson.M{"_id": idObj}).Decode(&menuItemDoc)
 	if errGet != nil {
 		slog.Error("Error finding document", "error", errGet)
