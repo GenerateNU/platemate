@@ -5,6 +5,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log/slog"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 /*
@@ -41,8 +43,7 @@ type AvgRating struct {
 	Return bool `bson:"return"` // @TODO: figure out if boolean or number
 }
 
-
-func (s *Service) CreateMenuItem(menuItemRequest MenuItemRequest) (MenuItemResponse, error) {
+func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument) {
 	menuItemDoc := MenuItemDocument{
 		Name: menuItemRequest.Name,
 		Picture: menuItemRequest.Picture,
@@ -63,6 +64,38 @@ func (s *Service) CreateMenuItem(menuItemRequest MenuItemRequest) (MenuItemRespo
 		}
 		menuItemDoc.AvgRating = avgRatingDoc
 	}
+	return menuItemDoc
+}
+
+func (s *Service) UpdateMenuItem(id string, menuItemRequest MenuItemRequest) (MenuItemResponse, error) {
+	menuItemDoc := ParseMenuItemRequest(menuItemRequest)
+	idObj, errID := primitive.ObjectIDFromHex(id)
+	if errID != nil {
+		slog.Error("Invalid ID", "error", errID)
+		return MenuItemResponse{}, errID
+	}
+	errUpdate := s.menuItems.FindOneAndUpdate(
+		context.Background(), 
+		bson.M{"_id": idObj}, // filter to match the document
+		bson.M{"$set": menuItemDoc}, // update the document
+		options.FindOneAndUpdate().SetReturnDocument(options.After), // return the updated document
+	).Decode(&menuItemDoc)
+
+	if errUpdate != nil {
+		slog.Error("Error updating document", "error", errUpdate)
+		return MenuItemResponse{}, errUpdate
+	}
+
+	updatedMenuItemResponse := MenuItemResponse{
+		ID: id,
+		MenuItemRequest: menuItemRequest,
+	}
+	return updatedMenuItemResponse, nil
+
+}
+
+func (s *Service) CreateMenuItem(menuItemRequest MenuItemRequest) (MenuItemResponse, error) {
+	menuItemDoc := ParseMenuItemRequest(menuItemRequest)
 	slog.Info("doc", "menuItemDocument", menuItemDoc)
 
 	result, err := s.menuItems.InsertOne(context.Background(), menuItemDoc)

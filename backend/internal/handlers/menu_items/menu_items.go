@@ -3,7 +3,8 @@ package menu_items
 import (
 	"github.com/gofiber/fiber/v2"
 	"log/slog"
-	"errors"
+	"errors"    
+	"go.mongodb.org/mongo-driver/mongo"
 
 )
 
@@ -40,17 +41,16 @@ type MenuItemResponse struct {
 
 
 func ValidateMenuItemRequest(menuItem MenuItemRequest) error {
-		// Ensure "Name" is not empty
-		if menuItem.Name == "" {
-			return errors.New("name is required")
-		}
 		// Ensure "Location" contains exactly two elements (latitude and longitude)
 		if len(menuItem.Location) != 2 {
 			return errors.New("location must contain exactly 2 values (latitude, longitude)")
 		}
-		if err := ValidateAvgRatingRequest(*menuItem.AvgRating); err != nil {
-			return err
+		if menuItem.AvgRating != nil {
+			if err := ValidateAvgRatingRequest(*menuItem.AvgRating); err != nil {
+				return err
+			}
 		}
+
 		return nil
 }
 
@@ -89,8 +89,7 @@ func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
 
 func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 	var menuItem MenuItemRequest
-	if err := c.BodyParser(&menuItem); err != nil { // if parsing fails, return a 400
-		// TODO: add in data validation
+	if err := c.BodyParser(&menuItem); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid request body")
 	}
 	if err := ValidateMenuItemRequest(menuItem); err != nil {
@@ -105,14 +104,25 @@ func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(createdMenuItem)
 }
 
-
-// func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
-// 	err := h.service.UpdateMenuItem()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return c.SendStatus(fiber.StatusOK)
-// }
+/* Updates the menu item with the corresponding ID. Full updates. */
+func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
+	var menuItem MenuItemRequest
+	id := c.Params("id")
+	if err := c.BodyParser(&menuItem); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString("Invalid request body")
+	}
+	if err := ValidateMenuItemRequest(menuItem); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	} 
+	updatedMenuItem, err := h.service.UpdateMenuItem(id, menuItem)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+            return c.Status(fiber.StatusNotFound).SendString("Menu item not found")
+        }
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(updatedMenuItem)
+}
 
 // func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
 // 	err := h.service.DeleteMenuItem()
