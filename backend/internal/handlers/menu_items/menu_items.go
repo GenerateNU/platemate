@@ -74,6 +74,7 @@ func PreprocessMenuItemRequest(menuItem MenuItemRequest) (MenuItemRequest) {
 	}
 	return menuItem
 }
+
 func ValidateMenuItemRequest(menuItem MenuItemRequest) error {
 		// Ensure name is not empty
 		if menuItem.Name == "" {
@@ -102,7 +103,7 @@ func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
 	// Ensure all ratings are [1,5], if provided
 	ratings := []*float64{avgRating.Portion, avgRating.Taste, avgRating.Value, avgRating.Overall}
 
-	// Loop through each rating
+	// Loop through each rating field
 	for _, rating := range ratings {
 		if rating != nil {
 			if err := ValidateRating(*rating); err != nil {
@@ -226,10 +227,21 @@ func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(updatedMenuItem)
 }
 
-// func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
-// 	err := h.service.DeleteMenuItem()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return c.SendStatus(fiber.StatusOK)
-// }
+func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	objID, errID := primitive.ObjectIDFromHex(id)
+	if errID != nil {
+        // Invalid ID format
+        return c.Status(fiber.StatusBadRequest).SendString("Invalid ID format")
+    }
+
+	menuItemDeleted, err := h.service.DeleteMenuItem(objID)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+            return c.Status(fiber.StatusNotFound).SendString("Menu item not found")
+        }
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(menuItemDeleted)
+}

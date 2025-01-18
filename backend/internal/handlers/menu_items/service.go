@@ -129,9 +129,10 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
         filter["tags"] = bson.M{"$in": menuItemsQuery.Tags}
     }
 
-    // Filter out every document that has one of the dietary restrictions
+    // Find menu items with all of the dietary restrictions
+	// e.g [halal, vegan, gluten-free] -> finds menu items that are halal, vegan, and gluten-free
     if len(menuItemsQuery.DietaryRestrictions) > 0 {
-        filter["dietaryRestrictions"] = bson.M{"$nin": menuItemsQuery.DietaryRestrictions}
+        filter["dietaryRestrictions"] = bson.M{"$all": menuItemsQuery.DietaryRestrictions}
     }
 
 	options := options.Find()
@@ -207,3 +208,14 @@ func (s *Service) GetMenuItemById(idObj primitive.ObjectID) (MenuItemResponse, e
 		
 } 
 
+
+func (s *Service) DeleteMenuItem(idObj primitive.ObjectID) (MenuItemResponse, error) {
+	var menuItemDoc MenuItemDocument
+	err := s.menuItems.FindOneAndDelete(context.Background(), bson.M{"_id": idObj}).Decode(&menuItemDoc)
+	if err != nil {
+		slog.Error("Error deleting document", "error", err)
+		return MenuItemResponse{}, err
+	}
+	menuItemResponse := ToMenuItemResponse(menuItemDoc)
+	return menuItemResponse, nil
+}
