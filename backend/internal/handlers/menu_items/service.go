@@ -25,9 +25,10 @@ func newService(collections map[string]*mongo.Collection) *Service {
 }
 
 type MenuItemDocument struct {
+	ID primitive.ObjectID `bson:"_id,omitempty"`
     Name string`bson:"name"`
     Picture string`bson:"picture"`
-    AvgRating AvgRating `bson:"avgRating,omitempty"`
+    AvgRating AvgRatingDocument `bson:"avgRating,omitempty"`
 	Reviews []string `bson:"reviews"`
 	Description string `bson:"description"`
 	Location []float64 `bson:"location"`
@@ -35,7 +36,7 @@ type MenuItemDocument struct {
 	DietaryRestrictions []string `bson:"dietaryRestrictions"`
 }
 
-type AvgRating struct {
+type AvgRatingDocument struct {
 	Portion *float64 `bson:"portion"`
 	Taste *float64 `bson:"taste"`
 	Value *float64 `bson:"value"`
@@ -43,8 +44,9 @@ type AvgRating struct {
 	Return *bool `bson:"return"` // @TODO: figure out if boolean or number
 }
 
+
 func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument) {
-	avgRatingDoc := AvgRating{
+	avgRatingDoc := AvgRatingDocument{
 		Portion: menuItemRequest.AvgRating.Portion,
 		Taste: menuItemRequest.AvgRating.Taste,
 		Value: menuItemRequest.AvgRating.Value,
@@ -65,6 +67,96 @@ func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument) {
 	return menuItemDoc
 }
 
+func ApplyRatingFilter(filter bson.M, field string, min *int, max *int) {
+    if min == nil && max == nil {
+        return
+    }
+    ratingFilter := bson.M{}
+
+    if min != nil {
+        ratingFilter["$gte"] = *min
+    }
+    if max != nil {
+        ratingFilter["$lte"] = *max
+    }
+
+    // Apply the rating filter to the filter map
+    filter[field] = ratingFilter
+}
+
+func ToMenuItemResponse(menuItem MenuItemDocument) MenuItemResponse {
+    return MenuItemResponse{
+        ID: menuItem.ID.Hex(),
+		MenuItemRequest: MenuItemRequest{
+			Name: menuItem.Name,
+			Picture: menuItem.Picture,
+			AvgRating: AvgRatingRequest{
+				Portion: menuItem.AvgRating.Portion,
+				Taste: menuItem.AvgRating.Taste,
+				Value: menuItem.AvgRating.Value,
+				Overall: menuItem.AvgRating.Overall,
+				Return: menuItem.AvgRating.Return,
+			},
+			Reviews: menuItem.Reviews,
+			Description: menuItem.Description,
+			Location: menuItem.Location,
+			Tags: menuItem.Tags,
+			DietaryRestrictions: menuItem.DietaryRestrictions,
+		},
+	}
+}
+
+
+func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemResponse, error) {
+	filter := bson.M{}
+	ApplyRatingFilter(filter, "avgRating.portion", menuItemsQuery.MinRatingPortion, menuItemsQuery.MaxRatingPortion)
+    ApplyRatingFilter(filter, "avgRating.taste", menuItemsQuery.MinRatingTaste, menuItemsQuery.MaxRatingTaste)
+    ApplyRatingFilter(filter, "avgRating.value", menuItemsQuery.MinRatingValue, menuItemsQuery.MaxRatingValue)
+    ApplyRatingFilter(filter, "avgRating.overall", menuItemsQuery.MinRatingOverall, menuItemsQuery.MaxRatingOverall)
+
+	// filter["location"] = bson.M{
+	// 	"$nearSphere": bson.M{
+	// 		"$geometry": bson.M{
+	// 			"type":        "Point",
+	// 			"coordinates": []float64{menuItemsQuery.Longitude, menuItemsQuery.Latitude},
+	// 		},
+	// 		"$maxDistance": menuItemsQuery.Radius * 1609.34 // convert miles -> meters
+	// 	},
+	// }
+
+	slog.Info("tags", "tags", menuItemsQuery.Tags)
+	if len(menuItemsQuery.Tags) > 0 {
+        filter["tags"] = bson.M{"$in": menuItemsQuery.Tags}
+    }
+
+    // Filter out every document that has one of the dietary restrictions
+    if len(menuItemsQuery.DietaryRestrictions) > 0 {
+        filter["dietaryRestrictions"] = bson.M{"$nin": menuItemsQuery.DietaryRestrictions}
+    }
+
+	options := options.Find()
+    options.SetSkip(int64(menuItemsQuery.Skip))  // Skip the first `Skip` items
+    options.SetLimit(int64(menuItemsQuery.Limit))  // Limit the number of results to `Limit`
+
+	// Query the database
+	cursor, err := s.menuItems.Find(context.Background(), filter, options)
+	if err != nil {
+		return nil, err
+	}
+
+	var menuItems []MenuItemDocument
+	if err := cursor.All(context.Background(), &menuItems); err != nil {
+		return nil, err
+	}
+
+	menuItemsResponse := make([]MenuItemResponse, len(menuItems))
+    for i, menuItem := range menuItems {
+        menuItemsResponse[i] = ToMenuItemResponse(menuItem)
+    }
+
+	return menuItemsResponse, nil
+}
+
 func (s *Service) UpdateMenuItem(idObj primitive.ObjectID, menuItemRequest MenuItemRequest) (MenuItemResponse, error) {
 	menuItemDoc := ParseMenuItemRequest(menuItemRequest)
 	errUpdate := s.menuItems.FindOneAndUpdate(
@@ -79,10 +171,7 @@ func (s *Service) UpdateMenuItem(idObj primitive.ObjectID, menuItemRequest MenuI
 		return MenuItemResponse{}, errUpdate
 	}
 
-	updatedMenuItemResponse := MenuItemResponse{
-		ID: idObj.Hex(),
-		MenuItemRequest: menuItemRequest,
-	}
+	updatedMenuItemResponse := ToMenuItemResponse(menuItemDoc)
 	return updatedMenuItemResponse, nil
 
 }
@@ -113,27 +202,7 @@ func (s *Service) GetMenuItemById(idObj primitive.ObjectID) (MenuItemResponse, e
 		slog.Error("Error finding document", "error", errGet)
 		return MenuItemResponse{}, errGet
 	}
-	menuItem := MenuItemResponse{
-		ID: idObj.Hex(),
-		MenuItemRequest: MenuItemRequest{
-			Name: menuItemDoc.Name,
-			Picture: menuItemDoc.Picture,
-			AvgRating: AvgRatingRequest{
-				Portion: menuItemDoc.AvgRating.Portion,
-				Taste: menuItemDoc.AvgRating.Taste,
-				Value: menuItemDoc.AvgRating.Value,
-				Overall: menuItemDoc.AvgRating.Overall,
-				Return: menuItemDoc.AvgRating.Return,
-			},
-			Reviews: menuItemDoc.Reviews,
-			Description: menuItemDoc.Description,
-			Location: menuItemDoc.Location,
-			Tags: menuItemDoc.Tags,
-			DietaryRestrictions: menuItemDoc.DietaryRestrictions,
-		},
-	}
-
-
+	menuItem := ToMenuItemResponse(menuItemDoc)
 	return menuItem, nil
 		
 } 

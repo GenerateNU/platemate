@@ -14,7 +14,7 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	menuGroup := app.Group("/menu-items")
 
 	menuGroup.Post("/", handler.CreateMenuItem)
-	// menuGroup.Get("/", handler.GetMenuItems)
+	menuGroup.Get("/", handler.GetMenuItems)
 	menuGroup.Get("/:id", handler.GetMenuItemById)
 	menuGroup.Put("/:id", handler.UpdateMenuItem)
 	// menuGroup.Delete("/:id", handler.DeleteMenuItem)
