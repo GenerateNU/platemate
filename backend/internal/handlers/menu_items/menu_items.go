@@ -40,6 +40,16 @@ type MenuItemResponse struct {
 	MenuItemRequest
 }
 
+// TODO: 
+// type SortBy string
+// const (
+//     SortByAlphabetical SortBy = "name"
+//     SortByRatingOverall SortBy = "avgRating.overall"
+//     SortByRatingTaste SortBy = "avgRating.taste"
+//     SortByRatingValue SortBy = "avgRating.value"
+//     SortByRatingPortion SortBy = "avgRating.portion"
+// )
+
 // NOTE: for primitive types default tag will always be applied, even if someone intientally
 // sets a field to the default/zero value set by Golang--in such cases, use *int, *bool, etc.
 type MenuItemsQuery struct {
@@ -59,7 +69,11 @@ type MenuItemsQuery struct {
     // Keywords []string `query:"keywords"`
     Limit int `query:"limit,default:10"`
     Skip int `query:"skip"`
+	// SortBy SortBy `query:"sortBy,default:name"`
+	// Desc bool `query:"desc"`
 }
+
+
 
 func PreprocessMenuItemRequest(menuItem MenuItemRequest) (MenuItemRequest) {
 	// Default nil arrays to empty 
@@ -80,23 +94,27 @@ func ValidateMenuItemRequest(menuItem MenuItemRequest) error {
 		if menuItem.Name == "" {
 			return errors.New("name cannot be empty")
 		}
-		// Ensure "Location" contains exactly two elements (latitude and longitude)
-		if len(menuItem.Location) != 2 {
-			return errors.New("location must contain exactly 2 values (latitude, longitude)")
+		if err := ValidateLocation(menuItem.Location); err != nil {
+			return err
 		}
-
-		latitude, longitude := menuItem.Location[0], menuItem.Location[1]
-		if latitude < -90.0 || latitude > 90.0 {
-			return errors.New("latitude must be between -90 and 90")
-		}
-		if longitude < -180.0 || longitude > 180.0 {
-			return errors.New("longitude must be between -180 and 180")
-		}
-
 		if err := ValidateAvgRatingRequest(menuItem.AvgRating); err != nil {
 			return err
 		}
 		return nil
+}
+
+func ValidateLocation(location []float64) error {
+	if len(location) != 2 {
+		return errors.New("location must contain exactly 2 values (latitude, longitude)")
+	}
+	latitude, longitude := location[0], location[1]
+	if latitude < -90.0 || latitude > 90.0 {
+		return errors.New("latitude must be between -90 and 90")
+	}
+	if longitude < -180.0 || longitude > 180.0 {
+		return errors.New("longitude must be between -180 and 180")
+	}
+	return nil
 }
 
 func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
@@ -146,10 +164,6 @@ func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 		- alphabetically
 		- number of reviews
 	*/
-	// err := h.service.GetMenuItem()
-	// if err != nil {
-	// 	return err
-	// }
 	//TODO: some way to search by name... unsure
 
 	// Parse query parameters
