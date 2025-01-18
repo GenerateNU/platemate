@@ -51,7 +51,7 @@ type MenuItemsQuery struct {
     MaxRatingOverall *float64 `query:"maxRatingOverall"`
     Tags []string `query:"tags"`
     DietaryRestrictions []string `query:"dietaryRestrictions"`
-    Limit int `query:"limit"`
+    Limit *int `query:"limit"`
     Skip int `query:"skip"`
 }
 
@@ -125,12 +125,12 @@ func ValidateMinMaxRating(min, max *float64) error {
 	// Ensure min and max are within valid bounds
 	if min != nil {
 		if err := ValidateRating(*min); err != nil {
-			return errors.New("min rating " + err.Error())
+			return errors.New("min " + err.Error())
 		}
 	}
 	if max != nil {
 		if err := ValidateRating(*max); err != nil {
-			return errors.New("max rating " + err.Error())
+			return errors.New("max " + err.Error())
 		}
 	}
 	// min <= max if both are provided
@@ -156,7 +156,7 @@ func ValidateQueryParams(queryParams MenuItemsQuery) error {
 		return err
 	}
 	// Validate limit
-	if queryParams.Limit <= 0 {
+	if queryParams.Limit != nil && *queryParams.Limit <= 0 {
 		return errors.New("limit must be greater than 0")
 	}
 	// Validate skip
@@ -172,10 +172,6 @@ func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 	var queryParams MenuItemsQuery
 	if err := c.QueryParser(&queryParams); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid query parameters")
-	}
-
-	if queryParams.Limit == 0 { // couldn't figure out how to get the default value to work
-		queryParams.Limit = 10
 	}
 
 	if err := ValidateQueryParams(queryParams); err != nil {

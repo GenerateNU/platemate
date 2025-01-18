@@ -127,8 +127,9 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 
 	options := options.Find()
     options.SetSkip(int64(menuItemsQuery.Skip))  // Skip the first `Skip` items
-    options.SetLimit(int64(menuItemsQuery.Limit))  // Limit the number of results to `Limit`
-
+	if menuItemsQuery.Limit != nil {
+   		options.SetLimit(int64(*menuItemsQuery.Limit))  // Limit the number of results to `Limit`
+	}
 	// Query the database
 	cursor, err := s.menuItems.Find(context.Background(), filter, options)
 	if err != nil {
