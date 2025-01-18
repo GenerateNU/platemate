@@ -49,6 +49,11 @@ func (h *Handler) GetReview(c *fiber.Ctx) error {
 
 	review, err := h.service.GetReviewByID(id)
 	if err != nil {
+		// Return 404 if the document is not found
+		if err.Error() == "mongo: no documents in result" {
+			return fiber.NewError(fiber.StatusNotFound, "Review not found")
+		}
+		// Return 500 otherwise
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(review)

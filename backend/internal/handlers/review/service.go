@@ -74,9 +74,14 @@ func (s *Service) GetReviewByID(id primitive.ObjectID) (*ReviewDocument, error) 
 
 	var review ReviewDocument
 	err := s.reviews.FindOne(ctx, filter).Decode(&review)
-	if err != nil {
+	if err == mongo.ErrNoDocuments {
+		// No matching review found
+		return nil, mongo.ErrNoDocuments
+	} else if err != nil {
+		// Different error occurred
 		return nil, err
 	}
+
 	return &review, nil
 }
 
