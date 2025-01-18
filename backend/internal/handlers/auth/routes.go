@@ -19,4 +19,8 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	route.Post("/logout", handler.Logout)
 	route.Post("/forgotPassword", handler.ForgotPassword)
 	route.Post("/changePassword", handler.ChangePassword)
+
+	api := app.Group("/protected")
+	api.Use(handler.AuthenticateMiddleware)
+	api.Get("/", handler.Test)
 }

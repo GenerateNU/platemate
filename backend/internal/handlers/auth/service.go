@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -32,9 +33,41 @@ func (s *Service) GenerateAccessToken(id string) (string, error) {
 	return s.GenerateToken(id, time.Now().Add(time.Hour*1).Unix())
 }
 
+func (s *Service) ValidateToken(token string) (string, error) {
+	t, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fiber.NewError(400, "Not Authorized")
+		}
+		return []byte(os.Getenv("AUTH_SECRET")), nil
+	})
+
+	if err != nil {
+		return "", err
+	}
+	claims, ok := t.Claims.(jwt.MapClaims)
+	if !ok  || !t.Valid {
+		return claims["user_id"].(string), fiber.NewError(400, "Not Authorized, Invalid Token")
+	}
+	return claims["user_id"].(string), nil
+}
+
 func (s *Service) GenerateRefreshToken(id string) (string, error) {
 	const toMonth = 24 * 7 * 30
 	return s.GenerateToken(id, time.Now().Add(time.Hour*toMonth).Unix())
+}
+
+func (s *Service) UseToken(user_id string) (error) {
+	_, err := s.users.UpdateOne(context.Background(), bson.M{"_id": user_id}, bson.M{"$set": bson.M{"token_used": true}})
+	return err
+}
+
+func (s *Service) CheckIfTokenUsed(user_id string) (bool, error) {
+	var user User
+	err := s.users.FindOne(context.Background(), bson.M{"_id": user_id}).Decode(&user)
+	if err != nil {
+		return false, err
+	}
+	return user.TokenUsed, nil
 }
 
 func (s *Service) GenerateTokens(id string) (string, string, error) {

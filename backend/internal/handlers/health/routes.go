@@ -12,6 +12,9 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	service := newService(collections)
 	handler := Handler{service}
 
-	app.Group("/health").Get("/", handler.GetHealth)
-	app.Group("/health").Get("/ping", handler.Ping)
+	api := app.Group("/health")
+	api.Get("/", handler.GetHealth)
+	api.Get("/ping", handler.Ping)
+
+
 }

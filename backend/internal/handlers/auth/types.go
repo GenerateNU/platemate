@@ -26,6 +26,8 @@ type User struct {
 	Password     string `bson:"password"`
 	ID           string `bson:"_id"`
 	RefreshToken string `bson:"refresh_token"`
+	TokenUsed    bool   `bson:"token_used"`
+	Count        int    `bson:"count"`
 }
 type LoginRequest struct {
 	Email    string `json:"email"`
