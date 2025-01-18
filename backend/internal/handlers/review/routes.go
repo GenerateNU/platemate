@@ -12,7 +12,11 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	service := newService(collections)
 	handler := Handler{service}
 
-	review := app.Group("/review")
+	// Add a group for API versioning
+	apiV1 := app.Group("/api/v1")
+
+	// Add review group under API Version 1
+	review := apiV1.Group("/review")
 
 	review.Post("/", handler.CreateReview)
 	review.Get("/", handler.GetReviews)
