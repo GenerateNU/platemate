@@ -2,7 +2,7 @@ package menu_items
 
 import (
 	"github.com/gofiber/fiber/v2"
-	// "log/slog"
+	"log/slog"
 	"errors"    
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -40,37 +40,19 @@ type MenuItemResponse struct {
 	MenuItemRequest
 }
 
-// TODO: 
-// type SortBy string
-// const (
-//     SortByAlphabetical SortBy = "name"
-//     SortByRatingOverall SortBy = "avgRating.overall"
-//     SortByRatingTaste SortBy = "avgRating.taste"
-//     SortByRatingValue SortBy = "avgRating.value"
-//     SortByRatingPortion SortBy = "avgRating.portion"
-// )
-
-// NOTE: for primitive types default tag will always be applied, even if someone intientally
-// sets a field to the default/zero value set by Golang--in such cases, use *int, *bool, etc.
 type MenuItemsQuery struct {
-    MinRatingPortion *int `query:"minRatingPortion"`
-    MaxRatingPortion *int `query:"maxRatingPortion"`
-    MinRatingTaste *int `query:"minRatingTaste"`
-    MaxRatingTaste *int `query:"maxRatingTaste"`
-    MinRatingValue *int `query:"minRatingValue"`
-    MaxRatingValue *int `query:"maxRatingValue"`
-    MinRatingOverall *int `query:"minRatingOverall"`
-    MaxRatingOverall *int `query:"maxRatingOverall"`
-    // Radius *int `query:"radius"`
-    // Latitude *float64 `query:"latitude"`
-    // Longitude *float64 `query:"longitude"`
+    MinRatingPortion *float64 `query:"minRatingPortion"`
+    MaxRatingPortion *float64 `query:"maxRatingPortion"`
+    MinRatingTaste *float64 `query:"minRatingTaste"`
+    MaxRatingTaste *float64 `query:"maxRatingTaste"`
+    MinRatingValue *float64 `query:"minRatingValue"`
+    MaxRatingValue *float64 `query:"maxRatingValue"`
+    MinRatingOverall *float64 `query:"minRatingOverall"`
+    MaxRatingOverall *float64 `query:"maxRatingOverall"`
     Tags []string `query:"tags"`
     DietaryRestrictions []string `query:"dietaryRestrictions"`
-    // Keywords []string `query:"keywords"`
-    Limit int `query:"limit,default:10"`
+    Limit int `query:"limit"`
     Skip int `query:"skip"`
-	// SortBy SortBy `query:"sortBy,default:name"`
-	// Desc bool `query:"desc"`
 }
 
 
@@ -90,17 +72,17 @@ func PreprocessMenuItemRequest(menuItem MenuItemRequest) (MenuItemRequest) {
 }
 
 func ValidateMenuItemRequest(menuItem MenuItemRequest) error {
-		// Ensure name is not empty
-		if menuItem.Name == "" {
-			return errors.New("name cannot be empty")
-		}
-		if err := ValidateLocation(menuItem.Location); err != nil {
-			return err
-		}
-		if err := ValidateAvgRatingRequest(menuItem.AvgRating); err != nil {
-			return err
-		}
-		return nil
+	// Ensure name is not empty
+	if menuItem.Name == "" {
+		return errors.New("name cannot be empty")
+	}
+	if err := ValidateLocation(menuItem.Location); err != nil {
+		return err
+	}
+	if err := ValidateAvgRatingRequest(menuItem.AvgRating); err != nil {
+		return err
+	}
+	return nil
 }
 
 func ValidateLocation(location []float64) error {
@@ -139,38 +121,67 @@ func ValidateRating(rating float64) error {
 	return nil
 }
 
-//TODO: query param validation
-/*
-- 1<= min <= max <= 5
-- 0 <= latitude <= 90
-- 0 <= longitude <= 180
-- radius > 0
-- skip >= 0
-- limit > 0
-- figure out if queryparser splits for arrays
-*/
-func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
-	/*
-	Min rating, max rating for all fields - figure out how to avoid nulls in db
-		return true/false
-	radius, longitude and latitude
-	limit
-	pageination
-	tags that should be present - and vs or?
-	key words - check if present in name, description ? - and vs or?
-	sort by:
-		- rating
-		- distance
-		- alphabetically
-		- number of reviews
-	*/
-	//TODO: some way to search by name... unsure
+func ValidateMinMaxRating(min, max *float64) error {
+	// Ensure min and max are within valid bounds
+	if min != nil {
+		if err := ValidateRating(*min); err != nil {
+			return errors.New("min rating " + err.Error())
+		}
+	}
+	if max != nil {
+		if err := ValidateRating(*max); err != nil {
+			return errors.New("max rating " + err.Error())
+		}
+	}
+	// min <= max if both are provided
+	if min != nil && max != nil && *min > *max {
+		return errors.New("min rating cannot be greater than max rating")
+	}
+	return nil
+}
 
+func ValidateQueryParams(queryParams MenuItemsQuery) error {
+	slog.Info("query params", "query params", queryParams)
+	// Validate rating
+	if err := ValidateMinMaxRating(queryParams.MinRatingPortion, queryParams.MaxRatingPortion); err != nil {
+		return err
+	}
+	if err := ValidateMinMaxRating(queryParams.MinRatingTaste, queryParams.MaxRatingTaste); err != nil {
+		return err
+	}
+	if err := ValidateMinMaxRating(queryParams.MinRatingValue, queryParams.MaxRatingValue); err != nil {
+		return err
+	}
+	if err := ValidateMinMaxRating(queryParams.MinRatingOverall, queryParams.MaxRatingOverall); err != nil {
+		return err
+	}
+	// Validate limit
+	if queryParams.Limit <= 0 {
+		return errors.New("limit must be greater than 0")
+	}
+	// Validate skip
+	if queryParams.Skip < 0 {
+		return errors.New("skip must be greater than or equal to 0")
+	}
+
+	return nil
+}
+
+func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 	// Parse query parameters
 	var queryParams MenuItemsQuery
 	if err := c.QueryParser(&queryParams); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid query parameters")
 	}
+
+	if queryParams.Limit == 0 { // couldn't figure out how to get the default value to work
+		queryParams.Limit = 10
+	}
+
+	if err := ValidateQueryParams(queryParams); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+
 	menuItems, err := h.service.GetMenuItems(queryParams)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString("Internal server error")

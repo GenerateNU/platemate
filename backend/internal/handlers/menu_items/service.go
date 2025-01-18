@@ -67,7 +67,7 @@ func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument) {
 	return menuItemDoc
 }
 
-func ApplyRatingFilter(filter bson.M, field string, min *int, max *int) {
+func ApplyRatingFilter(filter bson.M, field string, min *float64, max *float64) {
     if min == nil && max == nil {
         return
     }
@@ -113,16 +113,6 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
     ApplyRatingFilter(filter, "avgRating.taste", menuItemsQuery.MinRatingTaste, menuItemsQuery.MaxRatingTaste)
     ApplyRatingFilter(filter, "avgRating.value", menuItemsQuery.MinRatingValue, menuItemsQuery.MaxRatingValue)
     ApplyRatingFilter(filter, "avgRating.overall", menuItemsQuery.MinRatingOverall, menuItemsQuery.MaxRatingOverall)
-
-	// filter["location"] = bson.M{
-	// 	"$nearSphere": bson.M{
-	// 		"$geometry": bson.M{
-	// 			"type":        "Point",
-	// 			"coordinates": []float64{menuItemsQuery.Longitude, menuItemsQuery.Latitude},
-	// 		},
-	// 		"$maxDistance": menuItemsQuery.Radius * 1609.34 // convert miles -> meters
-	// 	},
-	// }
 
 	slog.Info("tags", "tags", menuItemsQuery.Tags)
 	if len(menuItemsQuery.Tags) > 0 {
