@@ -7,8 +7,8 @@ Enforcing base validations against doucments added to database
 */
 var (
 	validations = map[string]bson.M{
-		"health": healthValidator,
-		"users":  usersValidator,
+		"health":     healthValidator,
+		"users":      usersValidator,
 		"menu-items": menuItemsValidator,
 	}
 	defaultValidator = bson.M{
@@ -42,14 +42,14 @@ var (
 	menuItemsValidator = bson.M{
 		"bsonType": "object",
 		"required": []string{
-			"_id", 
-			"name", 
-			"avgRating", 
+			"_id",
+			"name",
+			"avgRating",
 			"picture",
-			"reviews", 
-			"description", 
-			"location", 
-			"tags", 
+			"reviews",
+			"description",
+			"location",
+			"tags",
 			"dietaryRestrictions",
 		},
 		"properties": bson.M{
@@ -66,23 +66,23 @@ var (
 				"bsonType": "object",
 				"properties": bson.M{
 					"portion": bson.M{
-						"bsonType": bson.M{"$in": []string{"double", "null"}},
+						"bsonType":    bson.M{"$in": []string{"double", "null"}},
 						"description": "Rating for portion size",
 					},
 					"taste": bson.M{
-						"bsonType": bson.M{"$in": []string{"double", "null"}},
+						"bsonType":    bson.M{"$in": []string{"double", "null"}},
 						"description": "Rating for taste",
 					},
 					"value": bson.M{
-						"bsonType": bson.M{"$in": []string{"double", "null"}},
+						"bsonType":    bson.M{"$in": []string{"double", "null"}},
 						"description": "Rating for value",
 					},
 					"overall": bson.M{
-						"bsonType": bson.M{"$in": []string{"double", "null"}},
+						"bsonType":    bson.M{"$in": []string{"double", "null"}},
 						"description": "Overall rating",
 					},
 					"return": bson.M{
-						"bsonType": bson.M{"$in": []string{"bool", "null"}},
+						"bsonType":    bson.M{"$in": []string{"bool", "null"}},
 						"description": "Would you return?",
 					},
 				},
@@ -118,6 +118,4 @@ var (
 			},
 		},
 	}
-	
-		
 )
