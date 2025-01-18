@@ -54,7 +54,7 @@ func (h *Handler) GetReview(c *fiber.Ctx) error {
 	return c.JSON(review)
 }
 
-// Update a review
+// Update a review (PUT)
 func (h *Handler) UpdateReview(c *fiber.Ctx) error {
 	id, err := primitive.ObjectIDFromHex(c.Params("id"))
 	if err != nil {
@@ -67,6 +67,25 @@ func (h *Handler) UpdateReview(c *fiber.Ctx) error {
 	}
 
 	err = h.service.UpdateReview(id, review)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+	return c.SendStatus(fiber.StatusOK)
+}
+
+// Update specific fields of a review (PATCH)
+func (h *Handler) UpdatePartialReview(c *fiber.Ctx) error {
+	id, err := primitive.ObjectIDFromHex(c.Params("id"))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid review ID")
+	}
+
+	var partialUpdate ReviewDocument
+	if err := json.Unmarshal(c.Body(), &partialUpdate); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid review data")
+	}
+
+	err = h.service.UpdatePartialReview(id, partialUpdate)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}

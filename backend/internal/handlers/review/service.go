@@ -125,6 +125,47 @@ func (s *Service) UpdateReview(id primitive.ObjectID, updated ReviewDocument) er
 	return err
 }
 
+// UpdatePartialReview updates only specified fields of a review document by ObjectID.
+func (s *Service) UpdatePartialReview(id primitive.ObjectID, updated ReviewDocument) error {
+	ctx := context.Background()
+	filter := bson.M{"_id": id}
+
+	updateFields := bson.M{}
+
+	// Add fields to the update document only if they are not empty or zero-valued
+	if updated.Rating != (Rating{}) {
+		updateFields["rating"] = updated.Rating
+	}
+	if updated.Picture != "" {
+		updateFields["picture"] = updated.Picture
+	}
+	if updated.Content != "" {
+		updateFields["content"] = updated.Content
+	}
+	if updated.Reviewer != (Reviewer{}) {
+		updateFields["reviewer"] = updated.Reviewer
+	}
+	if len(updated.Comments) > 0 {
+		updateFields["comments"] = updated.Comments
+	}
+	if updated.MenuItem != "" {
+		updateFields["menuItem"] = updated.MenuItem
+	}
+	if !updated.Timestamp.IsZero() {
+		updateFields["timestamp"] = updated.Timestamp
+	}
+
+	// Check if there is anything to update
+	if len(updateFields) == 0 {
+		return nil
+	}
+
+	update := bson.M{"$set": updateFields}
+
+	_, err := s.reviews.UpdateOne(ctx, filter, update)
+	return err
+}
+
 // DeleteReview removes a review document by ObjectID.
 func (s *Service) DeleteReview(id primitive.ObjectID) error {
 	ctx := context.Background()
