@@ -19,11 +19,11 @@ type UploadUrl struct {
 	key string `bson:"key"`
 }
 
-func (url *DownloadUrl) GetPresignedUrl(inputs *Server) {
+func (url *DownloadUrl) GetPresignedUrl(inputs *GetParams) {
 	// generate a presigned URL
 	req, err := s.Presigner.PresignGetObject(context.Background(), &s3.GetObjectInput{
 		Bucket: aws.String(inputs.Bucket),
-		Key:    aws.String(inputs.key),
+		Key:    aws.String(inputs.Key),
 	})
 	if err != nil {
 		log.Printf("Error generating presigned URL: %v", err)
@@ -36,8 +36,8 @@ func (url *DownloadUrl) GetPresignedUrl(inputs *Server) {
 	}, nil
 }
 
-func (url *UploadUrl) CreateUrlAndKey(inputs *Server) {
-	// generate a presigned URL
+// what should be the return type here???
+func (inputs *PostParams) CreateUrlAndKey() url *UploadUrl {
 
 	// generate uuid
 	fileUUID := uuid.New().String()
@@ -45,8 +45,8 @@ func (url *UploadUrl) CreateUrlAndKey(inputs *Server) {
 
 	req, err := s.Presigner.PresignPutObject(context.Background(), &s3.GetObjectInput{
 		Bucket: aws.String(inputs.Bucket),
-		Key:    aws.String(inputs.key),
-		Region: aws.Strings(inputs.region)
+		Key:    fileKey,
+		Region: aws.Strings(inputs.Region)
 	})
 	if err != nil {
 		log.Printf("Error generating presigned URL: %v", err)

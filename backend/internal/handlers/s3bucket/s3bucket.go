@@ -16,59 +16,38 @@ import (
 )
 
 type GetParams struct {
-	Presigner *s3.PresignClient
 	Bucket    string
-	key string
+	Key string
 }
 
 type PostParams struct {
-	Presigner *s3.PresignClient
 	Bucket    string
 	Filetype string
 	Region string
 }
 
-func (s *GetParams) GetPresignedUrlHandler(c *fiber.Ctx) {
-	// generate a presigned URL
-	// Load AWS configuration
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		return nil, fmt.Errorf("failed to load AWS config: %v", err)
-	}
-
-	// create a temporary S3 presign client
-	s3Client := s3.NewFromConfig(cfg)
-	presigner := s3.NewPresignClient(s3Client)
-	
+func (h *Handler) GetPresignedUrlHandler(c *fiber.Ctx) error {
 	fileType := c.Param("key")
 
 	// get the name of the bucket
 	// region, environment vars
-	bucketName := os.Getenv("platemate-assets")
+	bucketName := os.Getenv("AWS_BUCKET_NAME")
 	if bucketName == "" {
 		return nil, fmt.Errorf("S3_BUCKET environment variable is not set")
 	}
 
 	object := &GetParams{
-		Presigner: presigner,
 		Bucket:    bucketName,
 		key: key,
 	}
-	return h.service.GetPresignedUrl(object)
+	err := h.service.GetPresignedUrl(object)
+	if err != nil {
+		return err
+	}
+	return c.SendStatus(fiber.StatusOK)
 }
 
-func (s *PostParams) PostPresignedUrlHandler(c *fiber.Ctx) {
-	// generate a presigned URL
-	// Load AWS configuration
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		return nil, fmt.Errorf("failed to load AWS config: %v", err)
-	}
-
-	// create a temporary S3 presign client
-	s3Client := s3.NewFromConfig(cfg)
-	presigner := s3.NewPresignClient(s3Client)
-	
+func (h *Handler) PostPresignedUrlHandler(c *fiber.Ctx) error {
 	fileType := c.Query("fileType")
 	if fileType == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -78,18 +57,21 @@ func (s *PostParams) PostPresignedUrlHandler(c *fiber.Ctx) {
 
 	// get the name of the bucket
 	// region, environment vars
-	bucketName := os.Getenv("platemate-assets")
-	region := os.Getenv("us-east-1")
+	bucketName := os.Getenv("AWS_BUCKET_NAME")
+	region := os.Getenv("AWS_REGION")
 	if bucketName == "" {
 		return nil, fmt.Errorf("S3_BUCKET environment variable is not set")
 	}
 
 	object := &PostParams{
-		Presigner: presigner,
 		Bucket:    bucketName,
 		FileType: fileType,
 		Region: region
 	}
 
-	return h.service.CreateUrlAndKey(object)
+	err := h.service.CreateUrlAndKey(object)
+	if err != nil {
+		return err
+	}
+	return c.SendStatus(fiber.StatusOK)
 }
