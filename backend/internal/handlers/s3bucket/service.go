@@ -19,7 +19,7 @@ type UploadUrl struct {
 	key string `bson:"key"`
 }
 
-func (url *DownloadUrl) GetPresignedUrl(inputs *GetParams) {
+func (inputs *GetParams) GetPresignedUrl() url *DownloadUrl {
 	// generate a presigned URL
 	req, err := s.Presigner.PresignGetObject(context.Background(), &s3.GetObjectInput{
 		Bucket: aws.String(inputs.Bucket),
