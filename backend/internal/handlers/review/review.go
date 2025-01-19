@@ -2,9 +2,12 @@ package review
 
 import (
 	"encoding/json"
+	"errors"
 
+	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 /*
@@ -18,12 +21,13 @@ type Handler struct {
 func (h *Handler) CreateReview(c *fiber.Ctx) error {
 	var review ReviewDocument
 	if err := json.Unmarshal(c.Body(), &review); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid review data")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
 	result, err := h.service.InsertReview(review)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		// Central error handler take 500
+		return err
 	}
 	return c.JSON(result)
 }
@@ -33,8 +37,8 @@ func (h *Handler) GetReviews(c *fiber.Ctx) error {
 	reviews, err := h.service.GetAllReviews()
 
 	if err != nil {
-		println("Error fetching reviews:", err)
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		// Central error handler take 500
+		return err
 	}
 	return c.JSON(reviews)
 }
@@ -44,17 +48,16 @@ func (h *Handler) GetReview(c *fiber.Ctx) error {
 	id, err := primitive.ObjectIDFromHex(c.Params("id"))
 
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid review ID")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
 	review, err := h.service.GetReviewByID(id)
 	if err != nil {
-		// Return 404 if the document is not found
-		if err.Error() == "mongo: no documents in result" {
-			return fiber.NewError(fiber.StatusNotFound, "Review not found")
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Review", "id", id.Hex()))
 		}
-		// Return 500 otherwise
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		// Central error handler take 500
+		return err
 	}
 	return c.JSON(review)
 }
@@ -63,17 +66,18 @@ func (h *Handler) GetReview(c *fiber.Ctx) error {
 func (h *Handler) UpdateReview(c *fiber.Ctx) error {
 	id, err := primitive.ObjectIDFromHex(c.Params("id"))
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid review ID")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
 	var review ReviewDocument
 	if err := json.Unmarshal(c.Body(), &review); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid review data")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
 
 	err = h.service.UpdateReview(id, review)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		// Central error handler take 500
+		return err
 	}
 	return c.SendStatus(fiber.StatusOK)
 }
@@ -82,17 +86,18 @@ func (h *Handler) UpdateReview(c *fiber.Ctx) error {
 func (h *Handler) UpdatePartialReview(c *fiber.Ctx) error {
 	id, err := primitive.ObjectIDFromHex(c.Params("id"))
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid review ID")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
 	var partialUpdate ReviewDocument
 	if err := json.Unmarshal(c.Body(), &partialUpdate); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid review data")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
 
 	err = h.service.UpdatePartialReview(id, partialUpdate)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		// Central error handler take 500
+		return err
 	}
 	return c.SendStatus(fiber.StatusOK)
 }
@@ -101,11 +106,12 @@ func (h *Handler) UpdatePartialReview(c *fiber.Ctx) error {
 func (h *Handler) DeleteReview(c *fiber.Ctx) error {
 	id, err := primitive.ObjectIDFromHex(c.Params("id"))
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid review ID")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
 	if err := h.service.DeleteReview(id); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		// Central error handler take 500
+		return err
 	}
 	return c.SendStatus(fiber.StatusNoContent)
 }
