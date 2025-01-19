@@ -1,10 +1,10 @@
 package review
 
 import (
-	"encoding/json"
 	"errors"
 
 	"github.com/GenerateNU/platemate/internal/xerr"
+	go_json "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,7 +20,7 @@ type Handler struct {
 // Create a review
 func (h *Handler) CreateReview(c *fiber.Ctx) error {
 	var review ReviewDocument
-	if err := json.Unmarshal(c.Body(), &review); err != nil {
+	if err := go_json.Unmarshal(c.Body(), &review); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
@@ -70,7 +70,7 @@ func (h *Handler) UpdateReview(c *fiber.Ctx) error {
 	}
 
 	var review ReviewDocument
-	if err := json.Unmarshal(c.Body(), &review); err != nil {
+	if err := go_json.Unmarshal(c.Body(), &review); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
 
@@ -90,7 +90,7 @@ func (h *Handler) UpdatePartialReview(c *fiber.Ctx) error {
 	}
 
 	var partialUpdate ReviewDocument
-	if err := json.Unmarshal(c.Body(), &partialUpdate); err != nil {
+	if err := go_json.Unmarshal(c.Body(), &partialUpdate); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
 
