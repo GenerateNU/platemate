@@ -115,7 +115,7 @@ func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
 
 func ValidateRating(rating float64) error {
 	if rating < 1 || rating > 5 {
-		return fmt.Errorf("rating must be between 1 and 5, but got %d", rating)
+		return fmt.Errorf("rating must be between 1 and 5, but got %f", rating)
 	}
 	return nil
 }
@@ -134,7 +134,7 @@ func ValidateMinMaxRating(min, max *float64) error {
 	}
 	// min <= max if both are provided
 	if min != nil && max != nil && *min > *max {
-		return fmt.Errorf("min rating cannot be greater than max rating, but got min: %d and max: %d", *min, *max)
+		return fmt.Errorf("min rating cannot be greater than max rating, but got min: %f and max: %f", *min, *max)
 	}
 	return nil
 }
@@ -196,7 +196,7 @@ func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 	menuItem, err := h.service.GetMenuItemById(objID)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item not found", "id", id))
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item", "id", id))
 		}
 		return err
 	}
@@ -244,7 +244,7 @@ func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
 	updatedMenuItem, err := h.service.UpdateMenuItem(objID, menuItem)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item not found", "id", id))
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item", "id", id))
 		}
 		if errors.Is(err, ErrInvalidID) {
 			return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
@@ -266,7 +266,7 @@ func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
 	menuItemDeleted, err := h.service.DeleteMenuItem(objID)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item not found", "id", id))
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item", "id", id))
 		}
 		return err
 	}
