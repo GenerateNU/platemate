@@ -6,6 +6,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log/slog"
+	"fmt"
+	"github.com/GenerateNU/platemate/internal/xerr"
 )
 
 /*
@@ -113,7 +115,7 @@ func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
 
 func ValidateRating(rating float64) error {
 	if rating < 1 || rating > 5 {
-		return errors.New("rating must be between 1 and 5")
+		return fmt.Errorf("rating must be between 1 and 5, but got %d", rating)
 	}
 	return nil
 }
@@ -132,7 +134,7 @@ func ValidateMinMaxRating(min, max *float64) error {
 	}
 	// min <= max if both are provided
 	if min != nil && max != nil && *min > *max {
-		return errors.New("min rating cannot be greater than max rating")
+		return fmt.Errorf("min rating cannot be greater than max rating, but got min: %d and max: %d", *min, *max)
 	}
 	return nil
 }
@@ -154,11 +156,11 @@ func ValidateQueryParams(queryParams MenuItemsQuery) error {
 	}
 	// Validate limit
 	if queryParams.Limit != nil && *queryParams.Limit <= 0 {
-		return errors.New("limit must be greater than 0")
+		return fmt.Errorf("limit must be greater than 0, but got %d", *queryParams.Limit)
 	}
 	// Validate skip
 	if queryParams.Skip < 0 {
-		return errors.New("skip must be greater than or equal to 0")
+		return fmt.Errorf("skip must be greater than or equal to 0, but got %d", queryParams.Skip)
 	}
 
 	return nil
@@ -168,16 +170,17 @@ func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 	// Parse query parameters
 	var queryParams MenuItemsQuery
 	if err := c.QueryParser(&queryParams); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString("Invalid query parameters")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
 	if err := ValidateQueryParams(queryParams); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
 	menuItems, err := h.service.GetMenuItems(queryParams)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString("Internal server error")
+		return err
+
 	}
 	return c.Status(fiber.StatusOK).JSON(menuItems)
 
@@ -188,12 +191,12 @@ func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 	objID, errID := primitive.ObjectIDFromHex(id)
 	if errID != nil {
 		// Invalid ID format
-		return c.Status(fiber.StatusBadRequest).SendString("Invalid ID format")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 	menuItem, err := h.service.GetMenuItemById(objID)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return c.Status(fiber.StatusNotFound).SendString("Menu item not found")
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item not found", "id", id))
 		}
 		return err
 	}
@@ -203,10 +206,10 @@ func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 	var menuItem MenuItemRequest
 	if err := c.BodyParser(&menuItem); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString("Invalid request body")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 	if err := ValidateMenuItemRequest(menuItem); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 	menuItem = PreprocessMenuItemRequest(menuItem)
 
@@ -225,20 +228,20 @@ func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
 	objID, errID := primitive.ObjectIDFromHex(id)
 	if errID != nil {
 		// Invalid ID format
-		return c.Status(fiber.StatusBadRequest).SendString("Invalid ID format")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
 	if err := c.BodyParser(&menuItem); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString("Invalid request body")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 	if err := ValidateMenuItemRequest(menuItem); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 	menuItem = PreprocessMenuItemRequest(menuItem)
 	updatedMenuItem, err := h.service.UpdateMenuItem(objID, menuItem)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return c.Status(fiber.StatusNotFound).SendString("Menu item not found")
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item not found", "id", id))
 		}
 		return err
 	}
@@ -251,13 +254,13 @@ func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
 	objID, errID := primitive.ObjectIDFromHex(id)
 	if errID != nil {
 		// Invalid ID format
-		return c.Status(fiber.StatusBadRequest).SendString("Invalid ID format")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
 	menuItemDeleted, err := h.service.DeleteMenuItem(objID)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return c.Status(fiber.StatusNotFound).SendString("Menu item not found")
+		if errors.Is(err, mongo.ErrNoDocuments)s {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item not found", "id", id))
 		}
 		return err
 	}
