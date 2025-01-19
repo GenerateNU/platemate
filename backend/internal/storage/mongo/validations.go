@@ -90,7 +90,7 @@ var (
 			"reviews": bson.M{
 				"bsonType": "array",
 				"items": bson.M{
-					"bsonType": "string",
+					"bsonType": "objectId",
 				},
 			},
 			"description": bson.M{

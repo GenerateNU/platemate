@@ -7,6 +7,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log/slog"
+	"fmt"
+	"errors"
 )
 
 /*
@@ -29,7 +31,7 @@ type MenuItemDocument struct {
 	Name                string             `bson:"name"`
 	Picture             string             `bson:"picture"`
 	AvgRating           AvgRatingDocument  `bson:"avgRating,omitempty"`
-	Reviews             []string           `bson:"reviews"`
+	Reviews             []primitive.ObjectID `bson:"reviews"`
 	Description         string             `bson:"description"`
 	Location            []float64          `bson:"location"`
 	Tags                []string           `bson:"tags"`
@@ -44,7 +46,9 @@ type AvgRatingDocument struct {
 	Return  *bool    `bson:"return"` // @TODO: figure out if boolean or number
 }
 
-func ParseMenuItemRequest(menuItemRequest MenuItemRequest) MenuItemDocument {
+var ErrInvalidID = errors.New("the provided hex string is not a valid ObjectID")
+
+func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument, error) {
 	avgRatingDoc := AvgRatingDocument{
 		Portion: menuItemRequest.AvgRating.Portion,
 		Taste:   menuItemRequest.AvgRating.Taste,
@@ -52,18 +56,30 @@ func ParseMenuItemRequest(menuItemRequest MenuItemRequest) MenuItemDocument {
 		Overall: menuItemRequest.AvgRating.Overall,
 		Return:  menuItemRequest.AvgRating.Return,
 	}
+
+	var reviewsObjectID []primitive.ObjectID
+	for _, review := range menuItemRequest.Reviews {
+		objectID, err := primitive.ObjectIDFromHex(review) // Convert each string to ObjectID
+		if err != nil {
+			return MenuItemDocument{}, fmt.Errorf("invalid review ID '%s': %w", review, ErrInvalidID)
+
+		}
+
+		reviewsObjectID = append(reviewsObjectID, objectID)
+	}
+
 	menuItemDoc := MenuItemDocument{
 		Name:                menuItemRequest.Name,
 		Picture:             menuItemRequest.Picture,
 		AvgRating:           avgRatingDoc,
-		Reviews:             menuItemRequest.Reviews,
+		Reviews:            reviewsObjectID,
 		Description:         menuItemRequest.Description,
 		Location:            menuItemRequest.Location,
 		Tags:                menuItemRequest.Tags,
 		DietaryRestrictions: menuItemRequest.DietaryRestrictions,
 	}
 
-	return menuItemDoc
+	return menuItemDoc, nil
 }
 
 func ApplyRatingFilter(filter bson.M, field string, min *float64, max *float64) {
@@ -84,6 +100,10 @@ func ApplyRatingFilter(filter bson.M, field string, min *float64, max *float64) 
 }
 
 func ToMenuItemResponse(menuItem MenuItemDocument) MenuItemResponse {
+	var reviews []string
+	for _, review := range menuItem.Reviews {
+		reviews = append(reviews, review.Hex())
+	}
 	return MenuItemResponse{
 		ID: menuItem.ID.Hex(),
 		MenuItemRequest: MenuItemRequest{
@@ -96,7 +116,7 @@ func ToMenuItemResponse(menuItem MenuItemDocument) MenuItemResponse {
 				Overall: menuItem.AvgRating.Overall,
 				Return:  menuItem.AvgRating.Return,
 			},
-			Reviews:             menuItem.Reviews,
+			Reviews:             reviews,
 			Description:         menuItem.Description,
 			Location:            menuItem.Location,
 			Tags:                menuItem.Tags,
@@ -148,7 +168,10 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 }
 
 func (s *Service) UpdateMenuItem(idObj primitive.ObjectID, menuItemRequest MenuItemRequest) (MenuItemResponse, error) {
-	menuItemDoc := ParseMenuItemRequest(menuItemRequest)
+	menuItemDoc, errReviewID := ParseMenuItemRequest(menuItemRequest)
+	if errReviewID != nil {
+		return MenuItemResponse{}, errReviewID
+	}
 	errUpdate := s.menuItems.FindOneAndUpdate(
 		context.Background(),
 		bson.M{"_id": idObj},        // filter to match the document
@@ -167,7 +190,10 @@ func (s *Service) UpdateMenuItem(idObj primitive.ObjectID, menuItemRequest MenuI
 }
 
 func (s *Service) CreateMenuItem(menuItemRequest MenuItemRequest) (MenuItemResponse, error) {
-	menuItemDoc := ParseMenuItemRequest(menuItemRequest)
+	menuItemDoc, errReviewID := ParseMenuItemRequest(menuItemRequest)
+	if errReviewID != nil {
+		return MenuItemResponse{}, errReviewID
+	}
 	slog.Info("doc", "menuItemDocument", menuItemDoc)
 
 	result, err := s.menuItems.InsertOne(context.Background(), menuItemDoc)

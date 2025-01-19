@@ -11,7 +11,7 @@ Router maps endpoints to handlers
 func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	service := newService(collections)
 	handler := Handler{service}
-	menuGroup := app.Group("/menu-items")
+	menuGroup := app.Group("/api/v1/menu-items")
 
 	menuGroup.Post("/", handler.CreateMenuItem)
 	menuGroup.Get("/", handler.GetMenuItems)

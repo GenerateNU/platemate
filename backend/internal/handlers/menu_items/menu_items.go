@@ -191,7 +191,7 @@ func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 	objID, errID := primitive.ObjectIDFromHex(id)
 	if errID != nil {
 		// Invalid ID format
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(errID))
 	}
 	menuItem, err := h.service.GetMenuItemById(objID)
 	if err != nil {
@@ -215,6 +215,9 @@ func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 
 	createdMenuItem, err := h.service.CreateMenuItem(menuItem)
 	if err != nil {
+		if errors.Is(err, ErrInvalidID) {
+			return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+		}
 		return err
 	}
 	return c.Status(fiber.StatusOK).JSON(createdMenuItem)
@@ -228,7 +231,7 @@ func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
 	objID, errID := primitive.ObjectIDFromHex(id)
 	if errID != nil {
 		// Invalid ID format
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(errID))
 	}
 
 	if err := c.BodyParser(&menuItem); err != nil {
@@ -243,6 +246,9 @@ func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item not found", "id", id))
 		}
+		if errors.Is(err, ErrInvalidID) {
+			return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+		}
 		return err
 	}
 	return c.Status(fiber.StatusOK).JSON(updatedMenuItem)
@@ -254,12 +260,12 @@ func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
 	objID, errID := primitive.ObjectIDFromHex(id)
 	if errID != nil {
 		// Invalid ID format
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(errID))
 	}
 
 	menuItemDeleted, err := h.service.DeleteMenuItem(objID)
 	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments)s {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item not found", "id", id))
 		}
 		return err
