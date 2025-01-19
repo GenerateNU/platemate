@@ -2,13 +2,13 @@ package menu_items
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log/slog"
-	"fmt"
-	"errors"
 )
 
 /*
@@ -27,15 +27,15 @@ func newService(collections map[string]*mongo.Collection) *Service {
 }
 
 type MenuItemDocument struct {
-	ID                  primitive.ObjectID `bson:"_id,omitempty"`
-	Name                string             `bson:"name"`
-	Picture             string             `bson:"picture"`
-	AvgRating           AvgRatingDocument  `bson:"avgRating,omitempty"`
+	ID                  primitive.ObjectID   `bson:"_id,omitempty"`
+	Name                string               `bson:"name"`
+	Picture             string               `bson:"picture"`
+	AvgRating           AvgRatingDocument    `bson:"avgRating,omitempty"`
 	Reviews             []primitive.ObjectID `bson:"reviews"`
-	Description         string             `bson:"description"`
-	Location            []float64          `bson:"location"`
-	Tags                []string           `bson:"tags"`
-	DietaryRestrictions []string           `bson:"dietaryRestrictions"`
+	Description         string               `bson:"description"`
+	Location            []float64            `bson:"location"`
+	Tags                []string             `bson:"tags"`
+	DietaryRestrictions []string             `bson:"dietaryRestrictions"`
 }
 
 type AvgRatingDocument struct {
@@ -72,7 +72,7 @@ func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument, er
 		Name:                menuItemRequest.Name,
 		Picture:             menuItemRequest.Picture,
 		AvgRating:           avgRatingDoc,
-		Reviews:            reviewsObjectID,
+		Reviews:             reviewsObjectID,
 		Description:         menuItemRequest.Description,
 		Location:            menuItemRequest.Location,
 		Tags:                menuItemRequest.Tags,
