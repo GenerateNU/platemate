@@ -15,9 +15,6 @@ func newService(presigner *s3.PresignClient) *Service {
 	}
 }
 
-/*
-Router maps endpoints to handlers
-*/
 func Routes(app *fiber.App, presigner *s3.PresignClient) {
 	service := newService(presigner)
 	handler := Handler{service}

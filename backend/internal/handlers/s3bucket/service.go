@@ -25,7 +25,7 @@ func (s *Service) GetPresignedUrl(inputs *GetParams) (*DownloadUrl, error) {
 	if err != nil {
 		return nil, err
 	}
-	// get extension from the params 
+
 	return &DownloadUrl{
 		URL: req.URL,
 	}, nil

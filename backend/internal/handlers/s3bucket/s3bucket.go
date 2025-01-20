@@ -43,6 +43,7 @@ func (h *Handler) GetPresignedUrlHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	c.Set("Content-Type", "application/json")
 	return c.Send(jsonData)
 }
 
@@ -54,8 +55,7 @@ func (h *Handler) PostPresignedUrlHandler(c *fiber.Ctx) error {
 			"error": "fileType query parameter is required",
 		})
 	}
-
-	// get the name of the bucket
+	
 	bucketName := os.Getenv("AWS_BUCKET_NAME")
 	if bucketName == "" {
 		return fmt.Errorf("S3_BUCKET environment variable is not set")
@@ -74,5 +74,6 @@ func (h *Handler) PostPresignedUrlHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	c.Set("Content-Type", "application/json")
 	return c.Send(jsonData)
 }
