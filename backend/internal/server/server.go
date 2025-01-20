@@ -1,23 +1,35 @@
 package server
 
 import (
-    "context"
-    "fmt"
-    "github.com/aws/aws-sdk-go-v2/aws"
-    "github.com/aws/aws-sdk-go-v2/config"
-    "github.com/aws/aws-sdk-go-v2/service/s3"
-    "github.com/gofiber/fiber/v2"
+	"context"
+	"fmt"
+	"github.com/GenerateNU/platemate/internal/handlers/health"
+	"github.com/GenerateNU/platemate/internal/handlers/s3bucket"
+	"github.com/GenerateNU/platemate/internal/xerr"
+	_ "github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	gojson "github.com/goccy/go-json"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/favicon"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"go.mongodb.org/mongo-driver/mongo"
+	"os"
 )
 
 func New(collections map[string]*mongo.Collection) *fiber.App {
 	app := setupApp()
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
-    config.WithRegion("AWS_REGION"),
-    config.WithCredentialsProvider(aws.NewStaticCredentialsProvider("AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "")),)
+    config.WithRegion(os.Getenv("AWS_REGION")),
+    config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider("AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "")),)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load AWS config: %v", err)
+		fmt.Errorf("failed to load AWS config: %v", err)
 	}
 
 	// create a temporary S3 presign client

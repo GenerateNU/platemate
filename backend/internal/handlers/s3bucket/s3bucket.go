@@ -1,18 +1,10 @@
 package s3bucket
 
 import (
-	"context"
 	"fmt"
-	"log"
-	"net/http"
 	"os"
-	"time"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go-v2/service/s3/types"
-	"github.com/aws/aws-sdk-go-v2/service/s3/presign"
+	"github.com/gofiber/fiber/v2"
+	"encoding/json"
 )
 
 type GetParams struct {
@@ -23,31 +15,39 @@ type GetParams struct {
 type PostParams struct {
 	Bucket    string
 	Filetype string
-	Region string
+}
+
+type Handler struct {
+	service *Service
 }
 
 func (h *Handler) GetPresignedUrlHandler(c *fiber.Ctx) error {
-	fileType := c.Param("key")
+	fmt.Println("we are in the handler")
+	key := c.Params("key")
 
 	// get the name of the bucket
-	// region, environment vars
 	bucketName := os.Getenv("AWS_BUCKET_NAME")
 	if bucketName == "" {
-		return nil, fmt.Errorf("S3_BUCKET environment variable is not set")
+		return fmt.Errorf("S3_BUCKET environment variable is not set")
 	}
 
 	object := &GetParams{
 		Bucket:    bucketName,
-		key: key,
+		Key: key,
 	}
-	err := h.service.GetPresignedUrl(object)
+	url, err := h.service.GetPresignedUrl(object)
 	if err != nil {
 		return err
 	}
-	return c.SendStatus(fiber.StatusOK)
+	jsonData, err := json.MarshalIndent(url, "", " ")
+	if err != nil {
+		return err
+	}
+	return c.Send(jsonData)
 }
 
 func (h *Handler) PostPresignedUrlHandler(c *fiber.Ctx) error {
+	fmt.Println("we are in the handler")
 	fileType := c.Query("fileType")
 	if fileType == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -56,22 +56,23 @@ func (h *Handler) PostPresignedUrlHandler(c *fiber.Ctx) error {
 	}
 
 	// get the name of the bucket
-	// region, environment vars
 	bucketName := os.Getenv("AWS_BUCKET_NAME")
-	region := os.Getenv("AWS_REGION")
 	if bucketName == "" {
-		return nil, fmt.Errorf("S3_BUCKET environment variable is not set")
+		return fmt.Errorf("S3_BUCKET environment variable is not set")
 	}
 
 	object := &PostParams{
 		Bucket:    bucketName,
-		FileType: fileType,
-		Region: region
+		Filetype: fileType,
 	}
 
-	err := h.service.CreateUrlAndKey(object)
+	urlAndKey, err := h.service.CreateUrlAndKey(object)
 	if err != nil {
 		return err
 	}
-	return c.SendStatus(fiber.StatusOK)
+	jsonData, err := json.MarshalIndent(urlAndKey, "", " ")
+	if err != nil {
+		return err
+	}
+	return c.Send(jsonData)
 }

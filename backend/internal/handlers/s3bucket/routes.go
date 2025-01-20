@@ -2,7 +2,7 @@ package s3bucket
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 type Service struct {
@@ -11,7 +11,7 @@ type Service struct {
 
 func newService(presigner *s3.PresignClient) *Service {
 	return &Service{
-		Presigner: presigner
+		Presigner: presigner,
 	}
 }
 

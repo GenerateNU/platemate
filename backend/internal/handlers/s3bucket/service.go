@@ -2,60 +2,51 @@ package s3bucket
 
 import (
 	"context"
-
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/google/uuid"
 )
 
-// func newService(collections map[string]*mongo.Collection) *Service {
-// 	return &Service{collections["health"]}
-// }
-
 type DownloadUrl struct {
-	url    string `bson:"download_url"`
+	URL    string `json:"download_url"`
 }
 
 type UploadUrl struct {
-	url string `bson:"upload_url"`
-	key string `bson:"key"`
+	URL string `json:"upload_url"`
+	Key string `json:"key"`
 }
 
-func (inputs *GetParams) GetPresignedUrl() url *DownloadUrl {
+func (s *Service) GetPresignedUrl(inputs *GetParams) (*DownloadUrl, error) {
 	// generate a presigned URL
 	req, err := s.Presigner.PresignGetObject(context.Background(), &s3.GetObjectInput{
 		Bucket: aws.String(inputs.Bucket),
 		Key:    aws.String(inputs.Key),
 	})
 	if err != nil {
-		log.Printf("Error generating presigned URL: %v", err)
-		http.Error(w, "Failed to generate presigned URL", http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 	// get extension from the params 
 	return &DownloadUrl{
-		url: req.URL
+		URL: req.URL,
 	}, nil
 }
 
-// what should be the return type here???
-func (inputs *PostParams) CreateUrlAndKey() url *UploadUrl {
+func (s *Service) CreateUrlAndKey(inputs *PostParams) (*UploadUrl, error) {
 
 	// generate uuid
 	fileUUID := uuid.New().String()
-	fileKey := fileUUID + "." + fileType
+	fileKey := fileUUID + "." + inputs.Filetype
 
-	req, err := s.Presigner.PresignPutObject(context.Background(), &s3.GetObjectInput{
+	req, err := s.Presigner.PresignPutObject(context.Background(), &s3.PutObjectInput{
 		Bucket: aws.String(inputs.Bucket),
-		Key:    fileKey,
-		Region: aws.Strings(inputs.Region)
+		Key:    aws.String(fileKey),
 	})
 	if err != nil {
-		log.Printf("Error generating presigned URL: %v", err)
-		http.Error(w, "Failed to generate presigned URL", http.StatusInternalServerError)
-		return
+		return nil, err
 	}
-	// get extension from the params 
-	return &UploadUrl{
-		url: req.URL,
-		key: fileKey
-	}, nil
+	urlAndKey := &UploadUrl{
+		URL: req.URL,
+		Key: fileKey,
+	}
+	return urlAndKey, nil
 }
