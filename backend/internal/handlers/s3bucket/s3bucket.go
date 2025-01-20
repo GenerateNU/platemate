@@ -22,7 +22,6 @@ type Handler struct {
 }
 
 func (h *Handler) GetPresignedUrlHandler(c *fiber.Ctx) error {
-	fmt.Println("we are in the handler")
 	key := c.Params("key")
 
 	// get the name of the bucket
