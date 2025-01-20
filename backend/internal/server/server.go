@@ -29,7 +29,7 @@ func New(collections map[string]*mongo.Collection) *fiber.App {
     config.WithRegion(os.Getenv("AWS_REGION")),
     config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(os.Getenv("AWS_ACCESS_KEY_ID"), os.Getenv("AWS_SECRET_ACCESS_KEY"), "")),)
 	if err != nil {
-		fmt.Errorf(err)
+		fmt.Println("Failed to load AWS config: %v", err)
 	}
 
 	// create a S3 presign client
