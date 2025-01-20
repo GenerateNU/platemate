@@ -21,7 +21,7 @@ import (
 	"os"
 )
 
-func New(collections map[string]*mongo.Collection) (*fiber.App, err) {
+func New(collections map[string]*mongo.Collection) (*fiber.App, error) {
 	app := setupApp()
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
