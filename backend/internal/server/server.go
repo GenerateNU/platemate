@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"github.com/GenerateNU/platemate/internal/handlers/health"
 	"github.com/GenerateNU/platemate/internal/handlers/s3bucket"
 	"github.com/GenerateNU/platemate/internal/xerr"
@@ -22,14 +21,14 @@ import (
 	"os"
 )
 
-func New(collections map[string]*mongo.Collection) *fiber.App {
+func New(collections map[string]*mongo.Collection) (*fiber.App, err) {
 	app := setupApp()
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
     config.WithRegion(os.Getenv("AWS_REGION")),
     config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(os.Getenv("AWS_ACCESS_KEY_ID"), os.Getenv("AWS_SECRET_ACCESS_KEY"), "")),)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// create a S3 presign client
@@ -39,7 +38,7 @@ func New(collections map[string]*mongo.Collection) *fiber.App {
 	health.Routes(app, collections)
 	s3bucket.Routes(app, presigner)
 
-	return app
+	return app, nil
 }
 
 func setupApp() *fiber.App {
