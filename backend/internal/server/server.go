@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/GenerateNU/platemate/internal/handlers/health"
+	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/xerr"
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
@@ -18,7 +19,7 @@ func New(collections map[string]*mongo.Collection) *fiber.App {
 	app := setupApp()
 
 	health.Routes(app, collections)
-
+	menu_items.Routes(app, collections)
 	return app
 }
 
