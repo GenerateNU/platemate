@@ -2,9 +2,9 @@ package s3bucket
 
 import (
 	"fmt"
-	"os"
 	"github.com/gofiber/fiber/v2"
 	"encoding/json"
+	"github.com/GenerateNU/platemate/internal/config"
 )
 
 type GetParams struct {
@@ -19,14 +19,14 @@ type PostParams struct {
 
 type Handler struct {
 	service *Service
-}
+	config config.Config
+} 
 
 func (h *Handler) GetPresignedUrlHandler(c *fiber.Ctx) error {
-	fmt.Println("we are in the handler")
 	key := c.Params("key")
 
 	// get the name of the bucket
-	bucketName := os.Getenv("AWS_BUCKET_NAME")
+	bucketName := h.config.AWS.BucketName
 	if bucketName == "" {
 		return fmt.Errorf("S3_BUCKET environment variable is not set")
 	}
@@ -48,7 +48,6 @@ func (h *Handler) GetPresignedUrlHandler(c *fiber.Ctx) error {
 }
 
 func (h *Handler) PostPresignedUrlHandler(c *fiber.Ctx) error {
-	fmt.Println("we are in the handler")
 	fileType := c.Query("fileType")
 	if fileType == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -56,7 +55,7 @@ func (h *Handler) PostPresignedUrlHandler(c *fiber.Ctx) error {
 		})
 	}
 	
-	bucketName := os.Getenv("AWS_BUCKET_NAME")
+	bucketName := h.config.AWS.BucketName
 	if bucketName == "" {
 		return fmt.Errorf("S3_BUCKET environment variable is not set")
 	}

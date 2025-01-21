@@ -32,7 +32,6 @@ func (s *Service) GetPresignedUrl(inputs *GetParams) (*DownloadUrl, error) {
 }
 
 func (s *Service) CreateUrlAndKey(inputs *PostParams) (*UploadUrl, error) {
-
 	// generate uuid
 	fileUUID := uuid.New().String()
 	fileKey := fileUUID + "." + inputs.Filetype
