@@ -10,6 +10,23 @@ on:
       - "backend/**"
 
 jobs:
+  format:
+    name: Format Code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.23
+      - name: Format Code
+        run: |
+          cd backend
+          be_format_output=$(go fmt ./...)
+          if [[ -n "$be_format_output" ]]; then
+          echo "$be_format_output"
+          echo "::error::formatting issues found"
+          exit 1
+          fi
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
