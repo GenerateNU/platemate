@@ -25,14 +25,13 @@ func (s *Service) GetPresignedUrl(inputs *GetParams) (*DownloadUrl, error) {
 	if err != nil {
 		return nil, err
 	}
-	// get extension from the params 
+
 	return &DownloadUrl{
 		URL: req.URL,
 	}, nil
 }
 
 func (s *Service) CreateUrlAndKey(inputs *PostParams) (*UploadUrl, error) {
-
 	// generate uuid
 	fileUUID := uuid.New().String()
 	fileKey := fileUUID + "." + inputs.Filetype
