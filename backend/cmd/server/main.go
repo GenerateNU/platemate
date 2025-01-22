@@ -7,7 +7,11 @@ import (
 	"io"
 	"log/slog"
 	"os"
+	"os/exec"
 	"os/signal"
+	"runtime"
+	"strconv"
+	"strings"
 	"syscall"
 
 	"github.com/GenerateNU/platemate/internal/config"
@@ -22,6 +26,7 @@ func main() {
 }
 
 func run(stderr io.Writer, args []string) {
+
 	cmd := flag.NewFlagSet("", flag.ExitOnError)
 	verboseFlag := cmd.Bool("v", false, "")
 	logLevelFlag := cmd.String("log-level", slog.LevelDebug.String(), "")
@@ -41,6 +46,16 @@ func run(stderr io.Writer, args []string) {
 	config, err := config.Load()
 	if err != nil {
 		fatal(ctx, "Failed to load config", err)
+	}
+
+	port, err := strconv.Atoi(config.App.Port)
+	if err != nil {
+		fatal(ctx, "Failed to convert port to int", err)
+	}
+	if err := killProcessOnPort(port); err != nil {
+		slog.LogAttrs(ctx, slog.LevelError, "Failed to kill process on port", slog.Int("port", port), slog.String("error", err.Error()))
+	} else {
+		slog.LogAttrs(ctx, slog.LevelInfo, "Process on port killed successfully", slog.Int("port", port))
 	}
 
 	db, err := mongo.New(ctx, config.Atlas)
@@ -104,4 +119,42 @@ func fatal(ctx context.Context, msg string, err error) {
 		xslog.Error(err),
 	)
 	os.Exit(1)
+}
+
+func killProcessOnPort(port int) error {
+	var cmd *exec.Cmd
+	var output []byte
+	var err error
+
+	switch runtime.GOOS {
+	case "windows":
+		output, err = exec.Command("netstat", "-ano", "|", "findstr", ":"+strconv.Itoa(port)).Output()
+		if err != nil {
+			return fmt.Errorf("failed to find process: %w", err)
+		}
+		pid := strings.Fields(string(output))[4]
+		cmd = exec.Command("taskkill", "/F", "/PID", pid)
+
+	case "darwin", "linux":
+		output, err = exec.Command("lsof", "-i", ":"+strconv.Itoa(port)).Output()
+		if err != nil {
+			return fmt.Errorf("failed to find process: %w", err)
+		}
+		lines := strings.Split(string(output), "\n")
+		if len(lines) < 2 {
+			return fmt.Errorf("no process found listening on port %d", port)
+		}
+		pid := strings.Fields(lines[1])[1]
+		cmd = exec.Command("kill", "-9", pid)
+
+	default:
+		return fmt.Errorf("unsupported operating system: %s", runtime.GOOS)
+	}
+
+	err = cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to kill process: %w", err)
+	}
+
+	return nil
 }
