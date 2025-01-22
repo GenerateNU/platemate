@@ -1,26 +1,26 @@
 package s3bucket
 
 import (
-	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"encoding/json"
+	"fmt"
 	"github.com/GenerateNU/platemate/internal/config"
+	"github.com/gofiber/fiber/v2"
 )
 
 type GetParams struct {
-	Bucket    string
-	Key string
+	Bucket string
+	Key    string
 }
 
 type PostParams struct {
-	Bucket    string
+	Bucket   string
 	Filetype string
 }
 
 type Handler struct {
 	service *Service
-	config config.Config
-} 
+	config  config.Config
+}
 
 func (h *Handler) GetPresignedUrlHandler(c *fiber.Ctx) error {
 	key := c.Params("key")
@@ -32,8 +32,8 @@ func (h *Handler) GetPresignedUrlHandler(c *fiber.Ctx) error {
 	}
 
 	object := &GetParams{
-		Bucket:    bucketName,
-		Key: key,
+		Bucket: bucketName,
+		Key:    key,
 	}
 	url, err := h.service.GetPresignedUrl(object)
 	if err != nil {
@@ -54,14 +54,14 @@ func (h *Handler) PostPresignedUrlHandler(c *fiber.Ctx) error {
 			"error": "fileType query parameter is required",
 		})
 	}
-	
+
 	bucketName := h.config.AWS.BucketName
 	if bucketName == "" {
 		return fmt.Errorf("S3_BUCKET environment variable is not set")
 	}
 
 	object := &PostParams{
-		Bucket:    bucketName,
+		Bucket:   bucketName,
 		Filetype: fileType,
 	}
 

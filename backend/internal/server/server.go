@@ -1,7 +1,7 @@
 package server
 
 import (
-	"log"
+	"github.com/GenerateNU/platemate/internal/config"
 	"github.com/GenerateNU/platemate/internal/handlers/health"
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/s3bucket"
@@ -18,7 +18,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"go.mongodb.org/mongo-driver/mongo"
-	"github.com/GenerateNU/platemate/internal/config"
+	"log"
 )
 
 func New(collections map[string]*mongo.Collection) *fiber.App {

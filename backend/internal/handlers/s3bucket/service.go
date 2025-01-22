@@ -2,13 +2,13 @@ package s3bucket
 
 import (
 	"context"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
 )
 
 type DownloadUrl struct {
-	URL    string `json:"download_url"`
+	URL string `json:"download_url"`
 }
 
 type UploadUrl struct {
