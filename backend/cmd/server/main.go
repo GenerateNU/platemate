@@ -48,7 +48,7 @@ func run(stderr io.Writer, args []string) {
 		fatal(ctx, "Failed to load config", err)
 	}
 
-	port,err  := strconv.Atoi(config.App.Port)
+	port, err := strconv.Atoi(config.App.Port)
 	if err != nil {
 		fatal(ctx, "Failed to convert port to int", err)
 	}
@@ -57,7 +57,6 @@ func run(stderr io.Writer, args []string) {
 	} else {
 		slog.LogAttrs(ctx, slog.LevelInfo, "Process on port killed successfully", slog.Int("port", port))
 	}
-
 
 	db, err := mongo.New(ctx, config.Atlas)
 	if err != nil {
@@ -129,7 +128,7 @@ func killProcessOnPort(port int) error {
 
 	switch runtime.GOOS {
 	case "windows":
-		output, err = exec.Command("netstat", "-ano", "|", "findstr", ":" + strconv.Itoa(port)).Output()
+		output, err = exec.Command("netstat", "-ano", "|", "findstr", ":"+strconv.Itoa(port)).Output()
 		if err != nil {
 			return fmt.Errorf("failed to find process: %w", err)
 		}
@@ -137,7 +136,7 @@ func killProcessOnPort(port int) error {
 		cmd = exec.Command("taskkill", "/F", "/PID", pid)
 
 	case "darwin", "linux":
-		output, err = exec.Command("lsof", "-i", ":" + strconv.Itoa(port)).Output()
+		output, err = exec.Command("lsof", "-i", ":"+strconv.Itoa(port)).Output()
 		if err != nil {
 			return fmt.Errorf("failed to find process: %w", err)
 		}
