@@ -26,7 +26,7 @@ type Rating struct {
 	Taste   int  `bson:"taste" json:"taste"`
 	Value   int  `bson:"value" json:"value"`
 	Overall int  `bson:"overall" json:"overall"`
-	Return  bool `bson:"return,omitempty" json:"return,omitempty"`
+	Return  bool `bson:"return" json:"return"`
 }
 
 // Reviewer is a nested struct in ReviewDocument.
