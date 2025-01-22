@@ -48,7 +48,10 @@ func run(stderr io.Writer, args []string) {
 		fatal(ctx, "Failed to load config", err)
 	}
 
-	port := 8080
+	port,err  := strconv.Atoi(config.App.Port)
+	if err != nil {
+		fatal(ctx, "Failed to convert port to int", err)
+	}
 	if err := killProcessOnPort(port); err != nil {
 		slog.LogAttrs(ctx, slog.LevelError, "Failed to kill process on port", slog.Int("port", port), slog.String("error", err.Error()))
 	} else {
