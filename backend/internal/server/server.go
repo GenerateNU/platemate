@@ -1,9 +1,14 @@
 package server
 
 import (
+	"github.com/GenerateNU/platemate/internal/config"
 	"github.com/GenerateNU/platemate/internal/handlers/health"
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
+	"github.com/GenerateNU/platemate/internal/handlers/s3bucket"
 	"github.com/GenerateNU/platemate/internal/xerr"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
@@ -13,12 +18,36 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 )
 
 func New(collections map[string]*mongo.Collection) *fiber.App {
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("Failed to load configuration: %v", err)
+	}
+
 	app := setupApp()
 
+	awsConfig := aws.Config{
+		Region: cfg.AWS.Region,
+		Credentials: credentials.NewStaticCredentialsProvider(
+			cfg.AWS.AccessKeyID,
+			cfg.AWS.SecretAccessKey,
+			"",
+		),
+	}
+	if err != nil {
+		log.Fatalf("Failed to load AWS config: %v", err)
+	}
+
+	// create a S3 presign client
+	s3Client := s3.NewFromConfig(awsConfig)
+	presigner := s3.NewPresignClient(s3Client)
+
 	health.Routes(app, collections)
+	s3bucket.Routes(app, presigner)
+
 	menu_items.Routes(app, collections)
 	return app
 }
