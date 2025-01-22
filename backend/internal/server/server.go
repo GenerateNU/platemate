@@ -4,6 +4,7 @@ import (
 	"github.com/GenerateNU/platemate/internal/config"
 	"github.com/GenerateNU/platemate/internal/handlers/health"
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
+	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"github.com/GenerateNU/platemate/internal/handlers/s3bucket"
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -46,6 +47,7 @@ func New(collections map[string]*mongo.Collection) *fiber.App {
 	presigner := s3.NewPresignClient(s3Client)
 
 	health.Routes(app, collections)
+	review.Routes(app, collections)
 	s3bucket.Routes(app, presigner)
 
 	menu_items.Routes(app, collections)
