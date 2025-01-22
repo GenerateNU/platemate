@@ -37,7 +37,7 @@ func run(stderr io.Writer, args []string) {
 	if err := godotenv.Load(); err != nil {
 		fatal(ctx, "Failed to load .env", err)
 	}
-	
+
 	config, err := config.Load()
 	if err != nil {
 		fatal(ctx, "Failed to load config", err)
