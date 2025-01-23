@@ -41,11 +41,11 @@ func (db *DB) BulkOperation(ctx context.Context, operation CollectionOperation, 
 	return nil
 }
 
-func filterSystemDatabases(databases []string) []string { 
-systemNames := []string{"local","admin","encryption", "config"}
-	ret := make([]string,0);
+func filterSystemDatabases(databases []string) []string {
+	systemNames := []string{"local", "admin", "encryption", "config"}
+	ret := make([]string, 0)
 	for _, v := range databases {
-		if !slices.Contains(systemNames,v){
+		if !slices.Contains(systemNames, v) {
 			ret = append(ret, v)
 		}
 	}

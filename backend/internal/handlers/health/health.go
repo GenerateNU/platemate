@@ -16,6 +16,7 @@ func (h *Handler) GetHealth(c *fiber.Ctx) error {
 }
 
 func (h *Handler) Ping(c *fiber.Ctx) error {
+	// access query params with c
 	err := h.service.InsertDocumentToHealth()
 	if err != nil {
 		return err
