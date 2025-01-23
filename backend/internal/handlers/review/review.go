@@ -115,3 +115,17 @@ func (h *Handler) DeleteReview(c *fiber.Ctx) error {
 	}
 	return c.SendStatus(fiber.StatusNoContent)
 }
+
+func (h *Handler) CreateComment(c *fiber.Ctx) error {
+	var comment CommentDocument
+	// do some validations here 
+	// meow meow meow 
+	c.BodyParser(comment)
+
+	err := h.service.CreateComment(comment)
+	if err != nil {
+		// Central error handler take 500
+		return err
+	}
+	return c.SendStatus(fiber.StatusOK)
+}
