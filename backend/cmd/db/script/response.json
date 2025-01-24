@@ -1,0 +1,361 @@
+{
+    "places": [
+        {
+            "name": "places/ChIJEcUz3LWB5IkRAneAtHjs2H8",
+            "types": [
+                "restaurant",
+                "golf_course",
+                "sports_coaching",
+                "athletic_field",
+                "bar",
+                "sports_activity_location",
+                "american_restaurant",
+                "food",
+                "event_venue",
+                "point_of_interest",
+                "health",
+                "establishment"
+            ],
+            "formattedAddress": "777 Dedham St, Canton, MA 02021, USA",
+            "location": {
+                "latitude": 42.194418899999995,
+                "longitude": -71.15115639999999
+            },
+            "displayName": {
+                "text": "Topgolf Boston - Canton",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": true,
+            "servesVegetarianFood": false,
+            "editorialSummary": {
+                "text": "Sprawling entertainment venue with a high-tech driving range & swanky lounge with drinks & games.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJB939tp9w44kRQuO7SeU0ML4",
+            "types": [
+                "pub",
+                "bar",
+                "american_restaurant",
+                "restaurant",
+                "food",
+                "point_of_interest",
+                "establishment"
+            ],
+            "formattedAddress": "84 Beacon St, Boston, MA 02108, USA",
+            "location": {
+                "latitude": 42.3559324,
+                "longitude": -71.0712818
+            },
+            "displayName": {
+                "text": "Cheers",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Pub",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Tourists visit this classic bar with iconic facade for pub grub, pints & nostalgia.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJtSsNQLd544kRu-YMno6zDcI",
+            "types": [
+                "restaurant",
+                "bar",
+                "food",
+                "point_of_interest",
+                "establishment"
+            ],
+            "formattedAddress": "401 Park Dr, Boston, MA 02215, USA",
+            "location": {
+                "latitude": 42.344685,
+                "longitude": -71.10273099999999
+            },
+            "displayName": {
+                "text": "Time Out Market Boston",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": true,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Industrial-chic venue with a handpicked set of eateries and bar, plus an area for cooking demos.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJ99tZ9Ax644kRF96OnpZdQY8",
+            "types": [
+                "hotel",
+                "lodging",
+                "restaurant",
+                "food",
+                "point_of_interest",
+                "establishment"
+            ],
+            "formattedAddress": "138 St James Ave, Boston, MA 02116, USA",
+            "location": {
+                "latitude": 42.3490335,
+                "longitude": -71.076239
+            },
+            "displayName": {
+                "text": "Fairmont Copley Plaza Boston",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Hotel",
+                "languageCode": "en-US"
+            },
+            "editorialSummary": {
+                "text": "Landmark 1912 lodging featuring an American brasserie, event space & a rooftop fitness center.",
+                "languageCode": "en"
+            }
+        },
+        {
+            "name": "places/ChIJbaeXiER344kRR_f4e89EQuM",
+            "types": [
+                "gift_shop",
+                "cafe",
+                "tourist_attraction",
+                "museum",
+                "food",
+                "point_of_interest",
+                "store",
+                "establishment"
+            ],
+            "formattedAddress": "32 Quincy St, Cambridge, MA 02138, USA",
+            "location": {
+                "latitude": 42.3740898,
+                "longitude": -71.11435820000001
+            },
+            "displayName": {
+                "text": "Harvard Art Museums",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Museum",
+                "languageCode": "en-US"
+            },
+            "editorialSummary": {
+                "text": "Harvard's oldest museum, featuring European & American art from the Middle Ages to the present day.",
+                "languageCode": "en"
+            }
+        },
+        {
+            "name": "places/ChIJTYojxJR744kRkf0bpuiRHjI",
+            "types": [
+                "fast_food_restaurant",
+                "restaurant",
+                "food",
+                "point_of_interest",
+                "establishment"
+            ],
+            "formattedAddress": "569 Boylston St, Boston, MA 02116, USA",
+            "location": {
+                "latitude": 42.350552199999996,
+                "longitude": -71.0763851
+            },
+            "displayName": {
+                "text": "Chick-fil-A",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Fast Food Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": false,
+            "servesWine": false,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Fast-food chain serving chicken sandwiches & nuggets along with salads & sides.",
+                "languageCode": "en"
+            },
+            "servesCocktails": false,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJo2Ia1XR544kRUuuBswzYsNk",
+            "types": [
+                "tourist_attraction",
+                "gift_shop",
+                "cafe",
+                "bar",
+                "night_club",
+                "museum",
+                "food",
+                "point_of_interest",
+                "store",
+                "establishment"
+            ],
+            "formattedAddress": "500 Washington St, Boston, MA 02111, USA",
+            "location": {
+                "latitude": 42.3544714,
+                "longitude": -71.0612376
+            },
+            "displayName": {
+                "text": "WNDR Museum",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Tourist Attraction",
+                "languageCode": "en-US"
+            }
+        },
+        {
+            "name": "places/ChIJJxUW3XR644kRs1CvdK8_nrY",
+            "types": [
+                "brunch_restaurant",
+                "coffee_shop",
+                "cafe",
+                "breakfast_restaurant",
+                "bakery",
+                "food_store",
+                "restaurant",
+                "food",
+                "point_of_interest",
+                "store",
+                "establishment"
+            ],
+            "formattedAddress": "399 Boylston St, Boston, MA 02116, USA",
+            "location": {
+                "latitude": 42.35175830000001,
+                "longitude": -71.0719028
+            },
+            "displayName": {
+                "text": "Tatte Bakery & Cafe | Back Bay",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesBrunch": true,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Cozy spot with a rustic feel serving breakfast, soups, sandwiches, and an array of baked treats.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJMVYI84Vw44kRKNGrFHLCsVc",
+            "types": [
+                "seafood_restaurant",
+                "restaurant",
+                "food",
+                "point_of_interest",
+                "establishment"
+            ],
+            "formattedAddress": "41 Union St, Boston, MA 02108, USA",
+            "location": {
+                "latitude": 42.361287999999995,
+                "longitude": -71.05690799999999
+            },
+            "displayName": {
+                "text": "Union Oyster House",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Seafood Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "editorialSummary": {
+                "text": "Historic eatery serving chowder & other New England seafood standards since 1826.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJ8V9mMnN644kRpeZLuoShwNg",
+            "types": [
+                "brunch_restaurant",
+                "breakfast_restaurant",
+                "bar",
+                "restaurant",
+                "food",
+                "point_of_interest",
+                "establishment"
+            ],
+            "formattedAddress": "35 Stanhope St, Boston, MA 02116, USA",
+            "location": {
+                "latitude": 42.3484626,
+                "longitude": -71.07322049999999
+            },
+            "displayName": {
+                "text": "The Friendly Toast",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Brunch Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": true,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Trendy hangout serving all-day breakfasts in quirky surroundings, with vegan options.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        }
+    ]
+}

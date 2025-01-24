@@ -1,6 +1,6 @@
 import requests
 #from googlemaps import GooglePlaces, types, lang
-
+import json
 
 def load_env_variable(file_path, key):
     with open(file_path, "r") as f:
@@ -14,8 +14,9 @@ def load_env_variable(file_path, key):
 
 # Specify the .env file and the key to retrieve
 api_key = load_env_variable("backend/.env", "GOOGLE_PLACES_API_KEY")
-print(api_key)
-
+# filter out places without primary type = [] or that list
+# after we get the data - fitler out types: place of interest, establishment, food, 
+# insert into db (create schema)
 def google_places_search():
     url = 'https://places.googleapis.com/v1/places:searchNearby'
     place_types = ['restaurant', 'cafe', 'bar']
@@ -45,7 +46,15 @@ def google_places_search():
     }
 
     response = requests.post(url, json=body, params=params)
-    data = response.json()
-    print(data)
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+
+        # Write the JSON data to a file
+        with open("response.json", "w") as outfile:
+            json.dump(data, outfile, indent=4)  # Pretty-print the JSON to the file
+        print("JSON data has been written to 'response.json'")
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
 
 google_places_search()
