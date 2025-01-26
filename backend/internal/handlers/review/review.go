@@ -22,7 +22,7 @@ type Handler struct {
 func (h *Handler) CreateReview(c *fiber.Ctx) error {
 	var review ReviewDocument
 	if err := go_json.Unmarshal(c.Body(), &review); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.ErrorHandler(c, err))
 	}
 
 	result, err := h.service.InsertReview(review)
@@ -77,8 +77,7 @@ func (h *Handler) UpdateReview(c *fiber.Ctx) error {
 
 	err = h.service.UpdateReview(id, review)
 	if err != nil {
-		// Central error handler take 500
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.ErrorHandler(c, err))
 	}
 	return c.SendStatus(fiber.StatusOK)
 }
@@ -144,7 +143,7 @@ func (h *Handler) CreateComment(c *fiber.Ctx) error {
 	err = h.service.CreateComment(comment)
 	if err != nil {
 		// Central error handler take 500
-		return err
+		return c.Status(fiber.StatusInternalServerError).JSON(xerr.ErrorHandler(c, err))
 	}
 	return c.SendStatus(fiber.StatusOK)
 }

@@ -144,6 +144,7 @@ func (s *Service) DeleteReview(id primitive.ObjectID) error {
 	return err
 }
 
+// CreateComment adds a new comment to a review
 func (s *Service) CreateComment(comment CommentDocument) error {
 	ctx := context.Background()
 	filter := bson.M{"_id": comment.Review}
@@ -151,6 +152,13 @@ func (s *Service) CreateComment(comment CommentDocument) error {
 	s.reviews.FindOneAndUpdate(ctx, filter, update)
 	return nil
 }
+
+/***
+*
+* GetComments returns all comments for a review 
+* Sorted by the most recent timestamp
+*
+*/
 
 func (s *Service) GetComments(reviewID primitive.ObjectID) ([]CommentDocument, error) {
 	ctx := context.Background()
@@ -172,7 +180,7 @@ func (s *Service) GetComments(reviewID primitive.ObjectID) ([]CommentDocument, e
 
 	cursor, err := s.reviews.Aggregate(ctx, pipeline)
 	defer cursor.Close(ctx)
-	
+
 	if err != nil {
 		return nil, err
 	}
