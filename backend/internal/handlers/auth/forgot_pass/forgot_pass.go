@@ -75,7 +75,7 @@ func (h *Handler) ChangePassword(c *fiber.Ctx) error {
 	}
 	if reqBody.Email == "" || reqBody.NewPass == "" {
 		return c.Status(fiber.StatusBadRequest).
-			JSON(xerr.BadRequest(errors.New("Missing required fields")))
+			JSON(xerr.BadRequest(errors.New("missing required fields")))
 	}
 
 	// Service call
