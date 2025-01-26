@@ -86,3 +86,10 @@ func InternalServerError() fiber.Error {
 		Message: "internal server error",
 	}
 }
+
+func Unauthorized(reason string) fiber.Error {
+	return fiber.Error{
+		Code:    http.StatusUnauthorized,
+		Message: reason,
+	}
+}
