@@ -1,4 +1,4 @@
-package passwordreset
+package forgot_pass
 
 import (
 	"github.com/gofiber/fiber/v2"
