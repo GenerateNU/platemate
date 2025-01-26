@@ -144,10 +144,49 @@ func (s *Service) DeleteReview(id primitive.ObjectID) error {
 	return err
 }
 
-func (s *Service) CreateComment( comment CommentDocument) error {
+func (s *Service) CreateComment(comment CommentDocument) error {
 	ctx := context.Background()
 	filter := bson.M{"_id": comment.Review}
 	update := bson.M{"$push": bson.M{"comments": comment}}
 	s.reviews.FindOneAndUpdate(ctx, filter, update)
 	return nil
+}
+
+func (s *Service) GetComments(reviewID primitive.ObjectID) ([]CommentDocument, error) {
+	ctx := context.Background()
+	filter := bson.M{"_id": reviewID}
+	pipeline := []bson.M{
+			bson.M{
+				"$match":filter,
+			},
+			bson.M{
+				"$project": bson.M{"comments": 1, "_id": 0},
+			},
+			bson.M{"$unwind": "$comments"},
+			bson.M{
+				"$sort": bson.M{
+					"comments.timestamp": -1,
+				},	 
+			},
+	}
+
+	cursor, err := s.reviews.Aggregate(ctx, pipeline)
+	defer cursor.Close(ctx)
+	
+	if err != nil {
+		return nil, err
+	}
+	
+	var res []CommentPipelineEntry 
+	if err := cursor.All(ctx,&res); err != nil {
+		return nil, err
+	}
+
+	var comments []CommentDocument
+	for _, entry := range res {
+		comments = append(comments, entry.Comments)
+	}
+
+	
+	return comments, err
 }

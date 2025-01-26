@@ -35,12 +35,12 @@ type Reviewer struct {
 }
 
 type Commenter struct {
-	ID       string `bson:"id"       json:"id"`
+	ID       primitive.ObjectID `bson:"_id"       json:"_id"`
 	PFP      string `bson:"pfp"      json:"pfp"`
 	Username string `bson:"username" json:"username"`
 }
 type Mention struct {
-	ID       string `bson:"id"       json:"id"`
+	ID       string `bson:"_id"       json:"_id"`
 	Username string `bson:"username" json:"username"`
 }
 
@@ -52,6 +52,21 @@ type CommentDocument struct {
 	User 	    Commenter                `bson:"user" json:"user"`	
 	Mention   []Mention                `bson:"mention,omitempty" json:"mention,omitempty"`
 }
+
+type CreateCommentParams struct {
+	Content   string `json:"content"`
+	Review    string `json:"review"`
+	User      Commenter `json:"user"`
+	Mention   string `json:"mention,omitempty"`
+}
+
+type CommentPipelineEntry struct {
+	Comments CommentDocument `bson:"comments" json:"comments"`
+}
+type CommentPipelineResult struct {
+	Comments []CommentPipelineEntry `bson:"comments" json:"comments"`
+}
+
 /*
 Review Service to be used by Review Handler to interact with the
 Database layer of the application

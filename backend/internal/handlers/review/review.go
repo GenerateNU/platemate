@@ -2,6 +2,7 @@ package review
 
 import (
 	"errors"
+	"time"
 
 	"github.com/GenerateNU/platemate/internal/xerr"
 	go_json "github.com/goccy/go-json"
@@ -118,14 +119,46 @@ func (h *Handler) DeleteReview(c *fiber.Ctx) error {
 
 func (h *Handler) CreateComment(c *fiber.Ctx) error {
 	var comment CommentDocument
-	// do some validations here 
-	// meow meow meow 
-	c.BodyParser(comment)
+	reqInputs := CreateCommentParams{}
+	if err := go_json.Unmarshal(c.Body(), &reqInputs); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
+	}
+	c.BodyParser(&reqInputs)
+	id, err := primitive.ObjectIDFromHex(reqInputs.Review)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+	comment = CommentDocument{
+		Content: reqInputs.Content,
+		User: Commenter{
+			ID: reqInputs.User.ID,
+			PFP: reqInputs.User.PFP,
+			Username: reqInputs.User.Username,
+		},
+		Mention: []Mention{},
+		Timestamp: time.Now(),
+		Review: id,
+		ID: primitive.NewObjectID(),
+	}
 
-	err := h.service.CreateComment(comment)
+	err = h.service.CreateComment(comment)
 	if err != nil {
 		// Central error handler take 500
 		return err
 	}
 	return c.SendStatus(fiber.StatusOK)
+}
+
+func (h *Handler) GetComments(c *fiber.Ctx) error {
+	id, err := primitive.ObjectIDFromHex(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	comments, err := h.service.GetComments(id)
+	if err != nil {
+		// Central error handler take 500
+		return err
+	}	
+	return c.JSON(comments)	
 }
