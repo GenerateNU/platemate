@@ -10,6 +10,7 @@ var (
 		"health":     healthValidator,
 		"users":      usersValidator,
 		"menu-items": menuItemsValidator,
+		"reviews":    reviewsValidator,
 	}
 	defaultValidator = bson.M{
 		"bsonType":             "object",
@@ -118,4 +119,123 @@ var (
 			},
 		},
 	}
+	reviewsValidator = bson.M{
+		"bsonType":             "object",
+		"required":             []string{
+			"_id", "rating", "picture", "content", "reviewer", "timestamp", "comments", "menuItem",
+		},
+		"additionalProperties": true, // generally bad,
+		"properties": bson.M{
+			"_id": bson.M{
+				"bsonType":    "ObjectId",
+				"description": "must be an ObjectID string and is required",
+			},
+			"rating": bson.M{
+				"bsonType":    "object",
+				"description": "Rating for portion size",
+				"properties": bson.M{
+					"portion": bson.M{
+						// interger between 1 and 5 inclusive
+						"bsonType":    "int",
+						"minimum":     1,
+						"maximum":     5,
+					},
+					"taste": bson.M{
+						// interger between 1 and 5 inclusive
+						"bsonType":    "int",
+						"minimum":     1,						
+						"maximum":     5,		
+						"description": "Rating for taste",
+					},	
+					"value": bson.M{
+						// interger between 1 and 5 inclusive
+						"bsonType":    "int",
+						"minimum":     1,
+						"maximum":     5,			
+						"description": "Rating for value",
+					},
+					"overall": bson.M{
+						// interger between 1 and 5 inclusive
+						"bsonType":    "int",
+						"minimum":     1,
+						"maximum":     5,				
+						"description": "Overall rating",
+					},
+					"return": bson.M{
+						"bsonType":    "bool",
+						"description": "Would you return?",
+					},
+				},
+			},
+			"picutre": bson.M{
+				// url
+				"bsonType": "string",
+				"description": "URL of the picture",
+			},
+			"content": bson.M{
+				// url
+				"bsonType": "string",
+				"description": "Content of the review",
+			},
+			"reviewer": bson.M{
+				"bsonType": "object",
+				"properties": bson.M{
+					"id": bson.M{
+						"bsonType": "string",
+					},
+					"pfp": bson.M{
+						"bsonType": "string",
+					},
+					"username": bson.M{
+						"bsonType": "string",
+					},
+				},
+			},
+			"timestamp": bson.M{
+				// "date-time"
+				"bsonType": "timestamp",
+				"description": "Timestamp of the review",
+			},
+			"comments": bson.M{
+				"bsonType": "array",
+				"items": bson.M{
+					"bsonType": "object",
+					"properties": bson.M{
+						"id": bson.M{
+							"bsonType": "string",
+						},
+						"content": bson.M{
+							"bsonType": "string",
+						},
+						"timestamp": bson.M{
+							"bsonType": "timestamp",
+						},
+						"review": bson.M{
+							"bsonType": "ObjectId",
+						},
+						"user": bson.M{
+							"bsonType": "object",
+							"properties": bson.M{
+								"_id": bson.M{
+									"bsonType": "string",
+								},
+								"pfp": bson.M{
+									"bsonType": "string",
+								},
+								"username": bson.M{
+									"bsonType": "string",
+								},
+							},							
+						},
+
+						
+					},	 	
+				},		  		   			    				     					  	
+			},
+			"menuItem": bson.M{
+				//string
+				"bsonType": "string",
+				"description": "Name of the menu item",
+			},
+	}}
 )

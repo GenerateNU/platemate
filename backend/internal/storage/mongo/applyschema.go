@@ -14,8 +14,10 @@ pass in name of collection to apply new schema
 */
 func (db *DB) ApplySchema(ctx context.Context, name string) error {
 	command := bson.D{
-		{Key: "collMod", Value: name},
-		{Key: "validator", Value: validations[name]},
+ 		{"collMod", name},
+		{"validator", validations[name]},
+		{"validationLevel", "strict"},
+		{"validationAction", "error"},
 	}
 	if err := db.DB.RunCommand(ctx, command).Err(); err != nil {
 		return fmt.Errorf("failed to apply schema to collection '%s' in '%s': %w", name, db.DB.Name(), err)
