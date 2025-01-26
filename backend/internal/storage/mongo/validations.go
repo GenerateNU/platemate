@@ -107,7 +107,7 @@ var (
 			},
 		},
 	}
-	
+
 	usersValidator = bson.M{
 		"bsonType":             "object",
 		"required":             []string{"_id", "name"},
