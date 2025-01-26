@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/GenerateNU/platemate/internal/config"
+	"github.com/GenerateNU/platemate/internal/handlers/auth/forgot_pass"
 	"github.com/GenerateNU/platemate/internal/handlers/health"
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
@@ -50,6 +51,7 @@ func New(collections map[string]*mongo.Collection) *fiber.App {
 	review.Routes(app, collections)
 	s3bucket.Routes(app, presigner)
 
+	forgot_pass.Routes(app, collections)
 	menu_items.Routes(app, collections)
 	return app
 }

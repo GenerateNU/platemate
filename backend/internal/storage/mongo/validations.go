@@ -7,9 +7,10 @@ Enforcing base validations against doucments added to database
 */
 var (
 	validations = map[string]bson.M{
-		"health":     healthValidator,
-		"users":      usersValidator,
-		"menu-items": menuItemsValidator,
+		"health":         healthValidator,
+		"users":          usersValidator,
+		"menu-items":     menuItemsValidator,
+		"passwordResets": pwResetsValidator,
 	}
 	defaultValidator = bson.M{
 		"bsonType":             "object",
@@ -115,6 +116,30 @@ var (
 				"items": bson.M{
 					"bsonType": "string",
 				},
+			},
+		},
+	}
+	pwResetsValidator = bson.M{
+		"bsonType": "object",
+		"required": []string{"_id", "email", "otp", "verified", "createdAt", "expiresAt"},
+		"properties": bson.M{
+			"_id": bson.M{
+				"bsonType": "objectId",
+			},
+			"email": bson.M{
+				"bsonType": "string",
+			},
+			"otp": bson.M{
+				"bsonType": "string",
+			},
+			"verified": bson.M{
+				"bsonType": "bool",
+			},
+			"createdAt": bson.M{
+				"bsonType": "date",
+			},
+			"expiresAt": bson.M{
+				"bsonType": "date",
 			},
 		},
 	}

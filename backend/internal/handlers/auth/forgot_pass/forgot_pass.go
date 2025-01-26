@@ -2,12 +2,12 @@ package forgot_pass
 
 import (
 	"errors"
-	"strconv"
-
+	"fmt"
 	"github.com/GenerateNU/platemate/internal/xerr"
-	go_json "github.com/goccy/go-json"
+	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"net/mail"
+	"strconv"
 )
 
 var (
@@ -15,20 +15,44 @@ var (
 	ErrNoResetDoc   = errors.New("no reset document found")
 )
 
-// PasswordResetDocument maps to the pw-resets collection.
-type PasswordResetDocument struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	Email    string             `bson:"email"         json:"email"`
-	OTP      int                `bson:"otp"           json:"otp"`
-	Verified bool               `bson:"verified"      json:"verified"`
-	// we might want to add: CreatedAt time.Time `bson:"createdAt" json:"createdAt"`
-}
-
 /*
 Handler to execute business logic for Password Reset Endpoint
 */
 type Handler struct {
 	service *Service
+}
+
+func (h *Handler) ForgotPassword(c *fiber.Ctx) error {
+
+	body := ForgotPasswordRequestBody{}
+
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+
+	_, err := mail.ParseAddress(body.Email)
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid email address",
+		})
+	}
+
+	err = h.service.CreateOTP(body.Email, 15)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Internal server error",
+		})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"message": "Email sent to reset password",
+	})
+
 }
 
 // VerifyOTP handles the GET /api/v1/user/verify-otp endpoint.
@@ -69,7 +93,7 @@ func (h *Handler) ChangePassword(c *fiber.Ctx) error {
 	}
 
 	// Parse JSON body
-	if err := go_json.Unmarshal(c.Body(), &reqBody); err != nil {
+	if err := gojson.Unmarshal(c.Body(), &reqBody); err != nil {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(xerr.BadRequest(err))
 	}
