@@ -47,9 +47,6 @@ var (
 					"street": bson.M{
 						"bsonType": "string",
 					},
-					"city": bson.M{
-						"bsonType": "string",
-					},
 					"zipcode": bson.M{
 						"bsonType": "string",
 					},
@@ -81,7 +78,9 @@ var (
 						"maximum":  5.0,
 					},
 					"return": bson.M{
-						"bsonType": "bool",
+						"bsonType": "int",
+						"minimum": 0,
+						"maximum": 100,
 					},
 				},
 			},
