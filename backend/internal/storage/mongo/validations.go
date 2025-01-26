@@ -77,6 +77,8 @@ var (
 				"properties": bson.M{
 					"overall": bson.M{
 						"bsonType": "double",
+						"minimum":  1.0,
+						"maximum":  5.0,
 					},
 					"return": bson.M{
 						"bsonType": "bool",
