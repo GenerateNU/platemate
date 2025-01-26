@@ -14,6 +14,7 @@ def load_env_variable(file_path, key):
 
 # Specify the .env file and the key to retrieve
 api_key = load_env_variable("backend/.env", "GOOGLE_PLACES_API_KEY")
+# we only want places that's primary focus is food/drink
 place_types = [
     'acai_shop', 'afghani_restaurant', 'african_restaurant', 'american_restaurant', 
     'asian_restaurant', 'bagel_shop', 'bakery', 'bar', 'bar_and_grill', 'barbecue_restaurant', 
@@ -31,15 +32,13 @@ place_types = [
     'turkish_restaurant', 'vegan_restaurant', 'vegetarian_restaurant', 'vietnamese_restaurant', 
     'wine_bar'
 ]
-# filter out places without primary type = [] or that list
-# after we get the data - fitler out types: place of interest, establishment, food, 
-# insert into db (create schema)
+
 def google_places_search():
     url = 'https://places.googleapis.com/v1/places:searchNearby'
     place_types = ['restaurant', 'cafe', 'bar']
     location_restriction = {
         "circle": {
-            "center": {
+            "center": { # coordinates of Boston, MA
                 "latitude": 42.361145,
                 "longitude": -71.057083
                 },
@@ -120,6 +119,6 @@ def convert_to_mongo_db_format():
     return restaurants_for_mongo
         
     
-google_places_search()
+#google_places_search()
 #convert_to_mongo_db_format()
 

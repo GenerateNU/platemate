@@ -79,8 +79,8 @@ var (
 					},
 					"return": bson.M{
 						"bsonType": "int",
-						"minimum": 0,
-						"maximum": 100,
+						"minimum":  0,
+						"maximum":  100,
 					},
 				},
 			},
@@ -107,6 +107,7 @@ var (
 			},
 		},
 	}
+	
 	usersValidator = bson.M{
 		"bsonType":             "object",
 		"required":             []string{"_id", "name"},
