@@ -156,45 +156,43 @@ func (s *Service) CreateComment(comment CommentDocument) error {
 
 /***
 *
-* GetComments returns all comments for a review 
+* GetComments returns all comments for a review
 * Sorted by the most recent timestamp
 *
-*/
+ */
 
 func (s *Service) GetComments(reviewID primitive.ObjectID) ([]CommentDocument, error) {
 	ctx := context.Background()
 	filter := bson.M{"_id": reviewID}
 	pipeline := []bson.M{
-			bson.M{
-				"$match":filter,
+		bson.M{
+			"$match": filter,
+		},
+		bson.M{
+			"$project": bson.M{"comments": 1, "_id": 0},
+		},
+		bson.M{"$unwind": "$comments"},
+		bson.M{
+			"$sort": bson.M{
+				"comments.timestamp": -1,
 			},
-			bson.M{
-				"$project": bson.M{"comments": 1, "_id": 0},
-			},
-			bson.M{"$unwind": "$comments"},
-			bson.M{
-				"$sort": bson.M{
-					"comments.timestamp": -1,
-				},	 
-			},
+		},
 	}
 
 	cursor, err := s.reviews.Aggregate(ctx, pipeline)
-	defer cursor.Close(ctx)
-
 	if err != nil {
 		return nil, err
 	}
-	
-	var res []CommentPipelineEntry 
-	if err := cursor.All(ctx,&res); err != nil {
+	defer cursor.Close(ctx)
+	var res []CommentPipelineEntry
+	if err := cursor.All(ctx, &res); err != nil {
 		return nil, err
 	}
 
-	var comments  = make([]CommentDocument, 0, len(res))
+	var comments = make([]CommentDocument, 0, len(res))
 	for _, entry := range res {
 		comments = append(comments, entry.Comments)
 	}
-	
+
 	return comments, err
 }

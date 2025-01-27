@@ -41,10 +41,10 @@ func (h *Handler) CreateReview(c *fiber.Ctx) error {
 	}
 
 	result, err := h.service.InsertReview(review)
-	
+
 	if err != nil {
 		sErr := err.(mongo.WriteException) // Convert to Command Error
-		if sErr.HasErrorCode(121) { // Indicates that the document failed validation
+		if sErr.HasErrorCode(121) {        // Indicates that the document failed validation
 			return xerr.WriteException(c, sErr) // Handle the error by returning a 121 and the error message
 		}
 	}
@@ -141,7 +141,10 @@ func (h *Handler) CreateComment(c *fiber.Ctx) error {
 	if err := go_json.Unmarshal(c.Body(), &reqInputs); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
-	c.BodyParser(&reqInputs)
+	err := c.BodyParser(&reqInputs)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
+	}
 	id, err := primitive.ObjectIDFromHex(reqInputs.Review)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
@@ -149,21 +152,21 @@ func (h *Handler) CreateComment(c *fiber.Ctx) error {
 	comment = CommentDocument{
 		Content: reqInputs.Content,
 		User: Commenter{
-			ID: reqInputs.User.ID,
-			PFP: reqInputs.User.PFP,
+			ID:       reqInputs.User.ID,
+			PFP:      reqInputs.User.PFP,
 			Username: reqInputs.User.Username,
 		},
-		Mention: []Mention{},
+		Mention:   []Mention{},
 		Timestamp: time.Now(),
-		Review: id,
-		ID: primitive.NewObjectID(),
+		Review:    id,
+		ID:        primitive.NewObjectID(),
 	}
 
 	err = h.service.CreateComment(comment) // Insert operation
 
 	if err != nil {
 		sErr := err.(mongo.CommandError) // Convert to Command Error
-		if sErr.HasErrorCode(121) { // Indicates that the document failed validation
+		if sErr.HasErrorCode(121) {      // Indicates that the document failed validation
 			return xerr.FailedValidation(c, sErr) // Handle the error by returning a 121 and the error message
 		}
 	}
@@ -181,6 +184,6 @@ func (h *Handler) GetComments(c *fiber.Ctx) error {
 	if err != nil {
 		// Central error handler take 500
 		return err
-	}	
-	return c.JSON(comments)	
+	}
+	return c.JSON(comments)
 }

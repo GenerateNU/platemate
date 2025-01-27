@@ -18,12 +18,11 @@ type WriteErrorType struct {
 	WriteErrors []interface{} `json:"writeErrors"`
 }
 
-
 func WriteException(c *fiber.Ctx, err mongo.WriteException) error {
 	msg := err.Raw.String() // Convert to string
 
 	var jsonMap WriteErrorType
-	e :=json.Unmarshal([]byte(msg), &jsonMap)
+	e := json.Unmarshal([]byte(msg), &jsonMap)
 	if e != nil {
 		slog.LogAttrs(
 			c.Context(),
@@ -41,8 +40,8 @@ func WriteException(c *fiber.Ctx, err mongo.WriteException) error {
 		xslog.Error(err),
 	)
 	return c.Status(400).JSON(&jsonMap.WriteErrors)
-	
-}	
+
+}
 
 func FailedValidation(c *fiber.Ctx, err mongo.CommandError) error {
 

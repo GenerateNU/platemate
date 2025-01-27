@@ -14,7 +14,7 @@ pass in name of collection to apply new schema
 */
 func (db *DB) ApplySchema(ctx context.Context, name string) error {
 	command := bson.D{
- 		{Key: "collMod", Value: name},
+		{Key: "collMod", Value: name},
 		{Key: "validator", Value: validations[name]},
 		{Key: "validationLevel", Value: "strict"},
 		{Key: "validationAction", Value: "error"},
@@ -34,18 +34,21 @@ func (db *DB) ApplySchema(ctx context.Context, name string) error {
 		{Key: "validate", Value: name},
 		{Key: "full", Value: true},
 		{Key: "scandata", Value: true},
-	}	
+	}
 
 	var result bson.M
 	res := db.DB.RunCommand(ctx, command)
-	res.Decode(&result)
+	err := res.Decode(&result)
+	if err != nil {
+		return fmt.Errorf("failed to validate collection '%s' in '%s': %w", name, db.DB.Name(), err)
+	}
 
 	fmt.Printf("result: %v\n", &result)
 	if err := res.Err(); err != nil {
 		return fmt.Errorf("failed to validate collection '%s' in '%s': %w", name, db.DB.Name(), err)
 	}
 
-	colls,err := db.DB.ListCollections(ctx, bson.D{
+	colls, err := db.DB.ListCollections(ctx, bson.D{
 		{Key: "name", Value: name},
 	})
 	if err != nil {
