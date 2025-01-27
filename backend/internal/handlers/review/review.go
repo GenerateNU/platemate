@@ -21,15 +21,34 @@ type Handler struct {
 // Create a review
 func (h *Handler) CreateReview(c *fiber.Ctx) error {
 	var review ReviewDocument
-	if err := go_json.Unmarshal(c.Body(), &review); err != nil {
+	var params CreateReviewParams
+
+	if err := go_json.Unmarshal(c.Body(), &params); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.ErrorHandler(c, err))
 	}
 
-	result, err := h.service.InsertReview(review)
-	if err != nil {
-		// Central error handler take 500
-		return err
+	// do some validations on the inputs
+
+	review = ReviewDocument{
+		Rating:    params.Rating,
+		Picture:   params.Picture,
+		Content:   params.Content,
+		Reviewer:  params.Reviewer,
+		Timestamp: time.Now(),
+		MenuItem:  params.MenuItem,
+		ID:        primitive.NewObjectID(),
+		Comments:  []CommentDocument{},
 	}
+
+	result, err := h.service.InsertReview(review)
+	
+	if err != nil {
+		sErr := err.(mongo.WriteException) // Convert to Command Error
+		if sErr.HasErrorCode(121) { // Indicates that the document failed validation
+			return xerr.WriteException(c, sErr) // Handle the error by returning a 121 and the error message
+		}
+	}
+
 	return c.JSON(result)
 }
 
@@ -140,11 +159,15 @@ func (h *Handler) CreateComment(c *fiber.Ctx) error {
 		ID: primitive.NewObjectID(),
 	}
 
-	err = h.service.CreateComment(comment)
+	err = h.service.CreateComment(comment) // Insert operation
+
 	if err != nil {
-		// Central error handler take 500
-		return c.Status(fiber.StatusInternalServerError).JSON(xerr.ErrorHandler(c, err))
+		sErr := err.(mongo.CommandError) // Convert to Command Error
+		if sErr.HasErrorCode(121) { // Indicates that the document failed validation
+			return xerr.FailedValidation(c, sErr) // Handle the error by returning a 121 and the error message
+		}
 	}
+
 	return c.SendStatus(fiber.StatusOK)
 }
 

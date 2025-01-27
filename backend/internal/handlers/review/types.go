@@ -7,6 +7,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type CreateReviewParams struct {
+	Rating    Rating                   `json:"rating"`
+	Picture   string                   `json:"picture,omitempty"`
+	Content   string                   `json:"content"`
+	Reviewer  Reviewer                 `json:"reviewer"`
+	MenuItem  string                   `json:"menuItem"`
+}
+
 type ReviewDocument struct {
 	ID        primitive.ObjectID       `bson:"_id,omitempty" json:"_id,omitempty"`
 	Rating    Rating                   `bson:"rating" json:"rating"`
@@ -14,7 +22,7 @@ type ReviewDocument struct {
 	Content   string                   `bson:"content" json:"content"`
 	Reviewer  Reviewer                 `bson:"reviewer" json:"reviewer"`
 	Timestamp time.Time                `bson:"timestamp" json:"timestamp"`
-	Comments  []map[string]interface{} `bson:"comments,omitempty" json:"comments,omitempty"`
+	Comments  []CommentDocument        `bson:"comments" json:"comments"`
 	MenuItem  string                   `bson:"menuItem" json:"menuItem"`
 }
 

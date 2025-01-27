@@ -149,8 +149,9 @@ func (s *Service) CreateComment(comment CommentDocument) error {
 	ctx := context.Background()
 	filter := bson.M{"_id": comment.Review}
 	update := bson.M{"$push": bson.M{"comments": comment}}
-	s.reviews.FindOneAndUpdate(ctx, filter, update)
-	return nil
+	res := s.reviews.FindOneAndUpdate(ctx, filter, update)
+
+	return res.Err()
 }
 
 /***
