@@ -191,11 +191,10 @@ func (s *Service) GetComments(reviewID primitive.ObjectID) ([]CommentDocument, e
 		return nil, err
 	}
 
-	var comments []CommentDocument
+	var comments  = make([]CommentDocument, 0, len(res))
 	for _, entry := range res {
 		comments = append(comments, entry.Comments)
 	}
-
 	
 	return comments, err
 }
