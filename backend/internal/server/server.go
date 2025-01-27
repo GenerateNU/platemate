@@ -1,11 +1,14 @@
 package server
 
 import (
+	"log"
+
 	"github.com/GenerateNU/platemate/internal/config"
 	"github.com/GenerateNU/platemate/internal/handlers/health"
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"github.com/GenerateNU/platemate/internal/handlers/s3bucket"
+	"github.com/GenerateNU/platemate/internal/handlers/user_connections"
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -19,7 +22,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
 )
 
 func New(collections map[string]*mongo.Collection) *fiber.App {
@@ -51,6 +53,8 @@ func New(collections map[string]*mongo.Collection) *fiber.App {
 	s3bucket.Routes(app, presigner)
 
 	menu_items.Routes(app, collections)
+
+	user_connections.Routes(app, collections)
 	return app
 }
 
