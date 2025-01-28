@@ -7,9 +7,9 @@ Enforcing base validations against doucments added to database
 */
 var (
 	validations = map[string]bson.M{
-		"health":     healthValidator,
-		"users":      usersValidator,
-		"menu-items": menuItemsValidator,
+		"health":     bson.M{"$jsonSchema": healthValidator},
+		"users":      bson.M{"$jsonSchema": usersValidator},
+		"menu-items": bson.M{"$jsonSchema": menuItemsValidator},
 		"reviews":    bson.M{"$jsonSchema": reviewsValidator},
 	}
 
@@ -124,11 +124,27 @@ var (
 		"bsonType":             "object",
 		"title":                "Review Validation",
 		"required":             []string{"_id", "picture", "content", "reviewer", "timestamp", "menuItem", "comments"},
-		"additionalProperties": true, // generally bad,
+		"additionalProperties": false, // generally bad,
 		"properties": bson.M{
 			"_id": bson.M{
 				"bsonType":    "objectId",
 				"description": "must be an ObjectID string and is required",
+			},
+			"mentions": bson.M{
+				"bsonType": "array",
+				"items": bson.M{
+					"bsonType": "object",
+					"properties": bson.M{
+						"_id": bson.M{
+							"bsonType":    "objectId",
+							"description": "ID of the user mentioned in the comment",
+						},
+						"username": bson.M{
+							"bsonType":    "string",
+							"description": "Username of the user mentioned in the comment",
+						},
+					},
+				},
 			},
 			"rating": bson.M{
 				"bsonType":    "object",

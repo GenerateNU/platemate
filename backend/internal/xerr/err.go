@@ -31,8 +31,6 @@ func WriteException(c *fiber.Ctx, err mongo.WriteException) error {
 			xslog.Error(e),
 		)
 	}
-
-	// errs := err.WriteErrors.Error()
 	slog.LogAttrs(
 		c.Context(),
 		slog.LevelError,

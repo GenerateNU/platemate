@@ -35,6 +35,7 @@ func run(stderr io.Writer, args []string) {
 		os.Exit(1)
 	}
 	logger := newLogger(*logLevelFlag, *verboseFlag, stderr)
+
 	slog.SetDefault(logger)
 
 	ctx := context.Background()

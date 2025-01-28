@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/GenerateNU/platemate/internal/xerr"
+	"github.com/GenerateNU/platemate/internal/xvalidator"
 	go_json "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -145,6 +146,12 @@ func (h *Handler) CreateComment(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
+
+	errs := xvalidator.Validator.Validate(reqInputs)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
+	}
+
 	id, err := primitive.ObjectIDFromHex(reqInputs.Review)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
@@ -156,7 +163,7 @@ func (h *Handler) CreateComment(c *fiber.Ctx) error {
 			PFP:      reqInputs.User.PFP,
 			Username: reqInputs.User.Username,
 		},
-		Mention:   []Mention{},
+		Mention:   reqInputs.Mentions,
 		Timestamp: time.Now(),
 		Review:    id,
 		ID:        primitive.NewObjectID(),

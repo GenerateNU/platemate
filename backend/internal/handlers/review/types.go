@@ -58,14 +58,14 @@ type CommentDocument struct {
 	Timestamp time.Time          `bson:"timestamp" json:"timestamp"`
 	Review    primitive.ObjectID `bson:"review" json:"review"`
 	User      Commenter          `bson:"user" json:"user"`
-	Mention   []Mention          `bson:"mention,omitempty" json:"mention,omitempty"`
+	Mention   []Mention          `bson:"mentions,omitempty" json:"mentions,omitempty"`
 }
 
 type CreateCommentParams struct {
-	Content string    `json:"content"`
-	Review  string    `json:"review"`
-	User    Commenter `json:"user"`
-	Mention string    `json:"mention,omitempty"`
+	Content  string    `validate:"required" json:"content"`
+	Review   string    `validate:"required" json:"review"`
+	User     Commenter `validate:"required" json:"user"`
+	Mentions []Mention `json:"mentions,omitempty"`
 }
 
 type CommentPipelineEntry struct {

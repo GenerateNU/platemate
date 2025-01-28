@@ -178,6 +178,7 @@ func (s *Service) GetComments(reviewID primitive.ObjectID) ([]CommentDocument, e
 			},
 		},
 	}
+
 	cursor, err := s.reviews.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
