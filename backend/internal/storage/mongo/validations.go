@@ -7,18 +7,22 @@ Enforcing base validations against doucments added to database
 */
 var (
 	validations = map[string]bson.M{
-		"health":      healthValidator,
-		"users":       usersValidator,
-		"menu-items":  menuItemsValidator,
-		"restaurants": restaurantsValidator,
+		"health":     bson.M{"$jsonSchema": healthValidator},
+		"users":      bson.M{"$jsonSchema": usersValidator},
+		"menu-items": bson.M{"$jsonSchema": menuItemsValidator},
+		"reviews":    bson.M{"$jsonSchema": reviewsValidator},
+		"restaurants": bson.M{
+			"$jsonSchema": restaurantsValidator,
+		},
 	}
+
 	defaultValidator = bson.M{
 		"bsonType":             "object",
 		"required":             []string{"_id"},
 		"additionalProperties": true, // generally bad,
 		"properties": bson.M{
 			"_id": bson.M{
-				"bsonType":    "ObjectId",
+				"bsonType":    "objectId",
 				"description": "must be an ObjectID string and is required",
 			},
 		},
@@ -202,4 +206,143 @@ var (
 			},
 		},
 	}
+	reviewsValidator = bson.M{
+		"bsonType":             "object",
+		"title":                "Review Validation",
+		"required":             []string{"_id", "picture", "content", "reviewer", "timestamp", "menuItem", "comments"},
+		"additionalProperties": false, // generally bad,
+		"properties": bson.M{
+			"_id": bson.M{
+				"bsonType":    "objectId",
+				"description": "must be an ObjectID string and is required",
+			},
+			"mentions": bson.M{
+				"bsonType": "array",
+				"items": bson.M{
+					"bsonType": "object",
+					"properties": bson.M{
+						"_id": bson.M{
+							"bsonType":    "objectId",
+							"description": "ID of the user mentioned in the comment",
+						},
+						"username": bson.M{
+							"bsonType":    "string",
+							"description": "Username of the user mentioned in the comment",
+						},
+					},
+				},
+			},
+			"rating": bson.M{
+				"bsonType":    "object",
+				"description": "Rating for portion size",
+				"properties": bson.M{
+					"portion": bson.M{
+						// interger between 1 and 5 inclusive
+						"bsonType":    "int",
+						"minimum":     1,
+						"maximum":     5,
+						"description": "Rating for portion size between 1 and 5",
+					},
+					"taste": bson.M{
+						// interger between 1 and 5 inclusive
+						"bsonType":    "int",
+						"minimum":     1,
+						"maximum":     5,
+						"description": "Rating for taste",
+					},
+					"value": bson.M{
+						// interger between 1 and 5 inclusive
+						"bsonType":    "int",
+						"minimum":     1,
+						"maximum":     5,
+						"description": "Rating for value",
+					},
+					"overall": bson.M{
+						// interger between 1 and 5 inclusive
+						"bsonType":    "int",
+						"minimum":     1,
+						"maximum":     5,
+						"description": "Overall rating",
+					},
+				},
+			},
+			"picture": bson.M{
+				// url
+				"bsonType":    "string",
+				"description": "URL of the picture",
+			},
+			"content": bson.M{
+				// url
+				"bsonType":    "string",
+				"description": "Content of the review",
+			},
+			"reviewer": bson.M{
+				"bsonType": "object",
+				"properties": bson.M{
+					"_id": bson.M{
+						"bsonType":    "objectId",
+						"description": "must be an ObjectID string and is required",
+					},
+					"pfp": bson.M{
+						"bsonType":    "string",
+						"description": "URL of the PFP of the reviewer",
+					},
+					"username": bson.M{
+						"bsonType":    "string",
+						"description": "Username of the reviewer",
+					},
+				},
+			},
+			"timestamp": bson.M{
+				// "date-time"
+				"bsonType":    "date",
+				"description": "Timestamp of the review",
+			},
+			"comments": bson.M{
+				"bsonType": "array",
+				"items": bson.M{
+					"bsonType": "object",
+					"properties": bson.M{
+						"_id": bson.M{
+							"bsonType":    "objectId",
+							"description": "ID of the comment",
+						},
+						"content": bson.M{
+							"bsonType":    "string",
+							"description": "Content of the comment",
+						},
+						"timestamp": bson.M{
+							"bsonType":    "date",
+							"description": "Timestamp of the comment",
+						},
+						"review": bson.M{
+							"bsonType":    "objectId",
+							"description": "ID of the review",
+						},
+						"user": bson.M{
+							"bsonType": "object",
+							"properties": bson.M{
+								"_id": bson.M{
+									"bsonType":    "objectId",
+									"description": "ID of the user leavin the comment",
+								},
+								"pfp": bson.M{
+									"bsonType":    "string",
+									"description": "URL of the PFP of the user leaving the comment",
+								},
+								"username": bson.M{
+									"bsonType":    "string",
+									"description": "Username of the user leaving the comment",
+								},
+							},
+						},
+					},
+				},
+			},
+			"menuItem": bson.M{
+				//string
+				"bsonType":    "string",
+				"description": "Name of the menu item",
+			},
+		}}
 )
