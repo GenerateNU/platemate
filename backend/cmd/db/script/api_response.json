@@ -1,0 +1,799 @@
+{
+    "places": [
+        {
+            "name": "places/ChIJEcUz3LWB5IkRAneAtHjs2H8",
+            "types": [
+                "restaurant",
+                "golf_course",
+                "sports_coaching",
+                "bar",
+                "american_restaurant",
+                "athletic_field",
+                "sports_activity_location",
+                "event_venue",
+                "health",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "777 Dedham St, Canton, MA 02021, USA",
+            "location": {
+                "latitude": 42.194418899999995,
+                "longitude": -71.15115639999999
+            },
+            "rating": 3.6,
+            "googleMapsUri": "https://maps.google.com/?cid=9212373040954898178",
+            "displayName": {
+                "text": "Topgolf Boston - Canton",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": true,
+            "servesVegetarianFood": false,
+            "editorialSummary": {
+                "text": "Sprawling entertainment venue with a high-tech driving range & swanky lounge with drinks & games.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJB939tp9w44kRQuO7SeU0ML4",
+            "types": [
+                "pub",
+                "bar",
+                "american_restaurant",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "84 Beacon St, Boston, MA 02108, USA",
+            "location": {
+                "latitude": 42.3559324,
+                "longitude": -71.0712818
+            },
+            "rating": 4.4,
+            "googleMapsUri": "https://maps.google.com/?cid=13704511825477624642",
+            "displayName": {
+                "text": "Cheers",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Pub",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Tourists visit this classic bar with iconic facade for pub grub, pints & nostalgia.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJtSsNQLd544kRu-YMno6zDcI",
+            "types": [
+                "restaurant",
+                "bar",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "401 Park Dr, Boston, MA 02215, USA",
+            "location": {
+                "latitude": 42.344685,
+                "longitude": -71.10273099999999
+            },
+            "rating": 4.4,
+            "googleMapsUri": "https://maps.google.com/?cid=13983029843173631675",
+            "displayName": {
+                "text": "Time Out Market Boston",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": true,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Industrial-chic venue with a handpicked set of eateries and bar, plus an area for cooking demos.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJTYojxJR744kRkf0bpuiRHjI",
+            "types": [
+                "fast_food_restaurant",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "569 Boylston St, Boston, MA 02116, USA",
+            "location": {
+                "latitude": 42.350552199999996,
+                "longitude": -71.0763851
+            },
+            "rating": 4.1,
+            "googleMapsUri": "https://maps.google.com/?cid=3611484379603008913",
+            "displayName": {
+                "text": "Chick-fil-A",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Fast Food Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": false,
+            "servesWine": false,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Fast-food chain serving chicken sandwiches & nuggets along with salads & sides.",
+                "languageCode": "en"
+            },
+            "servesCocktails": false,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJJxUW3XR644kRs1CvdK8_nrY",
+            "types": [
+                "brunch_restaurant",
+                "bakery",
+                "breakfast_restaurant",
+                "coffee_shop",
+                "food_store",
+                "cafe",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "store",
+                "establishment"
+            ],
+            "formattedAddress": "399 Boylston St, Boston, MA 02116, USA",
+            "location": {
+                "latitude": 42.35175830000001,
+                "longitude": -71.0719028
+            },
+            "rating": 4.4,
+            "googleMapsUri": "https://maps.google.com/?cid=13159025184032641203",
+            "displayName": {
+                "text": "Tatte Bakery & Cafe | Back Bay",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesBrunch": true,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Cozy spot with a rustic feel serving breakfast, soups, sandwiches, and an array of baked treats.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJMVYI84Vw44kRKNGrFHLCsVc",
+            "types": [
+                "seafood_restaurant",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "41 Union St, Boston, MA 02108, USA",
+            "location": {
+                "latitude": 42.361287999999995,
+                "longitude": -71.05690799999999
+            },
+            "rating": 4.3,
+            "googleMapsUri": "https://maps.google.com/?cid=6319045547406381352",
+            "displayName": {
+                "text": "Union Oyster House",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Seafood Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "editorialSummary": {
+                "text": "Historic eatery serving chowder & other New England seafood standards since 1826.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJ8V9mMnN644kRpeZLuoShwNg",
+            "types": [
+                "brunch_restaurant",
+                "breakfast_restaurant",
+                "bar",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "35 Stanhope St, Boston, MA 02116, USA",
+            "location": {
+                "latitude": 42.3484626,
+                "longitude": -71.07322049999999
+            },
+            "rating": 4.5,
+            "googleMapsUri": "https://maps.google.com/?cid=15618661099154171557",
+            "displayName": {
+                "text": "The Friendly Toast",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Brunch Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": true,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Trendy hangout serving all-day breakfasts in quirky surroundings, with vegan options.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJX531iwt644kRaJ9LqHM3rRk",
+            "types": [
+                "seafood_restaurant",
+                "american_restaurant",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "279 Dartmouth St, Boston, MA 02116, USA",
+            "location": {
+                "latitude": 42.351156599999996,
+                "longitude": -71.07756789999999
+            },
+            "rating": 4.4,
+            "googleMapsUri": "https://maps.google.com/?cid=1850195991803436904",
+            "displayName": {
+                "text": "Saltie Girl",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Seafood Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": true,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Charming raw bar serving various seafood, including dishes made with tinned fish.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJIZZdOEJdXEAR6RG1ashN1lo",
+            "types": [
+                "mexican_restaurant",
+                "bar",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "21 Brattle St, Cambridge, MA 02138, USA",
+            "location": {
+                "latitude": 42.3734811,
+                "longitude": -71.1204944
+            },
+            "rating": 4.4,
+            "googleMapsUri": "https://maps.google.com/?cid=6545504631608644073",
+            "displayName": {
+                "text": "Felipe's Taqueria",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Mexican Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": false,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Made-to-order Mexican food & Latin cocktails whipped up in a casual counter-serve eatery.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true
+        },
+        {
+            "name": "places/ChIJZavI3d5744kRvcx_VFDEBh4",
+            "types": [
+                "fast_food_restaurant",
+                "american_restaurant",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "755 Boylston St, Boston, MA 02116, USA",
+            "location": {
+                "latitude": 42.3492749,
+                "longitude": -71.08106339999999
+            },
+            "rating": 4.2,
+            "googleMapsUri": "https://maps.google.com/?cid=2163632520292191421",
+            "displayName": {
+                "text": "Raising Cane's Chicken Fingers",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Fast Food Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": false,
+            "servesWine": false,
+            "servesVegetarianFood": false,
+            "editorialSummary": {
+                "text": "Fast-food chain specializing in fried chicken fingers, crinkle-cut fries & Texas toast.",
+                "languageCode": "en"
+            },
+            "servesDessert": false,
+            "servesCoffee": false
+        },
+        {
+            "name": "places/ChIJ0VP3TA5644kRIDNe5oe_Evc",
+            "types": [
+                "italian_restaurant",
+                "liquor_store",
+                "meal_delivery",
+                "grocery_store",
+                "food_delivery",
+                "food_store",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "store",
+                "establishment"
+            ],
+            "formattedAddress": "800 Boylston St, Boston, MA 02199, USA",
+            "location": {
+                "latitude": 42.3476432,
+                "longitude": -71.0825231
+            },
+            "rating": 4.3,
+            "googleMapsUri": "https://maps.google.com/?cid=17803502867355415328",
+            "displayName": {
+                "text": "Eataly",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Italian Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": true,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Vegas branch of the upscale Italian food hall, with restaurants, quick-service counters, and groceries.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJgd56Xeh544kRBxi8R-V-CKs",
+            "types": [
+                "fast_food_restaurant",
+                "american_restaurant",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "949 Commonwealth Ave, Boston, MA 02215, USA",
+            "location": {
+                "latitude": 42.3518693,
+                "longitude": -71.1187328
+            },
+            "rating": 4.4,
+            "googleMapsUri": "https://maps.google.com/?cid=12324239903515482119",
+            "displayName": {
+                "text": "Raising Cane's Chicken Fingers",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Fast Food Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": false,
+            "servesWine": false,
+            "servesBrunch": false,
+            "servesVegetarianFood": false,
+            "editorialSummary": {
+                "text": "Fast-food chain specializing in fried chicken fingers, crinkle-cut fries & Texas toast.",
+                "languageCode": "en"
+            },
+            "servesDessert": false,
+            "servesCoffee": false
+        },
+        {
+            "name": "places/ChIJ95EjMYB644kRHrS_JLt0-Lg",
+            "types": [
+                "seafood_restaurant",
+                "american_restaurant",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "383 Congress St, Boston, MA 02210, USA",
+            "location": {
+                "latitude": 42.3495517,
+                "longitude": -71.0476206
+            },
+            "rating": 4.6,
+            "googleMapsUri": "https://maps.google.com/?cid=13328531444327232542",
+            "displayName": {
+                "text": "Row 34",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Seafood Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "This stylish brick-&-wood eatery serves an extensive oyster menu plus fish entrees & craft beers.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJb4wUsI5w44kRnERe7ywQaJA",
+            "types": [
+                "pizza_restaurant",
+                "bar",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "11 1/2 Thacher St, Boston, MA 02113, USA",
+            "location": {
+                "latitude": 42.3654325,
+                "longitude": -71.05687929999999
+            },
+            "rating": 4.6,
+            "googleMapsUri": "https://maps.google.com/?cid=10405584724220069020",
+            "displayName": {
+                "text": "Regina Pizzeria",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Pizza Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": false,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Circa-1926 local chain for thin-crust, brick-oven pizzas in a no-frills setting.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJ0VQFcQx644kR9HL-L98mUFY",
+            "types": [
+                "mexican_restaurant",
+                "dessert_restaurant",
+                "night_club",
+                "pub",
+                "bar",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "271 Dartmouth St, Boston, MA 02116, USA",
+            "location": {
+                "latitude": 42.3506838,
+                "longitude": -71.0773765
+            },
+            "rating": 4.4,
+            "googleMapsUri": "https://maps.google.com/?cid=6219513825423422196",
+            "displayName": {
+                "text": "Lolita Back Bay",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Mexican Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": true,
+            "editorialSummary": {
+                "text": "Vibrant, trendy lounge offering Mexican-inspired eats & a lengthy tequila list amid Gothic decor.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJg_AEp4J644kRom967VLwHUA",
+            "types": [
+                "seafood_restaurant",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "270 Northern Ave, Boston, MA 02210, USA",
+            "location": {
+                "latitude": 42.3486426,
+                "longitude": -71.0377109
+            },
+            "rating": 4.4,
+            "googleMapsUri": "https://maps.google.com/?cid=4620113031714205602",
+            "displayName": {
+                "text": "Legal Sea Foods - Harborside",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Seafood Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": true,
+            "servesVegetarianFood": true,
+            "editorialSummary": {
+                "text": "Specializing in upmarket seafood, this contemporary chain also serves steaks & cocktails.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJF5RoWDt144kR08YEMOvBZS0",
+            "types": [
+                "fast_food_restaurant",
+                "catering_service",
+                "food_delivery",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "375 Washington St, Woburn, MA 01801, USA",
+            "location": {
+                "latitude": 42.500523099999995,
+                "longitude": -71.12588500000001
+            },
+            "rating": 4.6,
+            "googleMapsUri": "https://maps.google.com/?cid=3271233920221628115",
+            "displayName": {
+                "text": "Chick-fil-A",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": true,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": false,
+            "servesWine": false,
+            "editorialSummary": {
+                "text": "Fast-food chain serving chicken sandwiches & nuggets along with salads & sides.",
+                "languageCode": "en"
+            },
+            "servesCocktails": false,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJKz7ENohw44kR-Aq6LJoK9Sg",
+            "types": [
+                "seafood_restaurant",
+                "bar_and_grill",
+                "bar",
+                "cafe",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "80 Atlantic Ave, Boston, MA 02110, USA",
+            "location": {
+                "latitude": 42.3624738,
+                "longitude": -71.050544
+            },
+            "rating": 4.6,
+            "googleMapsUri": "https://maps.google.com/?cid=2951276788102859512",
+            "displayName": {
+                "text": "Boston Sail Loft",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Seafood Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": true,
+            "editorialSummary": {
+                "text": "Waterside maritime mainstay with floor-to-ceiling windows & seafood staples, plus bar scene.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesDessert": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJCe7kLY9w44kR55gvVv3g8zs",
+            "types": [
+                "seafood_restaurant",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "63 Salem St # 1, Boston, MA 02113, USA",
+            "location": {
+                "latitude": 42.363239,
+                "longitude": -71.055968
+            },
+            "rating": 4.4,
+            "googleMapsUri": "https://maps.google.com/?cid=4320043846255745255",
+            "displayName": {
+                "text": "Neptune Oyster",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Seafood Restaurant",
+                "languageCode": "en-US"
+            },
+            "servesBreakfast": false,
+            "servesLunch": true,
+            "servesDinner": true,
+            "servesBeer": true,
+            "servesWine": true,
+            "servesBrunch": false,
+            "editorialSummary": {
+                "text": "Lines form for the raw bar & warm, buttered lobster rolls at this tiny, high-end oyster bar.",
+                "languageCode": "en"
+            },
+            "servesCocktails": true,
+            "servesCoffee": true
+        },
+        {
+            "name": "places/ChIJEb5_VTBx44kRwkSBAbxDeX0",
+            "types": [
+                "bar_and_grill",
+                "brunch_restaurant",
+                "video_arcade",
+                "amusement_center",
+                "bar",
+                "event_venue",
+                "restaurant",
+                "point_of_interest",
+                "food",
+                "establishment"
+            ],
+            "formattedAddress": "87 Pier 4 Blvd., Boston, MA 02210, USA",
+            "location": {
+                "latitude": 42.3507605,
+                "longitude": -71.04433399999999
+            },
+            "rating": 4.5,
+            "googleMapsUri": "https://maps.google.com/?cid=9041332201681142978",
+            "displayName": {
+                "text": "F1 Arcade Boston",
+                "languageCode": "en"
+            },
+            "primaryTypeDisplayName": {
+                "text": "Bar",
+                "languageCode": "en-US"
+            },
+            "servesBeer": true,
+            "servesWine": true,
+            "servesCocktails": true
+        }
+    ]
+}

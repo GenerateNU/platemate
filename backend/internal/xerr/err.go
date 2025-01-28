@@ -1,16 +1,58 @@
 package xerr
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
 
 	go_json "github.com/goccy/go-json"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/GenerateNU/platemate/internal/xslog"
 	"github.com/gofiber/fiber/v2"
 )
+
+type WriteErrorType struct {
+	WriteErrors []interface{} `json:"writeErrors"`
+}
+
+func WriteException(c *fiber.Ctx, err mongo.WriteException) error {
+	msg := err.Raw.String() // Convert to string
+
+	var jsonMap WriteErrorType
+	e := json.Unmarshal([]byte(msg), &jsonMap)
+	if e != nil {
+		slog.LogAttrs(
+			c.Context(),
+			slog.LevelError,
+			"Error unmarshalling WriteException",
+			xslog.Error(e),
+		)
+	}
+	slog.LogAttrs(
+		c.Context(),
+		slog.LevelError,
+		msg,
+		xslog.Error(err),
+	)
+	return c.Status(400).JSON(&jsonMap.WriteErrors)
+
+}
+
+func FailedValidation(c *fiber.Ctx, err mongo.CommandError) error {
+
+	msg := err.Raw.String() // Convert to string
+	slog.LogAttrs(
+		c.Context(),
+		slog.LevelError,
+		msg,
+		xslog.Error(err),
+	)
+
+	return c.Status(int(err.Code)).JSON(msg)
+}
 
 func ErrorHandler(c *fiber.Ctx, err error) error {
 	var e *fiber.Error
