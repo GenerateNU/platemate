@@ -138,10 +138,8 @@ func (h *Handler) DeleteReview(c *fiber.Ctx) error {
 
 func (h *Handler) CreateComment(c *fiber.Ctx) error {
 	var comment CommentDocument
+
 	reqInputs := CreateCommentParams{}
-	if err := go_json.Unmarshal(c.Body(), &reqInputs); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
-	}
 	err := c.BodyParser(&reqInputs)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())

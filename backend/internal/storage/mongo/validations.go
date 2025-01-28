@@ -11,6 +11,9 @@ var (
 		"users":      bson.M{"$jsonSchema": usersValidator},
 		"menu-items": bson.M{"$jsonSchema": menuItemsValidator},
 		"reviews":    bson.M{"$jsonSchema": reviewsValidator},
+		"restaurants": bson.M{
+			"$jsonSchema": restaurantsValidator,
+		},
 	}
 
 	defaultValidator = bson.M{
@@ -24,7 +27,90 @@ var (
 			},
 		},
 	}
-	healthValidator = defaultValidator
+	healthValidator      = defaultValidator
+	restaurantsValidator = bson.M{
+		"bsonType": "object",
+		"required": []string{
+			"_id",
+			"address",
+			"menuItems",
+			"ratingAvg",
+			"name",
+			"style",
+			"picture",
+			"description",
+			"tags",
+		},
+		"properties": bson.M{
+			"_id": bson.M{
+				"bsonType": "objectId",
+			},
+			"address": bson.M{
+				"bsonType": "object",
+				"properties": bson.M{
+					"street": bson.M{
+						"bsonType": "string",
+					},
+					"zipcode": bson.M{
+						"bsonType": "string",
+					},
+					"state": bson.M{
+						"bsonType": "string",
+					},
+					"location": bson.M{
+						"bsonType": "array",
+						"items": bson.M{
+							"bsonType": "double",
+						},
+						"minItems": 2,
+						"maxItems": 2,
+					},
+				},
+			},
+			"menuItems": bson.M{
+				"bsonType": "array",
+				"items": bson.M{
+					"bsonType": "objectId",
+				},
+			},
+			"ratingAvg": bson.M{
+				"bsonType": "object",
+				"properties": bson.M{
+					"overall": bson.M{
+						"bsonType": "double",
+						"minimum":  1.0,
+						"maximum":  5.0,
+					},
+					"return": bson.M{
+						"bsonType": "int",
+						"minimum":  0,
+						"maximum":  100,
+					},
+				},
+			},
+			"name": bson.M{
+				"bsonType": "string",
+			},
+			"style": bson.M{
+				"bsonType": "array",
+				"items": bson.M{
+					"bsonType": "string",
+				},
+			},
+			"picture": bson.M{
+				"bsonType": "string",
+			},
+			"description": bson.M{
+				"bsonType": "string",
+			},
+			"tags": bson.M{
+				"bsonType": "array",
+				"items": bson.M{
+					"bsonType": "string",
+				},
+			},
+		},
+	}
 
 	usersValidator = bson.M{
 		"bsonType":             "object",
