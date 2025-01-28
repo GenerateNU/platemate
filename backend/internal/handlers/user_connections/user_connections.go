@@ -8,8 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var ErrAlreadyFollowing = errors.New("already following")
-
 type Handler struct {
 	service *Service
 }
