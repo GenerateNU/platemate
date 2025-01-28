@@ -78,6 +78,7 @@ func (s *Service) CreateOTP(email string, expiryInMinutes int8) error {
 
 	update := bson.M{
 		"$set": bson.M{
+			"verified":  false,
 			"otp":       otp,
 			"expiresAt": primitive.NewDateTimeFromTime(time.Now().Add(time.Minute * time.Duration(expiryInMinutes))),
 		},
@@ -127,7 +128,7 @@ func (s *Service) CreateOTP(email string, expiryInMinutes int8) error {
 }
 
 // VerifyOTP updates the 'verified' flag in the pw-resets collection.
-func (s *Service) VerifyOTP(otp int) error {
+func (s *Service) VerifyOTP(otp string) error {
 	ctx := context.Background()
 
 	filter := bson.M{"otp": otp}

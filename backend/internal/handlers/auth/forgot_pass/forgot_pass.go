@@ -7,7 +7,7 @@ import (
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"net/mail"
-	"strconv"
+	"regexp"
 )
 
 var (
@@ -64,14 +64,20 @@ func (h *Handler) VerifyOTP(c *fiber.Ctx) error {
 			JSON(xerr.BadRequest(errors.New("OTP is required")))
 	}
 
-	otp, err := strconv.Atoi(otpStr)
-	if err != nil {
+	// use regex to ensure a length of 6 with only numbers & capital
+	// letters in the result
+
+	pattern := `^[A-Z0-9]{6}$`
+
+	regex := regexp.MustCompile(pattern)
+
+	if !regex.MatchString(otpStr) {
 		return c.Status(fiber.StatusBadRequest).
-			JSON(xerr.BadRequest(errors.New("OTP must be a number")))
+			JSON(xerr.BadRequest(errors.New("invalid OTP")))
 	}
 
 	// Service call
-	if err := h.service.VerifyOTP(otp); err != nil {
+	if err := h.service.VerifyOTP(otpStr); err != nil {
 		if errors.Is(err, ErrUnauthorized) {
 			// Return 401 if OTP not found or invalid
 			return c.Status(fiber.StatusUnauthorized).
@@ -87,10 +93,8 @@ func (h *Handler) VerifyOTP(c *fiber.Ctx) error {
 
 // ChangePassword handles the POST /api/v1/user/change-password endpoint.
 func (h *Handler) ChangePassword(c *fiber.Ctx) error {
-	var reqBody struct {
-		Email   string `json:"email"`
-		NewPass string `json:"newPass"`
-	}
+
+	var reqBody ChangePasswordRequestBody
 
 	// Parse JSON body
 	if err := gojson.Unmarshal(c.Body(), &reqBody); err != nil {

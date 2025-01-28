@@ -6,6 +6,11 @@ type ForgotPasswordRequestBody struct {
 	Email string `json:"email"`
 }
 
+type ChangePasswordRequestBody struct {
+	Email   string `json:"email"`
+	NewPass string `json:"newPass"`
+}
+
 // *** MONGO DOCUMENTS BELOW *** //
 
 type PasswordResetDocument struct {
