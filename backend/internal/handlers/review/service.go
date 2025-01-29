@@ -2,47 +2,11 @@ package review
 
 import (
 	"context"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
-
-type ReviewDocument struct {
-	ID        primitive.ObjectID       `bson:"_id,omitempty" json:"_id,omitempty"`
-	Rating    Rating                   `bson:"rating" json:"rating"`
-	Picture   string                   `bson:"picture" json:"picture"`
-	Content   string                   `bson:"content" json:"content"`
-	Reviewer  Reviewer                 `bson:"reviewer" json:"reviewer"`
-	Timestamp time.Time                `bson:"timestamp" json:"timestamp"`
-	Comments  []map[string]interface{} `bson:"comments,omitempty" json:"comments,omitempty"`
-	MenuItem  string                   `bson:"menuItem" json:"menuItem"`
-}
-
-// Rating is a nested struct in ReviewDocument.
-type Rating struct {
-	Portion int  `bson:"portion" json:"portion"`
-	Taste   int  `bson:"taste" json:"taste"`
-	Value   int  `bson:"value" json:"value"`
-	Overall int  `bson:"overall" json:"overall"`
-	Return  bool `bson:"return" json:"return"`
-}
-
-// Reviewer is a nested struct in ReviewDocument.
-type Reviewer struct {
-	ID       string `bson:"id"       json:"id"`
-	PFP      string `bson:"pfp"      json:"pfp"`
-	Username string `bson:"username" json:"username"`
-}
-
-/*
-Review Service to be used by Review Handler to interact with the
-Database layer of the application
-*/
-type Service struct {
-	reviews *mongo.Collection
-}
 
 // newService receives the map of collections and picks out reviews
 func newService(collections map[string]*mongo.Collection) *Service {
@@ -178,4 +142,57 @@ func (s *Service) DeleteReview(id primitive.ObjectID) error {
 
 	_, err := s.reviews.DeleteOne(ctx, filter)
 	return err
+}
+
+// CreateComment adds a new comment to a review
+func (s *Service) CreateComment(comment CommentDocument) error {
+	ctx := context.Background()
+	filter := bson.M{"_id": comment.Review}
+	update := bson.M{"$push": bson.M{"comments": comment}}
+	res := s.reviews.FindOneAndUpdate(ctx, filter, update)
+
+	return res.Err()
+}
+
+/***
+*
+* GetComments returns all comments for a review
+* Sorted by the most recent timestamp
+*
+ */
+
+func (s *Service) GetComments(reviewID primitive.ObjectID) ([]CommentDocument, error) {
+	ctx := context.Background()
+	filter := bson.M{"_id": reviewID}
+	pipeline := []bson.M{
+		bson.M{
+			"$match": filter,
+		},
+		bson.M{
+			"$project": bson.M{"comments": 1, "_id": 0},
+		},
+		bson.M{"$unwind": "$comments"},
+		bson.M{
+			"$sort": bson.M{
+				"comments.timestamp": -1,
+			},
+		},
+	}
+
+	cursor, err := s.reviews.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+	var res []CommentPipelineEntry
+	if err := cursor.All(ctx, &res); err != nil {
+		return nil, err
+	}
+
+	var comments = make([]CommentDocument, 0, len(res))
+	for _, entry := range res {
+		comments = append(comments, entry.Comments)
+	}
+
+	return comments, err
 }
