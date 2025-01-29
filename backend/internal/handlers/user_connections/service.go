@@ -3,8 +3,10 @@ package user_connections
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 
+	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,6 +23,7 @@ type Service struct {
 	connections *mongo.Collection
 	users       *mongo.Collection
 	reviews     *mongo.Collection
+	menuItems   *mongo.Collection
 }
 
 type User struct {
@@ -29,7 +32,7 @@ type User struct {
 	Reviews        []primitive.ObjectID `bson:"reviews"`
 	FollowingCount int                  `bson:"followingCount"`
 	FollowersCount int                  `bson:"followersCount"`
-	ProfilePicture string               `bson:"profile_picture"`
+	ProfilePicture string               `bson:"profile_picture,omitempty"`
 }
 
 type Connection struct {
@@ -43,7 +46,7 @@ type Connection struct {
 type UserResponse struct {
 	ID             string   `json:"id"`
 	Username       string   `json:"username"`
-	ProfilePicture string   `json:"profile_picture"`
+	ProfilePicture string   `json:"profile_picture,omitempty"`
 	FollowersCount int      `json:"followersCount"`
 	FollowingCount int      `json:"followingCount"`
 	Reviews        []string `json:"reviews,omitempty"`
@@ -51,9 +54,10 @@ type UserResponse struct {
 
 func newService(collections map[string]*mongo.Collection) *Service {
 	return &Service{
-		connections: collections["connections"],
+		connections: collections["user_connections"],
 		users:       collections["users"],
 		reviews:     collections["reviews"],
+		menuItems:   collections["menuItems"],
 	}
 }
 
@@ -281,7 +285,7 @@ func (s *Service) DeleteConnection(followerId, followeeId string) error {
 }
 
 // GetFollowingReviewsForItem gets reviews for a specific menu item from users that the current user follows
-func (s *Service) GetFollowingReviewsForItem(userId string, itemId string) ([]review.ReviewDocument, error) {
+func (s *Service) GetFollowingReviewsForItem(userId string, menuItemId string) ([]review.ReviewDocument, error) {
 	ctx := context.Background()
 	userObjID, err := primitive.ObjectIDFromHex(userId)
 	if err != nil {
@@ -289,16 +293,19 @@ func (s *Service) GetFollowingReviewsForItem(userId string, itemId string) ([]re
 		return nil, &badReq
 	}
 
-	itemObjID, err := primitive.ObjectIDFromHex(itemId)
+	menuItemObjID, err := primitive.ObjectIDFromHex(menuItemId)
 	if err != nil {
 		badReq := xerr.BadRequest(err)
 		return nil, &badReq
 	}
 
-	// Check if user exists
-	var user User
-	err = s.users.FindOne(ctx, bson.M{"_id": userObjID}).Decode(&user)
+	var menuItem menu_items.MenuItemDocument
+	err = s.menuItems.FindOne(ctx, bson.M{"_id": menuItemObjID}).Decode(&menuItem)
+	log.Printf("Found menu item with reviews: %v", menuItem.Reviews)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return []review.ReviewDocument{}, nil
+		}
 		return nil, err
 	}
 
@@ -318,17 +325,19 @@ func (s *Service) GetFollowingReviewsForItem(userId string, itemId string) ([]re
 		return []review.ReviewDocument{}, nil
 	}
 
-	// Extract followee IDs
-	followeeIds := make([]string, len(connections))
+	followeeObjIDs := make([]primitive.ObjectID, len(connections))
 	for i, conn := range connections {
-		followeeIds[i] = conn.FolloweeId.Hex()
+		followeeObjIDs[i] = conn.FolloweeId
 	}
 
-	// Get reviews for the specific item from followed users
+	log.Printf("Menu Item Reviews: %v", menuItem.Reviews)
+	log.Printf("Followee IDs: %v", followeeObjIDs)
+
+	// query using "reviewer._id"
 	reviewsCursor, err := s.reviews.Find(ctx,
 		bson.M{
-			"reviewer.id": bson.M{"$in": followeeIds},
-			"menuItem":    itemObjID,
+			"_id":          bson.M{"$in": menuItem.Reviews},
+			"reviewer._id": bson.M{"$in": followeeObjIDs},
 		},
 		options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}),
 	)
@@ -342,9 +351,5 @@ func (s *Service) GetFollowingReviewsForItem(userId string, itemId string) ([]re
 		return nil, err
 	}
 
-	// Convert to response format
-	response := make([]review.ReviewDocument, len(reviews))
-	copy(response, reviews)
-
-	return response, nil
+	return reviews, nil
 }
