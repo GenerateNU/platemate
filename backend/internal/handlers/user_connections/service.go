@@ -3,10 +3,7 @@ package user_connections
 import (
 	"context"
 	"errors"
-	"log"
-	"time"
 
-	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"go.mongodb.org/mongo-driver/bson"
@@ -17,47 +14,20 @@ import (
 
 var (
 	ErrAlreadyFollowing = errors.New("already following this user")
+	ErrNotFollowing     = errors.New("not following this user")
 )
 
 type Service struct {
-	connections *mongo.Collection
-	users       *mongo.Collection
-	reviews     *mongo.Collection
-	menuItems   *mongo.Collection
-}
-
-type User struct {
-	ID             primitive.ObjectID   `bson:"_id,omitempty"`
-	Username       string               `bson:"username"`
-	Reviews        []primitive.ObjectID `bson:"reviews"`
-	FollowingCount int                  `bson:"followingCount"`
-	FollowersCount int                  `bson:"followersCount"`
-	ProfilePicture string               `bson:"profile_picture,omitempty"`
-}
-
-type Connection struct {
-	ID         primitive.ObjectID `bson:"_id,omitempty"`
-	FollowerId primitive.ObjectID `bson:"followerId"`
-	FolloweeId primitive.ObjectID `bson:"followeeId"`
-	CreatedAt  time.Time          `bson:"createdAt"`
-	UpdatedAt  time.Time          `bson:"updatedAt"`
-}
-
-type UserResponse struct {
-	ID             string   `json:"id"`
-	Username       string   `json:"username"`
-	ProfilePicture string   `json:"profile_picture,omitempty"`
-	FollowersCount int      `json:"followersCount"`
-	FollowingCount int      `json:"followingCount"`
-	Reviews        []string `json:"reviews,omitempty"`
+	users     *mongo.Collection
+	reviews   *mongo.Collection
+	menuItems *mongo.Collection
 }
 
 func newService(collections map[string]*mongo.Collection) *Service {
 	return &Service{
-		connections: collections["user_connections"],
-		users:       collections["users"],
-		reviews:     collections["reviews"],
-		menuItems:   collections["menuItems"],
+		users:     collections["users"],
+		reviews:   collections["reviews"],
+		menuItems: collections["menuItems"],
 	}
 }
 
@@ -70,68 +40,54 @@ func (s *Service) GetUserFollowers(userId string, page, limit int) ([]UserRespon
 		return nil, &badReq
 	}
 
-	// Check if user exists
+	// Find the user and get their followers
 	var user User
 	err = s.users.FindOne(ctx, bson.M{"_id": userObjID}).Decode(&user)
 	if err != nil {
 		return nil, err
 	}
 
+	// Calculate pagination
 	skip := (page - 1) * limit
-	opts := options.Find().
-		SetLimit(int64(limit)).
-		SetSkip(int64(skip)).
-		SetSort(bson.D{{Key: "createdAt", Value: -1}})
+	end := skip + limit
+	if end > len(user.Followers) {
+		end = len(user.Followers)
+	}
+	if skip >= len(user.Followers) {
+		return []UserResponse{}, nil
+	}
 
-	cursor, err := s.connections.Find(ctx,
-		bson.M{"followeeId": userObjID},
-		opts,
-	)
+	// Get the slice of follower IDs for this page
+	pageFollowers := user.Followers[skip:end]
+
+	// Fetch the actual user documents for these followers
+	cursor, err := s.users.Find(ctx, bson.M{
+		"_id": bson.M{"$in": pageFollowers},
+	})
 	if err != nil {
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
-	var connections []Connection
-	if err = cursor.All(ctx, &connections); err != nil {
+	var followers []User
+	if err = cursor.All(ctx, &followers); err != nil {
 		return nil, err
 	}
 
-	followerIds := make([]primitive.ObjectID, len(connections))
-	for i, conn := range connections {
-		followerIds[i] = conn.FollowerId
-	}
-
-	if len(followerIds) == 0 {
-		return []UserResponse{}, nil
-	}
-
-	usersCursor, err := s.users.Find(ctx,
-		bson.M{"_id": bson.M{"$in": followerIds}},
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer usersCursor.Close(ctx)
-
-	var users []User
-	if err = usersCursor.All(ctx, &users); err != nil {
-		return nil, err
-	}
-
-	response := make([]UserResponse, len(users))
-	for i, user := range users {
-		reviews := make([]string, len(user.Reviews))
-		for j, reviewID := range user.Reviews {
+	// Convert to response format
+	response := make([]UserResponse, len(followers))
+	for i, follower := range followers {
+		reviews := make([]string, len(follower.Reviews))
+		for j, reviewID := range follower.Reviews {
 			reviews[j] = reviewID.Hex()
 		}
 
 		response[i] = UserResponse{
-			ID:             user.ID.Hex(),
-			Username:       user.Username,
-			ProfilePicture: user.ProfilePicture,
-			FollowersCount: user.FollowersCount,
-			FollowingCount: user.FollowingCount,
+			ID:             follower.ID.Hex(),
+			Username:       follower.Username,
+			ProfilePicture: follower.ProfilePicture,
+			FollowersCount: follower.FollowersCount,
+			FollowingCount: follower.FollowingCount,
 			Reviews:        reviews,
 		}
 	}
@@ -154,34 +110,8 @@ func (s *Service) CreateConnection(followerId, followeeId string) error {
 		return &badReq
 	}
 
-	// Check if users exist
-	var user User
-	err = s.users.FindOne(ctx, bson.M{"_id": followeeObjID}).Decode(&user)
-	if err != nil {
-		return err
-	}
-
-	err = s.users.FindOne(ctx, bson.M{"_id": followerObjID}).Decode(&user)
-	if err != nil {
-		return err
-	}
-
-	// Check if already following
-	count, err := s.connections.CountDocuments(ctx,
-		bson.M{
-			"followerId": followerObjID,
-			"followeeId": followeeObjID,
-		},
-	)
-	if err != nil {
-		return err
-	}
-	if count > 0 {
-		return ErrAlreadyFollowing
-	}
-
 	// Start a session for the transaction
-	session, err := s.connections.Database().Client().StartSession()
+	session, err := s.users.Database().Client().StartSession()
 	if err != nil {
 		return err
 	}
@@ -189,32 +119,66 @@ func (s *Service) CreateConnection(followerId, followeeId string) error {
 
 	// Perform operations in a transaction
 	_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
-		// Create new connection
-		now := time.Now()
-		connection := Connection{
-			FollowerId: followerObjID,
-			FolloweeId: followeeObjID,
-			CreatedAt:  now,
-			UpdatedAt:  now,
+		// Check if already following
+		var follower User
+		err := s.users.FindOne(sessCtx, bson.M{
+			"_id":       followerObjID,
+			"following": followeeObjID,
+		}).Decode(&follower)
+		if err == nil {
+			return nil, ErrAlreadyFollowing
 		}
-
-		if _, err := s.connections.InsertOne(sessCtx, connection); err != nil {
+		if err != mongo.ErrNoDocuments {
 			return nil, err
 		}
 
-		// Update follower's following count
-		if _, err := s.users.UpdateOne(sessCtx,
+		// Initialize arrays and counts if they don't exist
+		_, err = s.users.UpdateMany(sessCtx,
+			bson.M{
+				"_id": bson.M{
+					"$in": []primitive.ObjectID{followerObjID, followeeObjID},
+				},
+				"$or": []bson.M{
+					{"following": bson.M{"$exists": false}},
+					{"followers": bson.M{"$exists": false}},
+					{"followingCount": bson.M{"$exists": false}},
+					{"followersCount": bson.M{"$exists": false}},
+				},
+			},
+			bson.M{
+				"$set": bson.M{
+					"following":      []primitive.ObjectID{},
+					"followers":      []primitive.ObjectID{},
+					"followingCount": 0,
+					"followersCount": 0,
+				},
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Now update the following/followers relationships
+		_, err = s.users.UpdateOne(sessCtx,
 			bson.M{"_id": followerObjID},
-			bson.M{"$inc": bson.M{"followingCount": 1}},
-		); err != nil {
+			bson.M{
+				"$addToSet": bson.M{"following": followeeObjID},
+				"$inc":      bson.M{"followingCount": 1},
+			},
+		)
+		if err != nil {
 			return nil, err
 		}
 
-		// Update followee's followers count
-		if _, err := s.users.UpdateOne(sessCtx,
+		// Update followee's document
+		_, err = s.users.UpdateOne(sessCtx,
 			bson.M{"_id": followeeObjID},
-			bson.M{"$inc": bson.M{"followersCount": 1}},
-		); err != nil {
+			bson.M{
+				"$addToSet": bson.M{"followers": followerObjID},
+				"$inc":      bson.M{"followersCount": 1},
+			},
+		)
+		if err != nil {
 			return nil, err
 		}
 
@@ -240,7 +204,7 @@ func (s *Service) DeleteConnection(followerId, followeeId string) error {
 	}
 
 	// Start a session for the transaction
-	session, err := s.connections.Database().Client().StartSession()
+	session, err := s.users.Database().Client().StartSession()
 	if err != nil {
 		return err
 	}
@@ -248,33 +212,40 @@ func (s *Service) DeleteConnection(followerId, followeeId string) error {
 
 	// Perform operations in a transaction
 	_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
-		// Delete the connection
-		result, err := s.connections.DeleteOne(sessCtx,
+		// Check if following
+		var follower User
+		err := s.users.FindOne(sessCtx, bson.M{
+			"_id":       followerObjID,
+			"following": followeeObjID,
+		}).Decode(&follower)
+		if err == mongo.ErrNoDocuments {
+			return nil, ErrNotFollowing
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		// Update follower's document
+		_, err = s.users.UpdateOne(sessCtx,
+			bson.M{"_id": followerObjID},
 			bson.M{
-				"followerId": followerObjID,
-				"followeeId": followeeObjID,
+				"$pull": bson.M{"following": followeeObjID},
+				"$inc":  bson.M{"followingCount": -1},
 			},
 		)
 		if err != nil {
 			return nil, err
 		}
-		if result.DeletedCount == 0 {
-			return nil, mongo.ErrNoDocuments
-		}
 
-		// Update follower's following count
-		if _, err := s.users.UpdateOne(sessCtx,
-			bson.M{"_id": followerObjID},
-			bson.M{"$inc": bson.M{"followingCount": -1}},
-		); err != nil {
-			return nil, err
-		}
-
-		// Update followee's followers count
-		if _, err := s.users.UpdateOne(sessCtx,
+		// Update followee's document
+		_, err = s.users.UpdateOne(sessCtx,
 			bson.M{"_id": followeeObjID},
-			bson.M{"$inc": bson.M{"followersCount": -1}},
-		); err != nil {
+			bson.M{
+				"$pull": bson.M{"followers": followerObjID},
+				"$inc":  bson.M{"followersCount": -1},
+			},
+		)
+		if err != nil {
 			return nil, err
 		}
 
@@ -293,61 +264,39 @@ func (s *Service) GetFollowingReviewsForItem(userId string, menuItemId string) (
 		return nil, &badReq
 	}
 
+	// Get the user's following list
+	var user User
+	err = s.users.FindOne(ctx, bson.M{"_id": userObjID}).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(user.Following) == 0 {
+		return []review.ReviewDocument{}, nil
+	}
+
+	// Get the menu item to check its reviews
 	menuItemObjID, err := primitive.ObjectIDFromHex(menuItemId)
 	if err != nil {
 		badReq := xerr.BadRequest(err)
 		return nil, &badReq
 	}
 
-	var menuItem menu_items.MenuItemDocument
-	err = s.menuItems.FindOne(ctx, bson.M{"_id": menuItemObjID}).Decode(&menuItem)
-	log.Printf("Found menu item with reviews: %v", menuItem.Reviews)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return []review.ReviewDocument{}, nil
-		}
-		return nil, err
-	}
-
-	// Get the user's following list
-	cursor, err := s.connections.Find(ctx, bson.M{"followerId": userObjID})
-	if err != nil {
-		return nil, err
-	}
-	defer cursor.Close(ctx)
-
-	var connections []Connection
-	if err = cursor.All(ctx, &connections); err != nil {
-		return nil, err
-	}
-
-	if len(connections) == 0 {
-		return []review.ReviewDocument{}, nil
-	}
-
-	followeeObjIDs := make([]primitive.ObjectID, len(connections))
-	for i, conn := range connections {
-		followeeObjIDs[i] = conn.FolloweeId
-	}
-
-	log.Printf("Menu Item Reviews: %v", menuItem.Reviews)
-	log.Printf("Followee IDs: %v", followeeObjIDs)
-
-	// query using "reviewer._id"
-	reviewsCursor, err := s.reviews.Find(ctx,
+	cursor, err := s.reviews.Find(ctx,
 		bson.M{
-			"_id":          bson.M{"$in": menuItem.Reviews},
-			"reviewer._id": bson.M{"$in": followeeObjIDs},
+			"_id":          bson.M{"$in": user.Reviews},
+			"reviewer._id": bson.M{"$in": user.Following},
+			"menuItem":     menuItemObjID.Hex(),
 		},
 		options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}),
 	)
 	if err != nil {
 		return nil, err
 	}
-	defer reviewsCursor.Close(ctx)
+	defer cursor.Close(ctx)
 
 	var reviews []review.ReviewDocument
-	if err = reviewsCursor.All(ctx, &reviews); err != nil {
+	if err = cursor.All(ctx, &reviews); err != nil {
 		return nil, err
 	}
 
