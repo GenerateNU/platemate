@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"go.mongodb.org/mongo-driver/bson"
@@ -264,6 +265,22 @@ func (s *Service) GetFollowingReviewsForItem(userId string, menuItemId string) (
 		return nil, &badReq
 	}
 
+	menuItemObjID, err := primitive.ObjectIDFromHex(menuItemId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return nil, &badReq
+	}
+
+	// Get the menu item to check its reviews
+	var menuItem menu_items.MenuItemDocument
+	err = s.menuItems.FindOne(ctx, bson.M{"_id": menuItemObjID}).Decode(&menuItem)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return []review.ReviewDocument{}, nil
+		}
+		return nil, err
+	}
+
 	// Get the user's following list
 	var user User
 	err = s.users.FindOne(ctx, bson.M{"_id": userObjID}).Decode(&user)
@@ -275,28 +292,21 @@ func (s *Service) GetFollowingReviewsForItem(userId string, menuItemId string) (
 		return []review.ReviewDocument{}, nil
 	}
 
-	// Get the menu item to check its reviews
-	menuItemObjID, err := primitive.ObjectIDFromHex(menuItemId)
-	if err != nil {
-		badReq := xerr.BadRequest(err)
-		return nil, &badReq
-	}
-
-	cursor, err := s.reviews.Find(ctx,
+	// Query reviews that match both menu item reviews and followed users
+	reviewsCursor, err := s.reviews.Find(ctx,
 		bson.M{
-			"_id":          bson.M{"$in": user.Reviews},
+			"_id":          bson.M{"$in": menuItem.Reviews},
 			"reviewer._id": bson.M{"$in": user.Following},
-			"menuItem":     menuItemObjID.Hex(),
 		},
 		options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}),
 	)
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer reviewsCursor.Close(ctx)
 
 	var reviews []review.ReviewDocument
-	if err = cursor.All(ctx, &reviews); err != nil {
+	if err = reviewsCursor.All(ctx, &reviews); err != nil {
 		return nil, err
 	}
 
