@@ -48,14 +48,27 @@ func (s *Service) GetUserFollowers(userId string, page, limit int) ([]UserRespon
 		return nil, err
 	}
 
-	// Calculate pagination
+	// Calculate total pages and adjust page number if out of bounds
+	totalFollowers := len(user.Followers)
+	totalPages := (totalFollowers + limit - 1) / limit // Ceiling division
+
+	if totalPages == 0 {
+		return []UserResponse{}, nil
+	}
+
+	// Adjust page to be within bounds
+	if page > totalPages {
+		page = totalPages
+	}
+	if page < 1 {
+		page = 1
+	}
+
+	// Calculate pagination bounds
 	skip := (page - 1) * limit
 	end := skip + limit
-	if end > len(user.Followers) {
-		end = len(user.Followers)
-	}
-	if skip >= len(user.Followers) {
-		return []UserResponse{}, nil
+	if end > totalFollowers {
+		end = totalFollowers
 	}
 
 	// Get the slice of follower IDs for this page
