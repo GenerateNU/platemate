@@ -3,12 +3,17 @@ package forgot_pass
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type ForgotPasswordRequestBody struct {
-	Email string `json:"email"`
+	Email string `validate:"required,email" json:"email"`
 }
 
 type ChangePasswordRequestBody struct {
-	Email   string `json:"email"`
-	NewPass string `json:"newPass"`
+	Email   string `validate:"required,email" json:"email"`
+	NewPass string `validate:"required,len=10" json:"newPass"`
+}
+
+type VerifyOTPRequestParams struct {
+	OTP   string `validate:"required,len=6,alphanum,uppercase" json:"otp"`
+	Email string `validate:"required" json:"email"`
 }
 
 // *** MONGO DOCUMENTS BELOW *** //

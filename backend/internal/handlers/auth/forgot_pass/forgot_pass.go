@@ -2,12 +2,9 @@ package forgot_pass
 
 import (
 	"errors"
-	"fmt"
 	"github.com/GenerateNU/platemate/internal/xerr"
-	gojson "github.com/goccy/go-json"
+	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
-	"net/mail"
-	"regexp"
 )
 
 var (
@@ -24,24 +21,18 @@ type Handler struct {
 
 func (h *Handler) ForgotPassword(c *fiber.Ctx) error {
 
-	body := ForgotPasswordRequestBody{}
-
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid request body",
-		})
-	}
-
-	_, err := mail.ParseAddress(body.Email)
-
+	reqBody := ForgotPasswordRequestBody{}
+	err := c.BodyParser(&reqBody)
 	if err != nil {
-		fmt.Println(err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid email address",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
 
-	err = h.service.CreateOTP(body.Email, 15)
+	errs := xvalidator.Validator.Validate(reqBody)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
+	}
+
+	err = h.service.CreateOTP(reqBody.Email, 15)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -57,37 +48,27 @@ func (h *Handler) ForgotPassword(c *fiber.Ctx) error {
 
 // VerifyOTP handles the GET /api/v1/user/verify-otp endpoint.
 func (h *Handler) VerifyOTP(c *fiber.Ctx) error {
-	// Extract the OTP from query parameters
-	otpStr := c.Query("otp")
-	if otpStr == "" {
-		return c.Status(fiber.StatusBadRequest).
-			JSON(xerr.BadRequest(errors.New("OTP is required")))
+
+	reqInputs := VerifyOTPRequestParams{
+		OTP:   c.Query("otp"),
+		Email: c.Query("email"),
 	}
 
-	// use regex to ensure a length of 6 with only numbers & capital
-	// letters in the result
-
-	pattern := `^[A-Z0-9]{6}$`
-
-	regex := regexp.MustCompile(pattern)
-
-	if !regex.MatchString(otpStr) {
-		return c.Status(fiber.StatusBadRequest).
-			JSON(xerr.BadRequest(errors.New("invalid OTP")))
+	errs := xvalidator.Validator.Validate(reqInputs)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
 	}
 
 	// Service call
-	if err := h.service.VerifyOTP(otpStr); err != nil {
+	if err := h.service.VerifyOTP(reqInputs.OTP); err != nil {
 		if errors.Is(err, ErrUnauthorized) {
 			// Return 401 if OTP not found or invalid
 			return c.Status(fiber.StatusUnauthorized).
 				JSON(xerr.Unauthorized("Invalid or expired OTP"))
 		}
-		// Some other internal error
 		return err
 	}
 
-	// If success, return 200
 	return c.SendStatus(fiber.StatusOK)
 }
 
@@ -96,14 +77,14 @@ func (h *Handler) ChangePassword(c *fiber.Ctx) error {
 
 	var reqBody ChangePasswordRequestBody
 
-	// Parse JSON body
-	if err := gojson.Unmarshal(c.Body(), &reqBody); err != nil {
-		return c.Status(fiber.StatusBadRequest).
-			JSON(xerr.BadRequest(err))
+	err := c.BodyParser(&reqBody)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
-	if reqBody.Email == "" || reqBody.NewPass == "" {
-		return c.Status(fiber.StatusBadRequest).
-			JSON(xerr.BadRequest(errors.New("missing required fields")))
+
+	errs := xvalidator.Validator.Validate(reqBody)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
 	}
 
 	// Service call
@@ -116,10 +97,8 @@ func (h *Handler) ChangePassword(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusInternalServerError).
 				JSON(xerr.InternalServerError())
 		}
-		// Some other internal error
 		return err
 	}
 
-	// If success, return 200
 	return c.SendStatus(fiber.StatusOK)
 }
