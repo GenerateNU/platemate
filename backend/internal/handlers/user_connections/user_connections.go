@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/GenerateNU/platemate/internal/xerr"
+	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -18,22 +19,25 @@ type FollowRequest struct {
 }
 
 type PaginationQuery struct {
-	Page  int `query:"page" default:"1"`
-	Limit int `query:"limit" default:"20"`
+	Page  int `query:"page" validate:"min=1" default:"1"`
+	Limit int `query:"limit" validate:"min=1,max=100" default:"20"`
+}
+
+type GetFollowersQuery struct {
+	PaginationQuery
+	UserId string `query:"userId" validate:"required"`
 }
 
 // GetFollowers returns a paginated list of followers for a user
 func (h *Handler) GetFollowers(c *fiber.Ctx) error {
-	var query PaginationQuery
+	var query GetFollowersQuery
 	if err := c.QueryParser(&query); err != nil {
-		badReq := xerr.BadRequest(err)
-		return c.Status(fiber.StatusBadRequest).JSON(&badReq)
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
-	userId := c.Query("userId")
-	if userId == "" {
-		badReq := xerr.BadRequest(errors.New("userId query parameter is required"))
-		return c.Status(fiber.StatusBadRequest).JSON(&badReq)
+	errs := xvalidator.Validator.Validate(query)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
 	}
 
 	// Set defaults if not provided
@@ -44,10 +48,10 @@ func (h *Handler) GetFollowers(c *fiber.Ctx) error {
 		query.Limit = 20
 	}
 
-	followers, err := h.service.GetUserFollowers(userId, query.Page, query.Limit)
+	followers, err := h.service.GetUserFollowers(query.UserId, query.Page, query.Limit)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", userId))
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserId))
 		}
 		return err
 	}
@@ -57,23 +61,28 @@ func (h *Handler) GetFollowers(c *fiber.Ctx) error {
 
 // GetFollowingReviewsForItem gets reviews for a menu item from users that the current user follows
 func (h *Handler) GetFollowingReviewsForItem(c *fiber.Ctx) error {
-	userId := c.Query("userId")
-	if userId == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(
-			errors.New("userId query parameter is required"),
-		))
+	type ReviewQuery struct {
+		UserId string `query:"userId" validate:"required"`
+		ItemId string `params:"id" validate:"required"`
 	}
 
-	itemId := c.Params("id")
-	if itemId == "" {
-		badReq := xerr.BadRequest(errors.New("item id parameter is required"))
-		return c.Status(fiber.StatusBadRequest).JSON(&badReq)
+	var query ReviewQuery
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
-	reviews, err := h.service.GetFollowingReviewsForItem(userId, itemId)
+	query.ItemId = c.Params("id")
+
+	// Added structured validation
+	errs := xvalidator.Validator.Validate(query)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
+	}
+
+	reviews, err := h.service.GetFollowingReviewsForItem(query.UserId, query.ItemId)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", userId))
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserId))
 		}
 		return err
 	}
@@ -88,10 +97,9 @@ func (h *Handler) FollowUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
-	if req.FollowerId == "" || req.FolloweeId == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(
-			errors.New("followerId and followeeId are required"),
-		))
+	errs := xvalidator.Validator.Validate(req)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
 	}
 
 	if req.FollowerId == req.FolloweeId {
@@ -118,10 +126,9 @@ func (h *Handler) UnfollowUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
-	if req.FollowerId == "" || req.FolloweeId == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(
-			errors.New("followerId and followeeId are required"),
-		))
+	errs := xvalidator.Validator.Validate(req)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
 	}
 
 	err := h.service.DeleteConnection(req.FollowerId, req.FolloweeId)
