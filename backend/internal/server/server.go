@@ -9,6 +9,7 @@ import (
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"github.com/GenerateNU/platemate/internal/handlers/s3bucket"
+	"github.com/GenerateNU/platemate/internal/handlers/user_connections"
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -54,6 +55,8 @@ func New(collections map[string]*mongo.Collection) *fiber.App {
 
 	forgot_pass.Routes(app, collections)
 	menu_items.Routes(app, collections)
+
+	user_connections.Routes(app, collections)
 	return app
 }
 
