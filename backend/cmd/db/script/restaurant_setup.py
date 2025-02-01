@@ -33,16 +33,16 @@ place_types = [
     'wine_bar'
 ]
 
-def google_places_search():
+def google_places_search(i):
     url = 'https://places.googleapis.com/v1/places:searchNearby'
     place_types = ['restaurant', 'cafe', 'bar']
     location_restriction = {
         "circle": {
             "center": { # coordinates of Boston, MA
-                "latitude": 42.361145,
-                "longitude": -71.057083
+                "latitude": 42.348857 + i*0.005,
+                "longitude": -71.037083 + i*0.007
                 },
-            "radius": 32000 # about 20 miles
+            "radius": 320 # about .2 miles
         }
     }
     fields = ['places.name','places.displayName', 'places.location', 'places.types', 'places.formattedAddress',
@@ -66,11 +66,20 @@ def google_places_search():
     if response.status_code == 200:
         # Parse the JSON response
         data = response.json()
+        json_data = []
         print(data)
-        # Write the JSON data to a file
-        with open("backend/cmd/db/script/api_response.json", "w") as outfile:
-            json.dump(data, outfile, indent=4)  # Pretty-print the JSON to the file
-        print("JSON data has been written to 'response.json'")
+        # Get the current JSON data from the file
+        with open("backend/cmd/db/script/api_response_2.json", "r") as json_file:
+            json_data = json.load(json_file)
+        # Append the new data to the existing JSON data
+        print(data)
+        if "places" in data:
+            for place in data["places"]:
+                json_data["places"].append(place)
+            # Write the updated JSON data to a file
+            with open("backend/cmd/db/script/api_response_2.json", "w") as outfile:
+                json.dump(json_data, outfile, indent=4)  # Pretty-print the JSON to the file
+            print("JSON data has been written to 'response.json'")
     else:
         print(f"Error: {response.status_code} - {response.text}")
         
@@ -89,7 +98,7 @@ def convert_to_mongo_db_format():
     tags['servesCoffee'] = 'Serves Coffee'
     available_tags = ['servesBreakfast', 'servesLunch', 'servesDinner', 'servesBeer', 'servesWine', 'servesBrunch', 'servesVegetarianFood', 'servesCocktails', 'servesDessert', 'servesCoffee']
     
-    with open("backend/cmd/db/script/api_response.json", "r") as file:
+    with open("backend/cmd/db/script/api_response_2.json", "r") as file:
         restaurants = json.load(file) 
     for restaurant in restaurants['places']:
         restaurant_for_mongo = {}
@@ -98,9 +107,14 @@ def convert_to_mongo_db_format():
         state_and_zip = inputted_address[2].split(" ")
         restaurant_for_mongo['address'] = {}
         restaurant_for_mongo['address']['street'] = inputted_address[0]
-        restaurant_for_mongo['address']['zipcode'] = state_and_zip[2]
-        restaurant_for_mongo['address']['state'] = state_and_zip[1] 
-        restaurant_for_mongo['address']['location'] = restaurant["location"]
+        try:
+            restaurant_for_mongo['address']['zipcode'] = state_and_zip[2]
+            restaurant_for_mongo['address']['state'] = state_and_zip[1] 
+            restaurant_for_mongo['address']['location'] = restaurant["location"]
+        except:
+            restaurant_for_mongo['address']['zipcode'] = ""
+            restaurant_for_mongo['address']['state'] = ""
+            restaurant_for_mongo['address']['location'] = ""
         restaurant_for_mongo['menuItems'] = []
         restaurant_for_mongo['ratingAvg'] = {}
         restaurant_for_mongo['ratingAvg']['overall'] = 5.0
@@ -118,7 +132,8 @@ def convert_to_mongo_db_format():
         restaurants_for_mongo.append(restaurant_for_mongo)
     return restaurants_for_mongo
         
+for i in range(20):
+    google_places_search(i-10)
     
-#google_places_search()
-#convert_to_mongo_db_format()
+convert_to_mongo_db_format()
 
