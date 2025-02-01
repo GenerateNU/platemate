@@ -23,7 +23,7 @@ type GlobalErrorHandlerResp struct {
 var Validate = validator.New()
 
 func (v XValidator) Validate(data interface{}) []ErrorResponse {
-	validationErrors := []ErrorResponse{}
+	var validationErrors []ErrorResponse
 
 	errs := Validate.Struct(data)
 	if errs != nil {
