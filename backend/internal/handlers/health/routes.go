@@ -16,5 +16,4 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	api.Get("/", handler.GetHealth)
 	api.Get("/ping", handler.Ping)
 
-
 }

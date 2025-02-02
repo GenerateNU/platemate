@@ -31,7 +31,7 @@ func (s *Service) GenerateToken(id string, exp int64, count float64) (string, er
 }
 
 func (s *Service) GenerateAccessToken(id string, count float64) (string, error) {
-	return s.GenerateToken(id, time.Now().Add(time.Hour*1).Unix() , count)
+	return s.GenerateToken(id, time.Now().Add(time.Hour*1).Unix(), count)
 }
 
 func (s *Service) GetUserCount(id string) (float64, error) {
@@ -64,14 +64,14 @@ func (s *Service) ValidateToken(token string) (string, float64, error) {
 		return "", 0, fiber.NewError(400, "Not Authorized, Revoked Token")
 	}
 
-	if !ok  || !t.Valid {
+	if !ok || !t.Valid {
 		return claims["user_id"].(string), 0, fiber.NewError(400, "Not Authorized, Invalid Token")
 	}
 	return claims["user_id"].(string), claims["count"].(float64), nil
 }
 
 func (s *Service) LoginFromCredentials(email string, password string) (string, float64, error) {
-	
+
 	var user User
 	err := s.users.FindOne(context.Background(), bson.M{"email": email}).Decode(&user)
 	if err != nil {
@@ -83,7 +83,7 @@ func (s *Service) LoginFromCredentials(email string, password string) (string, f
 	return user.ID, user.Count, nil
 }
 
-func (s *Service) InvalidateTokens(user_id string) (error) {
+func (s *Service) InvalidateTokens(user_id string) error {
 	// increase the count by one
 	_, err := s.users.UpdateOne(context.Background(), bson.M{"_id": user_id}, bson.M{"$inc": bson.M{"count": 1}})
 	return err
@@ -94,7 +94,7 @@ func (s *Service) GenerateRefreshToken(id string, count float64) (string, error)
 	return s.GenerateToken(id, time.Now().Add(time.Hour*toMonth).Unix(), count)
 }
 
-func (s *Service) UseToken(user_id string) (error) {
+func (s *Service) UseToken(user_id string) error {
 	_, err := s.users.UpdateOne(context.Background(), bson.M{"_id": user_id}, bson.M{"$set": bson.M{"token_used": true}})
 	return err
 }

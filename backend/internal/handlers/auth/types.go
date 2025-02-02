@@ -22,12 +22,12 @@ type TokenResponse struct {
 }
 
 type User struct {
-	Email        string `bson:"email"`
-	Password     string `bson:"password"`
-	ID           string `bson:"_id"`
-	RefreshToken string `bson:"refresh_token"`
-	TokenUsed    bool   `bson:"token_used"`
-	Count        float64    `bson:"count"`
+	Email        string  `bson:"email"`
+	Password     string  `bson:"password"`
+	ID           string  `bson:"_id"`
+	RefreshToken string  `bson:"refresh_token"`
+	TokenUsed    bool    `bson:"token_used"`
+	Count        float64 `bson:"count"`
 }
 type LoginRequest struct {
 	Email    string `json:"email"`

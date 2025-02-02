@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"strings"
-
+	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"strings"
 )
 
 /*
@@ -73,7 +73,7 @@ func (h *Handler) Register(c *fiber.Ctx) error {
 		ID:           id,
 		RefreshToken: refresh,
 		TokenUsed:    false,
-		Count: 		0,	
+		Count:        0,
 	}
 
 	if err = user.Validate(); err != nil {
@@ -87,7 +87,6 @@ func (h *Handler) Register(c *fiber.Ctx) error {
 func (h *Handler) Test(c *fiber.Ctx) error {
 	return c.SendString("Authorized!")
 }
-
 
 func (h *Handler) AuthenticateMiddleware(c *fiber.Ctx) error {
 	header := c.Get("Authorization")
@@ -112,28 +111,29 @@ func (h *Handler) AuthenticateMiddleware(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	
+
 	c.Response().Header.Add("access_token", access)
 	c.Response().Header.Add("refresh_token", refresh)
-	
+
 	return c.Next()
 }
 
-func (h *Handler) ValidateRefreshToken(c *fiber.Ctx, refreshToken string, user_id string) (float64,error) {
-		// Okay, so the access token is invalid now we check if the refresh token is valid
-		user_id, count, err := h.service.ValidateToken(refreshToken) 
-		if err != nil {
-			return 0, fiber.NewError(400, "Not Authorized: Access and Refresh Tokens are Expired " + err.Error())
-		}
-		// Check if the refresh token is unused 
-		used, err := h.service.CheckIfTokenUsed(user_id)
-		if err != nil {	
-			return 0, fiber.NewError(400, "Not Authorized, Error Validating Token Reusage "+err.Error())
-		} else if used {
-			return 0, fiber.NewError(400, "Not Authorized, Token Reuse Detected")
-		}
-		return count, nil
+func (h *Handler) ValidateRefreshToken(c *fiber.Ctx, refreshToken string) (float64, error) {
+	// Okay, so the access token is invalid now we check if the refresh token is valid
+	user_id, count, err := h.service.ValidateToken(refreshToken)
+	if err != nil {
+		return 0, fiber.NewError(400, "Not Authorized: Access and Refresh Tokens are Expired "+err.Error())
+	}
+	// Check if the refresh token is unused
+	used, err := h.service.CheckIfTokenUsed(user_id)
+	if err != nil {
+		return 0, fiber.NewError(400, "Not Authorized, Error Validating Token Reusage "+err.Error())
+	} else if used {
+		return 0, fiber.NewError(400, "Not Authorized, Token Reuse Detected")
+	}
+	return count, nil
 }
+
 /*
 	Given an access and refresh token, check if they are valid
 	and return a new pair of tokens if refresh token is valid.
@@ -144,10 +144,9 @@ func (h *Handler) ValidateAndGenerateTokens(c *fiber.Ctx, accessToken string, re
 		Check our tokens are valid by first checking if the access token is valid
 		and then checking if the refresh token is valid if the access token is invalid
 	*/
-	fmt.Println("Calling ValidateAndGenerateTokens")
-	user_id, count, err := h.service.ValidateToken(accessToken) 
+	user_id, count, err := h.service.ValidateToken(accessToken)
 	if err != nil {
-		count, err = h.ValidateRefreshToken(c, refreshToken, user_id)
+		count, err = h.ValidateRefreshToken(c, refreshToken)
 		if err != nil {
 			return "", "", err
 		}
@@ -193,9 +192,9 @@ func (h *Handler) Logout(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	err = h.service.InvalidateTokens(user_id) 
+	err = h.service.InvalidateTokens(user_id)
 	if err != nil {
 		return err
-	} 
+	}
 	return c.SendString("Logout Successful")
 }
