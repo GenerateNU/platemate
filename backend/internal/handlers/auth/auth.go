@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -52,7 +51,9 @@ func (h *Handler) Register(c *fiber.Ctx) error {
 	if exists, err := h.service.UserExists(req.Email); err != nil {
 		return err
 	} else if exists {
-		return fiber.NewError(400, "User already exists")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "User already exists",
+		})
 	}
 
 	id := primitive.NewObjectID().Hex()
@@ -76,7 +77,7 @@ func (h *Handler) Register(c *fiber.Ctx) error {
 	}
 
 	if err = user.Validate(); err != nil {
-		return fiber.NewError(400, "Error Constructing User ")
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
 	err = h.service.CreateUser(user)
@@ -197,14 +198,4 @@ func (h *Handler) Logout(c *fiber.Ctx) error {
 		return err
 	} 
 	return c.SendString("Logout Successful")
-}
-
-/*
- */
-func (h *Handler) ForgotPassword(c *fiber.Ctx) error {
-	return fiber.NewError(400, "Not Implemented")
-}
-
-func (h *Handler) ChangePassword(c *fiber.Ctx) error {
-	return fiber.NewError(400, "Not Implemented")
 }

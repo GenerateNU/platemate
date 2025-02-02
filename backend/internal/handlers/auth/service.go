@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"time"
 
@@ -18,18 +17,17 @@ Database layer of the application
 */
 
 func (s *Service) GenerateToken(id string, exp int64, count float64) (string, error) {
-	fmt.Println("Calling GenerateToken")
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"iss":     "dev-server",
-			"sub":     "", // some username
-			"user_id": id, // some user id
+			"sub":     "",
+			"user_id": id,
 			"role":    "user",
 			"iat":     time.Now().Unix(),
 			"exp":     exp,
 			"count":   count,
 		})
-	return t.SignedString([]byte(os.Getenv("AUTH_SECRET"))) // TODO: change to use config
+	return t.SignedString([]byte(os.Getenv("AUTH_SECRET")))
 }
 
 func (s *Service) GenerateAccessToken(id string, count float64) (string, error) {
@@ -37,7 +35,6 @@ func (s *Service) GenerateAccessToken(id string, count float64) (string, error) 
 }
 
 func (s *Service) GetUserCount(id string) (float64, error) {
-	fmt.Println("Calling GetUserCount")
 	var user User
 	err := s.users.FindOne(context.Background(), bson.M{"_id": id}).Decode(&user)
 	if err != nil {
@@ -47,7 +44,6 @@ func (s *Service) GetUserCount(id string) (float64, error) {
 }
 
 func (s *Service) ValidateToken(token string) (string, float64, error) {
-	fmt.Println("Calling ValidateToken")
 	t, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fiber.NewError(400, "Not Authorized")
@@ -62,7 +58,6 @@ func (s *Service) ValidateToken(token string) (string, float64, error) {
 	// count matches the count in the database
 	db_count, err := s.GetUserCount(claims["user_id"].(string))
 	if err != nil {
-		fmt.Println("Error in GetUserCount " + claims["user_id"].(string))
 		return "", 0, err
 	}
 	if claims["count"].(float64) != db_count {
@@ -82,10 +77,7 @@ func (s *Service) LoginFromCredentials(email string, password string) (string, f
 	if err != nil {
 		return "", 0, err
 	}
-	fmt.Println(user.Password)
-	fmt.Printf("%#v\n",user)
 	if user.Password != password {
-		fmt.Println("Invalid Credentials")
 		return "", 0, fiber.NewError(400, "Not Authorized, Invalid Credentials")
 	}
 	return user.ID, user.Count, nil
@@ -98,19 +90,16 @@ func (s *Service) InvalidateTokens(user_id string) (error) {
 }
 
 func (s *Service) GenerateRefreshToken(id string, count float64) (string, error) {
-	fmt.Println("Calling GenerateRefreshToken")
 	const toMonth = 24 * 7 * 30
 	return s.GenerateToken(id, time.Now().Add(time.Hour*toMonth).Unix(), count)
 }
 
 func (s *Service) UseToken(user_id string) (error) {
-	fmt.Println("Calling UseToken")
 	_, err := s.users.UpdateOne(context.Background(), bson.M{"_id": user_id}, bson.M{"$set": bson.M{"token_used": true}})
 	return err
 }
 
 func (s *Service) CheckIfTokenUsed(user_id string) (bool, error) {
-	fmt.Println("Calling CheckIfTokenUsed")
 	var user User
 	err := s.users.FindOne(context.Background(), bson.M{"_id": user_id}).Decode(&user)
 	if err != nil {
@@ -120,7 +109,6 @@ func (s *Service) CheckIfTokenUsed(user_id string) (bool, error) {
 }
 
 func (s *Service) GenerateTokens(id string, count float64) (string, string, error) {
-	fmt.Println("Calling GenerateTokens")
 	access, err := s.GenerateAccessToken(id, count)
 	if err != nil {
 		return "", "", err

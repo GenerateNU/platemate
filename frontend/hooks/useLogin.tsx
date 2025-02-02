@@ -9,7 +9,6 @@ async function useLogin(email: string, password: string) {
 // used to hit the login or register endpoint and store the asociated information for that user within their browser local storage
 async function loginRegister(email: string, password: string, route: string) {
     let url = baseUrl + "/auth/" + route;
-    console.log(url);
 
     try {
         const userReq = await fetch(url, {
@@ -26,7 +25,6 @@ async function loginRegister(email: string, password: string, route: string) {
         if (!userReq.ok) {
             throw Error("Unable to complete operation: " + route + " status code: " + userReq.statusText);
         }
-        console.log(userReq.json());
 
         const accessToken = await userReq.headers.get("Access_token");
         const refreshToken = await userReq.headers.get("Refresh_token");
@@ -36,8 +34,6 @@ async function loginRegister(email: string, password: string, route: string) {
         if (!refreshToken) {
             throw Error("Refresh token not found in response");
         }
-
-        // note other devs may need to setup expo unless im dumb and didn't do it... : npm install -g expo-cli
 
         await SecureStore.setItemAsync("accessToken", "Bearer " + accessToken);
         await SecureStore.setItemAsync("refreshToken", refreshToken);
