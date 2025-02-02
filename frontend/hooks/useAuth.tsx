@@ -1,6 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 
-export async function useAuth() {
+export async function revalidateAuth() {
     try {
         // check if the user has valid login/refresh, redirect user to login page if their auth is ass
         const url = "https://57a7-2601-19b-480-4dc0-f909-8c1c-d184-ab76.ngrok-free.app/protected/";

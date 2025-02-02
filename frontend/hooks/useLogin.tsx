@@ -2,8 +2,16 @@ import * as SecureStore from "expo-secure-store";
 
 const baseUrl = "https://57a7-2601-19b-480-4dc0-f909-8c1c-d184-ab76.ngrok-free.app"; // will need to be changed to actual URl and store in .env
 
-async function useLogin(email: string, password: string) {
+async function useLogin() {
+    return { login: login, register: register };
+}
+
+async function login(email: string, password: string) {
     await loginRegister(email, password, "login");
+}
+
+async function register(email: string, password: string) {
+    await loginRegister(email, password, "register");
 }
 
 // used to hit the login or register endpoint and store the asociated information for that user within their browser local storage
