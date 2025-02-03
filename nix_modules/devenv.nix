@@ -45,6 +45,7 @@
             description = "Runs the backend server in development mode.";
             exec = ''
               cd "$DEVENV_ROOT"/backend
+              kill $(lsof -t -i:8080)
               ${pkgs.gum}/bin/gum spin --spinner dot --title "go mod tidy" -- go mod tidy
               ${pkgs.rubyPackages.dotenv}/bin/dotenv -i -f ""$DEVENV_ROOT"/.env" -- \
               ${pkgs.watchexec}/bin/watchexec -r -e go -- \
@@ -79,6 +80,13 @@
             exec = ''
               cd "$DEVENV_ROOT"/backend
               sh ./cmd/db/apply_schema/script.sh
+            '';
+          };
+          "database-apply-indexes" = {
+            description = "Apply indexes to a given collection";
+            exec = ''
+              cd "$DEVENV_ROOT"/backend
+              go run cmd/db/apply_indexes/main.go
             '';
           };
           "frontend-lint" = {
