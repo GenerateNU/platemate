@@ -3,11 +3,13 @@ package menu_items
 import (
 	"errors"
 	"fmt"
+	"log/slog"
+
 	"github.com/GenerateNU/platemate/internal/xerr"
+	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log/slog"
 )
 
 /*
@@ -18,20 +20,20 @@ type Handler struct {
 }
 
 type AvgRatingRequest struct {
-	Portion *float64 `json:"portion"`
-	Taste   *float64 `json:"taste"`
-	Value   *float64 `json:"value"`
-	Overall *float64 `json:"overall"`
+	Portion *float64 `json:"portion" validate:"min=1,max=5"`
+	Taste   *float64 `json:"taste" validate:"min=1,max=5"`
+	Value   *float64 `json:"value" validate:"min=1,max=5"`
+	Overall *float64 `json:"overall" validate:"min=1,max=5"`
 	Return  *bool    `json:"return"`
 }
 
 type MenuItemRequest struct {
-	Name                string           `json:"name"`
+	Name                string           `json:"name" validate:"required"`
 	Picture             string           `json:"picture"`
 	AvgRating           AvgRatingRequest `json:"avgRating"`
 	Reviews             []string         `json:"reviews"`
 	Description         string           `json:"description"`
-	Location            []float64        `json:"location"`
+	Location            []float64        `json:"location" validate:"required, len=2, min=-180, max=180"` // TODO validate ranges
 	Tags                []string         `json:"tags"`
 	DietaryRestrictions []string         `json:"dietaryRestrictions"`
 }
@@ -42,18 +44,18 @@ type MenuItemResponse struct {
 }
 
 type MenuItemsQuery struct {
-	MinRatingPortion    *float64 `query:"minRatingPortion"`
-	MaxRatingPortion    *float64 `query:"maxRatingPortion"`
-	MinRatingTaste      *float64 `query:"minRatingTaste"`
-	MaxRatingTaste      *float64 `query:"maxRatingTaste"`
-	MinRatingValue      *float64 `query:"minRatingValue"`
-	MaxRatingValue      *float64 `query:"maxRatingValue"`
-	MinRatingOverall    *float64 `query:"minRatingOverall"`
-	MaxRatingOverall    *float64 `query:"maxRatingOverall"`
+	MinRatingPortion    *float64 `query:"minRatingPortion" validate:"min=1,max=5"` // TODO: validate min <= max
+	MaxRatingPortion    *float64 `query:"maxRatingPortion" validate:"min=1,max=5"`
+	MinRatingTaste      *float64 `query:"minRatingTaste" validate:"min=1,max=5"`
+	MaxRatingTaste      *float64 `query:"maxRatingTaste" validate:"min=1,max=5"`
+	MinRatingValue      *float64 `query:"minRatingValue" validate:"min=1,max=5"`
+	MaxRatingValue      *float64 `query:"maxRatingValue" validate:"min=1,max=5"`
+	MinRatingOverall    *float64 `query:"minRatingOverall" validate:"min=1,max=5"`
+	MaxRatingOverall    *float64 `query:"maxRatingOverall" validate:"min=1,max=5"`
 	Tags                []string `query:"tags"`
 	DietaryRestrictions []string `query:"dietaryRestrictions"`
-	Limit               *int     `query:"limit"`
-	Skip                int      `query:"skip"`
+	Limit               *int     `query:"limit" validate:"min=1"`
+	Skip                int      `query:"skip" validate:"min=0"`
 }
 
 func PreprocessMenuItemRequest(menuItem MenuItemRequest) MenuItemRequest {
@@ -173,8 +175,9 @@ func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
-	if err := ValidateQueryParams(queryParams); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	errs := xvalidator.Validator.Validate(queryParams)
+	if len(errs) > 0 { // If there are validation errors, return them
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
 	}
 
 	menuItems, err := h.service.GetMenuItems(queryParams)
@@ -208,8 +211,9 @@ func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 	if err := c.BodyParser(&menuItem); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
-	if err := ValidateMenuItemRequest(menuItem); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	errs := xvalidator.Validator.Validate(menuItem)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
 	}
 	menuItem = PreprocessMenuItemRequest(menuItem)
 
@@ -237,8 +241,9 @@ func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
 	if err := c.BodyParser(&menuItem); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
-	if err := ValidateMenuItemRequest(menuItem); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	errs := xvalidator.Validator.Validate(menuItem)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
 	}
 	menuItem = PreprocessMenuItemRequest(menuItem)
 	updatedMenuItem, err := h.service.UpdateMenuItem(objID, menuItem)
