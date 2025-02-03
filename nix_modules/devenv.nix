@@ -82,6 +82,13 @@
               sh ./cmd/db/apply_schema/script.sh
             '';
           };
+          "database-apply-indexes" = {
+            description = "Apply indexes to a given collection";
+            exec = ''
+              cd "$DEVENV_ROOT"/backend
+              go run cmd/db/apply_indexes/main.go
+            '';
+          };
           "frontend-lint" = {
             description = "Lints frontend code.";
             exec = ''

@@ -2,13 +2,13 @@ package auth
 
 import (
 	"context"
-	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"errors"
 )
 
 /*
@@ -27,7 +27,8 @@ func (s *Service) GenerateToken(id string, exp int64, count float64) (string, er
 			"exp":     exp,
 			"count":   count,
 		})
-	return t.SignedString([]byte(os.Getenv("AUTH_SECRET")))
+	// configure to use config in /internal/config/config.go 
+	return t.SignedString([]byte(s.config.Auth.Secret))
 }
 
 func (s *Service) GenerateAccessToken(id string, count float64) (string, error) {
@@ -48,7 +49,7 @@ func (s *Service) ValidateToken(token string) (string, float64, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fiber.NewError(400, "Not Authorized")
 		}
-		return []byte(os.Getenv("AUTH_SECRET")), nil
+		return []byte(s.config.Auth.Secret), nil
 	})
 
 	if err != nil {
@@ -74,6 +75,9 @@ func (s *Service) LoginFromCredentials(email string, password string) (string, f
 
 	var user User
 	err := s.users.FindOne(context.Background(), bson.M{"email": email}).Decode(&user)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return "", 0, fiber.NewError(404, "Account does not exist")
+	}
 	if err != nil {
 		return "", 0, err
 	}
@@ -118,19 +122,6 @@ func (s *Service) GenerateTokens(id string, count float64) (string, string, erro
 		return "", "", err
 	}
 	return access, refresh, err
-}
-
-/*
-Check if a user exists in the database by email
-*/
-func (s *Service) UserExists(email string) (bool, error) {
-	if err := s.users.FindOne(context.Background(), bson.M{"email": email}).Err(); err != nil {
-		if err == mongo.ErrNoDocuments {
-			return false, nil // user doesn't exist and there is no error
-		}
-		return false, err // there is an error
-	}
-	return true, nil // user exists and no error
 }
 
 /*

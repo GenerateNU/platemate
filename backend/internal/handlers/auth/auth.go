@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"strings"
+	"github.com/GenerateNU/platemate/internal/xvalidator"
 )
 
 /*
@@ -18,14 +19,16 @@ import (
 
 func (h *Handler) Login(c *fiber.Ctx) error {
 	var req LoginRequest
-
-	if err := c.BodyParser(&req); err != nil {
-		return err
+	err := c.BodyParser(&req)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
 
-	if err := req.Validate(); err != nil {
-		return err
+	errs := xvalidator.Validator.Validate(req)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
 	}
+
 	// database call to find the user and verify credentials and get count
 	id, count, err := h.service.LoginFromCredentials(req.Email, req.Password)
 	if err != nil {
@@ -46,14 +49,6 @@ func (h *Handler) Register(c *fiber.Ctx) error {
 
 	if err := req.Validate(); err != nil {
 		return err
-	}
-
-	if exists, err := h.service.UserExists(req.Email); err != nil {
-		return err
-	} else if exists {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "User already exists",
-		})
 	}
 
 	id := primitive.NewObjectID().Hex()

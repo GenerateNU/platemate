@@ -2,18 +2,21 @@ package auth
 
 import (
 	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/GenerateNU/platemate/internal/config"
 )
 
 type Service struct {
 	users *mongo.Collection
+	config  config.Config
 }
 
-func newService(collections map[string]*mongo.Collection) *Service {
-	return &Service{collections["users"]}
+func newService(collections map[string]*mongo.Collection, config config.Config) *Service {
+	return &Service{collections["users"], config}
 }
 
 type Handler struct {
 	service *Service
+	config  config.Config
 }
 type TokenResponse struct {
 	AccessToken  string `json:"access_token"`
@@ -30,11 +33,11 @@ type User struct {
 	Count        float64 `bson:"count"`
 }
 type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8"`
 }
 
 type RegisterRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8"`
 }

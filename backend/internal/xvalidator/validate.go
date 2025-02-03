@@ -43,6 +43,7 @@ func (v XValidator) Validate(data interface{}) []ErrorResponse {
 	return validationErrors
 }
 
+
 var Validator = &XValidator{
 	Validator: Validate,
 }
