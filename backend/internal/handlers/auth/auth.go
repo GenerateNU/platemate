@@ -2,10 +2,10 @@ package auth
 
 import (
 	"github.com/GenerateNU/platemate/internal/xerr"
+	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"strings"
-	"github.com/GenerateNU/platemate/internal/xvalidator"
 )
 
 /*

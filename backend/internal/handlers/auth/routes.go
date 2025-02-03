@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"log"
+	"github.com/GenerateNU/platemate/internal/config"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/mongo"
-	"github.com/GenerateNU/platemate/internal/config"
+	"log"
 )
 
 /*

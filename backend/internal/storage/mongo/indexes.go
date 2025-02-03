@@ -6,7 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-
 /*
 Indexes struct
 */
@@ -26,5 +25,5 @@ var Indexes = []Index{
 	{
 		Collection: "passwordResets",
 		Model:      mongo.IndexModel{Keys: bson.M{"expiresAt": 1}, Options: options.Index().SetExpireAfterSeconds(0)},
-	}, 
+	},
 }

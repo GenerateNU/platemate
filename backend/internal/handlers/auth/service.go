@@ -4,11 +4,11 @@ import (
 	"context"
 	"time"
 
+	"errors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"errors"
 )
 
 /*
@@ -27,7 +27,7 @@ func (s *Service) GenerateToken(id string, exp int64, count float64) (string, er
 			"exp":     exp,
 			"count":   count,
 		})
-	// configure to use config in /internal/config/config.go 
+	// configure to use config in /internal/config/config.go
 	return t.SignedString([]byte(s.config.Auth.Secret))
 }
 

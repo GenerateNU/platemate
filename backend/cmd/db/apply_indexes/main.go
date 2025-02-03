@@ -11,7 +11,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-
 func main() {
 	ctx := context.Background()
 
@@ -28,7 +27,7 @@ func main() {
 		fatal(ctx, "Failed to connect to MongoDB in main", err)
 	}
 
-	for _, index := range mongo.Indexes {	
+	for _, index := range mongo.Indexes {
 		if err := db.ApplyIndex(ctx, index.Collection, index.Model); err != nil {
 			fatal(ctx, "Failed to apply index to collection "+index.Collection, err)
 		} else {
