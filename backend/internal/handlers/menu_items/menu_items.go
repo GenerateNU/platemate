@@ -20,20 +20,20 @@ type Handler struct {
 }
 
 type AvgRatingRequest struct {
-	Portion *float64 `json:"portion" validate:"min=1,max=5"`
-	Taste   *float64 `json:"taste" validate:"min=1,max=5"`
-	Value   *float64 `json:"value" validate:"min=1,max=5"`
-	Overall *float64 `json:"overall" validate:"min=1,max=5"`
+	Portion *float64 `json:"portion" validate:"omitempty,min=1,max=5"`
+	Taste   *float64 `json:"taste" validate:"omitempty,min=1,max=5"`
+	Value   *float64 `json:"value" validate:"omitempty,min=1,max=5"`
+	Overall *float64 `json:"overall" validate:"omitempty,min=1,max=5"`
 	Return  *bool    `json:"return"`
 }
 
 type MenuItemRequest struct {
 	Name                string           `json:"name" validate:"required"`
-	Picture             string           `json:"picture"`
+	Picture             string           `json:"picture" validate:"omitempty,url"`
 	AvgRating           AvgRatingRequest `json:"avgRating"`
 	Reviews             []string         `json:"reviews"`
 	Description         string           `json:"description"`
-	Location            []float64        `json:"location" validate:"required, len=2, min=-180, max=180"` // TODO validate ranges
+	Location            []float64        `json:"location" validate:"required,location"`
 	Tags                []string         `json:"tags"`
 	DietaryRestrictions []string         `json:"dietaryRestrictions"`
 }
@@ -44,17 +44,17 @@ type MenuItemResponse struct {
 }
 
 type MenuItemsQuery struct {
-	MinRatingPortion    *float64 `query:"minRatingPortion" validate:"min=1,max=5"` // TODO: validate min <= max
-	MaxRatingPortion    *float64 `query:"maxRatingPortion" validate:"min=1,max=5"`
-	MinRatingTaste      *float64 `query:"minRatingTaste" validate:"min=1,max=5"`
-	MaxRatingTaste      *float64 `query:"maxRatingTaste" validate:"min=1,max=5"`
-	MinRatingValue      *float64 `query:"minRatingValue" validate:"min=1,max=5"`
-	MaxRatingValue      *float64 `query:"maxRatingValue" validate:"min=1,max=5"`
-	MinRatingOverall    *float64 `query:"minRatingOverall" validate:"min=1,max=5"`
-	MaxRatingOverall    *float64 `query:"maxRatingOverall" validate:"min=1,max=5"`
-	Tags                []string `query:"tags"`
-	DietaryRestrictions []string `query:"dietaryRestrictions"`
-	Limit               *int     `query:"limit" validate:"min=1"`
+	MinRatingPortion    *float64 `query:"minRatingPortion" validate:"omitempty,ltefieldIfExists=MaxRatingPortion,min=1,max=5"`
+	MaxRatingPortion    *float64 `query:"maxRatingPortion" validate:"omitempty,min=1,max=5"`
+	MinRatingTaste      *float64 `query:"minRatingTaste" validate:"omitempty,ltefieldIfExists=MaxRatingTaste,min=1,max=5"`
+	MaxRatingTaste      *float64 `query:"maxRatingTaste" validate:"omitempty,min=1,max=5"`
+	MinRatingValue      *float64 `query:"minRatingValue" validate:"omitempty,ltefieldIfExists=MaxRatingValue,min=1,max=5"`
+	MaxRatingValue      *float64 `query:"maxRatingValue" validate:"omitempty,min=1,max=5"`
+	MinRatingOverall    *float64 `query:"minRatingOverall" validate:"omitempty,ltefieldIfExists=MaxRatingOverall,min=1,max=5"`
+	MaxRatingOverall    *float64 `query:"maxRatingOverall" validate:"omitempty,min=1,max=5"`
+	Tags                []string `query:"omitempty,tags"`
+	DietaryRestrictions []string `query:"omitempty,dietaryRestrictions"`
+	Limit               *int     `query:"limit" validate:"omitempty,min=1"`
 	Skip                int      `query:"skip" validate:"min=0"`
 }
 
