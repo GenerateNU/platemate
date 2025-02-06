@@ -2,15 +2,7 @@
 
 Include a basic outline here of what this pull request is doing.
 
-References and fixes [link to GitHub issue](https://github-issue-link-url.com).
-
-### Imposed Changes
-- Item #1
-- Item #2
-
-### Testing Procedures
-- Testing procedure #1
-- Testing procedure #2
+References and fixes <github-issue-number>.
 
 ### Checklist
 - [x] I have read the CONTRIBUTING.md.

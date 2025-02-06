@@ -1,0 +1,83 @@
+{
+	"ok": { "$numberDouble": "0.0" },
+	"errmsg": "Plan executor error during findAndModify :: caused by :: Document failed validation",
+	"code": { "$numberInt": "121" },
+	"codeName": "DocumentValidationFailure",
+	"errInfo": {
+		"failingDocumentId": { "$oid": "64b4b65727a4f2580f7f11b5" },
+		"details": {
+			"operatorName": "$jsonSchema",
+			"title": "Review Validation",
+			"schemaRulesNotSatisfied": [
+				{
+					"operatorName": "properties",
+					"propertiesNotSatisfied": [
+						{
+							"propertyName": "comments",
+							"details": [
+								{
+									"operatorName": "items",
+									"reason": "At least one item did not match the sub-schema",
+									"itemIndex": { "$numberInt": "0" },
+									"details": [
+										{
+											"operatorName": "properties",
+											"propertiesNotSatisfied": [
+												{
+													"propertyName": "user",
+													"details": [
+														{
+															"operatorName": "properties",
+															"propertiesNotSatisfied": [
+																{
+																	"propertyName": "_id",
+																	"description": "ID of the user leavin the comment",
+																	"details": [
+																		{
+																			"operatorName": "bsonType",
+																			"specifiedAs": { "bsonType": "string" },
+																			"reason": "type did not match",
+																			"consideredValue": {
+																				"$oid": "64b4b65727a4f2580f7f11b5"
+																			},
+																			"consideredType": "objectId"
+																		}
+																	]
+																}
+															]
+														}
+													]
+												},
+												{
+													"propertyName": "_id",
+													"description": "ID of the comment",
+													"details": [
+														{
+															"operatorName": "bsonType",
+															"specifiedAs": { "bsonType": "string" },
+															"reason": "type did not match",
+															"consideredValue": { "$oid": "67957e267153fbea40b1995a" },
+															"consideredType": "objectId"
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	},
+	"$clusterTime": {
+		"clusterTime": { "$timestamp": { "t": 1737932744, "i": 16 } },
+		"signature": {
+			"hash": { "$binary": { "base64": "MxnzaDA2pbg+N8mwkbsgBt8E3m0=", "subType": "00" } },
+			"keyId": { "$numberLong": "7401530829257572354" }
+		}
+	},
+	"operationTime": { "$timestamp": { "t": 1737932744, "i": 16 } }
+}

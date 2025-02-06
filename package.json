@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "1.23.1",
+    "expo-secure-store": "^14.0.1",
+    "react-native-unimodules": "^0.14.10"
+  }
+}
