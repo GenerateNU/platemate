@@ -29,3 +29,41 @@ export function Card({ imageSource, imageStyle, contentContainerStyle, onPress, 
         </Container>
     );
 }
+
+// Example usage:
+
+// In parent (index.tsx here):
+// import { Card } from "@/components/Card";
+
+// <ThemedView style={{ marginTop: 20 }}>
+//     <Card
+//         imageSource={require("@/assets/images/partial-react-logo.png")}
+//         imageStyle={styles.cardImage}
+//         contentContainerStyle={styles.cardContent}
+//         onPress={() => console.log("Card Pressed")}
+//         style={styles.cardContainer}>
+//         <ThemedText type={"default"} style={{ fontFamily: "Outfit", textAlign: "center" }}>
+//             This is a sample card with an image.
+//         </ThemedText>
+//     </Card>
+// </ThemedView>
+
+// In styylesheet:
+// cardContainer: {
+//     borderWidth: 1,
+//     borderColor: "#ddd",
+//     borderRadius: 10,
+//     overflow: "hidden",
+//     margin: 10,
+//     padding: 10,
+//     alignItems: "center",
+// },
+// cardImage: {
+//     width: 150,
+//     height: 100,
+//     borderRadius: 5,
+//     marginBottom: 10,
+// },
+// cardContent: {
+//     alignItems: "center",
+// },
