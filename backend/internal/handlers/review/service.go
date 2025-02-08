@@ -11,7 +11,8 @@ import (
 // newService receives the map of collections and picks out reviews
 func newService(collections map[string]*mongo.Collection) *Service {
 	return &Service{
-		reviews: collections["reviews"],
+		reviews:     collections["reviews"],
+		restaurants: collections["restaurants"],
 	}
 }
 
