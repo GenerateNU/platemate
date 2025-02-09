@@ -32,6 +32,7 @@ type MenuItemDocument struct {
 	Name                string               `bson:"name"`
 	Picture             string               `bson:"picture"`
 	AvgRating           AvgRatingDocument    `bson:"avgRating,omitempty"`
+	PastOverallRating   float64              `bson:"pastOverallRating"`
 	Reviews             []primitive.ObjectID `bson:"reviews"`
 	Description         string               `bson:"description"`
 	Location            []float64            `bson:"location"`
@@ -73,6 +74,7 @@ func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument, er
 		Name:                menuItemRequest.Name,
 		Picture:             menuItemRequest.Picture,
 		AvgRating:           avgRatingDoc,
+		PastOverallRating:   menuItemRequest.PastOverallRating,
 		Reviews:             reviewsObjectID,
 		Description:         menuItemRequest.Description,
 		Location:            menuItemRequest.Location,
@@ -117,6 +119,7 @@ func ToMenuItemResponse(menuItem MenuItemDocument) MenuItemResponse {
 				Overall: menuItem.AvgRating.Overall,
 				Return:  menuItem.AvgRating.Return,
 			},
+			PastOverallRating:   menuItem.PastOverallRating,
 			Reviews:             reviews,
 			Description:         menuItem.Description,
 			Location:            menuItem.Location,
@@ -124,6 +127,20 @@ func ToMenuItemResponse(menuItem MenuItemDocument) MenuItemResponse {
 			DietaryRestrictions: menuItem.DietaryRestrictions,
 		},
 	}
+}
+
+func ToMenuResponseArray(cursor *mongo.Cursor) ([]MenuItemResponse, error) {
+	var menuItems []MenuItemDocument
+	if err := cursor.All(context.Background(), &menuItems); err != nil {
+		return nil, err
+	}
+
+	menuItemsResponse := make([]MenuItemResponse, len(menuItems))
+	for i, menuItem := range menuItems {
+		menuItemsResponse[i] = ToMenuItemResponse(menuItem)
+	}
+
+	return menuItemsResponse, nil
 }
 
 func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemResponse, error) {
@@ -152,14 +169,14 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 		}
 	}
 
-	if menuItemsQuery.Longitude != nil && menuItemsQuery.Latitude != nil { // return menu items in order of closest location 
+	if menuItemsQuery.Longitude != nil && menuItemsQuery.Latitude != nil { // return menu items in order of closest location
 		filter["location"] = bson.M{
 			"$near": bson.M{
 				"$geometry": bson.M{
 					"type":        "Point",
 					"coordinates": []float64{*menuItemsQuery.Longitude, *menuItemsQuery.Latitude},
 				},
-				"$maxDistance": 6437.38, // Optional: 4 mile search radius 
+				"$maxDistance": 6437.38, // Optional: 4 mile search radius
 			},
 		}
 	}
@@ -175,17 +192,11 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 		return nil, err
 	}
 
-	var menuItems []MenuItemDocument
-	if err := cursor.All(context.Background(), &menuItems); err != nil {
+	menuItems, err := ToMenuResponseArray(cursor)
+	if err != nil {
 		return nil, err
 	}
-
-	menuItemsResponse := make([]MenuItemResponse, len(menuItems))
-	for i, menuItem := range menuItems {
-		menuItemsResponse[i] = ToMenuItemResponse(menuItem)
-	}
-
-	return menuItemsResponse, nil
+	return menuItems, nil
 }
 
 func (s *Service) UpdateMenuItem(idObj primitive.ObjectID, menuItemRequest MenuItemRequest) (MenuItemResponse, error) {
@@ -212,6 +223,7 @@ func (s *Service) UpdateMenuItem(idObj primitive.ObjectID, menuItemRequest MenuI
 
 func (s *Service) CreateMenuItem(menuItemRequest MenuItemRequest) (MenuItemResponse, error) {
 	menuItemDoc, errReviewID := ParseMenuItemRequest(menuItemRequest)
+	fmt.Println(menuItemDoc.PastOverallRating)
 	if errReviewID != nil {
 		return MenuItemResponse{}, errReviewID
 	}
@@ -253,4 +265,53 @@ func (s *Service) DeleteMenuItem(idObj primitive.ObjectID) (MenuItemResponse, er
 	}
 	menuItemResponse := ToMenuItemResponse(menuItemDoc)
 	return menuItemResponse, nil
+}
+
+func (s *Service) GetOverallTrending(resturantID string) ([]MenuItemResponse, error) {
+	filter := bson.M{}
+	options := options.Find()
+	options.SetLimit(10) // Limit the number of results to `Limit`
+	if resturantID != "" {
+		filter["resturantID"] = bson.M{"$eq": resturantID}
+	}
+
+	pipeline := mongo.Pipeline{
+		{{Key: "$addFields", Value: bson.D{
+			{Key: "ratingDiff", Value: bson.D{
+				{Key: "$subtract", Value: bson.A{"$pastOverallRating", "$avgRating.overall"}},
+			}},
+		}}},
+		{{Key: "$sort", Value: bson.D{
+			{Key: "ratingDiff", Value: -1},
+		}}},
+		{{Key: "$project", Value: bson.D{
+			{Key: "_id", Value: 1},
+			{Key: "name", Value: 1},
+			{Key: "description", Value: 1},
+			{Key: "picture", Value: 1},
+			{Key: "tags", Value: 1},
+			{Key: "reviews", Value: 1},
+			{Key: "dietaryRestrictions", Value: 1},
+			{Key: "pastOverallRating", Value: 1},
+			{Key: "avgRating.portion", Value: 1},
+			{Key: "avgRating.taste", Value: 1},
+			{Key: "avgRating.value", Value: 1},
+			{Key: "avgRating.overall", Value: 1},
+			{Key: "avgRating.return", Value: 1},
+			{Key: "location", Value: 1},
+			{Key: "ratingDiff", Value: 1},
+		}}},
+	}
+
+	cursor, err := s.menuItems.Aggregate(context.Background(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	menuItems, err := ToMenuResponseArray(cursor)
+	if err != nil {
+		return nil, err
+	}
+	return menuItems, nil
+	// cursor, err := s.menuItems.Find(context.Background(), filter, options)
 }

@@ -27,16 +27,16 @@ type AvgRatingRequest struct {
 }
 
 type LocationRequest struct {
-
 }
 
 type MenuItemRequest struct {
 	Name                string           `json:"name"`
 	Picture             string           `json:"picture"`
 	AvgRating           AvgRatingRequest `json:"avgRating"`
+	PastOverallRating   float64          `json:"pastOverallRating"`
 	Reviews             []string         `json:"reviews"`
 	Description         string           `json:"description"`
-	Location            []float64        `json:"location"` // location must be stored in [longitude, latitude] order 
+	Location            []float64        `json:"location"` // location must be stored in [longitude, latitude] order
 	Tags                []string         `json:"tags"`
 	DietaryRestrictions []string         `json:"dietaryRestrictions"`
 }
@@ -279,4 +279,13 @@ func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
 		return err
 	}
 	return c.Status(fiber.StatusOK).JSON(menuItemDeleted)
+}
+
+func (h *Handler) GetOverallTrending(c *fiber.Ctx) error {
+	resturantID := c.Query("resturantID") // empty string if no id
+	menuItems, err := h.service.GetOverallTrending(resturantID)
+	if err != nil {
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(menuItems)
 }
