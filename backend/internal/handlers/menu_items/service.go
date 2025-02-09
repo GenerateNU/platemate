@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log/slog"
 )
 
 /*
@@ -141,6 +142,26 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 	// e.g [halal, vegan, gluten-free] -> finds menu items that are halal, vegan, and gluten-free
 	if len(menuItemsQuery.DietaryRestrictions) > 0 {
 		filter["dietaryRestrictions"] = bson.M{"$all": menuItemsQuery.DietaryRestrictions}
+	}
+
+	if menuItemsQuery.Name != "" { // trying to search for menu item by a given name, e.g "pasta"
+		filter["name"] = bson.M{
+			"$text": bson.M{
+				"$search": menuItemsQuery.Name,
+			},
+		}
+	}
+
+	if menuItemsQuery.Longitude != nil && menuItemsQuery.Latitude != nil { // return menu items in order of closest location 
+		filter["location"] = bson.M{
+			"$near": bson.M{
+				"$geometry": bson.M{
+					"type":        "Point",
+					"coordinates": []float64{*menuItemsQuery.Longitude, *menuItemsQuery.Latitude},
+				},
+				"$maxDistance": 6437.38, // Optional: 4 mile search radius 
+			},
+		}
 	}
 
 	options := options.Find()

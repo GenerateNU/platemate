@@ -3,11 +3,12 @@ package menu_items
 import (
 	"errors"
 	"fmt"
+	"log/slog"
+
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log/slog"
 )
 
 /*
@@ -25,13 +26,17 @@ type AvgRatingRequest struct {
 	Return  *bool    `json:"return"`
 }
 
+type LocationRequest struct {
+
+}
+
 type MenuItemRequest struct {
 	Name                string           `json:"name"`
 	Picture             string           `json:"picture"`
 	AvgRating           AvgRatingRequest `json:"avgRating"`
 	Reviews             []string         `json:"reviews"`
 	Description         string           `json:"description"`
-	Location            []float64        `json:"location"`
+	Location            []float64        `json:"location"` // location must be stored in [longitude, latitude] order 
 	Tags                []string         `json:"tags"`
 	DietaryRestrictions []string         `json:"dietaryRestrictions"`
 }
@@ -54,6 +59,9 @@ type MenuItemsQuery struct {
 	DietaryRestrictions []string `query:"dietaryRestrictions"`
 	Limit               *int     `query:"limit"`
 	Skip                int      `query:"skip"`
+	Longitude           *float64 `query:"longitude"`
+	Latitude            *float64 `query:"latitude"`
+	Name                string   `query:"name"`
 }
 
 func PreprocessMenuItemRequest(menuItem MenuItemRequest) MenuItemRequest {
