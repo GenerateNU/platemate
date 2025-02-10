@@ -13,8 +13,9 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 
 	rest := apiV1.Group("/restaurant")
 
-	rest.Get("/", handler.SearchRestaurants)   // GET /api/v1/restaurant?search=...
-	rest.Get("/:id", handler.GetRestaurant)    // GET /api/v1/restaurant/:id
-	rest.Put("/:id", handler.UpdateRestaurant) // PUT /api/v1/restaurant/:id
+	rest.Get("/", handler.SearchRestaurants)            // GET /api/v1/restaurant?search=...
+	rest.Get("/:id", handler.GetRestaurant)             // GET /api/v1/restaurant/:id
+	rest.Put("/:id", handler.UpdateRestaurant)          // PUT /api/v1/restaurant/:id (full update)
+	rest.Patch("/:id", handler.UpdatePartialRestaurant) // PATCH /api/v1/restaurant/:id (partial update)
 	rest.Delete("/:id", handler.DeleteRestaurant)
 }

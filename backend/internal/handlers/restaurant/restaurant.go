@@ -74,6 +74,31 @@ func (h *Handler) UpdateRestaurant(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
+// UpdatePartialRestaurant by ID (PATCH)
+func (h *Handler) UpdatePartialRestaurant(c *fiber.Ctx) error {
+	idParam := c.Params("id")
+	objID, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	var updateDoc RestaurantDocument
+	if err := go_json.Unmarshal(c.Body(), &updateDoc); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
+	}
+
+	err = h.service.UpdatePartialRestaurant(objID, updateDoc)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).
+				JSON(xerr.NotFound("Restaurant", "id", idParam))
+		}
+		return xerr.ErrorHandler(c, err)
+	}
+
+	return c.SendStatus(fiber.StatusOK)
+}
+
 // DeleteRestaurant by ID
 func (h *Handler) DeleteRestaurant(c *fiber.Ctx) error {
 	idParam := c.Params("id")

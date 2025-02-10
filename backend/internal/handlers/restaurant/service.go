@@ -60,8 +60,9 @@ func (s *Service) GetRestaurantByID(id primitive.ObjectID) (*RestaurantDocument,
 // UpdateRestaurant updates an existing document by ID
 func (s *Service) UpdateRestaurant(id primitive.ObjectID, updateDoc RestaurantDocument) error {
 	ctx := context.Background()
+	filter := bson.M{"_id": id}
 
-	update := bson.M{
+	updateFields := bson.M{
 		"$set": bson.M{
 			"name":                       updateDoc.Name,
 			"description":                updateDoc.Description,
@@ -79,16 +80,71 @@ func (s *Service) UpdateRestaurant(id primitive.ObjectID, updateDoc RestaurantDo
 		},
 	}
 
+	update := bson.M{"$set": updateFields}
+
+	_, err := s.restaurants.UpdateOne(ctx, filter, update)
+	return err
+}
+
+// UpdatePartialRestaurant updates only specified (non-zero) fields of a restaurant document by ID
+func (s *Service) UpdatePartialRestaurant(id primitive.ObjectID, updated RestaurantDocument) error {
+	ctx := context.Background()
 	filter := bson.M{"_id": id}
-	result, err := s.restaurants.UpdateOne(ctx, filter, update)
-	if err != nil {
-		return err
+
+	updateFields := bson.M{}
+
+	if updated.Name != "" {
+		updateFields["name"] = updated.Name
 	}
-	if result.MatchedCount == 0 {
-		// No document found with given ID
-		return mongo.ErrNoDocuments
+	if updated.Description != "" {
+		updateFields["description"] = updated.Description
 	}
-	return nil
+	if updated.Address.Street != "" {
+		updateFields["address.street"] = updated.Address.Street
+	}
+	if updated.Address.Zipcode != "" {
+		updateFields["address.zipcode"] = updated.Address.Zipcode
+	}
+	if updated.Address.State != "" {
+		updateFields["address.state"] = updated.Address.State
+	}
+	// Check non-zero for floats
+	if updated.Address.Location.Latitude != 0 {
+		updateFields["address.location.latitude"] = updated.Address.Location.Latitude
+	}
+	if updated.Address.Location.Longitude != 0 {
+		updateFields["address.location.longitude"] = updated.Address.Location.Longitude
+	}
+	if len(updated.MenuItems) > 0 {
+		updateFields["menuItems"] = updated.MenuItems
+	}
+	if updated.Style != "" {
+		updateFields["style"] = updated.Style
+	}
+	if updated.Picture != "" {
+		updateFields["picture"] = updated.Picture
+	}
+	if len(updated.Tags) > 0 {
+		updateFields["tags"] = updated.Tags
+	}
+	// For nested numeric fields,
+	if updated.RatingAvg.Overall != 0 {
+		updateFields["ratingAverage.overall"] = updated.RatingAvg.Overall
+	}
+	if updated.RatingAvg.Return != 0 {
+		updateFields["ratingAverage.return"] = updated.RatingAvg.Return
+	}
+
+	// If no fields to update, return early with no error
+	if len(updateFields) == 0 {
+		// Could also return an error if wanted
+		return nil
+	}
+
+	update := bson.M{"$set": updateFields}
+
+	_, err := s.restaurants.UpdateOne(ctx, filter, update)
+	return err
 }
 
 // DeleteRestaurant removes a restaurant by ID
