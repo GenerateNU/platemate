@@ -63,19 +63,19 @@ func (s *Service) UpdateRestaurant(id primitive.ObjectID, updateDoc RestaurantDo
 
 	update := bson.M{
 		"$set": bson.M{
-			"name":                  updateDoc.Name,
-			"description":           updateDoc.Description,
-			"address.street":        updateDoc.Address.Street,
-			"address.zipcode":       updateDoc.Address.Zipcode,
-			"address.city":          updateDoc.Address.City,
-			"address.location.x":    updateDoc.Address.Location.X,
-			"address.location.y":    updateDoc.Address.Location.Y,
-			"menuItems":             updateDoc.MenuItems,
-			"style":                 updateDoc.Style,
-			"picture":               updateDoc.Picture,
-			"tags":                  updateDoc.Tags,
-			"ratingAverage.overall": updateDoc.RatingAverage.Overall,
-			"ratingAverage.return":  updateDoc.RatingAverage.Return,
+			"name":                       updateDoc.Name,
+			"description":                updateDoc.Description,
+			"address.street":             updateDoc.Address.Street,
+			"address.zipcode":            updateDoc.Address.Zipcode,
+			"address.state":              updateDoc.Address.State,
+			"address.location.latitude":  updateDoc.Address.Location.Latitude,
+			"address.location.longitude": updateDoc.Address.Location.Longitude,
+			"menuItems":                  updateDoc.MenuItems,
+			"style":                      updateDoc.Style,
+			"picture":                    updateDoc.Picture,
+			"tags":                       updateDoc.Tags,
+			"ratingAverage.overall":      updateDoc.RatingAvg.Overall,
+			"ratingAverage.return":       updateDoc.RatingAvg.Return,
 		},
 	}
 

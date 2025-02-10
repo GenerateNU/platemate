@@ -5,28 +5,28 @@ import (
 )
 
 type RestaurantDocument struct {
-	ID primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	ID   primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	Name string             `bson:"name"         json:"name"`
 
 	Address struct {
 		Street   string `bson:"street"   json:"street"`
 		Zipcode  string `bson:"zipcode"  json:"zipcode"`
-		City     string `bson:"city"     json:"city"`
+		State    string `bson:"state"     json:"state"`
 		Location struct {
-			X float64 `bson:"x" json:"x"`
-			Y float64 `bson:"y" json:"y"`
+			Latitude  float64 `bson:"latitude" json:"latitude"`
+			Longitude float64 `bson:"longitude" json:"longitude"`
 		} `bson:"location" json:"location"`
 	} `bson:"address" json:"address"`
 
 	MenuItems []primitive.ObjectID `bson:"menuItems" json:"menuItems"`
 
-	RatingAverage struct {
+	RatingAvg struct {
 		Overall int `bson:"overall" json:"overall"` // Overall could be a numeric (should be 1-5)
 		Return  int `bson:"return" json:"return"`
-	} `bson:"ratingAverage" json:"ratingAverage"`
+	} `bson:"ratingAvg" json:"ratingAvg"`
 
-	Name        string   `bson:"name"         json:"name"`
-	Style       []string `bson:"style"        json:"style"`
-	Picture     []string `bson:"picture"      json:"picture"`
+	Style       string   `bson:"style"        json:"style"`   // could be an array
+	Picture     string   `bson:"picture"      json:"picture"` // could be an array
 	Description string   `bson:"description"  json:"description"`
 	Tags        []string `bson:"tags"         json:"tags"`
 }
