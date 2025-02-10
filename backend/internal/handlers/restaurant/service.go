@@ -63,21 +63,20 @@ func (s *Service) UpdateRestaurant(id primitive.ObjectID, updateDoc RestaurantDo
 	filter := bson.M{"_id": id}
 
 	updateFields := bson.M{
-		"$set": bson.M{
-			"name":                       updateDoc.Name,
-			"description":                updateDoc.Description,
-			"address.street":             updateDoc.Address.Street,
-			"address.zipcode":            updateDoc.Address.Zipcode,
-			"address.state":              updateDoc.Address.State,
-			"address.location.latitude":  updateDoc.Address.Location.Latitude,
-			"address.location.longitude": updateDoc.Address.Location.Longitude,
-			"menuItems":                  updateDoc.MenuItems,
-			"style":                      updateDoc.Style,
-			"picture":                    updateDoc.Picture,
-			"tags":                       updateDoc.Tags,
-			"ratingAverage.overall":      updateDoc.RatingAvg.Overall,
-			"ratingAverage.return":       updateDoc.RatingAvg.Return,
-		},
+
+		"name":                       updateDoc.Name,
+		"description":                updateDoc.Description,
+		"address.street":             updateDoc.Address.Street,
+		"address.zipcode":            updateDoc.Address.Zipcode,
+		"address.state":              updateDoc.Address.State,
+		"address.location.latitude":  updateDoc.Address.Location.Latitude,
+		"address.location.longitude": updateDoc.Address.Location.Longitude,
+		"menuItems":                  updateDoc.MenuItems,
+		"style":                      updateDoc.Style,
+		"picture":                    updateDoc.Picture,
+		"tags":                       updateDoc.Tags,
+		"ratingAvg.overall":          updateDoc.RatingAvg.Overall,
+		"ratingAvg.return":           updateDoc.RatingAvg.Return,
 	}
 
 	update := bson.M{"$set": updateFields}
@@ -129,10 +128,10 @@ func (s *Service) UpdatePartialRestaurant(id primitive.ObjectID, updated Restaur
 	}
 	// For nested numeric fields,
 	if updated.RatingAvg.Overall != 0 {
-		updateFields["ratingAverage.overall"] = updated.RatingAvg.Overall
+		updateFields["ratingAvg.overall"] = updated.RatingAvg.Overall
 	}
 	if updated.RatingAvg.Return != 0 {
-		updateFields["ratingAverage.return"] = updated.RatingAvg.Return
+		updateFields["ratingAvg.return"] = updated.RatingAvg.Return
 	}
 
 	// If no fields to update, return early with no error
