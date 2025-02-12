@@ -247,8 +247,8 @@ func (s *Service) updateRestaurantAverageRating(restaurantID primitive.ObjectID)
 	// Update the restaurant's document
 	update := bson.M{
 		"$set": bson.M{
-			"ratingAverage.overall": avgOverall,
-			"ratingAverage.return":  avgReturnPercent,
+			"ratingAvg.overall": avgOverall,
+			"ratingAvg.return":  avgReturnPercent,
 		},
 	}
 
