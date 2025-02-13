@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log/slog"
 )
 
 /*
@@ -137,10 +138,12 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 		filter["tags"] = bson.M{"$in": menuItemsQuery.Tags}
 	}
 
-	// Find menu items with all of the dietary restrictions
-	// e.g [halal, vegan, gluten-free] -> finds menu items that are halal, vegan, and gluten-free
+	// Dietary restrictions filter
 	if len(menuItemsQuery.DietaryRestrictions) > 0 {
-		filter["dietaryRestrictions"] = bson.M{"$all": menuItemsQuery.DietaryRestrictions}
+		filter["dietaryRestrictions"] = bson.M{
+			"$all": menuItemsQuery.DietaryRestrictions,
+			"$not": bson.M{"$size": 0},
+		}
 	}
 
 	options := options.Find()
