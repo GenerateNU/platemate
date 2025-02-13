@@ -3,11 +3,13 @@ package menu_items
 import (
 	"errors"
 	"fmt"
+	"log/slog"
+	"strings"
+
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log/slog"
 )
 
 /*
@@ -51,7 +53,7 @@ type MenuItemsQuery struct {
 	MinRatingOverall    *float64 `query:"minRatingOverall"`
 	MaxRatingOverall    *float64 `query:"maxRatingOverall"`
 	Tags                []string `query:"tags"`
-	DietaryRestrictions []string `query:"dietaryRestrictions"`
+	DietaryRestrictions []string `query:"filter"`
 	Limit               *int     `query:"limit"`
 	Skip                int      `query:"skip"`
 }
@@ -171,6 +173,10 @@ func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 	var queryParams MenuItemsQuery
 	if err := c.QueryParser(&queryParams); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	if filter := c.Query("filter"); filter != "" {
+		queryParams.DietaryRestrictions = strings.Split(filter, ",")
 	}
 
 	if err := ValidateQueryParams(queryParams); err != nil {
