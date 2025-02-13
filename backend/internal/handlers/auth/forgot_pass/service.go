@@ -28,16 +28,6 @@ type Service struct {
 
 // newService picks out the collections from the map.
 func newService(collections map[string]*mongo.Collection) *Service {
-
-	indexModel := mongo.IndexModel{
-		Keys:    bson.M{"expiresAt": 1},
-		Options: options.Index().SetExpireAfterSeconds(0),
-	}
-	_, err := collections["passwordResets"].Indexes().CreateOne(context.Background(), indexModel)
-	if err != nil {
-		panic(err)
-	}
-
 	return &Service{
 		pwResets: collections["passwordResets"],
 		users:    collections["users"],

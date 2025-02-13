@@ -14,6 +14,8 @@ require (
 	go.mongodb.org/mongo-driver v1.17.1
 )
 
+require github.com/golang-jwt/jwt/v5 v5.2.1
+
 require (
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.7 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.28 // indirect

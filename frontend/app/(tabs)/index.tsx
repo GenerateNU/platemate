@@ -1,9 +1,10 @@
-import { Image, StyleSheet } from "react-native";
+import { Button, Image, StyleSheet, TouchableOpacity } from "react-native";
 
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Link } from "expo-router";
+import React from "react";
 
 export default function HomeScreen() {
     return (
@@ -12,7 +13,7 @@ export default function HomeScreen() {
             headerImage={<Image source={require("@/assets/images/partial-react-logo.png")} style={styles.reactLogo} />}>
             <ThemedView style={styles.titleContainer}>
                 <ThemedText type={"title"} style={{ fontFamily: "Outfit" }}>
-                    PlatMate - React Native Boilerplate
+                    PlateMate - React Native Boilerplate
                 </ThemedText>
             </ThemedView>
             <ThemedView>
