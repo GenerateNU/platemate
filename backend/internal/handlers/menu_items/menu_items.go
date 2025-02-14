@@ -58,6 +58,29 @@ type MenuItemsQuery struct {
 	Skip                int      `query:"skip"`
 }
 
+var ValidDietaryRestrictions = map[string]bool{
+	"vegan":              true,
+	"vegetarian":         true,
+	"gluten-free":        true,
+	"dairy-free":         true,
+	"nut-free":           true,
+	"soy-free":           true,
+	"egg-free":           true,
+	"shellfish-free":     true,
+	"low-sodium":         true,
+	"high-fiber":         true,
+	"ketogenic":          true,
+	"paleo":              true,
+	"pescatarian":        true,
+	"kosher":             true,
+	"halal":              true,
+	"diabetic-friendly":  true,
+	"low-carb":           true,
+	"high-protein":       true,
+	"raw-food":           true,
+	"lactose-intolerant": true,
+}
+
 func PreprocessMenuItemRequest(menuItem MenuItemRequest) MenuItemRequest {
 	// Default nil arrays to empty
 	if menuItem.Reviews == nil {
@@ -83,6 +106,14 @@ func ValidateMenuItemRequest(menuItem MenuItemRequest) error {
 	if err := ValidateAvgRatingRequest(menuItem.AvgRating); err != nil {
 		return err
 	}
+
+	// Validate dietary restrictions
+	validRestrictions, err := ValidateDietaryRestrictions(menuItem.DietaryRestrictions)
+	if err != nil {
+		return err
+	}
+	menuItem.DietaryRestrictions = validRestrictions
+
 	return nil
 }
 
@@ -156,6 +187,16 @@ func ValidateQueryParams(queryParams MenuItemsQuery) error {
 	if err := ValidateMinMaxRating(queryParams.MinRatingOverall, queryParams.MaxRatingOverall); err != nil {
 		return err
 	}
+
+	// Validate dietary restrictions in query params
+	if len(queryParams.DietaryRestrictions) > 0 {
+		validRestrictions, err := ValidateDietaryRestrictions(queryParams.DietaryRestrictions)
+		if err != nil {
+			return err
+		}
+		queryParams.DietaryRestrictions = validRestrictions
+	}
+
 	// Validate limit
 	if queryParams.Limit != nil && *queryParams.Limit <= 0 {
 		return fmt.Errorf("limit must be greater than 0, but got %d", *queryParams.Limit)
@@ -166,6 +207,27 @@ func ValidateQueryParams(queryParams MenuItemsQuery) error {
 	}
 
 	return nil
+}
+
+// Validates and normalizes dietary restrictions
+func ValidateDietaryRestrictions(restrictions []string) ([]string, error) {
+	if len(restrictions) == 0 {
+		return []string{}, nil
+	}
+
+	validRestrictions := make([]string, 0)
+	for _, restriction := range restrictions {
+		normalized := strings.ToLower(strings.TrimSpace(restriction))
+		if ValidDietaryRestrictions[normalized] {
+			validRestrictions = append(validRestrictions, normalized)
+		}
+	}
+
+	if len(validRestrictions) == 0 {
+		return nil, fmt.Errorf("no valid dietary restrictions found in: %v", restrictions)
+	}
+
+	return validRestrictions, nil
 }
 
 func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
