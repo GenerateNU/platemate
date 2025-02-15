@@ -37,7 +37,7 @@ export default function HomeScreen() {
                 <RestaurantTags tags={restaurantTags} />
             </ThemedView>
             <ThemedView>
-                <StarReview avgRating={4.5} numRatings={123} full={true} />
+                <StarReview avgRating={1.9} numRatings={500} full={false} />
             </ThemedView>
 
 

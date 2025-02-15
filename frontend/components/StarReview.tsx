@@ -1,9 +1,8 @@
 import React from "react";
 import { View, Text } from "react-native";
-import ShadedStar from "@/assets/icons/ShadedStar.svg";
-import UnshadedStar from "@/assets/icons/UnshadedStar.svg";
+import ShadedStar from "@/assets/icons/shaded_star_rate.svg";
+import UnshadedStar from "@/assets/icons/unshaded_star_rate.svg";
 import { StyleSheet } from "react-native";
-
 
 interface StarReviewProps {
    avgRating: number;
@@ -30,20 +29,20 @@ export function Stars({ avgRating, full = true }: StarProps) {
    const maxStars = full ? 5 : 1;
    if (full) {
         for (let i = 0; i < maxStars; i++) {
-            if (i < avgRating) {
+            if (i < Math.floor(avgRating)) {
                 stars.push(
-                    <ShadedStar key={i} style={styles.star} />
+                    <ShadedStar key={i} width={16} height={16} />
                 );
             }
             else {
                 stars.push(
-                <UnshadedStar key={i} style={styles.star} />
+                <UnshadedStar key={i} width={16} height={16} />
              );
             }
         } 
     } else {
         stars.push(
-            <UnshadedStar key={0} style={styles.star} />
+            <UnshadedStar key={0} width={16} height={16} />
       );
     }
 
@@ -75,9 +74,5 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         gap: 5,
-     },
-    star: {
-        width: 80,
-        height: 12,
      },
  });
