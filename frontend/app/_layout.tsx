@@ -40,9 +40,9 @@ export default function RootLayout() {
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
                 <Stack.Screen
-                    name={"about"}
+                    name={"feed"}
                     options={{
-                        title: "About",
+                        title: "PlateMate",
                         headerLeft: () => (
                             <Ionicons name={"chevron-back"} size={24} color={"#20c1e6"} onPress={() => router.back()} />
                         ),

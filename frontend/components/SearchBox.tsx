@@ -1,22 +1,36 @@
 import React from "react";
-import { TextInput, TextInputProps } from "react-native";
+import { TextInput, TextInputProps, StyleSheet, View } from "react-native";
 
 interface SearchBoxProps extends TextInputProps {
     value: string;
     onChangeText: (text: string) => void;
+    icon?: React.ReactNode;
 }
 
-export function SearchBox({ value, onChangeText, ...rest }: SearchBoxProps) {
-    return <TextInput value={value} onChangeText={onChangeText} {...rest} />;
+export function SearchBox({ value, onChangeText, icon, ...rest }: SearchBoxProps) {
+    return (
+        <View style={styles.container}>
+            <TextInput value={value} onChangeText={onChangeText} {...rest} style={styles.input} />
+            {icon && icon}
+        </View>
+    );
 }
 
-// Example usage:
-
-// import { SearchBox } from "@/components/SearchBox";
-
-// <SearchBox
-//   placeholder="Type to search..."
-//   value={searchValue}
-//   onChangeText={(text) => setSearchValue(text)}
-//   // Can also pass in other TextInputProps: keyboardType, etc...
-// />
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: "row",
+        alignItems: "center",
+        borderWidth: 1,
+        borderColor: "#DDD",
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+    },
+    input: {
+        flex: 1,
+    },
+    icon: {
+        marginLeft: 8,
+        resizeMode: "contain",
+    },
+});
