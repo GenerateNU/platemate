@@ -3,10 +3,14 @@ import { Button, Image, StyleSheet, TouchableOpacity } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { RestaurantTags } from "@/components/RestaurantTags";
+import { StarReview } from "@/components/StarReview";
 import { Link } from "expo-router";
 import React from "react";
 
 export default function HomeScreen() {
+    const restaurantTags = ["Italian", "Vegan", "Family-friendly", "Gluten-free"]; // Example tags
+
     return (
         <ParallaxScrollView
             headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -29,6 +33,14 @@ export default function HomeScreen() {
                     </ThemedText>
                 </Link>
             </ThemedView>
+            <ThemedView>
+                <RestaurantTags tags={restaurantTags} />
+            </ThemedView>
+            <ThemedView>
+                <StarReview avgRating={4.5} numRatings={123} full={true} />
+            </ThemedView>
+
+
         </ParallaxScrollView>
     );
 }
