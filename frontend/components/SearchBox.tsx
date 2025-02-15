@@ -1,6 +1,7 @@
 import { useRecentSearch } from "../hooks/useRecentSearch";
 import React, { useEffect, useRef } from "react";
 import { TextInput, TextInputProps, StyleSheet, View } from "react-native";
+import { ThemedText } from "./ThemedText";
 
 interface SearchBoxProps extends TextInputProps {
     value: string;
@@ -14,17 +15,12 @@ interface SearchBoxProps extends TextInputProps {
 export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, ...rest }: SearchBoxProps) {
     const { getRecents, appendSearch } = useRecentSearch(name);
     let recents: any = useRef([]); // TODO: fix this type
-    useRef(recents);
     useEffect(() => {
-        if (recent) {
-            recents.current = getRecents();
-        }
-    }, [name]);
+        if (recent) recents.current = getRecents();
+    }, [recent, getRecents]);
 
     const onSubmitEditing = () => {
-        if (recent) {
-            appendSearch(value);
-        }
+        if (recent) appendSearch(value);
         onSubmit();
     };
 
@@ -41,9 +37,13 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
                 {icon && icon}
             </View>
             {recent && (
-                <View>
+                <View style={styles.recentsContainer}>
                     {recents.current.map((term: string, index: number) => {
-                        return <View key={index} />;
+                        return (
+                            <View key={index} style={styles.recent}>
+                                <ThemedText>{term}</ThemedText>
+                            </View>
+                        );
                     })}
                 </View>
             )}
@@ -52,6 +52,16 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
 }
 
 const styles = StyleSheet.create({
+    recentsContainer: {
+        flexDirection: "column",
+        alignItems: "flex-start",
+        marginTop: 8,
+        position: "absolute",
+    },
+    recent: {
+        width: "100%",
+        paddingVertical: 4,
+    },
     container: {
         flexDirection: "row",
         alignItems: "center",
