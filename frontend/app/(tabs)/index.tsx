@@ -23,7 +23,7 @@ export default function HomeScreen() {
                 </ThemedText>
             </ThemedView>
             <ThemedView>
-                <Link href={"/about"}>
+                <Link href={"/feed"}>
                     <ThemedText type={"default"} lightColor={"#20c1e6"} style={{ fontFamily: "Outfit" }}>
                         Click here to view an example stack.
                     </ThemedText>
