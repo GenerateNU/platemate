@@ -13,6 +13,9 @@ export default function FeedScreen() {
             <SearchBox
                 icon={<SearchIcon />}
                 placeholder={"What are you hungry for?"}
+                recent={true}
+                name={"general"}
+                onSubmit={() => console.log("submit")}
                 value={searchText}
                 onChangeText={(text) => setSearchText(text)}
             />

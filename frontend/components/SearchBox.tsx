@@ -1,7 +1,8 @@
-import { useRecentSearch } from "../hooks/useRecentSearch";
-import React, { useEffect, useRef } from "react";
-import { TextInput, TextInputProps, StyleSheet, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { TextInput, TextInputProps, StyleSheet, View, Dimensions, TouchableOpacity } from "react-native";
 import { ThemedText } from "./ThemedText";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { useRecentSearch } from "@/hooks/useRecentSearch";
 
 interface SearchBoxProps extends TextInputProps {
     value: string;
@@ -14,13 +15,36 @@ interface SearchBoxProps extends TextInputProps {
 
 export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, ...rest }: SearchBoxProps) {
     const { getRecents, appendSearch } = useRecentSearch(name);
-    let recents: any = useRef([]); // TODO: fix this type
+    const [inputHeight, setInputHeight] = useState(0);
+    const textColor = useThemeColor({ light: "#000", dark: "#fff" }, "text");
+    const inputRef = useRef<TextInput>(null);
+    const [recentItems, setRecentItems] = useState<string[]>([]);
+
+    async function fetchRecents() {
+        if (recent) setRecentItems(await getRecents());
+        else setRecentItems([]);
+    }
+    async function clearRecents() {
+        setRecentItems([]);
+    }
+
     useEffect(() => {
-        if (recent) recents.current = getRecents();
-    }, [recent, getRecents]);
+        if (inputRef.current) {
+            inputRef.current?.measureInWindow((height) => {
+                setInputHeight(height + Dimensions.get("window").height * 0.01);
+            });
+        }
+    }, [inputRef]);
+
+    useEffect(() => {
+        fetchRecents();
+    }, []);
 
     const onSubmitEditing = () => {
-        if (recent) appendSearch(value);
+        if (recent)
+            appendSearch(value).then(() => {
+                fetchRecents();
+            });
         onSubmit();
     };
 
@@ -28,21 +52,33 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
         <View>
             <View style={styles.container}>
                 <TextInput
+                    id={"search-input"}
+                    ref={inputRef}
                     onSubmitEditing={onSubmitEditing}
+                    onFocus={() => fetchRecents()}
+                    onBlur={() => clearRecents()}
                     value={value}
                     onChangeText={onChangeText}
                     {...rest}
-                    style={styles.input}
+                    style={{ ...styles.input, color: textColor }}
                 />
                 {icon && icon}
             </View>
             {recent && (
-                <View style={styles.recentsContainer}>
-                    {recents.current.map((term: string, index: number) => {
+                <View style={{ ...styles.recentsContainer, top: inputHeight }}>
+                    {recentItems.map((term: string, index: number) => {
                         return (
-                            <View key={index} style={styles.recent}>
+                            <TouchableOpacity
+                                key={index}
+                                style={styles.recent}
+                                onPress={() => {
+                                    inputRef.current?.blur();
+                                    onChangeText(term);
+                                    onSubmit();
+                                    appendSearch(term);
+                                }}>
                                 <ThemedText>{term}</ThemedText>
-                            </View>
+                            </TouchableOpacity>
                         );
                     })}
                 </View>
@@ -55,12 +91,15 @@ const styles = StyleSheet.create({
     recentsContainer: {
         flexDirection: "column",
         alignItems: "flex-start",
-        marginTop: 8,
         position: "absolute",
+        width: "100%",
     },
     recent: {
         width: "100%",
+        padding: 16,
         paddingVertical: 4,
+        backgroundColor: "#ffffff50",
+        flex: 1,
     },
     container: {
         flexDirection: "row",

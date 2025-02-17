@@ -14,23 +14,28 @@ export function useRecentSearch(searchSet: string = "") {
         setRecents(async () => {
             const recents = await asyncStorage.getItem(searchSet);
             if (recents) {
+                console.log("found recent searches");
+                console.log(recents);
                 return JSON.parse(recents);
             } else {
+                console.log("didn't find search set");
                 return [];
             }
         });
     }, [searchSet]);
 
-    const appendSearch = (search: string) => {
-        if (searchSet === "") {
+    const appendSearch = async (search: string) => {
+        if (searchSet.trim() === "" || search.trim() === "") {
             return;
         }
-        setRecents((prev) => {
-            let newRecents = [...prev, search];
-            newRecents = prev.slice(0, MAX_RECENTS - 1);
-            asyncStorage.setItem(searchSet, JSON.stringify(newRecents));
-            return newRecents;
-        });
+        if ((await recents).includes(search)) {
+            recents.splice(recents.indexOf(search), 1);
+        }
+        let newRecents = [search, ...(await recents)];
+        newRecents = newRecents.slice(0, MAX_RECENTS);
+        console.log(newRecents);
+        asyncStorage.setItem(searchSet, JSON.stringify(newRecents));
+        setRecents(newRecents);
     };
 
     const getRecents = () => {
