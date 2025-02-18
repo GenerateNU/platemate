@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useColorScheme } from "react-native";
 import asyncStorage from "@react-native-async-storage/async-storage";
 
 export function useRecentSearch(searchSet: string = "") {
@@ -28,19 +27,31 @@ export function useRecentSearch(searchSet: string = "") {
         if (searchSet.trim() === "" || search.trim() === "") {
             return;
         }
+        let filtered = await recents;
         if ((await recents).includes(search)) {
-            recents.splice(recents.indexOf(search), 1);
+            filtered = (await recents).filter((item) => item !== search);
         }
-        let newRecents = [search, ...(await recents)];
+        let newRecents = [search, ...(await filtered)];
         newRecents = newRecents.slice(0, MAX_RECENTS);
         console.log(newRecents);
         asyncStorage.setItem(searchSet, JSON.stringify(newRecents));
         setRecents(newRecents);
     };
 
+    const deleteRecent = async (term: string) => {
+        if (searchSet.trim() === "" || term.trim() === "") {
+            return;
+        }
+        let filtered = await recents;
+        filtered = filtered.filter((item) => item !== term);
+        asyncStorage.setItem(searchSet, JSON.stringify(filtered));
+        console.log(filtered);
+        setRecents(filtered);
+    };
+
     const getRecents = () => {
         return recents;
     };
 
-    return { getRecents, appendSearch };
+    return { getRecents, appendSearch, deleteRecent };
 }

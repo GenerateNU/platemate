@@ -15,6 +15,7 @@ export function ThemedText({ style, lightColor, darkColor, type = "default", ...
         <Text
             style={[
                 { color },
+                { fontFamily: "Outfit" },
                 type === "default" ? styles.default : undefined,
                 type === "title" ? styles.title : undefined,
                 type === "defaultSemiBold" ? styles.defaultSemiBold : undefined,
