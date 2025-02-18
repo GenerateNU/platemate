@@ -271,6 +271,25 @@ func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(menuItem)
 }
 
+func (h *Handler) GetSimilarMenuItems(c *fiber.Ctx) error {
+	id := c.Params("id")
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	similarItems, err := h.service.GetSimilarMenuItems(objID)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item", "id", id))
+		}
+		slog.Error("Error finding similar items", "error", err)
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(similarItems)
+}
+
 func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 	var menuItem MenuItemRequest
 	if err := c.BodyParser(&menuItem); err != nil {
