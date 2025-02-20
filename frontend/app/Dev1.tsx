@@ -5,10 +5,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { SearchBox } from "@/components/SearchBox";
 import SearchIcon from "@/assets/icons/search.svg";
 import UserInfoRowBase from "@/components/UserInfo/UserInfoRowBase";
-<<<<<<< HEAD
 import ReviewPreview from "@/components/Cards/ReviewPreview";
-=======
->>>>>>> 15079c425e87eafd0341d460369858c6c021db9e
 
 type Props = {};
 
