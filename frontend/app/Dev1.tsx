@@ -44,7 +44,6 @@ const Dev1 = (props: Props) => {
                     rating={4}
                     content={"This is the content of the review."}
                 />
-                {/* <SearchBox value={""} onChangeText={() => {}} onSubmit={() => {}} icon={<Text>🔍</Text>} /> */}
             </ScrollView>
         </ThemedView>
     );
