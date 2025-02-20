@@ -1,7 +1,6 @@
 package s3bucket
 
 import (
-	"encoding/json"
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
@@ -10,6 +9,10 @@ import (
 func (h *Handler) GetPresignedUrlHandler(c *fiber.Ctx) error {
 
 	var queryParams PresignedDownloadURLQueryParams
+
+	if err := c.ParamsParser(&queryParams); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
 
 	errs := xvalidator.Validator.Validate(queryParams)
 	if len(errs) > 0 {
@@ -24,12 +27,9 @@ func (h *Handler) GetPresignedUrlHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	jsonData, err := json.MarshalIndent(url, "", " ")
-	if err != nil {
-		return err
-	}
+
 	c.Set("Content-Type", "application/json")
-	return c.Send(jsonData)
+	return c.Status(200).JSON(PresignedDownloadURLResponse{DownloadURL: url.URL})
 }
 
 func (h *Handler) PostPresignedUrlHandler(c *fiber.Ctx) error {
@@ -53,11 +53,7 @@ func (h *Handler) PostPresignedUrlHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	jsonData, err := json.MarshalIndent(urlAndKey, "", " ")
-	if err != nil {
-		return err
-	}
 
 	c.Set("Content-Type", "application/json")
-	return c.Send(jsonData)
+	return c.Status(200).JSON(PresignedUploadURLResponse{UploadURL: urlAndKey.URL, Key: urlAndKey.Key})
 }

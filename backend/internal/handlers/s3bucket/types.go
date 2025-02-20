@@ -33,6 +33,10 @@ type PresignedUploadURLResponse struct {
 	Key       string `json:"key"`
 }
 
+type PresignedDownloadURLResponse struct {
+	DownloadURL string `json:"download_url"`
+}
+
 // PresignedUploadURLQueryParams TODO: validate filetypes
 type PresignedUploadURLQueryParams struct {
 	FileType string `validate:"required" json:"fileType"`
