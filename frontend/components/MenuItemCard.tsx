@@ -37,11 +37,7 @@ export function MenuItemCard({ name, image, starReview }: MenuItemProp) {
             </View>
         </View>
     );
-
-
 }
-
-
 
 const styles = StyleSheet.create({
     text: {
@@ -56,7 +52,6 @@ const styles = StyleSheet.create({
     nameReviewsContainer: {
         flex: 1, // Takes 1/3 of the space
         flexDirection: "column",
-
     },
     titleRow: {
         flex: 1,
@@ -67,7 +62,7 @@ const styles = StyleSheet.create({
         flex: 1, // Takes 1/2 of bottom section
         alignItems: "flex-end",
         justifyContent: "center",
-        paddingRight: 4
+        paddingRight: 4,
     },
     container: {
         width: 144,
@@ -87,5 +82,5 @@ const styles = StyleSheet.create({
         height: "100%",
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
-    }
- });
+    },
+});

@@ -12,7 +12,6 @@ import PhoneIcon from "@/assets/icons/phone.svg";
 import MarkerIcon from "@/assets/icons/marker.svg";
 import ClockIcon from "@/assets/icons/clock.svg";
 
-
 import { RestaurantDetailItem } from "@/components/RestaurantDetailItem";
 
 export default function RestaurantView({}) {
@@ -35,7 +34,6 @@ export default function RestaurantView({}) {
                 </View>
             </View>
             <ThemedView style={styles.container}>
-
                 <ThemedView style={styles.headerContainer}>
                     <ThemedText style={styles.titleText}>Pad Thai Kitchen</ThemedText>
                     <View style={styles.iconContainer}>
@@ -185,4 +183,3 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 32,
     },
 });
-

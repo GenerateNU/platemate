@@ -32,8 +32,6 @@ export default function HomeScreen() {
                     </ThemedText>
                 </Link>
             </ThemedView>
-
-
         </ParallaxScrollView>
     );
 }

@@ -31,26 +31,16 @@ export function Stars({ avgRating, full = true }: StarProps) {
     if (full) {
         for (let i = 0; i < maxStars; i++) {
             if (i < Math.floor(avgRating)) {
-                stars.push(
-                    <ShadedStar key={i} width={16} height={16} />,
-                );
+                stars.push(<ShadedStar key={i} width={16} height={16} />);
             } else {
-                stars.push(
-                    <UnshadedStar key={i} width={16} height={16} />,
-                );
+                stars.push(<UnshadedStar key={i} width={16} height={16} />);
             }
         }
     } else {
-        stars.push(
-            <UnshadedStar key={0} width={16} height={16} />,
-        );
+        stars.push(<UnshadedStar key={0} width={16} height={16} />);
     }
 
-    return (
-        <View style={styles.starsContainer}>
-            {stars}
-        </View>
-    );
+    return <View style={styles.starsContainer}>{stars}</View>;
 }
 
 const styles = StyleSheet.create({

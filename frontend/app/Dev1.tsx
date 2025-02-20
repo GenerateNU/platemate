@@ -12,7 +12,6 @@ import { RestaurantTags } from "@/components/RestaurantTags";
 import { StarReview } from "@/components/StarReview";
 import { MenuItemCard } from "@/components/MenuItemCard";
 
-
 type Props = {};
 
 const Dev1 = (props: Props) => {

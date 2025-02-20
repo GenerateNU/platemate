@@ -4,14 +4,7 @@ import { Button } from "@/components/Button";
 import { ThemedView } from "@/components/ThemedView";
 
 const TagButton = ({ title }: { title: string }) => {
-    return (
-        <Button
-            title={title}
-            onPress={() => {}}
-            containerStyle={styles.tagButton}
-            textStyle={styles.tagText}
-        />
-    );
+    return <Button title={title} onPress={() => {}} containerStyle={styles.tagButton} textStyle={styles.tagText} />;
 };
 
 interface TagButtonProps {
