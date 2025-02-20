@@ -47,6 +47,16 @@ export default function Playground() {
                 }}>
                 <ThemedText type="subtitle">Restaurant View</ThemedText>
             </Link>
+            <Link
+                href={"/ReviewFlow"}
+                style={{
+                    color: "#fff",
+                    fontSize: 24,
+                    fontWeight: "bold",
+                    fontFamily: "Outfit",
+                }}>
+                <ThemedText type="subtitle">Review Flow</ThemedText>
+            </Link>
         </ParallaxScrollView>
     );
 }
