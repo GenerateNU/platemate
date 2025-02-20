@@ -5,6 +5,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { SearchBox } from "@/components/SearchBox";
 import SearchIcon from "@/assets/icons/search.svg";
 import UserInfoRowBase from "@/components/UserInfo/UserInfoRowBase";
+import ReviewPreview from "@/components/Cards/ReviewPreview";
 
 type Props = {};
 
@@ -36,6 +37,13 @@ const Dev1 = (props: Props) => {
                         }
                     />
                 </View>
+                <ReviewPreview
+                    plateName={"Plate 1"}
+                    restaurantName={"Restaurant 1"}
+                    tags={["tag1", "tag2", "tag3", "tag4"]}
+                    rating={4}
+                    content={"This is the content of the review."}
+                />
                 {/* <SearchBox value={""} onChangeText={() => {}} onSubmit={() => {}} icon={<Text>🔍</Text>} /> */}
             </ScrollView>
         </ThemedView>
