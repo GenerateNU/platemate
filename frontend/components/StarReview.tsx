@@ -4,7 +4,7 @@ import ShadedStar from "@/assets/icons/shaded_star_rate.svg";
 import UnshadedStar from "@/assets/icons/unshaded_star_rate.svg";
 import { StyleSheet } from "react-native";
 
-interface StarReviewProps {
+export interface StarReviewProps {
    avgRating: number;
    numRatings: number;
    full?: boolean; // If true, show 5 stars, else show 1
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
         lineHeight: 18,
         letterSpacing: 0,
         textAlign: "center",
-        color: "#285852", // Darker text color for contrast
+        color: "#285852",
      },
     starsContainer: {
         flexDirection: "row",

@@ -5,11 +5,16 @@ import { ThemedView } from "@/components/ThemedView";
 import { SearchBox } from "@/components/SearchBox";
 import SearchIcon from "@/assets/icons/search.svg";
 import UserInfoRowBase from "@/components/UserInfo/UserInfoRowBase";
+import { RestaurantTags } from "@/components/RestaurantTags";
+import { StarReview } from "@/components/StarReview";
+import { MenuItemCard } from "@/components/MenuItemCard";
+
 
 type Props = {};
 
 const Dev1 = (props: Props) => {
     const [searchText, setSearchText] = React.useState("");
+    const restaurantTags = ["Italian", "Vegan", "Family-friendly", "Gluten-free"]; // Example tags
 
     return (
         <ThemedView style={styles.container}>
@@ -37,6 +42,15 @@ const Dev1 = (props: Props) => {
                     />
                 </View>
                 {/* <SearchBox value={""} onChangeText={() => {}} onSubmit={() => {}} icon={<Text>🔍</Text>} /> */}
+                <ThemedView>
+                <RestaurantTags tags={restaurantTags} />
+                </ThemedView>
+                <ThemedView>
+                    <StarReview avgRating={1.9} numRatings={500} full={false} />
+                </ThemedView>
+                <ThemedView>
+                    <MenuItemCard name={"Pad Thai"} image={"https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395_960_720.jpg"} starReview={{ avgRating: 3.5, numRatings: 100, full: false }} /> 
+                </ThemedView>
             </ScrollView>
         </ThemedView>
     );

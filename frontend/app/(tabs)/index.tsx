@@ -6,11 +6,10 @@ import { ThemedView } from "@/components/ThemedView";
 import { RestaurantTags } from "@/components/RestaurantTags";
 import { StarReview } from "@/components/StarReview";
 import { Link } from "expo-router";
+import { MenuItemCard } from "@/components/MenuItemCard";
 import React from "react";
 
 export default function HomeScreen() {
-    const restaurantTags = ["Italian", "Vegan", "Family-friendly", "Gluten-free"]; // Example tags
-
     return (
         <ParallaxScrollView
             headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -32,12 +31,6 @@ export default function HomeScreen() {
                         Click here to view an example stack.
                     </ThemedText>
                 </Link>
-            </ThemedView>
-            <ThemedView>
-                <RestaurantTags tags={restaurantTags} />
-            </ThemedView>
-            <ThemedView>
-                <StarReview avgRating={1.9} numRatings={500} full={false} />
             </ThemedView>
 
 
