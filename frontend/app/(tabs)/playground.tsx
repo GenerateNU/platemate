@@ -28,6 +28,16 @@ export default function Playground() {
                 <ThemedText type="subtitle">Development Environment 1</ThemedText>
             </Link>
             <Link
+                href={"/feed"}
+                style={{
+                    color: "#fff",
+                    fontSize: 24,
+                    fontWeight: "bold",
+                    fontFamily: "Outfit",
+                }}>
+                <ThemedText type="subtitle">Feed</ThemedText>
+            </Link>
+            <Link
                 href={"/RestaurantView"}
                 style={{
                     color: "#fff",

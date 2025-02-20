@@ -3,6 +3,7 @@ import { TextInput, TextInputProps, StyleSheet, View, Dimensions, TouchableOpaci
 import { ThemedText } from "./ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useRecentSearch } from "@/hooks/useRecentSearch";
+import FontAwesome5 from "@expo/vector-icons/build/FontAwesome5";
 
 interface SearchBoxProps extends TextInputProps {
     value: string;
@@ -77,6 +78,7 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
                                     onSubmit();
                                     appendSearch(term);
                                 }}>
+                                <FontAwesome5 name="redo" size={12} color="gray" />
                                 <ThemedText>{term}</ThemedText>
                             </TouchableOpacity>
                         );
@@ -92,14 +94,20 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignItems: "flex-start",
         position: "absolute",
+        backgroundColor: "#ffffff",
+        zIndex: 10,
+        paddingBottom: 8,
         width: "100%",
     },
     recent: {
         width: "100%",
         padding: 16,
-        paddingVertical: 4,
+        paddingVertical: 6,
         backgroundColor: "#ffffff50",
         flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
     },
     container: {
         flexDirection: "row",
@@ -112,7 +120,6 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        fontFamily: "Outfit",
     },
     icon: {
         marginLeft: 8,

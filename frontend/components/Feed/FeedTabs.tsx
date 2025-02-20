@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 type Props = {
     tabs: string[];
+    activeTab: number;
+    setActiveTab: (index: number) => void;
 };
 
-export default function FeedTabs({ tabs }: Props) {
-    const [activeTab, setActiveTab] = useState(0);
-
+export default function FeedTabs({ tabs, activeTab, setActiveTab }: Props) {
     return (
-        <ThemedView style={styles.container}>
+        <View style={styles.container}>
             {tabs.map((tab, index) => (
                 <TouchableOpacity key={index} style={styles.tab} onPress={() => setActiveTab(index)}>
                     <ThemedText
@@ -22,26 +22,26 @@ export default function FeedTabs({ tabs }: Props) {
                     </ThemedText>
                 </TouchableOpacity>
             ))}
-        </ThemedView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         flexDirection: "row",
-        justifyContent: "center",
     },
     tabContainer: {},
     tab: {
         flex: 1,
         borderBottomWidth: 2,
         borderBottomColor: "transparent",
+        paddingBottom: 4,
     },
     activeTabText: {
         fontWeight: "600",
-        textDecorationLine: "underline",
         textDecorationStyle: "solid",
+        borderBottomColor: "#0a7ea4",
+        borderBottomWidth: 2,
     },
     inactiveTabText: {
         fontWeight: "500",
