@@ -6,6 +6,8 @@ import { SearchBox } from "@/components/SearchBox";
 import SearchIcon from "@/assets/icons/search.svg";
 import UserInfoRowBase from "@/components/UserInfo/UserInfoRowBase";
 import { EmojiTag } from "@/components/EmojiTag";
+import { ProgressBar } from "@/components/ProgressBar";
+
 
 type Props = {};
 
@@ -43,6 +45,18 @@ const ReviewFlow = (props: Props) => {
                         selected={isTomatoSelected}
                         onPress={() => setTomatoSelected(!isTomatoSelected)}
                     />
+                </View>
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                    <ProgressBar progress={25} />
+                </View>
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                    <ProgressBar progress={50} />
+                </View>
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                    <ProgressBar progress={75} />
+                </View>
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                    <ProgressBar progress={100} />
                 </View>
                 {/* <SearchBox value={""} onChangeText={() => {}} onSubmit={() => {}} icon={<Text>🔍</Text>} /> */}
             </ScrollView>
