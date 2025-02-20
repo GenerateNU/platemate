@@ -5,6 +5,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { SearchBox } from "@/components/SearchBox";
 import SearchIcon from "@/assets/icons/search.svg";
 import UserInfoRowBase from "@/components/UserInfo/UserInfoRowBase";
+import FeedTabs from "@/components/FeedTabs";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 
@@ -28,6 +29,7 @@ const Dev1 = (props: Props) => {
                     value={searchText}
                     onChangeText={(text) => setSearchText(text)}
                 />
+                <FeedTabs tabs={["Recommended", "Social/Friends"]} />
                 <View style={styles.cardContainer}>
                     <UserInfoRowBase
                         name={"Beak"}

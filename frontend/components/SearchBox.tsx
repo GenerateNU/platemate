@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
+        fontFamily: "Outfit",
     },
     icon: {
         marginLeft: 8,
