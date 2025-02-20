@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Image, TouchableOpacity, View } from "react-native";
+import { Dimensions, StyleSheet, Image, Text, View } from "react-native";
 import React from "react";
 import UserInfoRowBase from "../UserInfo/UserInfoRowBase";
 import { ThemedText } from "../ThemedText";
@@ -51,17 +51,17 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
                     <View style={{ flexDirection: "row", gap: 12 }}>
                         {tags.map((tag: string, index: number) => {
                             return (
-                                <ThemedText
+                                <Text
                                     key={index}
-                                    type="defaultSemiBold"
                                     style={{
                                         backgroundColor: "#fc0",
+                                        color: "#000",
                                         paddingHorizontal: 8,
                                         paddingVertical: 4,
                                         borderRadius: 20,
                                     }}>
                                     {tag}
-                                </ThemedText>
+                                </Text>
                             );
                         })}
                     </View>

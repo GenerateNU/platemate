@@ -44,17 +44,17 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
                 <View style={{ flexDirection: "row", gap: 12 }}>
                     {tags.map((tag: string, index: number) => {
                         return (
-                            <ThemedText
+                            <Text
                                 key={index}
-                                type="defaultSemiBold"
                                 style={{
                                     backgroundColor: "#fc0",
+                                    color: "#000",
                                     paddingHorizontal: 8,
                                     paddingVertical: 4,
                                     borderRadius: 20,
                                 }}>
                                 {tag}
-                            </ThemedText>
+                            </Text>
                         );
                     })}
                 </View>
