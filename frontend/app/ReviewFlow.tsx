@@ -1,50 +1,41 @@
-import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
 import React, { useState } from "react";
+import { StyleSheet, View, ScrollView, Dimensions } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { SearchBox } from "@/components/SearchBox";
 import SearchIcon from "@/assets/icons/search.svg";
-import UserInfoRowBase from "@/components/UserInfo/UserInfoRowBase";
-import { EmojiTag } from "@/components/EmojiTag";
+import { EmojiTagsGrid } from "@/components/EmojiTagsGrid";
 
-type Props = {};
+const emojiTags = [
+    { id: "avocado", emoji: "🥑", text: "Creamy" },
+    { id: "tomato", emoji: "🍅", text: "Fresh and Crisp" },
+    { id: "cheese", emoji: "🧀", text: "Well-Seasoned and Balanced" },
+    { id: "spicy", emoji: "🌶", text: "Juicy" },
+    { id: "drink", emoji: "🌶", text: "Refreshing" },
+];
 
-const ReviewFlow = (props: Props) => {
-    const [searchText, setSearchText] = React.useState("");
-    const [isAvocadoSelected, setAvocadoSelected] = useState(false);
-    const [isTomatoSelected, setTomatoSelected] = useState(false);
+const ReviewFlow = () => {
+    const [searchText, setSearchText] = useState("");
+    const [selectedTags, setSelectedTags] = useState<{ [key: string]: boolean }>({});
+
+    const toggleTag = (id: string) => {
+        setSelectedTags((prev) => ({ ...prev, [id]: !prev[id] }));
+    };
 
     return (
         <ThemedView style={styles.container}>
-            <ThemedText type="title" style={{ fontWeight: "700" }}>
+            <ThemedText type="title" style={styles.title}>
                 Review Flow
             </ThemedText>
-            <ScrollView contentContainerStyle={{ gap: 16 }}>
-                <SearchBox
-                    icon={<SearchIcon />}
-                    placeholder={"What are you hungry for?"}
-                    recent={true}
-                    name={"general"}
-                    onSubmit={() => console.log("submit")}
-                    value={searchText}
-                    onChangeText={(text) => setSearchText(text)}
-                />
-                <View style={{ flexDirection: "row", gap: 10 }}>
-                    <EmojiTag
-                        emoji="🥑"
-                        text="Creamy"
-                        selected={isAvocadoSelected}
-                        onPress={() => setAvocadoSelected(!isAvocadoSelected)}
-                    />
 
-                    <EmojiTag
-                        emoji="🍅"
-                        text="Juicy"
-                        selected={isTomatoSelected}
-                        onPress={() => setTomatoSelected(!isTomatoSelected)}
-                    />
-                </View>
-                {/* <SearchBox value={""} onChangeText={() => {}} onSubmit={() => {}} icon={<Text>🔍</Text>} /> */}
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <EmojiTagsGrid
+                    tags={emojiTags.map((tag) => ({
+                        ...tag,
+                        selected: !!selectedTags[tag.id],
+                    }))}
+                    onTagPress={toggleTag}
+                />
             </ScrollView>
         </ThemedView>
     );
@@ -59,5 +50,10 @@ const styles = StyleSheet.create({
         paddingTop: Dimensions.get("window").height * 0.12,
         gap: 16,
     },
-    cardContainer: { padding: 24, borderWidth: 1, borderColor: "#DDD", borderRadius: 12 },
+    title: {
+        fontWeight: "700",
+    },
+    scrollContainer: {
+        gap: 16,
+    },
 });
