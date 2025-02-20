@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { SearchBox } from "@/components/SearchBox";
@@ -16,6 +16,8 @@ type Props = {};
 
 const Dev1 = (props: Props) => {
     const [searchText, setSearchText] = React.useState("");
+    const [isAvocadoSelected, setAvocadoSelected] = useState(false);
+    const [isTomatoSelected, setTomatoSelected] = useState(false);
 
     return (
         <ThemedView style={styles.container}>
