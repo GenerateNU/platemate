@@ -17,6 +17,18 @@ import (
 	both an access token and a refresh token.
 */
 
+// Login handles user authentication
+// @Summary      Authenticate user
+// @Description  Logs in a user and returns JWT tokens
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request  body  LoginRequest  true  "User credentials"
+// @Success      200      {object}  map[string]string  "Tokens in response headers"
+// @Failure      400      {object}  map[string]string  "Invalid request"
+// @Failure      401      {object}  map[string]string  "Unauthorized"
+// @Failure      500      {object}  map[string]string  "Internal server error"
+// @Router       /login [post]
 func (h *Handler) Login(c *fiber.Ctx) error {
 	var req LoginRequest
 	err := c.BodyParser(&req)
