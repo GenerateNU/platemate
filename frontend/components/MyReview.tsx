@@ -168,7 +168,12 @@ export function MyReview() {
 
             {/* Dish image centered */}
             <View style={styles.imageContainer}>
-                <Image source={{ uri: "https://via.placeholder.com/200" }} style={styles.dishImage} />
+                <Image
+                    source={{
+                        uri: "https://s3-alpha-sig.figma.com/img/296c/9b5f/e826d9e1747de9010166f3934746adf1?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=tWwsc0gbL-fRy7HRvoDFlUj9SLvS8EN0adQdGd2lZhLNVnyDRH49VezfgfiKO37YJYa80RhBVB14KBqCI4Sz7XaYDoe-6cz3wbzLIoB7Cd-lBaxxGQrA2QZv7zKLGeWU19Pu7qiVamUQWz4odayUWme3~68I3-uD8xFvvrTEZzKwbAnKneaeduoX7tqCalDPs5v9S0or7bYw~85sfTmknQ8vDkkhEVLO0b2cbxDXMbp~9Iek2v72ZIHRLHLNn2qxxnr4VEqrdAAqohd1f0pIZN6Vvz3yUAU8UXzLFcJk2MWJu5897Os7HkjymHNN0Grcrj09rhd~UC0RkLbdAOEXxw__",
+                    }}
+                    style={styles.dishImage}
+                />
             </View>
 
             {/* Step-specific content */}
