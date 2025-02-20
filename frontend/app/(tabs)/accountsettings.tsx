@@ -5,9 +5,9 @@ import AccountSettings, { AccountSettingsProps, UserCredentials } from "../../co
 const AccountSettingsScreen = () => {
     const credentials: UserCredentials = {
         email: "dannyrollo@gmail.com",
-        password: "ilovegenerate",  
-    }
-    
+        password: "ilovegenerate",
+    };
+
     const userSettings: AccountSettingsProps = {
         credentials: credentials,
         vegetarian: true,
@@ -23,30 +23,29 @@ const AccountSettingsScreen = () => {
         diabetic: false,
         soyFree: true,
         cameraAccess: true,
-        contactSync: false
+        contactSync: false,
     };
 
-    
     return (
         <ScrollView contentContainerStyle={{ padding: 1 }}>
             <View style={{ flex: 1, backgroundColor: "#fff" }}>
-             <AccountSettings 
-                credentials={userSettings.credentials}
-                vegetarian={userSettings.vegetarian}
-                vegan={userSettings.vegan}
-                nutFree={userSettings.nutFree}
-                shellfishAllergy={userSettings.shellfishAllergy}
-                glutenFree={userSettings.glutenFree}
-                dairyFree={userSettings.dairyFree}
-                kosher={userSettings.kosher}
-                halal={userSettings.halal}
-                pescatarian={userSettings.pescatarian}
-                keto={userSettings.keto}
-                diabetic={userSettings.diabetic}
-                soyFree={userSettings.soyFree}
-                cameraAccess={userSettings.cameraAccess}
-                contactSync={userSettings.contactSync}
-            />
+                <AccountSettings
+                    credentials={userSettings.credentials}
+                    vegetarian={userSettings.vegetarian}
+                    vegan={userSettings.vegan}
+                    nutFree={userSettings.nutFree}
+                    shellfishAllergy={userSettings.shellfishAllergy}
+                    glutenFree={userSettings.glutenFree}
+                    dairyFree={userSettings.dairyFree}
+                    kosher={userSettings.kosher}
+                    halal={userSettings.halal}
+                    pescatarian={userSettings.pescatarian}
+                    keto={userSettings.keto}
+                    diabetic={userSettings.diabetic}
+                    soyFree={userSettings.soyFree}
+                    cameraAccess={userSettings.cameraAccess}
+                    contactSync={userSettings.contactSync}
+                />
             </View>
         </ScrollView>
     );
