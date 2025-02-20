@@ -5,6 +5,8 @@ import { ThemedView } from "@/components/ThemedView";
 import { SearchBox } from "@/components/SearchBox";
 import SearchIcon from "@/assets/icons/search.svg";
 import UserInfoRowBase from "@/components/UserInfo/UserInfoRowBase";
+import ReviewPreview from "@/components/Cards/ReviewPreview";
+import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 
 type Props = {};
 
@@ -36,7 +38,46 @@ const Dev1 = (props: Props) => {
                         }
                     />
                 </View>
-                {/* <SearchBox value={""} onChangeText={() => {}} onSubmit={() => {}} icon={<Text>🔍</Text>} /> */}
+                <ScrollView horizontal={true} contentContainerStyle={{ gap: 16 }}>
+                    <ReviewPreview
+                        plateName={"Plate 1"}
+                        restaurantName={"Restaurant 1"}
+                        tags={["tag1", "tag2", "tag3", "tag4"]}
+                        rating={4}
+                        content={"This is the content of the review."}
+                    />
+                    <ReviewPreview
+                        plateName={"Plate 1"}
+                        restaurantName={"Restaurant 1"}
+                        tags={["tag1", "tag2", "tag3", "tag4"]}
+                        rating={4}
+                        content={"This is the content of the review."}
+                    />
+                    <ReviewPreview
+                        plateName={"Plate 1"}
+                        restaurantName={"Restaurant 1"}
+                        tags={["tag1", "tag2", "tag3", "tag4"]}
+                        rating={4}
+                        content={"This is the content of the review."}
+                    />
+                </ScrollView>
+                <MenuItemPreview
+                    plateName={"Plate 1"}
+                    content={"This is the description of the menu item. it is really tasty and good!"}
+                    restaurantName={"Restaurant 1"}
+                    tags={["tag1", "tag2", "tag3", "tag4"]}
+                    rating={4.5}
+                    picture="https://static01.nyt.com/images/2024/01/10/multimedia/AS-Burrito-vzhk/AS-Burrito-vzhk-threeByTwoMediumAt2X.jpg"
+                />
+                <MenuItemPreview
+                    plateName={"Plate 1"}
+                    content={"This is the description of the menu item. it is really tasty and good!"}
+                    restaurantName={"Restaurant 1"}
+                    tags={["tag1", "tag2", "tag3", "tag4"]}
+                    rating={4.5}
+                    trending
+                    picture="https://static01.nyt.com/images/2024/01/10/multimedia/AS-Burrito-vzhk/AS-Burrito-vzhk-threeByTwoMediumAt2X.jpg"
+                />
             </ScrollView>
         </ThemedView>
     );
