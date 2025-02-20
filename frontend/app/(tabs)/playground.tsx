@@ -28,24 +28,14 @@ export default function Playground() {
                 <ThemedText type="subtitle">Development Environment 1</ThemedText>
             </Link>
             <Link
-                href={"/Dev2"}
+                href={"/RestaurantView"}
                 style={{
                     color: "#fff",
                     fontSize: 24,
                     fontWeight: "bold",
                     fontFamily: "Outfit",
                 }}>
-                <ThemedText type="subtitle">Development Environment 2</ThemedText>
-            </Link>
-            <Link
-                href={"/Dev3"}
-                style={{
-                    color: "#fff",
-                    fontSize: 24,
-                    fontWeight: "bold",
-                    fontFamily: "Outfit",
-                }}>
-                <ThemedText type="subtitle">Development Environment 3</ThemedText>
+                <ThemedText type="subtitle">Restaurant View</ThemedText>
             </Link>
         </ParallaxScrollView>
     );
