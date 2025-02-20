@@ -36,6 +36,7 @@ export default function RootLayout() {
                     headerTitleStyle: {
                         fontFamily: "Outfit",
                     },
+                    headerShown: false,
                 }}>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
@@ -43,6 +44,15 @@ export default function RootLayout() {
                     name={"feed"}
                     options={{
                         title: "PlateMate",
+                        headerLeft: () => (
+                            <Ionicons name={"chevron-back"} size={24} color={"#20c1e6"} onPress={() => router.back()} />
+                        ),
+                    }}
+                />
+                <Stack.Screen
+                    name={"Dev1"}
+                    options={{
+                        title: "Development Environment 1",
                         headerLeft: () => (
                             <Ionicons name={"chevron-back"} size={24} color={"#20c1e6"} onPress={() => router.back()} />
                         ),
