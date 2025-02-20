@@ -23,3 +23,23 @@ type UserResponse struct {
 	FollowingCount int      `json:"followingCount"`
 	Reviews        []string `json:"reviews,omitempty"`
 }
+
+type FollowRequest struct {
+	FollowerId string `json:"followerId"`
+	FolloweeId string `json:"followeeId"`
+}
+
+type PaginationQuery struct {
+	Page  int `query:"page" validate:"min=1" default:"1"`
+	Limit int `query:"limit" validate:"min=1,max=100" default:"20"`
+}
+
+type GetFollowersQuery struct {
+	PaginationQuery
+	UserId string `query:"userId" validate:"required"`
+}
+
+type ReviewQuery struct {
+	UserId string `query:"userId" validate:"required"`
+	ItemId string `params:"id" validate:"required"`
+}

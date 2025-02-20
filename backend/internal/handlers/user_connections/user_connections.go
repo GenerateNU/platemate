@@ -13,21 +13,6 @@ type Handler struct {
 	service *Service
 }
 
-type FollowRequest struct {
-	FollowerId string `json:"followerId"`
-	FolloweeId string `json:"followeeId"`
-}
-
-type PaginationQuery struct {
-	Page  int `query:"page" validate:"min=1" default:"1"`
-	Limit int `query:"limit" validate:"min=1,max=100" default:"20"`
-}
-
-type GetFollowersQuery struct {
-	PaginationQuery
-	UserId string `query:"userId" validate:"required"`
-}
-
 // GetFollowers returns a paginated list of followers for a user
 func (h *Handler) GetFollowers(c *fiber.Ctx) error {
 	var query GetFollowersQuery
@@ -61,10 +46,6 @@ func (h *Handler) GetFollowers(c *fiber.Ctx) error {
 
 // GetFollowingReviewsForItem gets reviews for a menu item from users that the current user follows
 func (h *Handler) GetFollowingReviewsForItem(c *fiber.Ctx) error {
-	type ReviewQuery struct {
-		UserId string `query:"userId" validate:"required"`
-		ItemId string `params:"id" validate:"required"`
-	}
 
 	var query ReviewQuery
 	if err := c.QueryParser(&query); err != nil {
