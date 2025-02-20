@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, StyleSheet } from "react-native";
+import { Text, StyleSheet, ViewStyle } from "react-native";
 import { ThemedTouchable } from "./ThemedTouchable";
 
 interface EmojiTagProps {
@@ -7,12 +7,15 @@ interface EmojiTagProps {
     text: string;
     selected?: boolean;
     onPress?: () => void;
+    style?: ViewStyle;
 }
 
-// Use ThemedTouchable inside EmojiTag
-export function EmojiTag({ emoji, text, selected = false, onPress }: EmojiTagProps) {
+export function EmojiTag({ emoji, text, selected = false, onPress, style }: EmojiTagProps) {
     return (
-        <ThemedTouchable onPress={onPress} style={selected ? styles.selected : styles.unselected} activeOpacity={0.7}>
+        <ThemedTouchable
+            onPress={onPress}
+            style={[selected ? styles.selected : styles.unselected, style]}
+            activeOpacity={0.7}>
             <Text style={styles.tagText}>
                 {emoji} {text}
             </Text>

@@ -1,17 +1,22 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import { ThemedView } from "./ThemedView";
+import React, { useState } from "react";
+import { View, StyleSheet, LayoutChangeEvent } from "react-native";
+import { ThemedView } from "@/components/ThemedView";
 
 interface ProgressBarProps {
     progress: 25 | 50 | 75 | 100;
 }
 
 export function ProgressBar({ progress }: ProgressBarProps) {
-    const barWidth = 317;
-    const progressWidth = (progress / 100) * barWidth;
+    const [containerWidth, setContainerWidth] = useState(0);
+
+    const onLayout = (event: LayoutChangeEvent) => {
+        setContainerWidth(event.nativeEvent.layout.width);
+    };
+
+    const progressWidth = containerWidth * (progress / 100);
 
     return (
-        <ThemedView style={styles.bar}>
+        <ThemedView style={styles.bar} onLayout={onLayout}>
             <View style={[styles.progress, { width: progressWidth }]} />
         </ThemedView>
     );
@@ -20,11 +25,10 @@ export function ProgressBar({ progress }: ProgressBarProps) {
 const styles = StyleSheet.create({
     bar: {
         backgroundColor: "#D9D9D9",
-        width: 317,
+        width: "100%",
         height: 10,
         borderRadius: 20,
         overflow: "hidden",
-        gap: "10px",
     },
     progress: {
         backgroundColor: "#FFCF0F",
