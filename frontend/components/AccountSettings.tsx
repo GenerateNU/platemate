@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions } from "react-native";
 import ToggleOff from "@/assets/icons/toggle_off.svg";
-import ToggleOn from "@/assets/icons/toggle_on.svg"
+import ToggleOn from "@/assets/icons/toggle_on.svg";
 
 export interface UserCredentials {
     email?: string;
@@ -25,7 +25,23 @@ export interface AccountSettingsProps {
     contactSync?: boolean;
 }
 
-const AccountSettings = ({ credentials, vegetarian, vegan, nutFree, shellfishAllergy, glutenFree, dairyFree, kosher, halal, pescatarian, keto, diabetic, soyFree, cameraAccess, contactSync }: AccountSettingsProps) => {
+const AccountSettings = ({
+    credentials,
+    vegetarian,
+    vegan,
+    nutFree,
+    shellfishAllergy,
+    glutenFree,
+    dairyFree,
+    kosher,
+    halal,
+    pescatarian,
+    keto,
+    diabetic,
+    soyFree,
+    cameraAccess,
+    contactSync,
+}: AccountSettingsProps) => {
     const [vegetarianValue, setVegetarianValue] = useState(vegetarian || false);
     const [veganValue, setVeganValue] = useState(vegan || false);
     const [nutFreeValue, setNutFreeValue] = useState(nutFree || false);
@@ -53,7 +69,7 @@ const AccountSettings = ({ credentials, vegetarian, vegan, nutFree, shellfishAll
     return (
         <View style={styles.container}>
             <View style={styles.settingsHeader}>
-                <Text style={styles.settingsHeaderText}>{"< Settings"}</Text>
+                <Text style={styles.settingsHeaderText}>{"Settings"}</Text>
             </View>
             <View style={styles.sectionContainer}>
                 <View style={styles.accountContainer}>
@@ -61,18 +77,11 @@ const AccountSettings = ({ credentials, vegetarian, vegan, nutFree, shellfishAll
                     <View style={styles.emailPasswordContainer}>
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputLabel}>Email</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={credentials?.email}
-                            />
+                            <TextInput style={styles.input} value={credentials?.email} />
                         </View>
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputLabel}>Password</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={credentials?.password}
-                                secureTextEntry
-                            />
+                            <TextInput style={styles.input} value={credentials?.password} secureTextEntry />
                         </View>
                     </View>
                 </View>
@@ -81,74 +90,128 @@ const AccountSettings = ({ credentials, vegetarian, vegan, nutFree, shellfishAll
                     <View style={styles.togglesContainer}>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Vegetarian{"\n"}<Text style={styles.toggleDescription}>{vegetarianValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={vegetarianValue} onValueChange={newValue => setVegetarianValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Vegetarian{"\n"}
+                                    <Text style={styles.toggleDescription}>{vegetarianValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle
+                                    value={vegetarianValue}
+                                    onValueChange={(newValue) => setVegetarianValue(newValue)}
+                                />
                             </View>
                         </View>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Vegan{"\n"}<Text style={styles.toggleDescription}>{veganValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={veganValue} onValueChange={newValue => setVeganValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Vegan{"\n"}
+                                    <Text style={styles.toggleDescription}>{veganValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle value={veganValue} onValueChange={(newValue) => setVeganValue(newValue)} />
                             </View>
                         </View>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Nut-free{"\n"}<Text style={styles.toggleDescription}>{nutFreeValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={nutFreeValue} onValueChange={newValue => setNutFreeValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Nut-free{"\n"}
+                                    <Text style={styles.toggleDescription}>{nutFreeValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle value={nutFreeValue} onValueChange={(newValue) => setNutFreeValue(newValue)} />
                             </View>
                         </View>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Shellfish allergy{"\n"}<Text style={styles.toggleDescription}>{shellfishAllergyValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={shellfishAllergyValue} onValueChange={newValue => setShellfishAllergyValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Shellfish allergy{"\n"}
+                                    <Text style={styles.toggleDescription}>{shellfishAllergyValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle
+                                    value={shellfishAllergyValue}
+                                    onValueChange={(newValue) => setShellfishAllergyValue(newValue)}
+                                />
                             </View>
                         </View>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Gluten-free{"\n"}<Text style={styles.toggleDescription}>{glutenFreeValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={glutenFreeValue} onValueChange={newValue => setGlutenFreeValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Gluten-free{"\n"}
+                                    <Text style={styles.toggleDescription}>{glutenFreeValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle
+                                    value={glutenFreeValue}
+                                    onValueChange={(newValue) => setGlutenFreeValue(newValue)}
+                                />
                             </View>
                         </View>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Dairy-free{"\n"}<Text style={styles.toggleDescription}>{dairyFreeValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={dairyFreeValue} onValueChange={newValue => setDairyFreeValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Dairy-free{"\n"}
+                                    <Text style={styles.toggleDescription}>{dairyFreeValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle
+                                    value={dairyFreeValue}
+                                    onValueChange={(newValue) => setDairyFreeValue(newValue)}
+                                />
                             </View>
                         </View>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Kosher{"\n"}<Text style={styles.toggleDescription}>{kosherValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={kosherValue} onValueChange={newValue => setKosherValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Kosher{"\n"}
+                                    <Text style={styles.toggleDescription}>{kosherValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle value={kosherValue} onValueChange={(newValue) => setKosherValue(newValue)} />
                             </View>
                         </View>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Halal{"\n"}<Text style={styles.toggleDescription}>{halalValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={halalValue} onValueChange={newValue => setHalalValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Halal{"\n"}
+                                    <Text style={styles.toggleDescription}>{halalValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle value={halalValue} onValueChange={(newValue) => setHalalValue(newValue)} />
                             </View>
                         </View>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Pescatarian{"\n"}<Text style={styles.toggleDescription}>{pescatarianValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={pescatarianValue} onValueChange={newValue => setPescatarianValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Pescatarian{"\n"}
+                                    <Text style={styles.toggleDescription}>{pescatarianValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle
+                                    value={pescatarianValue}
+                                    onValueChange={(newValue) => setPescatarianValue(newValue)}
+                                />
                             </View>
                         </View>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Keto{"\n"}<Text style={styles.toggleDescription}>{ketoValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={ketoValue} onValueChange={newValue => setKetoValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Keto{"\n"}
+                                    <Text style={styles.toggleDescription}>{ketoValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle value={ketoValue} onValueChange={(newValue) => setKetoValue(newValue)} />
                             </View>
                         </View>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Diabetic{"\n"}<Text style={styles.toggleDescription}>{diabeticValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={diabeticValue} onValueChange={newValue => setDiabeticValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Diabetic{"\n"}
+                                    <Text style={styles.toggleDescription}>{diabeticValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle
+                                    value={diabeticValue}
+                                    onValueChange={(newValue) => setDiabeticValue(newValue)}
+                                />
                             </View>
                         </View>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Soy Free{"\n"}<Text style={styles.toggleDescription}>{soyFreeValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={soyFreeValue} onValueChange={newValue => setSoyFreeValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Soy Free{"\n"}
+                                    <Text style={styles.toggleDescription}>{soyFreeValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle value={soyFreeValue} onValueChange={(newValue) => setSoyFreeValue(newValue)} />
                             </View>
                         </View>
                     </View>
@@ -156,14 +219,26 @@ const AccountSettings = ({ credentials, vegetarian, vegan, nutFree, shellfishAll
                         <Text style={styles.sectionTitle}>Data Privacy</Text>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Camera Access{"\n"}<Text style={styles.toggleDescription}>{cameraAccessValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={cameraAccessValue} onValueChange={newValue => setCameraAccessValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Camera Access{"\n"}
+                                    <Text style={styles.toggleDescription}>{cameraAccessValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle
+                                    value={cameraAccessValue}
+                                    onValueChange={(newValue) => setCameraAccessValue(newValue)}
+                                />
                             </View>
                         </View>
                         <View style={styles.toggleContainer}>
                             <View style={styles.toggleContentContainer}>
-                                <Text style={styles.toggleLabel}>Contact Sync{"\n"}<Text style={styles.toggleDescription}>{contactSyncValue ? "on" : "off"}</Text></Text>
-                                <Toggle value={contactSyncValue} onValueChange={newValue => setContactSyncValue(newValue)} />
+                                <Text style={styles.toggleLabel}>
+                                    Contact Sync{"\n"}
+                                    <Text style={styles.toggleDescription}>{contactSyncValue ? "on" : "off"}</Text>
+                                </Text>
+                                <Toggle
+                                    value={contactSyncValue}
+                                    onValueChange={(newValue) => setContactSyncValue(newValue)}
+                                />
                             </View>
                         </View>
                         <View style={styles.extraSettingsContainer}>
@@ -182,7 +257,6 @@ const AccountSettings = ({ credentials, vegetarian, vegan, nutFree, shellfishAll
                         </View>
                     </View>
                 </View>
-
             </View>
         </View>
     );
@@ -191,13 +265,14 @@ const AccountSettings = ({ credentials, vegetarian, vegan, nutFree, shellfishAll
 const styles = StyleSheet.create({
     container: {
         flex: 10,
-        backgroundColor: "#FFFFFF", 
-        padding: 20, 
+        backgroundColor: "#FFFFFF",
+        padding: 20,
+        paddingTop: Dimensions.get("screen").height * 0.08,
     },
     settingsHeader: {
         paddingVertical: 10,
-        width: '100%',
-        backgroundColor: '#FFFFFF', 
+        width: "100%",
+        backgroundColor: "#FFFFFF",
     },
     settingsHeaderText: {
         fontSize: 28,
@@ -205,7 +280,7 @@ const styles = StyleSheet.create({
         fontStyle: "normal",
         fontWeight: 700,
         lineHeight: 28,
-        fontFamily: "Inter"
+        fontFamily: "Inter",
     },
     sectionContainer: {
         gap: 28,
@@ -245,39 +320,39 @@ const styles = StyleSheet.create({
     input: {
         fontSize: 12,
         height: 35,
-        borderColor: '#D9D9D9',
+        borderColor: "#D9D9D9",
         borderWidth: 1,
         borderRadius: 11,
         paddingHorizontal: 10,
         backgroundColor: "white",
-        color: '#000000',
+        color: "#000000",
         width: 328,
         flexShrink: 0,
     },
     toggleSectionContainer: {
         display: "flex",
-        flexDirection: 'column',
+        flexDirection: "column",
         gap: 14,
         alignSelf: "stretch",
     },
     togglesContainer: {
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
         gap: 4,
-        alignSelf: 'stretch',
+        alignSelf: "stretch",
     },
     toggleContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        alignSelf: 'stretch',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        alignSelf: "stretch",
     },
     toggleContentContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        alignSelf: 'stretch',
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        alignSelf: "stretch",
     },
     toggleLabel: {
         fontSize: 16,
@@ -285,7 +360,7 @@ const styles = StyleSheet.create({
         fontStyle: "normal",
         fontWeight: 400,
         lineHeight: 28,
-        fontFamily: "Inter"
+        fontFamily: "Inter",
     },
     toggleDescription: {
         fontSize: 12,
@@ -304,12 +379,12 @@ const styles = StyleSheet.create({
     },
     extraSettingsText: {
         fontSize: 12,
-        fontFamily: 'Inter',
-        color: '#151619',
-        textAlign: 'center',
+        fontFamily: "Inter",
+        color: "#151619",
+        textAlign: "center",
         width: 328,
         lineHeight: 28,
-        fontStyle: 'normal',
+        fontStyle: "normal",
         fontWeight: 400,
     },
     extraSettingsContainer: {
@@ -319,8 +394,7 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         gap: 4,
         alignSelf: "stretch",
-    }
+    },
 });
-
 
 export default AccountSettings;
