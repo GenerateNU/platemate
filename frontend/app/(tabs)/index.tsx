@@ -28,6 +28,11 @@ export default function HomeScreen() {
                         Click here to view an example stack.
                     </ThemedText>
                 </Link>
+                {/* <Link href={"/accountsettings"}>
+                    <ThemedText type={"default"} lightColor={"#20c1e6"} style={{ fontFamily: "Outfit" }}>
+                        Click here to view the settings.
+                    </ThemedText>
+                </Link> */}
             </ThemedView>
         </ParallaxScrollView>
     );
