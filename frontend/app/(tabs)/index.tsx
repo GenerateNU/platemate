@@ -3,7 +3,10 @@ import { Button, Image, StyleSheet, TouchableOpacity } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { RestaurantTags } from "@/components/RestaurantTags";
+import { StarReview } from "@/components/StarReview";
 import { Link } from "expo-router";
+import { MenuItemCard } from "@/components/MenuItemCard";
 import React from "react";
 
 export default function HomeScreen() {

@@ -8,6 +8,9 @@ import UserInfoRowBase from "@/components/UserInfo/UserInfoRowBase";
 import FeedTabs from "@/components/FeedTabs";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
+import { RestaurantTags } from "@/components/RestaurantTags";
+import { StarReview } from "@/components/StarReview";
+import { MenuItemCard } from "@/components/MenuItemCard";
 
 type Props = {};
 
