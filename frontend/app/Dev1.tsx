@@ -1,15 +1,18 @@
 import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { SearchBox } from "@/components/SearchBox";
 import SearchIcon from "@/assets/icons/search.svg";
 import UserInfoRowBase from "@/components/UserInfo/UserInfoRowBase";
+import { EmojiTag } from "@/components/EmojiTag";
 
 type Props = {};
 
 const Dev1 = (props: Props) => {
     const [searchText, setSearchText] = React.useState("");
+    const [isAvocadoSelected, setAvocadoSelected] = useState(false);
+    const [isTomatoSelected, setTomatoSelected] = useState(false);
 
     return (
         <ThemedView style={styles.container}>
@@ -26,14 +29,19 @@ const Dev1 = (props: Props) => {
                     value={searchText}
                     onChangeText={(text) => setSearchText(text)}
                 />
-                <View style={styles.cardContainer}>
-                    <UserInfoRowBase
-                        name={"Beak"}
-                        username={"beakerboy"}
-                        right={<View />}
-                        icon={
-                            "https://bookstore.gpo.gov/sites/default/files/styles/product_page_image/public/covers/600x96-official_presidential_portrait_of_barack_obama_20x24.jpg?itok=IompvPfM"
-                        }
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                    <EmojiTag
+                        emoji="🥑"
+                        text="Creamy"
+                        selected={isAvocadoSelected}
+                        onPress={() => setAvocadoSelected(!isAvocadoSelected)}
+                    />
+
+                    <EmojiTag
+                        emoji="🍅"
+                        text="Juicy"
+                        selected={isTomatoSelected}
+                        onPress={() => setTomatoSelected(!isTomatoSelected)}
                     />
                 </View>
                 {/* <SearchBox value={""} onChangeText={() => {}} onSubmit={() => {}} icon={<Text>🔍</Text>} /> */}
