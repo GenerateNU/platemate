@@ -28,7 +28,7 @@ const AccountSettingsScreen = () => {
 
     
     return (
-        <ScrollView contentContainerStyle={{ padding: 0 }}>
+        <ScrollView contentContainerStyle={{ padding: 1 }}>
             <View style={{ flex: 1, backgroundColor: "#fff" }}>
              <AccountSettings 
                 credentials={userSettings.credentials}

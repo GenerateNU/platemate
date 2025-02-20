@@ -15,7 +15,7 @@ export default function TabLayout() {
         <Tabs
             screenOptions={{
                 tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-                headerShown: true,
+                headerShown: false,
                 headerTitleStyle: {
                     fontFamily: "Outfit",
                 },
@@ -40,6 +40,13 @@ export default function TabLayout() {
                 options={{
                     title: "Explore",
                     tabBarIcon: ({ color }) => <IconSymbol size={28} name="chevron.compact.down" color={color} />,
+                }}
+            />
+            <Tabs.Screen
+                name="accountsettings"
+                options={{
+                    title: "Account Settings",
+                    tabBarIcon: ({ color }) => <IconSymbol size={28} name="gear" color={color} />,
                 }}
             />
         </Tabs>

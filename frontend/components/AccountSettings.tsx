@@ -191,13 +191,13 @@ const AccountSettings = ({ credentials, vegetarian, vegan, nutFree, shellfishAll
 const styles = StyleSheet.create({
     container: {
         flex: 10,
-        backgroundColor: "#FFFFFF", // Ensures the background is white
-        padding: 20, // Adds padding around the content
+        backgroundColor: "#FFFFFF", 
+        padding: 20, 
     },
     settingsHeader: {
         paddingVertical: 10,
         width: '100%',
-        backgroundColor: '#FFFFFF', // ensures color is set as white
+        backgroundColor: '#FFFFFF', 
     },
     settingsHeaderText: {
         fontSize: 28,

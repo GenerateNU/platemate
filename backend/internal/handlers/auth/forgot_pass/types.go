@@ -16,8 +16,6 @@ type VerifyOTPRequestParams struct {
 	Email string `validate:"required" json:"email"`
 }
 
-// *** MONGO DOCUMENTS BELOW *** //
-
 type PasswordResetDocument struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
 	Email     string             `bson:"email"         json:"email"`
