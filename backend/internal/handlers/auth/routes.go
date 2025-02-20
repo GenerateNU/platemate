@@ -20,6 +20,15 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 
 	route := app.Group("/api/v1/auth")
 
+	// User godoc
+	// @Summary      Get users
+	// @Tags         user
+	// @Accept       json
+	// @Produce      json
+	// @Success      200  {object}  answers.UsersAnswer
+	// @Failure      400  {object}  errors.ApiError
+	// @Failure      500  {object}  errors.ApiError
+	// @Router /v1/users [GET]
 	route.Post("/login", handler.Login)
 	route.Post("/register", handler.Register)
 	route.Post("/logout", handler.Logout)

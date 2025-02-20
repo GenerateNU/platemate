@@ -6,7 +6,7 @@ import (
 
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
-	go_json "github.com/goccy/go-json"
+	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,7 +24,7 @@ func (h *Handler) CreateReview(c *fiber.Ctx) error {
 	var review ReviewDocument
 	var params CreateReviewParams
 
-	if err := go_json.Unmarshal(c.Body(), &params); err != nil {
+	if err := gojson.Unmarshal(c.Body(), &params); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.ErrorHandler(c, err))
 	}
 
@@ -91,7 +91,7 @@ func (h *Handler) UpdateReview(c *fiber.Ctx) error {
 	}
 
 	var review ReviewDocument
-	if err := go_json.Unmarshal(c.Body(), &review); err != nil {
+	if err := gojson.Unmarshal(c.Body(), &review); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
 
@@ -110,7 +110,7 @@ func (h *Handler) UpdatePartialReview(c *fiber.Ctx) error {
 	}
 
 	var partialUpdate ReviewDocument
-	if err := go_json.Unmarshal(c.Body(), &partialUpdate); err != nil {
+	if err := gojson.Unmarshal(c.Body(), &partialUpdate); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
 
