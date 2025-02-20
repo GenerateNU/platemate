@@ -1,6 +1,14 @@
 import requests
 #from googlemaps import GooglePlaces, types, lang
 import json
+import pandas as pd
+import random
+
+min_num = 0 # Minimum value of review id
+max_num = 50  # Maximum value of review id
+min_size = 0  # Minimum size of the amount of reviews 
+max_size = 50  # Maximum size of the amount of reviews
+style_list = ['Pub', 'Restaurant', 'Bar', 'Cafe']
 
 def load_env_variable(file_path, key):
     with open(file_path, "r") as f:
@@ -118,7 +126,52 @@ def convert_to_mongo_db_format():
         restaurants_for_mongo.append(restaurant_for_mongo)
     return restaurants_for_mongo
         
+def generate_mock_restaurant_data():
+    mock_restaurants = []
+    df = pd.read_csv("backend/cmd/db/script/mock_restaurant_data.csv")
+    tags = {}
+    tags['servesBreakfast'] = 'Serves Breakfast'
+    tags['servesLunch'] = 'Serves Lunch'
+    tags['servesDinner'] = 'Serves Dinner'
+    tags['servesBeer'] = 'Serves Beer'
+    tags['servesWine'] = 'Serves Wine'
+    tags['servesBrunch'] = 'Serves Brunch'
+    tags['servesVegetarianFood'] = 'Serves Vegetarian Food'
+    tags['servesCocktails'] = 'Serves Cocktails'
+    tags['servesDessert'] = 'Serves Dessert'
+    tags['servesCoffee'] = 'Serves Coffee'
+    available_tags = ['servesBreakfast', 'servesLunch', 'servesDinner', 'servesBeer', 'servesWine', 'servesBrunch', 'servesVegetarianFood', 'servesCocktails', 'servesDessert', 'servesCoffee']
+    
+    for index, row in df.iterrows():
+        mock_restaurants_for_mongo = {}
+        mock_restaurants_for_mongo['name'] = row['name']
+        mock_restaurants_for_mongo['address'] = {}
+        mock_restaurants_for_mongo['address']['street'] = row['address.street']
+        mock_restaurants_for_mongo['address']['zipcode'] = row['address.zipcode']
+        mock_restaurants_for_mongo['address']['state'] = row['address.state'] 
+        mock_restaurants_for_mongo['address']['location'] = {}
+        mock_restaurants_for_mongo['address']['location']['latitude'] = row['address.location.latitude']
+        mock_restaurants_for_mongo['address']['location']['longitude'] = row['address.location.longitude']
+        list_size = random.randint(min_size, max_size)
+        menu_list = list(set([random.randint(min_num, max_num) for _ in range(list_size)]))
+        mock_restaurants_for_mongo['menuItems'] = menu_list
+        mock_restaurants_for_mongo['ratingAvg'] = {}
+        mock_restaurants_for_mongo['ratingAvg']['overall'] = row['ratingAvg.overall']
+        mock_restaurants_for_mongo['ratingAvg']['return'] = row['ratingAvg.return']
+        mock_restaurants_for_mongo['style'] = style_list[random.randint(0, 3)]
+        mock_restaurants_for_mongo['picture'] = row['picture']
+        mock_restaurants_for_mongo['restaurant'] = row['description']
+        list_size = random.randint(0, 9)
+        tags_idx_list = list(set([random.randint(0, 9) for _ in range(list_size)]))
+        tag_list = []
+        for idx in tags_idx_list:
+            tag_list.append(available_tags[idx])
+        mock_restaurants_for_mongo['tags'] = []
+        for tag in tag_list:
+            mock_restaurants_for_mongo['tags'].append(tag)
+        mock_restaurants.append(mock_restaurants_for_mongo)
+    return mock_restaurants
+    
     
 #google_places_search()
 #convert_to_mongo_db_format()
-

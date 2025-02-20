@@ -59,6 +59,10 @@ func run(stderr io.Writer, args []string) {
 		slog.LogAttrs(ctx, slog.LevelInfo, "Process on port killed successfully", slog.Int("port", port))
 	}
 
+	if config.AWS.BucketName == "" {
+		fatal(ctx, "AWS bucket name not set", nil)
+	}
+
 	db, err := mongo.New(ctx, config.Atlas)
 	if err != nil {
 		fatal(ctx, "Failed to connect to MongoDB", err)

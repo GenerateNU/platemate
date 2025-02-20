@@ -12,12 +12,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-/*
-Adds two example fields to the collection passed via
-the collection flag.
-Example usage: go run cmd/db/example/main.go -collection=collectionName
-Applies empty strings as default values
-*/
 func main() {
 	ctx := context.Background()
 	name := flag.String("name", "users", "name of the new copy of production")

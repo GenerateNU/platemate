@@ -7,3 +7,6 @@
 # macos files
 .DS_Store
 .devenv
+node_modules
+
+package-lock.json

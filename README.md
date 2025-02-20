@@ -59,3 +59,19 @@ nix develop --impure
 ### If NIX does not work:
 
 - Ask a Tech Lead for help!
+
+### Backend .env Configuration
+
+```env
+ATLAS_USER=
+ATLAS_PASS=
+ATLAS_CLUSTER=
+ATLAS_ENVIRONMENT=
+
+AWS_REGION=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_BUCKET_NAME=
+
+SENDGRID_API_KEY=
+```
