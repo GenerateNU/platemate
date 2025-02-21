@@ -12,10 +12,7 @@ type RestaurantDocument struct {
 		Street   string `bson:"street"   json:"street"`
 		Zipcode  string `bson:"zipcode"  json:"zipcode"`
 		State    string `bson:"state"     json:"state"`
-		Location struct {
-			Latitude  float64 `bson:"latitude" json:"latitude"`
-			Longitude float64 `bson:"longitude" json:"longitude"`
-		} `bson:"location" json:"location"`
+		Location []int  `bson:"location" json:"location"`
 	} `bson:"address" json:"address"`
 
 	MenuItems []primitive.ObjectID `bson:"menuItems" json:"menuItems"`

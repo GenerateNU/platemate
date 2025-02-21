@@ -64,19 +64,18 @@ func (s *Service) UpdateRestaurant(id primitive.ObjectID, updateDoc RestaurantDo
 
 	updateFields := bson.M{
 
-		"name":                       updateDoc.Name,
-		"description":                updateDoc.Description,
-		"address.street":             updateDoc.Address.Street,
-		"address.zipcode":            updateDoc.Address.Zipcode,
-		"address.state":              updateDoc.Address.State,
-		"address.location.latitude":  updateDoc.Address.Location.Latitude,
-		"address.location.longitude": updateDoc.Address.Location.Longitude,
-		"menuItems":                  updateDoc.MenuItems,
-		"style":                      updateDoc.Style,
-		"picture":                    updateDoc.Picture,
-		"tags":                       updateDoc.Tags,
-		"ratingAvg.overall":          updateDoc.RatingAvg.Overall,
-		"ratingAvg.return":           updateDoc.RatingAvg.Return,
+		"name":              updateDoc.Name,
+		"description":       updateDoc.Description,
+		"address.street":    updateDoc.Address.Street,
+		"address.zipcode":   updateDoc.Address.Zipcode,
+		"address.state":     updateDoc.Address.State,
+		"address.location":  updateDoc.Address.Location,
+		"menuItems":         updateDoc.MenuItems,
+		"style":             updateDoc.Style,
+		"picture":           updateDoc.Picture,
+		"tags":              updateDoc.Tags,
+		"ratingAvg.overall": updateDoc.RatingAvg.Overall,
+		"ratingAvg.return":  updateDoc.RatingAvg.Return,
 	}
 
 	update := bson.M{"$set": updateFields}
@@ -107,16 +106,14 @@ func (s *Service) UpdatePartialRestaurant(id primitive.ObjectID, updated Restaur
 	if updated.Address.State != "" {
 		updateFields["address.state"] = updated.Address.State
 	}
-	// Check non-zero for floats
-	if updated.Address.Location.Latitude != 0 {
-		updateFields["address.location.latitude"] = updated.Address.Location.Latitude
-	}
-	if updated.Address.Location.Longitude != 0 {
-		updateFields["address.location.longitude"] = updated.Address.Location.Longitude
+	if len(updated.Address.Location) > 0 {
+		updateFields["address.location"] = updated.Address.Location
 	}
 	if len(updated.MenuItems) > 0 {
 		updateFields["menuItems"] = updated.MenuItems
 	}
+
+	// Check non-zero for floats
 	if updated.Style != "" {
 		updateFields["style"] = updated.Style
 	}
