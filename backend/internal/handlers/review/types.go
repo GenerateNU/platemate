@@ -8,22 +8,24 @@ import (
 )
 
 type CreateReviewParams struct {
-	Rating   Rating   `json:"rating"`
-	Picture  string   `json:"picture,omitempty"`
-	Content  string   `json:"content"`
-	Reviewer Reviewer `json:"reviewer"`
-	MenuItem string   `json:"menuItem"`
+	Rating       Rating   `json:"rating"`
+	Picture      string   `json:"picture,omitempty"`
+	Content      string   `json:"content"`
+	Reviewer     Reviewer `json:"reviewer"`
+	MenuItem     string   `json:"menuItem"`
+	RestaurantID string   `json:"restaurantId"`
 }
 
 type ReviewDocument struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	Rating    Rating             `bson:"rating" json:"rating"`
-	Picture   string             `bson:"picture" json:"picture"`
-	Content   string             `bson:"content" json:"content"`
-	Reviewer  Reviewer           `bson:"reviewer" json:"reviewer"`
-	Timestamp time.Time          `bson:"timestamp" json:"timestamp"`
-	Comments  []CommentDocument  `bson:"comments" json:"comments"`
-	MenuItem  string             `bson:"menuItem" json:"menuItem"`
+	ID           primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	Rating       Rating             `bson:"rating" json:"rating"`
+	Picture      string             `bson:"picture" json:"picture"`
+	Content      string             `bson:"content" json:"content"`
+	Reviewer     Reviewer           `bson:"reviewer" json:"reviewer"`
+	Timestamp    time.Time          `bson:"timestamp" json:"timestamp"`
+	Comments     []CommentDocument  `bson:"comments" json:"comments"`
+	MenuItem     string             `bson:"menuItem" json:"menuItem"`
+	RestaurantID primitive.ObjectID `bson:"restaurantId" json:"restaurantId"`
 }
 
 // Rating is a nested struct in ReviewDocument.
@@ -80,5 +82,6 @@ Review Service to be used by Review Handler to interact with the
 Database layer of the application
 */
 type Service struct {
-	reviews *mongo.Collection
+	reviews     *mongo.Collection
+	restaurants *mongo.Collection
 }
