@@ -7,17 +7,8 @@ import (
 	"github.com/google/uuid"
 )
 
-type DownloadUrl struct {
-	URL string `json:"download_url"`
-}
-
-type UploadUrl struct {
-	URL string `json:"upload_url"`
-	Key string `json:"key"`
-}
-
 func (s *Service) GetPresignedUrl(inputs *GetParams) (*DownloadUrl, error) {
-	// generate a presigned URL
+
 	req, err := s.Presigner.PresignGetObject(context.Background(), &s3.GetObjectInput{
 		Bucket: aws.String(inputs.Bucket),
 		Key:    aws.String(inputs.Key),
@@ -32,7 +23,7 @@ func (s *Service) GetPresignedUrl(inputs *GetParams) (*DownloadUrl, error) {
 }
 
 func (s *Service) CreateUrlAndKey(inputs *PostParams) (*UploadUrl, error) {
-	// generate uuid
+
 	fileUUID := uuid.New().String()
 	fileKey := fileUUID + "." + inputs.Filetype
 
