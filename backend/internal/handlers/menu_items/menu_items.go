@@ -340,3 +340,19 @@ func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(menuItemDeleted)
 }
+
+func (h *Handler) GetMenuItemReviews(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	objID, errID := primitive.ObjectIDFromHex(id)
+	if errID != nil {
+		// Invalid ID format
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(errID))
+	}
+
+	reviews, err := h.service.GetMenuItemReviews(objID)
+	if err != nil {
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(reviews)
+}

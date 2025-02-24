@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,13 +19,14 @@ Database layer of the application
 */
 type Service struct {
 	menuItems *mongo.Collection
+	reviews   *mongo.Collection
 }
 
 func newService(collections map[string]*mongo.Collection) *Service {
 	if collections["menuItems"] == nil {
 		slog.Info("menuItems collection is nil!")
 	}
-	return &Service{collections["menuItems"]}
+	return &Service{collections["menuItems"], collections["reviews"]}
 }
 
 type MenuItemDocument struct {
@@ -235,4 +237,42 @@ func (s *Service) DeleteMenuItem(idObj primitive.ObjectID) (MenuItemResponse, er
 	}
 	menuItemResponse := ToMenuItemResponse(menuItemDoc)
 	return menuItemResponse, nil
+}
+
+func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID) ([]review.ReviewDocument, error) {
+	var menuItemDoc MenuItemDocument
+	ctx := context.Background()
+	err := s.menuItems.FindOne(ctx, bson.M{"_id": idObj}).Decode(&menuItemDoc)
+	if err != nil {
+		slog.Error("Error finding document", "error", err)
+		if err == mongo.ErrNoDocuments {
+			return []review.ReviewDocument{}, nil
+		}
+		return nil, err
+	}
+
+	if len(menuItemDoc.Reviews) == 0 {
+		return []review.ReviewDocument{}, nil
+	}
+
+	// Query reviews that match menu item
+	reviewsCursor, err := s.reviews.Find(ctx,
+		bson.M{
+			"_id": bson.M{"$in": menuItemDoc.Reviews},
+		},
+		options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}),
+	)
+	if err != nil {
+		slog.Error("Error finding reviews", "error", err)
+		return nil, err
+	}
+	defer reviewsCursor.Close(ctx)
+
+	var reviews []review.ReviewDocument
+	if err = reviewsCursor.All(context.Background(), &reviews); err != nil {
+		slog.Error("Error finding reviews", "error", err)
+		return nil, err
+	}
+
+	return reviews, nil
 }
