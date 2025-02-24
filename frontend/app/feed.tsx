@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, View, ScrollView } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 
 import { ThemedView } from "@/components/ThemedView";
 import React, { useState } from "react";
@@ -6,7 +6,6 @@ import { SearchBox } from "@/components/SearchBox";
 import SearchIcon from "@/assets/icons/search.svg";
 import FeedTabs from "@/components/Feed/FeedTabs";
 import FeedContent from "@/components/Feed/FeedContent";
-import { ThemedText } from "@/components/ThemedText";
 
 export default function FeedScreen() {
     const [searchText, setSearchText] = React.useState("");

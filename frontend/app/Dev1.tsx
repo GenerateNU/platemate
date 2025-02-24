@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
+import { StyleSheet, View, ScrollView, Dimensions } from "react-native";
 import React from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -8,14 +8,11 @@ import UserInfoRowBase from "@/components/UserInfo/UserInfoRowBase";
 import FeedTabs from "@/components/Feed/FeedTabs";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
-import { RestaurantTags } from "@/components/RestaurantTags";
-import { StarReview } from "@/components/StarReview";
-import { MenuItemCard } from "@/components/MenuItemCard";
 
-type Props = {};
-
-const Dev1 = (props: Props) => {
+const Dev1 = () => {
     const [searchText, setSearchText] = React.useState("");
+
+    const [activeTab, setActiveTab] = React.useState(0);
 
     return (
         <ThemedView style={styles.container}>
@@ -32,7 +29,7 @@ const Dev1 = (props: Props) => {
                     value={searchText}
                     onChangeText={(text) => setSearchText(text)}
                 />
-                <FeedTabs tabs={["Recommended", "Social/Friends"]} />
+                <FeedTabs tabs={["Recommended", "Social/Friends"]} activeTab={activeTab} setActiveTab={setActiveTab} />
                 <View style={styles.cardContainer}>
                     <UserInfoRowBase
                         name={"Beak"}

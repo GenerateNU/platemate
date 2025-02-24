@@ -15,8 +15,9 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
     const colorScheme = useColorScheme();
     const [loaded] = useFonts({
-        Outfit: require("../assets/fonts/Outfit-Variable.ttf"),
-        SofiaSans: require("../assets/fonts/SofiaSans-Variable.ttf"),
+        // Outfit: require("../assets/fonts/Outfit-Variable.ttf"),
+        // SofiaSans: require("../assets/fonts/SofiaSans-Variable.ttf"),
+        SourceSans3: require("../assets/fonts/SourceSans3-Variable.ttf"),
     });
 
     useEffect(() => {
@@ -34,7 +35,7 @@ export default function RootLayout() {
             <Stack
                 screenOptions={{
                     headerTitleStyle: {
-                        fontFamily: "Outfit",
+                        fontFamily: "Source Sans 3",
                     },
                     headerShown: false,
                 }}>

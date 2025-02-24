@@ -8,7 +8,7 @@ import {
     type TouchableOpacityProps,
 } from "react-native";
 
-export interface ButtonProps extends TouchableOpacityProps, PropsWithChildren<{}> {
+export interface ButtonProps extends TouchableOpacityProps, PropsWithChildren<object> {
     title?: string;
     containerStyle?: StyleProp<ViewStyle>;
     textStyle?: StyleProp<TextStyle>;

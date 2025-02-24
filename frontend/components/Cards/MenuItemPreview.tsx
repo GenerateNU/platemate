@@ -1,9 +1,6 @@
-import { Dimensions, StyleSheet, Image, Text, View } from "react-native";
+import { Dimensions, Image, Text, View, ScrollView } from "react-native";
 import React from "react";
-import UserInfoRowBase from "../UserInfo/UserInfoRowBase";
 import { ThemedText } from "../ThemedText";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
 import Trending from "@/assets/images/trending.svg";
 
@@ -18,7 +15,6 @@ type Props = {
 };
 
 const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, picture, trending }: Props) => {
-    const color = useThemeColor({ light: "#000", dark: "#fff" }, "text");
     return (
         <View
             style={{
@@ -48,23 +44,26 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
                             {content}
                         </ThemedText>
                     </View>
-                    <View style={{ flexDirection: "row", gap: 12 }}>
-                        {tags.map((tag: string, index: number) => {
-                            return (
-                                <Text
-                                    key={index}
-                                    style={{
-                                        backgroundColor: "#fc0",
-                                        color: "#000",
-                                        paddingHorizontal: 8,
-                                        paddingVertical: 4,
-                                        borderRadius: 20,
-                                    }}>
-                                    {tag}
-                                </Text>
-                            );
-                        })}
-                    </View>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{ flexDirection: "row", gap: 12 }}>
+                        {tags.map((tag: string, index: number) => (
+                            <Text
+                                key={index}
+                                style={{
+                                    backgroundColor: "#fc0",
+                                    color: "#000",
+                                    paddingHorizontal: 8,
+                                    paddingVertical: 4,
+                                    borderRadius: 20,
+                                    fontSize: 14,
+                                }}>
+                                {tag}
+                            </Text>
+                        ))}
+                    </ScrollView>
+
                     <View style={{ flexDirection: "row", gap: 12 }}>
                         <ThemedText type="default">Overall Rating {rating}</ThemedText>
                     </View>
@@ -87,5 +86,3 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
 };
 
 export default MenuItemPreview;
-
-const styles = StyleSheet.create({});
