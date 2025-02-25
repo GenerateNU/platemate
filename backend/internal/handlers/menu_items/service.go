@@ -13,40 +13,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-/*
-Menu Items Service to be used by Menu Items Handler to interact with the
-Database layer of the application
-*/
-type Service struct {
-	menuItems *mongo.Collection
-	reviews   *mongo.Collection
-}
-
 func newService(collections map[string]*mongo.Collection) *Service {
 	if collections["menuItems"] == nil {
 		slog.Info("menuItems collection is nil!")
 	}
 	return &Service{collections["menuItems"], collections["reviews"]}
-}
-
-type MenuItemDocument struct {
-	ID                  primitive.ObjectID   `bson:"_id,omitempty"`
-	Name                string               `bson:"name"`
-	Picture             string               `bson:"picture"`
-	AvgRating           AvgRatingDocument    `bson:"avgRating,omitempty"`
-	Reviews             []primitive.ObjectID `bson:"reviews"`
-	Description         string               `bson:"description"`
-	Location            []float64            `bson:"location"`
-	Tags                []string             `bson:"tags"`
-	DietaryRestrictions []string             `bson:"dietaryRestrictions"`
-}
-
-type AvgRatingDocument struct {
-	Portion *float64 `bson:"portion"`
-	Taste   *float64 `bson:"taste"`
-	Value   *float64 `bson:"value"`
-	Overall *float64 `bson:"overall"`
-	Return  *bool    `bson:"return"` // @TODO: figure out if boolean or number
 }
 
 var ErrInvalidID = errors.New("the provided hex string is not a valid ObjectID")

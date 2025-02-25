@@ -19,49 +19,6 @@ type Handler struct {
 	service *Service
 }
 
-type AvgRatingRequest struct {
-	Portion *float64 `json:"portion"`
-	Taste   *float64 `json:"taste"`
-	Value   *float64 `json:"value"`
-	Overall *float64 `json:"overall"`
-	Return  *bool    `json:"return"`
-}
-
-type MenuItemRequest struct {
-	Name                string           `json:"name"`
-	Picture             string           `json:"picture"`
-	AvgRating           AvgRatingRequest `json:"avgRating"`
-	Reviews             []string         `json:"reviews"`
-	Description         string           `json:"description"`
-	Location            []float64        `json:"location"`
-	Tags                []string         `json:"tags"`
-	DietaryRestrictions []string         `json:"dietaryRestrictions"`
-}
-
-type MenuItemResponse struct {
-	ID string `json:"id"`
-	MenuItemRequest
-}
-
-type MenuItemsQuery struct {
-	MinRatingPortion    *float64 `query:"minRatingPortion"`
-	MaxRatingPortion    *float64 `query:"maxRatingPortion"`
-	MinRatingTaste      *float64 `query:"minRatingTaste"`
-	MaxRatingTaste      *float64 `query:"maxRatingTaste"`
-	MinRatingValue      *float64 `query:"minRatingValue"`
-	MaxRatingValue      *float64 `query:"maxRatingValue"`
-	MinRatingOverall    *float64 `query:"minRatingOverall"`
-	MaxRatingOverall    *float64 `query:"maxRatingOverall"`
-	Tags                []string `query:"tags"`
-	DietaryRestrictions []string `query:"filter"`
-	Limit               *int     `query:"limit"`
-	Skip                int      `query:"skip"`
-}
-
-type MenuItemReviewQuery struct {
-	UserID *string `query:"userID"`
-}
-
 var ValidDietaryRestrictions = map[string]bool{
 	"vegan":              true,
 	"vegetarian":         true,
