@@ -40,5 +40,6 @@ const styles = StyleSheet.create({
         flex: 1,
         gap: 16,
         paddingTop: Dimensions.get("window").height * 0.12,
+        paddingBottom: 220,
     },
 });

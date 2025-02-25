@@ -25,6 +25,7 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
         if (recent) setRecentItems(await getRecents());
         else setRecentItems([]);
     }
+
     async function clearRecents() {
         setRecentItems([]);
     }
@@ -79,7 +80,7 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
                                     appendSearch(term);
                                 }}>
                                 <FontAwesome5 name="redo" size={12} color="gray" />
-                                <ThemedText>{term}</ThemedText>
+                                <ThemedText style={{ fontFamily: "Source Sans 3" }}>{term}</ThemedText>
                             </TouchableOpacity>
                         );
                     })}
@@ -98,6 +99,7 @@ const styles = StyleSheet.create({
         zIndex: 10,
         paddingBottom: 8,
         width: "100%",
+        fontFamily: "Source Sans 3",
     },
     recent: {
         width: "100%",
@@ -108,6 +110,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
+        fontFamily: "Source Sans 3",
     },
     container: {
         flexDirection: "row",
@@ -117,9 +120,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         paddingHorizontal: 12,
         paddingVertical: 8,
+        fontFamily: "Source Sans 3",
     },
     input: {
         flex: 1,
+        fontFamily: "Source Sans 3",
     },
     icon: {
         marginLeft: 8,

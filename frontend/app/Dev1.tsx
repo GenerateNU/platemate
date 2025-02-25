@@ -13,6 +13,8 @@ const Dev1 = () => {
     const [searchText, setSearchText] = React.useState("");
     const [activeTab, setActiveTab] = React.useState(0);
 
+    const [activeTab, setActiveTab] = React.useState(0);
+
     return (
         <ThemedView style={styles.container}>
             <ThemedText type="title" style={{ fontWeight: "700" }}>
