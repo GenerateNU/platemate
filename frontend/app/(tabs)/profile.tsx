@@ -107,7 +107,7 @@ export default function Profile() {
     ]);
 
     return (
-        <ScrollView style={{ flex: 1, marginBottom: 84}}>
+        <ScrollView style={{ flex: 1, marginBottom: 84 }}>
             <ThemedView style={{ flex: 1, alignItems: "center", paddingVertical: 64, paddingHorizontal: 24, gap: 12 }}>
                 <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
                 <ThemedView style={{ flex: 1, width: "100%", gap: 16 }}>
