@@ -15,7 +15,7 @@ export function ThemedText({ style, lightColor, darkColor, type = "default", ...
         <Text
             style={[
                 { color },
-                { fontFamily: "Outfit" },
+                { fontFamily: "Source Sans 3" },
                 type === "default" ? styles.default : undefined,
                 type === "title" ? styles.title : undefined,
                 type === "sectionTitle" ? styles.sectionTitle : undefined,

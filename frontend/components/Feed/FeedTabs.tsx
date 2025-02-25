@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -40,7 +38,7 @@ const styles = StyleSheet.create({
     activeTabText: {
         fontWeight: "600",
         textDecorationStyle: "solid",
-        borderBottomColor: "#0a7ea4",
+        borderBottomColor: "black",
         borderBottomWidth: 2,
     },
     inactiveTabText: {
@@ -49,7 +47,7 @@ const styles = StyleSheet.create({
     },
     tabText: {
         fontSize: 16,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
         textAlign: "center",
     },
 });
