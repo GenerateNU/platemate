@@ -1,8 +1,7 @@
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import UserInfoRowBase from "../UserInfo/UserInfoRowBase";
 import { ThemedText } from "../ThemedText";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
 
@@ -15,7 +14,6 @@ type Props = {
 };
 
 const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Props) => {
-    const color = useThemeColor({ light: "#000", dark: "#fff" }, "text");
     return (
         <View
             style={{
@@ -81,5 +79,3 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
 };
 
 export default ReviewPreview;
-
-const styles = StyleSheet.create({});

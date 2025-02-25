@@ -5,10 +5,6 @@ import { StarReview } from "@/components/StarReview";
 import { StarReviewProps } from "@/components/StarReview";
 import { Image } from "react-native";
 
-interface MenuItemCardsProp {
-    tags: string[];
-}
-
 interface MenuItemProp {
     name: string;
     image: string;

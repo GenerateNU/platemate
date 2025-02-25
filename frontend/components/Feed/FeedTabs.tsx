@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 

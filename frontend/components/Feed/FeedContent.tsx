@@ -1,4 +1,4 @@
-import { StyleSheet, Text, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import React, { useState } from "react";
 import MenuItemPreview from "../Cards/MenuItemPreview";
 import ReviewPreview from "../Cards/ReviewPreview";
@@ -12,7 +12,7 @@ const FRIENDS = 0;
 const RECOMMENDED = 1;
 
 const FeedContent = ({ activeTab }: Props) => {
-    const [recommended, setReccomended] = useState([
+    const [recommended] = useState([
         {
             plateName: "Chipotle Burrito",
             restaurantName: "Chipotle",
@@ -65,7 +65,7 @@ const FeedContent = ({ activeTab }: Props) => {
         },
     ]);
 
-    const [friends, setFriends] = useState([
+    const [friends] = useState([
         {
             plateName: "Quarter Pounder Cheese Deluxe",
             restaurantName: "McDonald's",
@@ -124,5 +124,3 @@ const FeedContent = ({ activeTab }: Props) => {
 };
 
 export default FeedContent;
-
-const styles = StyleSheet.create({});

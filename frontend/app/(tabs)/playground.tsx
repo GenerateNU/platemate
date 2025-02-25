@@ -1,9 +1,8 @@
 import React from "react";
-import { StyleSheet, Image } from "react-native";
+import { Image } from "react-native";
 
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Link } from "expo-router";
 
 export default function Playground() {
@@ -50,16 +49,3 @@ export default function Playground() {
         </ParallaxScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    headerImage: {
-        color: "#808080",
-        bottom: -90,
-        left: -35,
-        position: "absolute",
-    },
-    titleContainer: {
-        flexDirection: "row",
-        gap: 8,
-    },
-});

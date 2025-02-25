@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, View, ScrollView } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 
 import { ThemedView } from "@/components/ThemedView";
 
@@ -7,11 +7,6 @@ import { SearchBox } from "@/components/SearchBox";
 import SearchIcon from "@/assets/icons/search.svg";
 import FeedTabs from "@/components/Feed/FeedTabs";
 import FeedContent from "@/components/Feed/FeedContent";
-import { ThemedText } from "@/components/ThemedText";
-import { RestaurantTags } from "@/components/RestaurantTags";
-import { StarReview } from "@/components/StarReview";
-import { Link } from "expo-router";
-import { MenuItemCard } from "@/components/MenuItemCard";
 
 export default function FeedScreen() {
     const [searchText, setSearchText] = React.useState("");

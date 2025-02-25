@@ -1,9 +1,6 @@
-import { Dimensions, StyleSheet, Image, Text, View } from "react-native";
+import { Dimensions, Image, Text, View } from "react-native";
 import React from "react";
-import UserInfoRowBase from "../UserInfo/UserInfoRowBase";
 import { ThemedText } from "../ThemedText";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
 import Trending from "@/assets/images/trending.svg";
 
@@ -18,7 +15,6 @@ type Props = {
 };
 
 const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, picture, trending }: Props) => {
-    const color = useThemeColor({ light: "#000", dark: "#fff" }, "text");
     return (
         <View
             style={{
@@ -87,5 +83,3 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
 };
 
 export default MenuItemPreview;
-
-const styles = StyleSheet.create({});

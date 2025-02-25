@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, ImageSourcePropType, ViewStyle } from "react-native";
-import { Avatar, AvatarProps } from "./Avatar";
-import LocationIcon from "./location_on.svg";
+import { View, Text, StyleSheet, ImageSourcePropType } from "react-native";
+import { Avatar } from "./Avatar";
+import LocationIcon from "@/assets/icons/location_on.svg";
 import { Button } from "./Button";
 
 export interface ProfileProps {
