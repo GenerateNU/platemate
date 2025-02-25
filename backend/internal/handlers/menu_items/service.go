@@ -261,7 +261,6 @@ func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID, userID *primitive
 
 	}
 
-	slog.Error("filter", "filter", filter)
 	// Query reviews that match menu item and user, if provided
 	reviewsCursor, err := s.reviews.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}))
 	if err != nil {
@@ -280,4 +279,50 @@ func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID, userID *primitive
 	}
 
 	return reviews, nil
+}
+
+func (s *Service) GetMenuItemReviewPictures(idObj primitive.ObjectID) ([]string, error) {
+	var menuItemDoc MenuItemDocument
+	err := s.menuItems.FindOne(context.Background(), bson.M{"_id": idObj}).Decode(&menuItemDoc)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return []string{}, nil
+		}
+		slog.Error("Error finding document", "error", err)
+		return nil, err
+	}
+
+	if len(menuItemDoc.Reviews) == 0 {
+		return []string{}, nil
+	}
+
+	filter := bson.M{"_id": bson.M{"$in": menuItemDoc.Reviews}}
+	projection := bson.M{"picture": 1} // Only include the picture field
+	// Query reviews that match menu item and project only the picture field
+	reviewsCursor, err := s.reviews.Find(context.Background(), filter, options.Find().SetProjection(projection))
+
+	if err != nil {
+		slog.Error("Error finding reviews", "error", err)
+		return nil, err
+	}
+	defer reviewsCursor.Close(context.Background())
+
+	var reviews []struct {
+		Picture string `bson:"picture"` // The picture field in the review
+	}
+
+	if err = reviewsCursor.All(context.Background(), &reviews); err != nil {
+		slog.Error("Error decoding reviews", "error", err)
+		return nil, err
+	}
+	if reviews == nil {
+		return []string{}, nil
+	}
+
+	var reviewPictures []string
+	for _, review := range reviews {
+		reviewPictures = append(reviewPictures, review.Picture)
+	}
+
+	return reviewPictures, nil
 }
