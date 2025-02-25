@@ -2,8 +2,8 @@
 // MongoDB Playground
 // Use Ctrl+Space inside a snippet or a string literal to trigger completions.
 
-const database = 'Production';
-const collection = 'NEW_COLLECTION_NAME';
+const database = "Production";
+const collection = "NEW_COLLECTION_NAME";
 
 // The current database to use.
 use(database);
