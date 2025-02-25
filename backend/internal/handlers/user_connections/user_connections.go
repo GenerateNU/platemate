@@ -71,6 +71,31 @@ func (h *Handler) GetFollowingReviewsForItem(c *fiber.Ctx) error {
 	return c.JSON(reviews)
 }
 
+// GetFriendReviewsForItem gets reviews for a menu item from friends of current user (users in following and followers)
+func (h *Handler) GetFriendReviewsForItem(c *fiber.Ctx) error {
+	var query ReviewQuery
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	query.ItemId = c.Params("id")
+
+	errs := xvalidator.Validator.Validate(query)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
+	}
+
+	reviews, err := h.service.GetFriendReviewsForItem(query.UserId, query.ItemId)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserId))
+		}
+		return err
+	}
+
+	return c.JSON(reviews)
+}
+
 // FollowUser creates a new follow relationship between users
 func (h *Handler) FollowUser(c *fiber.Ctx) error {
 	var req FollowRequest
