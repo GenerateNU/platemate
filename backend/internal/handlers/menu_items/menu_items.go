@@ -58,6 +58,10 @@ type MenuItemsQuery struct {
 	Skip                int      `query:"skip"`
 }
 
+type MenuItemReviewQuery struct {
+	UserID *string `query:"userID"`
+}
+
 var ValidDietaryRestrictions = map[string]bool{
 	"vegan":              true,
 	"vegetarian":         true,
@@ -343,6 +347,10 @@ func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
 
 func (h *Handler) GetMenuItemReviews(c *fiber.Ctx) error {
 	id := c.Params("id")
+	var query MenuItemReviewQuery
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
 
 	objID, errID := primitive.ObjectIDFromHex(id)
 	if errID != nil {
@@ -350,7 +358,17 @@ func (h *Handler) GetMenuItemReviews(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(errID))
 	}
 
-	reviews, err := h.service.GetMenuItemReviews(objID)
+	// Convert user ID only if it's provided
+	var userObjID *primitive.ObjectID
+	if query.UserID != nil {
+		parsedUserID, err := primitive.ObjectIDFromHex(*query.UserID)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+		}
+		userObjID = &parsedUserID
+	}
+
+	reviews, err := h.service.GetMenuItemReviews(objID, userObjID)
 	if err != nil {
 		return err
 	}

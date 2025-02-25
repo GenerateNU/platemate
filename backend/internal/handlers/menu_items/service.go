@@ -239,7 +239,7 @@ func (s *Service) DeleteMenuItem(idObj primitive.ObjectID) (MenuItemResponse, er
 	return menuItemResponse, nil
 }
 
-func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID) ([]review.ReviewDocument, error) {
+func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID, userID *primitive.ObjectID) ([]review.ReviewDocument, error) {
 	var menuItemDoc MenuItemDocument
 	ctx := context.Background()
 	err := s.menuItems.FindOne(ctx, bson.M{"_id": idObj}).Decode(&menuItemDoc)
@@ -255,13 +255,15 @@ func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID) ([]review.ReviewD
 		return []review.ReviewDocument{}, nil
 	}
 
-	// Query reviews that match menu item
-	reviewsCursor, err := s.reviews.Find(ctx,
-		bson.M{
-			"_id": bson.M{"$in": menuItemDoc.Reviews},
-		},
-		options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}),
-	)
+	filter := bson.M{"_id": bson.M{"$in": menuItemDoc.Reviews}}
+	if userID != nil {
+		filter["reviewer._id"] = *userID
+
+	}
+
+	slog.Error("filter", "filter", filter)
+	// Query reviews that match menu item and user, if provided
+	reviewsCursor, err := s.reviews.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}))
 	if err != nil {
 		slog.Error("Error finding reviews", "error", err)
 		return nil, err
@@ -269,9 +271,12 @@ func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID) ([]review.ReviewD
 	defer reviewsCursor.Close(ctx)
 
 	var reviews []review.ReviewDocument
-	if err = reviewsCursor.All(context.Background(), &reviews); err != nil {
+	if err = reviewsCursor.All(ctx, &reviews); err != nil {
 		slog.Error("Error finding reviews", "error", err)
 		return nil, err
+	}
+	if reviews == nil {
+		reviews = []review.ReviewDocument{}
 	}
 
 	return reviews, nil
