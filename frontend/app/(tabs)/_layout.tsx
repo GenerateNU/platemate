@@ -93,7 +93,7 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="playground"
+                name="map"
                 options={{
                     tabBarIcon: ({ color, focused }) => (
                         <TabIcon IconComponent={MapNavIcon} color={color} focused={focused} />
