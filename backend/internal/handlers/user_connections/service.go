@@ -325,3 +325,72 @@ func (s *Service) GetFollowingReviewsForItem(userId string, menuItemId string) (
 
 	return reviews, nil
 }
+
+// GetFriendReviewsForItem gets reviews for a specific menu item from friends (users that follow each other)
+// AKA users in the current user's following and follower list
+func (s *Service) GetFriendReviewsForItem(userId string, menuItemId string) ([]review.ReviewDocument, error) {
+
+	ctx := context.Background()
+	userObjID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return nil, &badReq
+	}
+
+	menuItemObjID, err := primitive.ObjectIDFromHex(menuItemId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return nil, &badReq
+	}
+
+	// Get the menu item to check its reviews
+	var menuItem menu_items.MenuItemDocument
+	err = s.menuItems.FindOne(ctx, bson.M{"_id": menuItemObjID}).Decode(&menuItem)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return []review.ReviewDocument{}, nil
+		}
+		return nil, err
+	}
+
+	// Get the user's following list
+	var user User
+	err = s.users.FindOne(ctx, bson.M{"_id": userObjID}).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(user.Following) == 0 || len(user.Followers) == 0 { // No friends :(
+		return []review.ReviewDocument{}, nil
+	}
+
+	// Query reviews that match both menu item reviews and friends (follower and following)
+	reviewsCursor, err := s.reviews.Find(ctx,
+		bson.M{
+			"$and": []bson.M{
+				{
+					"_id": bson.M{"$in": menuItem.Reviews}, // Match reviews related to the menu item
+				},
+				{
+					"reviewer._id": bson.M{"$in": user.Following}, // Reviewer's ID must be in the Following list
+				},
+				{
+					"reviewer._id": bson.M{"$in": user.Followers}, // Reviewer's ID must also be in the Followers list
+				},
+			},
+		},
+		options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer reviewsCursor.Close(ctx)
+
+	var reviews []review.ReviewDocument
+	if err = reviewsCursor.All(ctx, &reviews); err != nil {
+		return nil, err
+	}
+
+	return reviews, nil
+
+}

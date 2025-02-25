@@ -19,45 +19,6 @@ type Handler struct {
 	service *Service
 }
 
-type AvgRatingRequest struct {
-	Portion *float64 `json:"portion"`
-	Taste   *float64 `json:"taste"`
-	Value   *float64 `json:"value"`
-	Overall *float64 `json:"overall"`
-	Return  *bool    `json:"return"`
-}
-
-type MenuItemRequest struct {
-	Name                string           `json:"name"`
-	Picture             string           `json:"picture"`
-	AvgRating           AvgRatingRequest `json:"avgRating"`
-	Reviews             []string         `json:"reviews"`
-	Description         string           `json:"description"`
-	Location            []float64        `json:"location"`
-	Tags                []string         `json:"tags"`
-	DietaryRestrictions []string         `json:"dietaryRestrictions"`
-}
-
-type MenuItemResponse struct {
-	ID string `json:"id"`
-	MenuItemRequest
-}
-
-type MenuItemsQuery struct {
-	MinRatingPortion    *float64 `query:"minRatingPortion"`
-	MaxRatingPortion    *float64 `query:"maxRatingPortion"`
-	MinRatingTaste      *float64 `query:"minRatingTaste"`
-	MaxRatingTaste      *float64 `query:"maxRatingTaste"`
-	MinRatingValue      *float64 `query:"minRatingValue"`
-	MaxRatingValue      *float64 `query:"maxRatingValue"`
-	MinRatingOverall    *float64 `query:"minRatingOverall"`
-	MaxRatingOverall    *float64 `query:"maxRatingOverall"`
-	Tags                []string `query:"tags"`
-	DietaryRestrictions []string `query:"filter"`
-	Limit               *int     `query:"limit"`
-	Skip                int      `query:"skip"`
-}
-
 var ValidDietaryRestrictions = map[string]bool{
 	"vegan":              true,
 	"vegetarian":         true,
@@ -339,4 +300,48 @@ func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
 		return err
 	}
 	return c.Status(fiber.StatusOK).JSON(menuItemDeleted)
+}
+
+func (h *Handler) GetMenuItemReviews(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var query MenuItemReviewQuery
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	objID, errID := primitive.ObjectIDFromHex(id)
+	if errID != nil {
+		// Invalid ID format
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(errID))
+	}
+
+	// Convert user ID only if it's provided
+	var userObjID *primitive.ObjectID
+	if query.UserID != nil {
+		parsedUserID, err := primitive.ObjectIDFromHex(*query.UserID)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+		}
+		userObjID = &parsedUserID
+	}
+
+	reviews, err := h.service.GetMenuItemReviews(objID, userObjID)
+	if err != nil {
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(reviews)
+}
+
+func (h *Handler) GetMenuItemReviewPictures(c *fiber.Ctx) error {
+	id := c.Params("id")
+	objID, errID := primitive.ObjectIDFromHex(id)
+	if errID != nil {
+		// Invalid ID format
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(errID))
+	}
+	pictures, err := h.service.GetMenuItemReviewPictures(objID)
+	if err != nil {
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(pictures)
 }
