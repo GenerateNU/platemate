@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, SafeAreaVie
 import { IconSymbol } from "../components/ui/IconSymbol";
 import { ProgressBar } from "./ProgressBar";
 import { EmojiTagsGrid } from "./EmojiTagsGrid";
+import { StarReview, Stars, InteractiveStars } from "./StarReview";
 
 // Example star-rating component placeholder
 function StarRating({ rating, onChange }: { rating: number; onChange: (value: number) => void }) {
@@ -106,18 +107,20 @@ export function MyReview() {
             return (
                 <View style={styles.stepContainer}>
                     <Text style={styles.stepTitle}>How was the taste?</Text>
-                    <StarRating rating={tasteRating} onChange={setTasteRating} />
-                    <EmojiTagsGrid
-                        tags={tasteTags}
-                        onTagPress={(id) => toggleTagSelected(tasteTags, setTasteTags, id)}
-                    />
+                    <InteractiveStars rating={tasteRating} onChange={setTasteRating} />
+                    <View style={{ alignItems: "center", justifyContent: "center" }}>
+                        <EmojiTagsGrid
+                            tags={tasteTags}
+                            onTagPress={(id) => toggleTagSelected(tasteTags, setTasteTags, id)}
+                        />
+                    </View>
                 </View>
             );
         } else if (step === 2) {
             return (
                 <View style={styles.stepContainer}>
                     <Text style={styles.stepTitle}>How was the portion?</Text>
-                    <StarRating rating={portionRating} onChange={setPortionRating} />
+                    <InteractiveStars rating={tasteRating} onChange={setTasteRating} />
                     <EmojiTagsGrid
                         tags={portionTags}
                         onTagPress={(id) => toggleTagSelected(portionTags, setPortionTags, id)}
@@ -128,7 +131,7 @@ export function MyReview() {
             return (
                 <View style={styles.stepContainer}>
                     <Text style={styles.stepTitle}>How was the value?</Text>
-                    <StarRating rating={valueRating} onChange={setValueRating} />
+                    <InteractiveStars rating={tasteRating} onChange={setTasteRating} />
                     <EmojiTagsGrid
                         tags={valueTags}
                         onTagPress={(id) => toggleTagSelected(valueTags, setValueTags, id)}
@@ -225,9 +228,14 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         marginBottom: 12,
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
     },
     starRow: {
         flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
         marginBottom: 16,
     },
     starIcon: {

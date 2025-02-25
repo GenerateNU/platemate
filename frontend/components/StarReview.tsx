@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import ShadedStar from "@/assets/icons/shaded_star_rate.svg";
 import UnshadedStar from "@/assets/icons/unshaded_star_rate.svg";
 import { StyleSheet } from "react-native";
@@ -8,6 +8,12 @@ export interface StarReviewProps {
     avgRating: number;
     numRatings: number;
     full?: boolean; // If true, show 5 stars, else show 1
+}
+
+export interface InteractiveStarsProps {
+    rating: number;
+    onChange: (value: number) => void;
+    starSize?: number;
 }
 
 interface StarProps {
@@ -43,6 +49,23 @@ export function Stars({ avgRating, full = true }: StarProps) {
     return <View style={styles.starsContainer}>{stars}</View>;
 }
 
+export function InteractiveStars({ rating, onChange, starSize = 24 }: InteractiveStarsProps) {
+    const maxStars = 5;
+    return (
+        <View style={styles.starRow}>
+            {Array.from({ length: maxStars }).map((_, i) => {
+                const isFilled = i < rating;
+                const StarIcon = isFilled ? ShadedStar : UnshadedStar;
+                return (
+                    <TouchableOpacity key={i} onPress={() => onChange(i + 1)}>
+                        <StarIcon width={starSize} height={starSize} />
+                    </TouchableOpacity>
+                );
+            })}
+        </View>
+    );
+}
+
 const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
@@ -64,5 +87,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         gap: 5,
+    },
+    starRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
     },
 });
