@@ -4,7 +4,7 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 
-export default function ExploreScreen() {
+export default function MapScreen() {
     return (
         <ParallaxScrollView
             headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
@@ -16,7 +16,7 @@ export default function ExploreScreen() {
                     style={styles.headerImage}
                 />
             }>
-            <ThemedText style={{ fontFamily: "Outfit" }}>This is the content of the explore page.</ThemedText>
+            <ThemedText style={{ fontFamily: "Outfit" }}>This is the content of the map page.</ThemedText>
         </ParallaxScrollView>
     );
 }

@@ -93,7 +93,7 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="playground"
+                name="map"
                 options={{
                     tabBarIcon: ({ color, focused }) => (
                         <TabIcon IconComponent={MapNavIcon} color={color} focused={focused} />
@@ -106,13 +106,6 @@ export default function TabLayout() {
                     tabBarIcon: ({ color, focused }) => (
                         <TabIcon IconComponent={ProfileNavIcon} color={color} focused={focused} />
                     ),
-                }}
-            />
-            <Tabs.Screen
-                name="accountsettings"
-                options={{
-                    title: "Account Settings",
-                    tabBarIcon: ({ color }) => <IconSymbol size={28} name="gear" color={color} />,
                 }}
             />
         </Tabs>
