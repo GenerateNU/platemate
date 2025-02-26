@@ -1,11 +1,10 @@
 import { ThemedView } from "@/components/ThemedView";
-import { Dimensions, Image, ScrollView, StyleSheet, View } from "react-native";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { RestaurantTags } from "@/components/RestaurantTags";
 import { StarReview } from "@/components/StarReview";
 import { MenuItemCard } from "@/components/MenuItemCard";
 import React from "react";
-import { Svg, Path } from "react-native-svg";
 
 import WebsiteIcon from "@/assets/icons/website.svg";
 import PhoneIcon from "@/assets/icons/phone.svg";
@@ -14,7 +13,7 @@ import ClockIcon from "@/assets/icons/clock.svg";
 
 import { RestaurantDetailItem } from "@/components/RestaurantDetailItem";
 
-export default function RestaurantView({}) {
+export default function RestaurantView() {
     const restaurantTags = ["Italian", "Vegan", "Family-friendly", "Gluten-free"]; // Example tags
 
     return (
@@ -148,7 +147,7 @@ const styles = StyleSheet.create({
     },
     titleText: {
         fontWeight: "bold",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
         fontSize: 28,
         paddingTop: 6,
     },

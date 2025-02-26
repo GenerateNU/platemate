@@ -3,6 +3,8 @@ package review
 import (
 	"context"
 
+	"math"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -11,7 +13,8 @@ import (
 // newService receives the map of collections and picks out reviews
 func newService(collections map[string]*mongo.Collection) *Service {
 	return &Service{
-		reviews: collections["reviews"],
+		reviews:     collections["reviews"],
+		restaurants: collections["restaurants"],
 	}
 }
 
@@ -61,6 +64,12 @@ func (s *Service) InsertReview(r ReviewDocument) (*ReviewDocument, error) {
 
 	// Cast the inserted ID to ObjectID
 	r.ID = result.InsertedID.(primitive.ObjectID)
+
+	// Update restaurant's average review
+	if err := s.updateRestaurantAverageRating(r.RestaurantID); err != nil {
+		return &r, err
+	}
+
 	return &r, nil
 }
 
@@ -195,4 +204,55 @@ func (s *Service) GetComments(reviewID primitive.ObjectID) ([]CommentDocument, e
 	}
 
 	return comments, err
+}
+
+// updateRestaurantAverageRating recalculates and updates the average rating for the restaurant
+func (s *Service) updateRestaurantAverageRating(restaurantID primitive.ObjectID) error {
+	ctx := context.Background()
+
+	// Find all reviews for this restaurant
+	filter := bson.M{"restaurantId": restaurantID}
+	cursor, err := s.reviews.Find(ctx, filter)
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+
+	var reviews []ReviewDocument
+	if err := cursor.All(ctx, &reviews); err != nil {
+		return err
+	}
+
+	if len(reviews) == 0 {
+		// No reviews for this restaurant, so average is 0 (could just skip)
+		return nil
+	}
+
+	// Compute new averages
+	var totalOverall float64 // simple average
+	var totalReturn float64  // % or count
+
+	for _, review := range reviews {
+		totalOverall += float64(review.Rating.Overall)
+		if review.Rating.Return {
+			totalReturn += 1
+		}
+	}
+
+	// Cast to int after math for storage
+	count := float64(len(reviews))
+	avgOverall := int(math.Round(totalOverall / count))                // 1..5 scale
+	avgReturnPercent := int(math.Round((totalReturn / count) * 100.0)) // 0..100%
+
+	// Update the restaurant's document
+	update := bson.M{
+		"$set": bson.M{
+			"ratingAvg.overall": avgOverall,
+			"ratingAvg.return":  avgReturnPercent,
+		},
+	}
+
+	// Update the restaurant document with the new average
+	_, err = s.restaurants.UpdateOne(ctx, bson.M{"_id": restaurantID}, update)
+	return err
 }

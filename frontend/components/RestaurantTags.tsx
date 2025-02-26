@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { Button } from "@/components/Button";
 import { ThemedView } from "@/components/ThemedView";
 
