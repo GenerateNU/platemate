@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import ShadedStar from "@/assets/icons/shaded_star_rate.svg";
 import UnshadedStar from "@/assets/icons/unshaded_star_rate.svg";
+import { StyleSheet } from "react-native";
 
 export interface StarReviewProps {
     avgRating: number;
@@ -33,13 +34,15 @@ export function StarReview({ avgRating, numRatings, full = true }: StarReviewPro
 export function Stars({ avgRating, full = true }: StarProps) {
     const stars = [];
     const maxStars = full ? 5 : 1;
-
-    for (let i = 0; i < maxStars; i++) {
-        if (i < Math.floor(avgRating)) {
-            stars.push(<ShadedStar key={i} width={16} height={16} />);
-        } else {
-            stars.push(<UnshadedStar key={i} width={16} height={16} />);
+    if (full) {
+        for (let i = 0; i < maxStars; i++) {
+            if (i < Math.floor(avgRating)) {
+            } else {
+                stars.push(<UnshadedStar key={i} width={16} height={16} />);
+            }
         }
+    } else {
+        stars.push(<UnshadedStar key={0} width={16} height={16} />);
     }
 
     return <View style={styles.starsContainer}>{stars}</View>;
@@ -65,12 +68,12 @@ export function InteractiveStars({ rating, onChange, starSize = 24 }: Interactiv
 const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
-        alignItems: "center", // Ensures vertical alignment
-        justifyContent: "center", // Centers items horizontally
+        alignItems: "center",
+        justifyContent: "flex-start",
         gap: 7,
     },
     text: {
-        fontFamily: "Source Sans 3",
+        fontFamily: "Outfit",
         fontWeight: "500",
         fontSize: 16,
         lineHeight: 18,
@@ -80,10 +83,9 @@ const styles = StyleSheet.create({
     },
     starsContainer: {
         flexDirection: "row",
-        alignItems: "center", // Ensures the stars align with text
-        justifyContent: "center", // Centers stars in their container
-        gap: 3, // Reduced gap for better spacing
-        paddingBottom: 6,
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 5,
     },
     starRow: {
         flexDirection: "row",
@@ -91,5 +93,3 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
 });
-
-export default StarReview;
