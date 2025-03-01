@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/GenerateNU/platemate/internal/handlers/review"
+	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -216,6 +217,10 @@ func (s *Service) GetSimilarMenuItems(itemID primitive.ObjectID) ([]MenuItemResp
 	originalItem, err := s.GetMenuItemById(itemID)
 	if err != nil {
 		return nil, err
+	}
+
+	if validationErrors := xvalidator.Validator.Validate(originalItem.MenuItemRequest); len(validationErrors) > 0 {
+		return nil, fmt.Errorf("validation errors: %v", validationErrors)
 	}
 
 	pipeline := mongo.Pipeline{
