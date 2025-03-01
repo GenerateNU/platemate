@@ -6,7 +6,7 @@ import (
 
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
-	go_json "github.com/goccy/go-json"
+	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,21 +24,28 @@ func (h *Handler) CreateReview(c *fiber.Ctx) error {
 	var review ReviewDocument
 	var params CreateReviewParams
 
-	if err := go_json.Unmarshal(c.Body(), &params); err != nil {
+	if err := gojson.Unmarshal(c.Body(), &params); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.ErrorHandler(c, err))
 	}
 
 	// do some validations on the inputs
 
+	// Convert the string restaurantId to ObjectID
+	restaurantOID, err := primitive.ObjectIDFromHex(params.RestaurantID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
 	review = ReviewDocument{
-		Rating:    params.Rating,
-		Picture:   params.Picture,
-		Content:   params.Content,
-		Reviewer:  params.Reviewer,
-		Timestamp: time.Now(),
-		MenuItem:  params.MenuItem,
-		ID:        primitive.NewObjectID(),
-		Comments:  []CommentDocument{},
+		Rating:       params.Rating,
+		Picture:      params.Picture,
+		Content:      params.Content,
+		Reviewer:     params.Reviewer,
+		Timestamp:    time.Now(),
+		MenuItem:     params.MenuItem,
+		ID:           primitive.NewObjectID(),
+		Comments:     []CommentDocument{},
+		RestaurantID: restaurantOID,
 	}
 
 	result, err := h.service.InsertReview(review)
@@ -48,6 +55,7 @@ func (h *Handler) CreateReview(c *fiber.Ctx) error {
 		if sErr.HasErrorCode(121) {        // Indicates that the document failed validation
 			return xerr.WriteException(c, sErr) // Handle the error by returning a 121 and the error message
 		}
+		return err // Any other error
 	}
 
 	return c.JSON(result)
@@ -91,7 +99,7 @@ func (h *Handler) UpdateReview(c *fiber.Ctx) error {
 	}
 
 	var review ReviewDocument
-	if err := go_json.Unmarshal(c.Body(), &review); err != nil {
+	if err := gojson.Unmarshal(c.Body(), &review); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
 
@@ -110,7 +118,7 @@ func (h *Handler) UpdatePartialReview(c *fiber.Ctx) error {
 	}
 
 	var partialUpdate ReviewDocument
-	if err := go_json.Unmarshal(c.Body(), &partialUpdate); err != nil {
+	if err := gojson.Unmarshal(c.Body(), &partialUpdate); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
 

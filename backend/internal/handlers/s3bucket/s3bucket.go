@@ -1,78 +1,59 @@
 package s3bucket
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/GenerateNU/platemate/internal/config"
+	"github.com/GenerateNU/platemate/internal/xerr"
+	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
 )
 
-type GetParams struct {
-	Bucket string
-	Key    string
-}
-
-type PostParams struct {
-	Bucket   string
-	Filetype string
-}
-
-type Handler struct {
-	service *Service
-	config  config.Config
-}
-
 func (h *Handler) GetPresignedUrlHandler(c *fiber.Ctx) error {
-	key := c.Params("key")
 
-	// get the name of the bucket
-	bucketName := h.config.AWS.BucketName
-	if bucketName == "" {
-		return fmt.Errorf("S3_BUCKET environment variable is not set")
+	var queryParams PresignedDownloadURLQueryParams
+
+	if err := c.ParamsParser(&queryParams); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
-	object := &GetParams{
-		Bucket: bucketName,
-		Key:    key,
+	errs := xvalidator.Validator.Validate(queryParams)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
 	}
-	url, err := h.service.GetPresignedUrl(object)
+
+	url, err := h.service.GetPresignedUrl(&GetParams{
+		Bucket: h.config.BucketName,
+		Key:    queryParams.Key,
+	})
+
 	if err != nil {
 		return err
 	}
-	jsonData, err := json.MarshalIndent(url, "", " ")
-	if err != nil {
-		return err
-	}
+
 	c.Set("Content-Type", "application/json")
-	return c.Send(jsonData)
+	return c.Status(200).JSON(PresignedDownloadURLResponse{DownloadURL: url.URL})
 }
 
 func (h *Handler) PostPresignedUrlHandler(c *fiber.Ctx) error {
-	fileType := c.Query("fileType")
-	if fileType == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "fileType query parameter is required",
-		})
+
+	var queryParams PresignedUploadURLQueryParams
+
+	if err := c.QueryParser(&queryParams); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
-	bucketName := h.config.AWS.BucketName
-	if bucketName == "" {
-		return fmt.Errorf("S3_BUCKET environment variable is not set")
+	errs := xvalidator.Validator.Validate(queryParams)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
 	}
 
-	object := &PostParams{
-		Bucket:   bucketName,
-		Filetype: fileType,
-	}
+	urlAndKey, err := h.service.CreateUrlAndKey(&PostParams{
+		Bucket:   h.config.BucketName,
+		Filetype: queryParams.FileType,
+	})
 
-	urlAndKey, err := h.service.CreateUrlAndKey(object)
 	if err != nil {
 		return err
 	}
-	jsonData, err := json.MarshalIndent(urlAndKey, "", " ")
-	if err != nil {
-		return err
-	}
+
 	c.Set("Content-Type", "application/json")
-	return c.Send(jsonData)
+	return c.Status(200).JSON(PresignedUploadURLResponse{UploadURL: urlAndKey.URL, Key: urlAndKey.Key})
 }

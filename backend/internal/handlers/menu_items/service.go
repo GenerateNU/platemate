@@ -6,45 +6,18 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-/*
-Menu Items Service to be used by Menu Items Handler to interact with the
-Database layer of the application
-*/
-type Service struct {
-	menuItems *mongo.Collection
-}
-
 func newService(collections map[string]*mongo.Collection) *Service {
 	if collections["menuItems"] == nil {
 		slog.Info("menuItems collection is nil!")
 	}
-	return &Service{collections["menuItems"]}
-}
-
-type MenuItemDocument struct {
-	ID                  primitive.ObjectID   `bson:"_id,omitempty"`
-	Name                string               `bson:"name"`
-	Picture             string               `bson:"picture"`
-	AvgRating           AvgRatingDocument    `bson:"avgRating,omitempty"`
-	Reviews             []primitive.ObjectID `bson:"reviews"`
-	Description         string               `bson:"description"`
-	Location            []float64            `bson:"location"`
-	Tags                []string             `bson:"tags"`
-	DietaryRestrictions []string             `bson:"dietaryRestrictions"`
-}
-
-type AvgRatingDocument struct {
-	Portion *float64 `bson:"portion"`
-	Taste   *float64 `bson:"taste"`
-	Value   *float64 `bson:"value"`
-	Overall *float64 `bson:"overall"`
-	Return  *bool    `bson:"return"` // @TODO: figure out if boolean or number
+	return &Service{collections["menuItems"], collections["reviews"]}
 }
 
 var ErrInvalidID = errors.New("the provided hex string is not a valid ObjectID")
@@ -299,4 +272,91 @@ func (s *Service) GetSimilarMenuItems(itemID primitive.ObjectID) ([]MenuItemResp
 	}
 
 	return similarItems, nil
+	
+func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID, userID *primitive.ObjectID) ([]review.ReviewDocument, error) {
+	var menuItemDoc MenuItemDocument
+	ctx := context.Background()
+	err := s.menuItems.FindOne(ctx, bson.M{"_id": idObj}).Decode(&menuItemDoc)
+	if err != nil {
+		slog.Error("Error finding document", "error", err)
+		if err == mongo.ErrNoDocuments {
+			return []review.ReviewDocument{}, nil
+		}
+		return nil, err
+	}
+
+	if len(menuItemDoc.Reviews) == 0 {
+		return []review.ReviewDocument{}, nil
+	}
+
+	filter := bson.M{"_id": bson.M{"$in": menuItemDoc.Reviews}}
+	if userID != nil {
+		filter["reviewer._id"] = *userID
+
+	}
+
+	// Query reviews that match menu item and user, if provided
+	reviewsCursor, err := s.reviews.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}))
+	if err != nil {
+		slog.Error("Error finding reviews", "error", err)
+		return nil, err
+	}
+	defer reviewsCursor.Close(ctx)
+
+	var reviews []review.ReviewDocument
+	if err = reviewsCursor.All(ctx, &reviews); err != nil {
+		slog.Error("Error finding reviews", "error", err)
+		return nil, err
+	}
+	if reviews == nil {
+		reviews = []review.ReviewDocument{}
+	}
+
+	return reviews, nil
+}
+
+func (s *Service) GetMenuItemReviewPictures(idObj primitive.ObjectID) ([]string, error) {
+	var menuItemDoc MenuItemDocument
+	err := s.menuItems.FindOne(context.Background(), bson.M{"_id": idObj}).Decode(&menuItemDoc)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return []string{}, nil
+		}
+		slog.Error("Error finding document", "error", err)
+		return nil, err
+	}
+
+	if len(menuItemDoc.Reviews) == 0 {
+		return []string{}, nil
+	}
+
+	filter := bson.M{"_id": bson.M{"$in": menuItemDoc.Reviews}}
+	projection := bson.M{"picture": 1} // Only include the picture field
+	// Query reviews that match menu item and project only the picture field
+	reviewsCursor, err := s.reviews.Find(context.Background(), filter, options.Find().SetProjection(projection))
+
+	if err != nil {
+		slog.Error("Error finding reviews", "error", err)
+		return nil, err
+	}
+	defer reviewsCursor.Close(context.Background())
+
+	var reviews []struct {
+		Picture string `bson:"picture"` // The picture field in the review
+	}
+
+	if err = reviewsCursor.All(context.Background(), &reviews); err != nil {
+		slog.Error("Error decoding reviews", "error", err)
+		return nil, err
+	}
+	if reviews == nil {
+		return []string{}, nil
+	}
+
+	var reviewPictures []string
+	for _, review := range reviews {
+		reviewPictures = append(reviewPictures, review.Picture)
+	}
+
+	return reviewPictures, nil
 }

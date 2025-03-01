@@ -13,21 +13,6 @@ type Handler struct {
 	service *Service
 }
 
-type FollowRequest struct {
-	FollowerId string `json:"followerId"`
-	FolloweeId string `json:"followeeId"`
-}
-
-type PaginationQuery struct {
-	Page  int `query:"page" validate:"min=1" default:"1"`
-	Limit int `query:"limit" validate:"min=1,max=100" default:"20"`
-}
-
-type GetFollowersQuery struct {
-	PaginationQuery
-	UserId string `query:"userId" validate:"required"`
-}
-
 // GetFollowers returns a paginated list of followers for a user
 func (h *Handler) GetFollowers(c *fiber.Ctx) error {
 	var query GetFollowersQuery
@@ -61,10 +46,6 @@ func (h *Handler) GetFollowers(c *fiber.Ctx) error {
 
 // GetFollowingReviewsForItem gets reviews for a menu item from users that the current user follows
 func (h *Handler) GetFollowingReviewsForItem(c *fiber.Ctx) error {
-	type ReviewQuery struct {
-		UserId string `query:"userId" validate:"required"`
-		ItemId string `params:"id" validate:"required"`
-	}
 
 	var query ReviewQuery
 	if err := c.QueryParser(&query); err != nil {
@@ -80,6 +61,31 @@ func (h *Handler) GetFollowingReviewsForItem(c *fiber.Ctx) error {
 	}
 
 	reviews, err := h.service.GetFollowingReviewsForItem(query.UserId, query.ItemId)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserId))
+		}
+		return err
+	}
+
+	return c.JSON(reviews)
+}
+
+// GetFriendReviewsForItem gets reviews for a menu item from friends of current user (users in following and followers)
+func (h *Handler) GetFriendReviewsForItem(c *fiber.Ctx) error {
+	var query ReviewQuery
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	query.ItemId = c.Params("id")
+
+	errs := xvalidator.Validator.Validate(query)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
+	}
+
+	reviews, err := h.service.GetFriendReviewsForItem(query.UserId, query.ItemId)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserId))

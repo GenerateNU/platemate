@@ -1,0 +1,58 @@
+definitions:
+  auth.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+      - email
+      - password
+    type: object
+info:
+  contact: {}
+paths:
+  /login:
+    post:
+      consumes:
+        - application/json
+      description: Logs in a user and returns JWT tokens
+      parameters:
+        - description: User credentials
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/auth.LoginRequest"
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Tokens in response headers
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Authenticate user
+      tags:
+        - auth
+swagger: "2.0"
