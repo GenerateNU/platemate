@@ -272,7 +272,8 @@ func (s *Service) GetSimilarMenuItems(itemID primitive.ObjectID) ([]MenuItemResp
 	}
 
 	return similarItems, nil
-	
+}
+
 func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID, userID *primitive.ObjectID) ([]review.ReviewDocument, error) {
 	var menuItemDoc MenuItemDocument
 	ctx := context.Background()
