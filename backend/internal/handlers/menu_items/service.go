@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/GenerateNU/platemate/internal/handlers/review"
+	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,6 +22,8 @@ func newService(collections map[string]*mongo.Collection) *Service {
 }
 
 var ErrInvalidID = errors.New("the provided hex string is not a valid ObjectID")
+
+const MAX_SIMILAR_ITEMS = 5
 
 func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument, error) {
 	avgRatingDoc := AvgRatingDocument{
@@ -208,6 +211,72 @@ func (s *Service) DeleteMenuItem(idObj primitive.ObjectID) (MenuItemResponse, er
 	}
 	menuItemResponse := ToMenuItemResponse(menuItemDoc)
 	return menuItemResponse, nil
+}
+
+func (s *Service) GetSimilarMenuItems(itemID primitive.ObjectID) ([]MenuItemResponse, error) {
+	originalItem, err := s.GetMenuItemById(itemID)
+	if err != nil {
+		return nil, err
+	}
+
+	if validationErrors := xvalidator.Validator.Validate(originalItem.MenuItemRequest); len(validationErrors) > 0 {
+		return nil, fmt.Errorf("validation errors: %v", validationErrors)
+	}
+
+	pipeline := mongo.Pipeline{
+		bson.D{{
+			Key: "$search",
+			Value: bson.M{
+				"index": "similar",
+				"compound": bson.M{
+					"must": []bson.M{
+						{
+							"moreLikeThis": bson.M{
+								"like": bson.M{
+									"name":                originalItem.MenuItemRequest.Name,
+									"description":         originalItem.MenuItemRequest.Description,
+									"tags":                originalItem.MenuItemRequest.Tags,
+									"dietaryRestrictions": originalItem.MenuItemRequest.DietaryRestrictions,
+								},
+							},
+						},
+					},
+					"mustNot": []bson.M{
+						{
+							"equals": bson.M{
+								"path":  "_id",
+								"value": itemID,
+							},
+						},
+					},
+				},
+			},
+		}},
+		bson.D{{
+			Key:   "$limit",
+			Value: MAX_SIMILAR_ITEMS,
+		}},
+	}
+
+	cursor, err := s.menuItems.Aggregate(context.Background(), pipeline)
+	if err != nil {
+		slog.Error("Error executing moreLikeThis search", "error", err)
+		return nil, err
+	}
+	defer cursor.Close(context.Background())
+
+	var menuItems []MenuItemDocument
+	if err := cursor.All(context.Background(), &menuItems); err != nil {
+		slog.Error("Error decoding results", "error", err)
+		return nil, err
+	}
+
+	similarItems := make([]MenuItemResponse, len(menuItems))
+	for i, item := range menuItems {
+		similarItems[i] = ToMenuItemResponse(item)
+	}
+
+	return similarItems, nil
 }
 
 func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID, userID *primitive.ObjectID) ([]review.ReviewDocument, error) {
