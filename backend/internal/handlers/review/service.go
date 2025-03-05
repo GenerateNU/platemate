@@ -256,3 +256,21 @@ func (s *Service) updateRestaurantAverageRating(restaurantID primitive.ObjectID)
 	_, err = s.restaurants.UpdateOne(ctx, bson.M{"_id": restaurantID}, update)
 	return err
 }
+
+// GetReviewsByUser retrieves all reviews where reviewer.id matches the provided userID
+func (s *Service) GetReviewsByUser(userID string) ([]ReviewDocument, error) {
+	ctx := context.Background()
+	filter := bson.M{"reviewer.id": userID}
+
+	cursor, err := s.reviews.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var results []ReviewDocument
+	if err := cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}

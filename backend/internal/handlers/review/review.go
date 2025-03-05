@@ -200,3 +200,15 @@ func (h *Handler) GetComments(c *fiber.Ctx) error {
 	}
 	return c.JSON(comments)
 }
+
+// GetReviewsByUser returns all review documents for a specific user
+func (h *Handler) GetReviewsByUser(c *fiber.Ctx) error {
+	userID := c.Params("userId")
+
+	reviews, err := h.service.GetReviewsByUser(userID)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(reviews)
+}
