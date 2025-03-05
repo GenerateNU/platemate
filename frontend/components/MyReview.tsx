@@ -3,26 +3,7 @@ import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, SafeAreaVie
 import { IconSymbol } from "../components/ui/IconSymbol";
 import { ProgressBar } from "./ProgressBar";
 import { EmojiTagsGrid } from "./EmojiTagsGrid";
-import { StarReview, Stars, InteractiveStars } from "./StarReview";
-
-// Example star-rating component placeholder
-function StarRating({ rating, onChange }: { rating: number; onChange: (value: number) => void }) {
-    const stars = [1, 2, 3, 4, 5];
-    return (
-        <View style={styles.starRow}>
-            {stars.map((star) => (
-                <TouchableOpacity key={star} onPress={() => onChange(star)}>
-                    <IconSymbol
-                        name="chevron.right" // TEMP: Replace with an actual star icon or SFSymbol
-                        size={24}
-                        color={star <= rating ? "#FFD700" : "#D9D9D9"}
-                        style={styles.starIcon}
-                    />
-                </TouchableOpacity>
-            ))}
-        </View>
-    );
-}
+import { InteractiveStars } from "./StarReview";
 
 export function MyReview() {
     const [step, setStep] = useState(1);
@@ -71,7 +52,7 @@ export function MyReview() {
     };
 
     // Adjust progress based on current step
-    const getProgressValue = () => {
+    const getProgressValue = (): 25 | 50 | 75 | 100 => {
         switch (step) {
             case 1:
                 return 25;
@@ -101,44 +82,34 @@ export function MyReview() {
         // navigation.goBack();
         console.log("Go back pressed!");
     };
+    // Step content configuration
+    const stepContent = [
+        {
+            title: "How was the taste?",
+            rating: tasteRating,
+            setRating: setTasteRating,
+            tags: tasteTags,
+            setTags: setTasteTags,
+        },
+        {
+            title: "How was the portion?",
+            rating: portionRating,
+            setRating: setPortionRating,
+            tags: portionTags,
+            setTags: setPortionTags,
+        },
+        {
+            title: "How was the value?",
+            rating: valueRating,
+            setRating: setValueRating,
+            tags: valueTags,
+            setTags: setValueTags,
+        },
+    ];
 
     const renderStep = () => {
-        if (step === 1) {
-            return (
-                <View style={styles.stepContainer}>
-                    <Text style={styles.stepTitle}>How was the taste?</Text>
-                    <InteractiveStars rating={tasteRating} onChange={setTasteRating} />
-                    <View style={{ alignItems: "center", justifyContent: "center" }}>
-                        <EmojiTagsGrid
-                            tags={tasteTags}
-                            onTagPress={(id) => toggleTagSelected(tasteTags, setTasteTags, id)}
-                        />
-                    </View>
-                </View>
-            );
-        } else if (step === 2) {
-            return (
-                <View style={styles.stepContainer}>
-                    <Text style={styles.stepTitle}>How was the portion?</Text>
-                    <InteractiveStars rating={tasteRating} onChange={setTasteRating} />
-                    <EmojiTagsGrid
-                        tags={portionTags}
-                        onTagPress={(id) => toggleTagSelected(portionTags, setPortionTags, id)}
-                    />
-                </View>
-            );
-        } else if (step === 3) {
-            return (
-                <View style={styles.stepContainer}>
-                    <Text style={styles.stepTitle}>How was the value?</Text>
-                    <InteractiveStars rating={tasteRating} onChange={setTasteRating} />
-                    <EmojiTagsGrid
-                        tags={valueTags}
-                        onTagPress={(id) => toggleTagSelected(valueTags, setValueTags, id)}
-                    />
-                </View>
-            );
-        } else {
+        // Final step (text input)
+        if (step === 4) {
             return (
                 <View style={styles.stepContainer}>
                     <Text style={styles.stepTitle}>Overall rating or feedback?</Text>
@@ -152,13 +123,30 @@ export function MyReview() {
                 </View>
             );
         }
+
+        // Rating steps (1-3)
+        const currentStep = stepContent[step - 1];
+        return (
+            <View style={styles.stepContainer}>
+                <Text style={styles.stepTitle}>{currentStep.title}</Text>
+                <View style={styles.starsContainer}>
+                    <InteractiveStars rating={currentStep.rating} onChange={currentStep.setRating} />
+                </View>
+                <View style={styles.tagsContainer}>
+                    <EmojiTagsGrid
+                        tags={currentStep.tags}
+                        onTagPress={(id) => toggleTagSelected(currentStep.tags, currentStep.setTags, id)}
+                    />
+                </View>
+            </View>
+        );
     };
 
     return (
         <SafeAreaView style={styles.container}>
             {/* Header with back chevron and title */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={handleBack}>
+                <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                     <IconSymbol name="chevron.left" color="#000" size={24} />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>My Review</Text>
@@ -191,26 +179,35 @@ export function MyReview() {
 }
 
 const styles = StyleSheet.create({
+    // Base container
     container: {
         flex: 1,
         backgroundColor: "#FFF",
-        paddingHorizontal: 16,
-        paddingTop: 16,
     },
+
+    // Header styling
     header: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 12,
+        paddingVertical: 16,
+        marginBottom: 8,
+    },
+    backButton: {
+        padding: 8,
+        marginRight: 8,
     },
     headerTitle: {
         fontSize: 20,
         fontWeight: "bold",
-        marginLeft: 8,
     },
+
+    // Progress bar
     progressContainer: {
-        alignItems: "center",
         marginBottom: 24,
+        paddingHorizontal: 16,
     },
+
+    // Food image
     imageContainer: {
         alignItems: "center",
         marginBottom: 24,
@@ -221,40 +218,48 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         resizeMode: "cover",
     },
+
+    // Step content containers
     stepContainer: {
-        marginBottom: 24,
+        flex: 1,
+        paddingHorizontal: 16,
     },
     stepTitle: {
-        fontSize: 18,
+        fontSize: 32,
         fontWeight: "bold",
-        marginBottom: 12,
-        justifyContent: "center",
-        alignItems: "center",
+        marginBottom: 16,
         textAlign: "center",
     },
-    starRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
+    starsContainer: {
+        paddingVertical: 20,
         marginBottom: 16,
     },
-    starIcon: {
-        marginRight: 8,
+    tagsContainer: {
+        flex: 1,
+        justifyContent: "center",
+        backgroundColor: "#dfdfdf",
+        alignItems: "center",
+        marginBottom: 16,
     },
+
+    // Text input for final step
     textInput: {
         borderColor: "#ccc",
         borderWidth: 1,
         borderRadius: 8,
-        padding: 12,
-        minHeight: 100,
+        padding: 16,
+        minHeight: 120,
         textAlignVertical: "top",
     },
+
+    // Action button
     nextButton: {
         backgroundColor: "#FFCF0F",
-        borderRadius: 8,
+        borderRadius: 20,
         paddingVertical: 16,
+        marginHorizontal: 16,
+        marginVertical: 24,
         alignItems: "center",
-        marginBottom: 16,
     },
     nextButtonText: {
         fontSize: 16,

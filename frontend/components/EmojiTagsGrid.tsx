@@ -36,8 +36,9 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         flexWrap: "wrap",
-        alignItems: "flex-start",
+        alignItems: "center",
         justifyContent: "flex-start",
+        backgroundColor: "#FFF",
     },
     tag: {
         marginRight: 25,
