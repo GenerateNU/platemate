@@ -212,3 +212,16 @@ func (h *Handler) GetReviewsByUser(c *fiber.Ctx) error {
 
 	return c.JSON(reviews)
 }
+
+// SearchUserReviews handles GET /api/v1/review/user/:userId/search?query=...
+func (h *Handler) SearchUserReviews(c *fiber.Ctx) error {
+	userID := c.Params("userId")
+	queryParam := c.Query("query", "") // If query param provided, defaults to empty string
+
+	results, err := h.service.SearchUserReviews(userID, queryParam)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(results)
+}
