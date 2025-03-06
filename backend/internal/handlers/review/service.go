@@ -272,5 +272,11 @@ func (s *Service) GetReviewsByUser(userID string) ([]ReviewDocument, error) {
 	if err := cursor.All(ctx, &results); err != nil {
 		return nil, err
 	}
+
+	// Return empty slice instead of nil if no reviews are found
+	if len(results) == 0 {
+		return []ReviewDocument{}, nil
+	}
+
 	return results, nil
 }
