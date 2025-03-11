@@ -158,6 +158,27 @@ func ValidateQueryParams(queryParams MenuItemsQuery) error {
 		queryParams.DietaryRestrictions = validRestrictions
 	}
 
+	// Validate sorting
+	validSortFields := map[string]bool{
+		"name":              true,
+		"avgRating.overall": true,
+		"avgRating.portion": true,
+		"avgRating.taste":   true,
+		"avgRating.value":   true,
+		// If we add other fields, add them here
+	}
+	if queryParams.SortBy != "" {
+		if !validSortFields[queryParams.SortBy] {
+			return fmt.Errorf("invalid sortBy field: %s", queryParams.SortBy)
+		}
+		// Sort order can be “asc” (default) or “desc”
+		if queryParams.SortOrder != "" &&
+			strings.ToLower(queryParams.SortOrder) != "asc" &&
+			strings.ToLower(queryParams.SortOrder) != "desc" {
+			return fmt.Errorf("invalid sortOrder: %s (must be 'asc' or 'desc')", queryParams.SortOrder)
+		}
+	}
+
 	// Validate limit
 	if queryParams.Limit != nil && *queryParams.Limit <= 0 {
 		return fmt.Errorf("limit must be greater than 0, but got %d", *queryParams.Limit)

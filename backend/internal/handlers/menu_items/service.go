@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"strings"
 
 	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
@@ -109,7 +110,6 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 	ApplyRatingFilter(filter, "avgRating.value", menuItemsQuery.MinRatingValue, menuItemsQuery.MaxRatingValue)
 	ApplyRatingFilter(filter, "avgRating.overall", menuItemsQuery.MinRatingOverall, menuItemsQuery.MaxRatingOverall)
 
-	slog.Info("tags", "tags", menuItemsQuery.Tags)
 	if len(menuItemsQuery.Tags) > 0 {
 		filter["tags"] = bson.M{"$in": menuItemsQuery.Tags}
 	}
@@ -122,13 +122,27 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 		}
 	}
 
-	options := options.Find()
-	options.SetSkip(int64(menuItemsQuery.Skip)) // Skip the first `Skip` items
+	// Build find options
+	opts := options.Find()
+	opts.SetSkip(int64(menuItemsQuery.Skip)) // Skip the first `Skip` items
 	if menuItemsQuery.Limit != nil {
-		options.SetLimit(int64(*menuItemsQuery.Limit)) // Limit the number of results to `Limit`
+		opts.SetLimit(int64(*menuItemsQuery.Limit)) // Limit the number of results to `Limit`
 	}
+
+	// Sorting
+	if menuItemsQuery.SortBy != "" {
+		sortOrder := 1 // default: asc
+		if strings.ToLower(menuItemsQuery.SortOrder) == "desc" {
+			sortOrder = -1
+		}
+		// This respects the sortBy and sortOrder passed via query parameters,
+		// so we rely on menuItemsQuery.SortBy being a valid, known field
+		// e.g. sort by "avgRating.overall" or "name"
+		opts.SetSort(bson.D{{Key: menuItemsQuery.SortBy, Value: sortOrder}})
+	}
+
 	// Query the database
-	cursor, err := s.menuItems.Find(context.Background(), filter, options)
+	cursor, err := s.menuItems.Find(context.Background(), filter, opts)
 	if err != nil {
 		return nil, err
 	}
