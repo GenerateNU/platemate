@@ -43,7 +43,7 @@ type MenuItemsQuery struct {
 	Limit               *int     `query:"limit"`
 	Skip                int      `query:"skip"`
 	SortBy              string   `query:"sortBy"`    // Could also be an enum if needed
-	SortOrder           string   `query:"sortOrder"` // “asc” or “desc
+	SortOrder           string   `query:"sortOrder"` // “asc” or “desc"
 }
 
 type MenuItemReviewQuery struct {
