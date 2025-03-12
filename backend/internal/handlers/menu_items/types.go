@@ -57,6 +57,12 @@ Database layer of the application
 type Service struct {
 	menuItems *mongo.Collection
 	reviews   *mongo.Collection
+	users     *mongo.Collection
+}
+
+type PopularWithFriendsQuery struct {
+	UserID string `query:"userID" validate:"required"`
+	Limit  int    `query:"limit"`
 }
 
 type MenuItemDocument struct {

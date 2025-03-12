@@ -385,3 +385,23 @@ func (h *Handler) GetMenuItemReviewPictures(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(pictures)
 }
+
+func (h *Handler) GetPopularWithFriends(c *fiber.Ctx) error {
+	var query PopularWithFriendsQuery
+
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+	userID, err := primitive.ObjectIDFromHex(query.UserID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	items, err := h.service.GetPopularWithFriends(userID, query.Limit)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(xerr.InternalServerError())
+	}
+
+	return c.JSON(items)
+}
