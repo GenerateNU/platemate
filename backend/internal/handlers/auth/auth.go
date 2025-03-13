@@ -48,9 +48,19 @@ func (h *Handler) Login(c *fiber.Ctx) error {
 	}
 
 	access, refresh, err := h.service.GenerateTokens(id, count)
+
+	if err != nil {
+		return err
+	}
+
 	c.Response().Header.Add("access_token", access)
 	c.Response().Header.Add("refresh_token", refresh)
-	return err
+
+	return c.Status(fiber.StatusOK).JSON(TokenResponse{
+		AccessToken:  access,
+		RefreshToken: refresh,
+		User:         id,
+	})
 }
 
 func (h *Handler) Register(c *fiber.Ctx) error {

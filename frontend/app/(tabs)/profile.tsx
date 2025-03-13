@@ -1,10 +1,13 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
 import AccountSettings, { AccountSettingsProps, UserCredentials } from "../../components/AccountSettings";
+import { useAuth } from "@/providers/AuthProvider";
 
 const ProfileScreen = () => {
+    const { email } = useAuth();
+
     const credentials: UserCredentials = {
-        email: "dannyrollo@gmail.com",
+        email: email,
         password: "ilovegenerate",
     };
 
