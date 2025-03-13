@@ -1,4 +1,4 @@
-package user_connections
+package users
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -13,6 +13,8 @@ type User struct {
 	FollowingCount int                  `bson:"followingCount"`
 	FollowersCount int                  `bson:"followersCount"`
 	ProfilePicture string               `bson:"profile_picture,omitempty"`
+	FirstName      string               `bson:"firstName,omitempty"`
+	Surname        string               `bson:"surname,omitempty"`
 }
 
 type UserResponse struct {
@@ -22,11 +24,17 @@ type UserResponse struct {
 	FollowersCount int      `json:"followersCount"`
 	FollowingCount int      `json:"followingCount"`
 	Reviews        []string `json:"reviews,omitempty"`
+	FirstName      string   `json:"first_name,omitempty"`
+	Surname        string   `json:"surname,omitempty"`
 }
 
 type FollowRequest struct {
 	FollowerId string `json:"followerId"`
 	FolloweeId string `json:"followeeId"`
+}
+
+type GetUserByIdParam struct {
+	UserID string `params:"id" validate:"required"`
 }
 
 type PaginationQuery struct {

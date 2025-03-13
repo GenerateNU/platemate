@@ -1,4 +1,4 @@
-package user_connections
+package users
 
 import (
 	"context"
@@ -30,6 +30,37 @@ func newService(collections map[string]*mongo.Collection) *Service {
 		reviews:   collections["reviews"],
 		menuItems: collections["menuItems"],
 	}
+}
+
+func (s *Service) GetUserById(userId string) (UserResponse, error) {
+	ctx := context.Background()
+	userObjID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return UserResponse{}, &badReq
+	}
+
+	var user User
+	err = s.users.FindOne(ctx, bson.M{"_id": userObjID}).Decode(&user)
+	if err != nil {
+		return UserResponse{}, err
+	}
+
+	reviews := make([]string, len(user.Reviews))
+	for i, reviewID := range user.Reviews {
+		reviews[i] = reviewID.Hex()
+	}
+
+	return UserResponse{
+		ID:             user.ID.Hex(),
+		Username:       user.Username,
+		ProfilePicture: user.ProfilePicture,
+		FollowersCount: user.FollowersCount,
+		FollowingCount: user.FollowingCount,
+		Reviews:        reviews,
+		FirstName:      user.FirstName,
+		Surname:        user.Surname,
+	}, nil
 }
 
 // GetUserFollowers retrieves a paginated list of users who follow the specified user

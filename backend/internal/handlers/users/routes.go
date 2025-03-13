@@ -1,4 +1,4 @@
-package user_connections
+package users
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -14,6 +14,8 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 
 	// User follow/unfollow endpoints
 	user := apiV1.Group("/user")
+	user.Get("/:id", handler.GetUserById)
+
 	user.Get("/followers", handler.GetFollowers)
 	user.Post("/follow", handler.FollowUser)
 	user.Delete("/follow", handler.UnfollowUser)

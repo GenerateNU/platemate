@@ -31,6 +31,8 @@ type User struct {
 	RefreshToken string  `bson:"refresh_token"`
 	TokenUsed    bool    `bson:"token_used"`
 	Count        float64 `bson:"count"`
+	FirstName    string  `bson:"first_name"`
+	Surname      string  `bson:"surname"`
 }
 type LoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
