@@ -22,12 +22,22 @@ export function SortRow({ title }: SortRowProps) {
         });
 
     };
+    const getSubtitle = () => {
+        switch (arrowState) {
+            case 'up':
+                return 'Highest to lowest';
+            case 'down':
+                return 'Lowest to highest';
+            case 'none':
+                return '-';
+        }
+    };
     
     return (
         <View style={styles.rowContainer}>
             <View style={styles.textContainer}>
                 <Text style={styles.sortFieldTitle}>{title}</Text>
-                <Text style={styles.subTitle}> - </Text>
+                <Text style={styles.subTitle}>{getSubtitle()}</Text>
             </View>
             <Button title="" containerStyle={styles.sortButton} onPress={handleButtonClick}>
                 {/* Conditionally render the arrow icon based on the state */}
@@ -46,7 +56,7 @@ interface SortByProps {
 export function SortBy( { titles }: SortByProps) {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Sort By</Text>
+            <Text style={styles.title}>📶 Sort By</Text>
             <View style={styles.sortRowsContainer}>
                 {titles.map((title, index) => (
                     <SortRow key={index} title={title} />
@@ -101,6 +111,7 @@ const styles = StyleSheet.create({
         lineHeight: 28,
         letterSpacing: 0,
         color: "#000000",
+        marginBottom: 0
     },
     subTitle: {
         fontFamily: "Inter",
@@ -109,12 +120,13 @@ const styles = StyleSheet.create({
         lineHeight: 28,
         letterSpacing: 0,
         color: "#727272",
+        marginLeft: 2,
+        marginTop: -8, // line height of title and subtitle overlap by 8
     },
     textContainer: {
         flexDirection: "column",
         alignItems: "flex-start",
         justifyContent: "flex-start",
-
     },
     blankIcon: {
         width: 24,
