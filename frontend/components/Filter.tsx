@@ -6,7 +6,7 @@ import { TagButton } from "@/components/RestaurantTags";
 interface FilterProps {
     filters: string[];
     title: string;
-    // TODO: emoji: string; 
+    // TODO: emoji: string;
 }
 
 export function Filter({ filters, title }: FilterProps) {
@@ -33,7 +33,7 @@ export function FilterGrid({ filters }: FilterGridProps) {
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: "column",  // Stack the title and grid vertically
+        flexDirection: "column", // Stack the title and grid vertically
         alignItems: "flex-start", // Align both title and grid to the left
         gap: 14, // Space between title and grid
     },
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         lineHeight: 28,
         letterSpacing: 0,
         color: "#151619",
-        marginBottom: 14, // Bottom margin
+        marginBottom: 11,
     },
     filterContainer: {
         flexDirection: "row",
