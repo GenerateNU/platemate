@@ -10,11 +10,17 @@ interface SortRowProps {
 }
 
 export function SortRow({ title }: SortRowProps) {
-    const [isArrowUp, setIsArrowUp] = useState(false); // Track arrow state
+    const [arrowState, setArrowState] = useState<'up' | 'down' | 'none'>('none');
 
     // Toggle arrow state on button press
     const handleButtonClick = () => {
-        setIsArrowUp(prev => !prev);
+        setArrowState(prev => {
+            // Cycle through 'up', 'down', and 'none' states
+            if (prev === 'none') return 'up';
+            if (prev === 'up') return 'down';
+            return 'none';
+        });
+
     };
     
     return (
@@ -24,10 +30,10 @@ export function SortRow({ title }: SortRowProps) {
                 <Text style={styles.subTitle}> - </Text>
             </View>
             <Button title="" containerStyle={styles.sortButton} onPress={handleButtonClick}>
-                <ArrowUpward 
-                
-                    style={{ opacity: isArrowUp ? 1 : 0
-                    }} />
+                {/* Conditionally render the arrow icon based on the state */}
+                {arrowState === 'up' && <ArrowUpward width={24} height={24} />}
+                {arrowState === 'down' && <View style={styles.blankIcon} />} 
+                {arrowState === 'none' && <View style={styles.blankIcon} />}
             </Button>
         </View>
     );
@@ -73,9 +79,9 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     rowContainer: {
-        justifyContent: "space-between", // Space out the children: push button to the right
-        flexDirection: "row", // Set row layout for the container
-        alignItems: "center", // Align items vertically in the center
+        justifyContent: "space-between",
+        flexDirection: "row",
+        alignItems: "center",
         width: "100%",
     },
     sortButton: {
@@ -109,5 +115,10 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         justifyContent: "flex-start",
 
-    }
+    },
+    blankIcon: {
+        width: 24,
+        height: 24, // same as size as the arrow icon i think? DOUBLE CHECK
+    },
 });
+
