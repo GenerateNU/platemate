@@ -9,6 +9,7 @@ import ClockIcon from "@/assets/icons/clock.svg";
 import { StarReview } from "@/components/StarReview";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
+import { Filter } from "@/components/Filter";
 
 export default function Feed() {
     const [activeTab, setActiveTab] = React.useState(0);
@@ -128,6 +129,16 @@ export default function Feed() {
                     <RestaurantDetailItem text={"Open | Closes 1 AM"} Icon={ClockIcon} />
                 </ThemedView>
             </ThemedView>
+            <ThemedView style={{ flex: 1, alignItems: "center", paddingVertical: 64, paddingHorizontal: 24, gap: 30 }}>
+                <Filter filters={["Fast Food", "Pizza", "Chinese", "Sushi",
+                     "Mexico", "Indian", "Burgers", "Wings",
+                     "Thai", "Coffee", "Bubble Tea", "Korean",
+                     "Halal", "Vietnamese", "Hot Pot", "Greek"]} title="Cuisines" />
+                <Filter filters={["Vegan", "Healthy", "Small-Business", "Trending",
+                     "Low-Cal", "Sit-Down", "To-Go", "BYOB",
+                     "Delivery-Available", "Reservation-Required"]} title="Specifications" />
+            </ThemedView>
+            
         </ScrollView>
     );
 }
