@@ -5,11 +5,11 @@ import { ThemedView } from "@/components/ThemedView";
 import { useState } from "react";
 
 export const TagButton = ({ title, filter }: { title: string; filter?: boolean}) => {
-    const [inverted, setInverted] = useState(false);
+    const [selected, selectTag] = useState(false);
 
     const handlePress = () => {
         if (filter) {
-            setInverted(!inverted);
+            selectTag(!selected);
         }
     };
 
@@ -19,7 +19,7 @@ export const TagButton = ({ title, filter }: { title: string; filter?: boolean})
             onPress={handlePress} 
             containerStyle={[
                 filter ? styles.filterButton : styles.tagButton, // Use filterButton if filter is true, otherwise tagButton
-                filter && (inverted ? styles.filterUnhighlightedButton : styles.filterHighlightedButton)
+                filter && (selected ? styles.filterHighlightedButton : styles.filterUnhighlightedButton)
             ]} 
             textStyle={[
                 styles.tagText,
