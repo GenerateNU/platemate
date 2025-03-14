@@ -137,29 +137,33 @@ export default function Feed() {
                     <Filter filters={["Fast Food", "Pizza", "Chinese", "Sushi",
                         "Mexico", "Indian", "Burgers", "Wings",
                         "Thai", "Coffee", "Bubble Tea", "Korean",
-                        "Halal", "Vietnamese", "Hot Pot", "Greek"]} title="Cuisines" />
+                        "Halal", "Vietnamese", "Hot Pot", "Greek",
+                         "Ice cream", "BBQ", "Italian", "Asian",
+                         "Seafood", "Soup", "Japanese", "Salad",
+                         "American", "Comfort food", "Breakfast",
+                         "Caribbean", "Bakery", "Bar"]} title="🍝 Cuisines" />
                     <Filter filters={["Vegan", "Healthy", "Small-Business", "Trending",
                         "Low-Cal", "Sit-Down", "To-Go", "BYOB",
-                        "Delivery-Available", "Reservation-Required"]} title="Specifications" />
-                    <Button 
+                        "Delivery-Available", "Reservation-Required"]} title="🍽️ Specifications" />
+                    <Button
                         title={"Apply Filters"} 
                         onPress={ () => {} }
                         containerStyle={[
                             {
                                 paddingVertical: 12,
-                                paddingHorizontal: 24, // Adjusted horizontal padding for better balance
+                                paddingHorizontal: 24,
                                 borderRadius: 25,
-                                backgroundColor: "#285852", // Dark color for the background
+                                backgroundColor: "#285852",
                             },
                         ]}
                         textStyle={[
                             {
-                                fontFamily: "Source Sans 3", // Replace with actual font name if needed
+                                fontFamily: "Source Sans 3",
                                 fontSize: 14,
-                                fontWeight: "500", // Medium weight
+                                fontWeight: "500", 
                                 lineHeight: 18,
                                 letterSpacing: 0,
-                                color: "#FFFFFF", // White text
+                                color: "#FFFFFF", 
                             },
                         ]}
                     /> 

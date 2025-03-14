@@ -51,5 +51,6 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
         alignItems: "flex-start",
         gap: 25,
+        rowGap: 24,
     },
 });
