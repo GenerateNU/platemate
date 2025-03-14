@@ -4,7 +4,7 @@ import { Button } from "@/components/Button";
 import { ThemedView } from "@/components/ThemedView";
 import { useState } from "react";
 
-export const TagButton = ({ title, filter }: { title: string; filter?: boolean}) => {
+export const TagButton = ({ title, filter }: { title: string; filter?: boolean }) => {
     const [selected, selectTag] = useState(false);
 
     const handlePress = () => {
@@ -14,19 +14,17 @@ export const TagButton = ({ title, filter }: { title: string; filter?: boolean})
     };
 
     return (
-        <Button 
-            title={title} 
-            onPress={handlePress} 
+        <Button
+            title={title}
+            onPress={handlePress}
             containerStyle={[
                 filter ? styles.filterButton : styles.tagButton, // Use filterButton if filter is true, otherwise tagButton
-                filter && (selected ? styles.filterHighlightedButton : styles.filterUnhighlightedButton)
-            ]} 
-            textStyle={[
-                styles.tagText,
-                filter && styles.filterText
-            ]} 
+                filter && (selected ? styles.filterHighlightedButton : styles.filterUnhighlightedButton),
+            ]}
+            textStyle={[styles.tagText, filter && styles.filterText]}
         />
-    );};
+    );
+};
 
 interface TagButtonProps {
     tags: string[];
@@ -73,7 +71,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#000000",
     },
-    filterHighlightedButton: { // padding and corner radius? slightly different vs restaurant
+    filterHighlightedButton: {
+        // padding and corner radius? slightly different vs restaurant
         backgroundColor: "#FFCF0F",
         borderColor: "#FFCF0F",
     },
@@ -81,7 +80,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFFFFF",
         borderColor: "#FFCF0F",
     },
-    
+
     filterText: {
         textAlign: "center",
         color: "#000000",
@@ -91,6 +90,4 @@ const styles = StyleSheet.create({
         lineHeight: 20,
         letterSpacing: 0,
     },
-
-
 });

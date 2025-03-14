@@ -132,22 +132,62 @@ export default function Feed() {
                 </ThemedView>
             </ThemedView>
             <ThemedView style={{ flex: 1, alignItems: "center", paddingVertical: 64, paddingHorizontal: 24, gap: 40 }}>
-                <ThemedView style={{ flex: 1, alignItems: "center", paddingVertical: 64, paddingHorizontal: 24, gap: 30 }}>
-                    <SortBy titles={["Taste Rating", "Value Rating", "Portion Rating", "Overall Rating"]}/>
-                    <Filter filters={["Fast Food", "Pizza", "Chinese", "Sushi",
-                        "Mexico", "Indian", "Burgers", "Wings",
-                        "Thai", "Coffee", "Bubble Tea", "Korean",
-                        "Halal", "Vietnamese", "Hot Pot", "Greek",
-                         "Ice cream", "BBQ", "Italian", "Asian",
-                         "Seafood", "Soup", "Japanese", "Salad",
-                         "American", "Comfort food", "Breakfast",
-                         "Caribbean", "Bakery", "Bar"]} title="🍝 Cuisines" />
-                    <Filter filters={["Vegan", "Healthy", "Small-Business", "Trending",
-                        "Low-Cal", "Sit-Down", "To-Go", "BYOB",
-                        "Delivery-Available", "Reservation-Required"]} title="🍽️ Specifications" />
+                <ThemedView
+                    style={{ flex: 1, alignItems: "center", paddingVertical: 64, paddingHorizontal: 24, gap: 30 }}>
+                    <SortBy titles={["Taste Rating", "Value Rating", "Portion Rating", "Overall Rating"]} />
+                    <Filter
+                        filters={[
+                            "Fast Food",
+                            "Pizza",
+                            "Chinese",
+                            "Sushi",
+                            "Mexico",
+                            "Indian",
+                            "Burgers",
+                            "Wings",
+                            "Thai",
+                            "Coffee",
+                            "Bubble Tea",
+                            "Korean",
+                            "Halal",
+                            "Vietnamese",
+                            "Hot Pot",
+                            "Greek",
+                            "Ice cream",
+                            "BBQ",
+                            "Italian",
+                            "Asian",
+                            "Seafood",
+                            "Soup",
+                            "Japanese",
+                            "Salad",
+                            "American",
+                            "Comfort food",
+                            "Breakfast",
+                            "Caribbean",
+                            "Bakery",
+                            "Bar",
+                        ]}
+                        title="🍝 Cuisines"
+                    />
+                    <Filter
+                        filters={[
+                            "Vegan",
+                            "Healthy",
+                            "Small-Business",
+                            "Trending",
+                            "Low-Cal",
+                            "Sit-Down",
+                            "To-Go",
+                            "BYOB",
+                            "Delivery-Available",
+                            "Reservation-Required",
+                        ]}
+                        title="🍽️ Specifications"
+                    />
                     <Button
-                        title={"Apply Filters"} 
-                        onPress={ () => {} }
+                        title={"Apply Filters"}
+                        onPress={() => {}}
                         containerStyle={[
                             {
                                 paddingVertical: 12,
@@ -160,17 +200,15 @@ export default function Feed() {
                             {
                                 fontFamily: "Source Sans 3",
                                 fontSize: 14,
-                                fontWeight: "500", 
+                                fontWeight: "500",
                                 lineHeight: 18,
                                 letterSpacing: 0,
-                                color: "#FFFFFF", 
+                                color: "#FFFFFF",
                             },
                         ]}
-                    /> 
+                    />
                 </ThemedView>
-
             </ThemedView>
-            
         </ScrollView>
     );
 }
