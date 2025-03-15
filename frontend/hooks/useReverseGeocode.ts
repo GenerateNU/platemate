@@ -22,8 +22,8 @@ export default function useReverseGeocode(latitude?: number, longitude?: number)
         
         if (result && isMounted) {
           // Address string format customization:
-          const { name, city, region, country } = result;
-          const formattedAddress = [name, city, region, country]
+            const { name, street, postalCode, city, region, country } = result;
+          const formattedAddress = [name, street, postalCode, city, region, country]
             .filter(Boolean)
             .join(', ');
           
