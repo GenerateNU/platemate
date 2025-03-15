@@ -18,7 +18,7 @@ export default function useReverseGeocode(latitude?: number, longitude?: number)
     async function fetchAddress() {
       try {
         // Reverse-geocode the coordinates
-        const [result] = await Location.reverseGeocodeAsync({ latitude, longitude });
+        const [result] = await Location.reverseGeocodeAsync({ latitude: latitude!, longitude: longitude! });
         
         if (result && isMounted) {
           // Address string format customization:
