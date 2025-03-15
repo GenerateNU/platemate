@@ -134,6 +134,7 @@ var (
 			"_id",
 			"name",
 			"avgRating",
+			"prevAvgRating",
 			"picture",
 			"reviews",
 			"description",

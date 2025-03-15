@@ -3,6 +3,7 @@
 **Before making a commit, make sure the lint, test, and format checks pass.**
 
 You can do this by running the associated commands in our development environment.
+
 ```shell
 backend-lint
 backend-test
@@ -24,5 +25,6 @@ Then, commit your changes. Afterwards:
 - Go uses **TitleCase** and React Native uses **camelCase** for naming conventions.
 
 ### If you have time...
-- *Want to go that extra level?* — Consider checking out [act](https://github.com/nektos/act).
-- If you're *real interested* in industry-level commit practices, consider [GPG/PGP signing](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) your commits.
+
+- _Want to go that extra level?_ — Consider checking out [act](https://github.com/nektos/act).
+- If you're _real interested_ in industry-level commit practices, consider [GPG/PGP signing](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) your commits.

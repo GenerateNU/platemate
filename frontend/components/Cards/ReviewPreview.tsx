@@ -1,8 +1,7 @@
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import UserInfoRowBase from "../UserInfo/UserInfoRowBase";
 import { ThemedText } from "../ThemedText";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
 
@@ -15,7 +14,6 @@ type Props = {
 };
 
 const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Props) => {
-    const color = useThemeColor({ light: "#000", dark: "#fff" }, "text");
     return (
         <View
             style={{
@@ -27,38 +25,40 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
                 borderRadius: 12,
                 paddingTop: 24,
                 width: Dimensions.get("window").width * 0.75,
+                height: Dimensions.get("window").height * 0.4,
             }}>
             <UserInfoRowBase
                 name={"Beak"}
                 username={"beakerboy"}
                 right={<View />}
-                icon={
-                    "https://media.licdn.com/dms/image/v2/D4E03AQHfL9dfqDis5w/profile-displayphoto-shrink_200_200/B4EZRxo377GwAY-/0/1737073329197?e=2147483647&v=beta&t=Es1EwoIQ-ssmHQmHQiLmz2W1KmEqYu8trkRksVySAeo"
-                }
+                icon={"https://ca.slack-edge.com/T2CHL6FEG-U07KG3RKBDX-a3dd191230d7-512"}
             />
             <View style={{ gap: 10 }}>
                 <View>
-                    <ThemedText type="subtitle">{plateName}</ThemedText>
-                    <ThemedText type="default">{restaurantName}</ThemedText>
+                    <ThemedText type="subtitle" style={{ fontFamily: "Source Sans 3" }}>
+                        {plateName}
+                    </ThemedText>
+                    <ThemedText type="default" style={{ fontFamily: "Source Sans 3" }}>
+                        {restaurantName}
+                    </ThemedText>
                 </View>
-                <View style={{ flexDirection: "row", gap: 12 }}>
-                    {tags.map((tag: string, index: number) => {
-                        return (
-                            <Text
-                                key={index}
-                                style={{
-                                    backgroundColor: "#fc0",
-                                    color: "#000",
-                                    paddingHorizontal: 8,
-                                    paddingVertical: 4,
-                                    borderRadius: 20,
-                                }}>
-                                {tag}
-                            </Text>
-                        );
-                    })}
-                </View>
-                <ThemedText type="default">{content}</ThemedText>
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.scrollableTags}>
+                    {tags.map((tag, index) => (
+                        <Text key={index} style={styles.tag}>
+                            {tag}
+                        </Text>
+                    ))}
+                </ScrollView>
+                <ThemedText
+                    type="default"
+                    style={{ fontFamily: "Source Sans 3" }}
+                    numberOfLines={3}
+                    ellipsizeMode="tail">
+                    {content}
+                </ThemedText>
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                 <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
@@ -82,4 +82,17 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
 
 export default ReviewPreview;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    scrollableTags: {
+        flexDirection: "row",
+        gap: 8,
+    },
+    tag: {
+        backgroundColor: "#fc0",
+        color: "#000",
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 20,
+        fontSize: 12,
+    },
+});

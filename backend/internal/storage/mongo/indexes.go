@@ -26,4 +26,16 @@ var Indexes = []Index{
 		Collection: "passwordResets",
 		Model:      mongo.IndexModel{Keys: bson.M{"expiresAt": 1}, Options: options.Index().SetExpireAfterSeconds(0)},
 	},
+	{
+		Collection: "restaurants",
+		Model: mongo.IndexModel{
+			Keys: bson.D{
+				{Key: "name", Value: "text"},
+				{Key: "description", Value: "text"},
+				{Key: "style", Value: "text"},
+				{Key: "tags", Value: "text"},
+			},
+			Options: options.Index().SetName("restaurant_text_index"),
+		},
+	},
 }

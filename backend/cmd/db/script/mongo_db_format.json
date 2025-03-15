@@ -1,300 +1,297 @@
 [
-    {
-        "name": "Topgolf Boston - Canton",
-        "address": {
-            "street": "777 Dedham St",
-            "zipcode": "02021",
-            "state": "MA",
-            "location": {
-                "latitude": 42.194418899999995,
-                "longitude": -71.15115639999999
-            }
-        },
-        "menuItems": [],
-        "ratingAverage": {
-            "overall": 5,
-            "return": 100
-        },
-        "style": "Restaurant",
-        "picture": "https://maps.google.com/?cid=9212373040954898178",
-        "description": "Sprawling entertainment venue with a high-tech driving range & swanky lounge with drinks & games.",
-        "tags": [
-            "Serves Breakfast",
-            "Serves Lunch",
-            "Serves Dinner",
-            "Serves Beer",
-            "Serves Wine",
-            "Serves Brunch",
-            "Serves Cocktails",
-            "Serves Dessert",
-            "Serves Coffee"
-        ]
+  {
+    "name": "Topgolf Boston - Canton",
+    "address": {
+      "street": "777 Dedham St",
+      "zipcode": "02021",
+      "state": "MA",
+      "location": {
+        "latitude": 42.194418899999995,
+        "longitude": -71.15115639999999
+      }
     },
-    {
-        "name": "Cheers",
-        "address": {
-            "street": "84 Beacon St",
-            "zipcode": "02108",
-            "state": "MA",
-            "location": {
-                "latitude": 42.3559324,
-                "longitude": -71.0712818
-            }
-        },
-        "menuItems": [],
-        "ratingAverage": {
-            "overall": 5,
-            "return": 100
-        },
-        "style": "Pub",
-        "picture": "https://maps.google.com/?cid=13704511825477624642",
-        "description": "Tourists visit this classic bar with iconic facade for pub grub, pints & nostalgia.",
-        "tags": [
-            "Serves Lunch",
-            "Serves Dinner",
-            "Serves Beer",
-            "Serves Wine",
-            "Serves Vegetarian Food",
-            "Serves Cocktails",
-            "Serves Dessert",
-            "Serves Coffee"
-        ]
+    "menuItems": [],
+    "ratingAverage": {
+      "overall": 5,
+      "return": 100
     },
-    {
-        "name": "Time Out Market Boston",
-        "address": {
-            "street": "401 Park Dr",
-            "zipcode": "02215",
-            "state": "MA",
-            "location": {
-                "latitude": 42.344685,
-                "longitude": -71.10273099999999
-            }
-        },
-        "menuItems": [],
-        "ratingAverage": {
-            "overall": 5,
-            "return": 100
-        },
-        "style": "Restaurant",
-        "picture": "https://maps.google.com/?cid=13983029843173631675",
-        "description": "Industrial-chic venue with a handpicked set of eateries and bar, plus an area for cooking demos.",
-        "tags": [
-            "Serves Breakfast",
-            "Serves Lunch",
-            "Serves Dinner",
-            "Serves Beer",
-            "Serves Wine",
-            "Serves Brunch",
-            "Serves Vegetarian Food",
-            "Serves Cocktails",
-            "Serves Dessert",
-            "Serves Coffee"
-        ]
+    "style": "Restaurant",
+    "picture": "https://maps.google.com/?cid=9212373040954898178",
+    "description": "Sprawling entertainment venue with a high-tech driving range & swanky lounge with drinks & games.",
+    "tags": [
+      "Serves Breakfast",
+      "Serves Lunch",
+      "Serves Dinner",
+      "Serves Beer",
+      "Serves Wine",
+      "Serves Brunch",
+      "Serves Cocktails",
+      "Serves Dessert",
+      "Serves Coffee"
+    ]
+  },
+  {
+    "name": "Cheers",
+    "address": {
+      "street": "84 Beacon St",
+      "zipcode": "02108",
+      "state": "MA",
+      "location": {
+        "latitude": 42.3559324,
+        "longitude": -71.0712818
+      }
     },
-    {
-        "name": "Chick-fil-A",
-        "address": {
-            "street": "569 Boylston St",
-            "zipcode": "02116",
-            "state": "MA",
-            "location": {
-                "latitude": 42.350552199999996,
-                "longitude": -71.0763851
-            }
-        },
-        "menuItems": [],
-        "ratingAverage": {
-            "overall": 5,
-            "return": 100
-        },
-        "style": "Fast Food Restaurant",
-        "picture": "https://maps.google.com/?cid=3611484379603008913",
-        "description": "Fast-food chain serving chicken sandwiches & nuggets along with salads & sides.",
-        "tags": [
-            "Serves Breakfast",
-            "Serves Lunch",
-            "Serves Dinner",
-            "Serves Vegetarian Food",
-            "Serves Dessert",
-            "Serves Coffee"
-        ]
+    "menuItems": [],
+    "ratingAverage": {
+      "overall": 5,
+      "return": 100
     },
-    {
-        "name": "Tatte Bakery & Cafe | Back Bay",
-        "address": {
-            "street": "399 Boylston St",
-            "zipcode": "02116",
-            "state": "MA",
-            "location": {
-                "latitude": 42.35175830000001,
-                "longitude": -71.0719028
-            }
-        },
-        "menuItems": [],
-        "ratingAverage": {
-            "overall": 5,
-            "return": 100
-        },
-        "style": "Restaurant",
-        "picture": "https://maps.google.com/?cid=13159025184032641203",
-        "description": "Cozy spot with a rustic feel serving breakfast, soups, sandwiches, and an array of baked treats.",
-        "tags": [
-            "Serves Breakfast",
-            "Serves Lunch",
-            "Serves Dinner",
-            "Serves Beer",
-            "Serves Brunch",
-            "Serves Vegetarian Food",
-            "Serves Cocktails",
-            "Serves Dessert",
-            "Serves Coffee"
-        ]
+    "style": "Pub",
+    "picture": "https://maps.google.com/?cid=13704511825477624642",
+    "description": "Tourists visit this classic bar with iconic facade for pub grub, pints & nostalgia.",
+    "tags": [
+      "Serves Lunch",
+      "Serves Dinner",
+      "Serves Beer",
+      "Serves Wine",
+      "Serves Vegetarian Food",
+      "Serves Cocktails",
+      "Serves Dessert",
+      "Serves Coffee"
+    ]
+  },
+  {
+    "name": "Time Out Market Boston",
+    "address": {
+      "street": "401 Park Dr",
+      "zipcode": "02215",
+      "state": "MA",
+      "location": {
+        "latitude": 42.344685,
+        "longitude": -71.10273099999999
+      }
     },
-    {
-        "name": "Union Oyster House",
-        "address": {
-            "street": "41 Union St",
-            "zipcode": "02108",
-            "state": "MA",
-            "location": {
-                "latitude": 42.361287999999995,
-                "longitude": -71.05690799999999
-            }
-        },
-        "menuItems": [],
-        "ratingAverage": {
-            "overall": 5,
-            "return": 100
-        },
-        "style": "Seafood Restaurant",
-        "picture": "https://maps.google.com/?cid=6319045547406381352",
-        "description": "Historic eatery serving chowder & other New England seafood standards since 1826.",
-        "tags": [
-            "Serves Lunch",
-            "Serves Dinner",
-            "Serves Beer",
-            "Serves Wine",
-            "Serves Cocktails",
-            "Serves Dessert",
-            "Serves Coffee"
-        ]
+    "menuItems": [],
+    "ratingAverage": {
+      "overall": 5,
+      "return": 100
     },
-    {
-        "name": "The Friendly Toast",
-        "address": {
-            "street": "35 Stanhope St",
-            "zipcode": "02116",
-            "state": "MA",
-            "location": {
-                "latitude": 42.3484626,
-                "longitude": -71.07322049999999
-            }
-        },
-        "menuItems": [],
-        "ratingAverage": {
-            "overall": 5,
-            "return": 100
-        },
-        "style": "Brunch Restaurant",
-        "picture": "https://maps.google.com/?cid=15618661099154171557",
-        "description": "Trendy hangout serving all-day breakfasts in quirky surroundings, with vegan options.",
-        "tags": [
-            "Serves Breakfast",
-            "Serves Lunch",
-            "Serves Dinner",
-            "Serves Beer",
-            "Serves Wine",
-            "Serves Brunch",
-            "Serves Vegetarian Food",
-            "Serves Cocktails",
-            "Serves Dessert",
-            "Serves Coffee"
-        ]
+    "style": "Restaurant",
+    "picture": "https://maps.google.com/?cid=13983029843173631675",
+    "description": "Industrial-chic venue with a handpicked set of eateries and bar, plus an area for cooking demos.",
+    "tags": [
+      "Serves Breakfast",
+      "Serves Lunch",
+      "Serves Dinner",
+      "Serves Beer",
+      "Serves Wine",
+      "Serves Brunch",
+      "Serves Vegetarian Food",
+      "Serves Cocktails",
+      "Serves Dessert",
+      "Serves Coffee"
+    ]
+  },
+  {
+    "name": "Chick-fil-A",
+    "address": {
+      "street": "569 Boylston St",
+      "zipcode": "02116",
+      "state": "MA",
+      "location": {
+        "latitude": 42.350552199999996,
+        "longitude": -71.0763851
+      }
     },
-    {
-        "name": "Saltie Girl",
-        "address": {
-            "street": "279 Dartmouth St",
-            "zipcode": "02116",
-            "state": "MA",
-            "location": {
-                "latitude": 42.351156599999996,
-                "longitude": -71.07756789999999
-            }
-        },
-        "menuItems": [],
-        "ratingAverage": {
-            "overall": 5,
-            "return": 100
-        },
-        "style": "Seafood Restaurant",
-        "picture": "https://maps.google.com/?cid=1850195991803436904",
-        "description": "Charming raw bar serving various seafood, including dishes made with tinned fish.",
-        "tags": [
-            "Serves Lunch",
-            "Serves Dinner",
-            "Serves Beer",
-            "Serves Wine",
-            "Serves Brunch",
-            "Serves Vegetarian Food",
-            "Serves Cocktails",
-            "Serves Dessert",
-            "Serves Coffee"
-        ]
+    "menuItems": [],
+    "ratingAverage": {
+      "overall": 5,
+      "return": 100
     },
-    {
-        "name": "Felipe's Taqueria",
-        "address": {
-            "street": "21 Brattle St",
-            "zipcode": "02138",
-            "state": "MA",
-            "location": {
-                "latitude": 42.3734811,
-                "longitude": -71.1204944
-            }
-        },
-        "menuItems": [],
-        "ratingAverage": {
-            "overall": 5,
-            "return": 100
-        },
-        "style": "Mexican Restaurant",
-        "picture": "https://maps.google.com/?cid=6545504631608644073",
-        "description": "Made-to-order Mexican food & Latin cocktails whipped up in a casual counter-serve eatery.",
-        "tags": [
-            "Serves Breakfast",
-            "Serves Lunch",
-            "Serves Dinner",
-            "Serves Beer",
-            "Serves Wine",
-            "Serves Vegetarian Food",
-            "Serves Cocktails",
-            "Serves Dessert"
-        ]
+    "style": "Fast Food Restaurant",
+    "picture": "https://maps.google.com/?cid=3611484379603008913",
+    "description": "Fast-food chain serving chicken sandwiches & nuggets along with salads & sides.",
+    "tags": [
+      "Serves Breakfast",
+      "Serves Lunch",
+      "Serves Dinner",
+      "Serves Vegetarian Food",
+      "Serves Dessert",
+      "Serves Coffee"
+    ]
+  },
+  {
+    "name": "Tatte Bakery & Cafe | Back Bay",
+    "address": {
+      "street": "399 Boylston St",
+      "zipcode": "02116",
+      "state": "MA",
+      "location": {
+        "latitude": 42.35175830000001,
+        "longitude": -71.0719028
+      }
     },
-    {
-        "name": "Raising Cane's Chicken Fingers",
-        "address": {
-            "street": "755 Boylston St",
-            "zipcode": "02116",
-            "state": "MA",
-            "location": {
-                "latitude": 42.3492749,
-                "longitude": -71.08106339999999
-            }
-        },
-        "menuItems": [],
-        "ratingAverage": {
-            "overall": 5,
-            "return": 100
-        },
-        "style": "Fast Food Restaurant",
-        "picture": "https://maps.google.com/?cid=2163632520292191421",
-        "description": "Fast-food chain specializing in fried chicken fingers, crinkle-cut fries & Texas toast.",
-        "tags": [
-            "Serves Lunch",
-            "Serves Dinner"
-        ]
-    }
+    "menuItems": [],
+    "ratingAverage": {
+      "overall": 5,
+      "return": 100
+    },
+    "style": "Restaurant",
+    "picture": "https://maps.google.com/?cid=13159025184032641203",
+    "description": "Cozy spot with a rustic feel serving breakfast, soups, sandwiches, and an array of baked treats.",
+    "tags": [
+      "Serves Breakfast",
+      "Serves Lunch",
+      "Serves Dinner",
+      "Serves Beer",
+      "Serves Brunch",
+      "Serves Vegetarian Food",
+      "Serves Cocktails",
+      "Serves Dessert",
+      "Serves Coffee"
+    ]
+  },
+  {
+    "name": "Union Oyster House",
+    "address": {
+      "street": "41 Union St",
+      "zipcode": "02108",
+      "state": "MA",
+      "location": {
+        "latitude": 42.361287999999995,
+        "longitude": -71.05690799999999
+      }
+    },
+    "menuItems": [],
+    "ratingAverage": {
+      "overall": 5,
+      "return": 100
+    },
+    "style": "Seafood Restaurant",
+    "picture": "https://maps.google.com/?cid=6319045547406381352",
+    "description": "Historic eatery serving chowder & other New England seafood standards since 1826.",
+    "tags": [
+      "Serves Lunch",
+      "Serves Dinner",
+      "Serves Beer",
+      "Serves Wine",
+      "Serves Cocktails",
+      "Serves Dessert",
+      "Serves Coffee"
+    ]
+  },
+  {
+    "name": "The Friendly Toast",
+    "address": {
+      "street": "35 Stanhope St",
+      "zipcode": "02116",
+      "state": "MA",
+      "location": {
+        "latitude": 42.3484626,
+        "longitude": -71.07322049999999
+      }
+    },
+    "menuItems": [],
+    "ratingAverage": {
+      "overall": 5,
+      "return": 100
+    },
+    "style": "Brunch Restaurant",
+    "picture": "https://maps.google.com/?cid=15618661099154171557",
+    "description": "Trendy hangout serving all-day breakfasts in quirky surroundings, with vegan options.",
+    "tags": [
+      "Serves Breakfast",
+      "Serves Lunch",
+      "Serves Dinner",
+      "Serves Beer",
+      "Serves Wine",
+      "Serves Brunch",
+      "Serves Vegetarian Food",
+      "Serves Cocktails",
+      "Serves Dessert",
+      "Serves Coffee"
+    ]
+  },
+  {
+    "name": "Saltie Girl",
+    "address": {
+      "street": "279 Dartmouth St",
+      "zipcode": "02116",
+      "state": "MA",
+      "location": {
+        "latitude": 42.351156599999996,
+        "longitude": -71.07756789999999
+      }
+    },
+    "menuItems": [],
+    "ratingAverage": {
+      "overall": 5,
+      "return": 100
+    },
+    "style": "Seafood Restaurant",
+    "picture": "https://maps.google.com/?cid=1850195991803436904",
+    "description": "Charming raw bar serving various seafood, including dishes made with tinned fish.",
+    "tags": [
+      "Serves Lunch",
+      "Serves Dinner",
+      "Serves Beer",
+      "Serves Wine",
+      "Serves Brunch",
+      "Serves Vegetarian Food",
+      "Serves Cocktails",
+      "Serves Dessert",
+      "Serves Coffee"
+    ]
+  },
+  {
+    "name": "Felipe's Taqueria",
+    "address": {
+      "street": "21 Brattle St",
+      "zipcode": "02138",
+      "state": "MA",
+      "location": {
+        "latitude": 42.3734811,
+        "longitude": -71.1204944
+      }
+    },
+    "menuItems": [],
+    "ratingAverage": {
+      "overall": 5,
+      "return": 100
+    },
+    "style": "Mexican Restaurant",
+    "picture": "https://maps.google.com/?cid=6545504631608644073",
+    "description": "Made-to-order Mexican food & Latin cocktails whipped up in a casual counter-serve eatery.",
+    "tags": [
+      "Serves Breakfast",
+      "Serves Lunch",
+      "Serves Dinner",
+      "Serves Beer",
+      "Serves Wine",
+      "Serves Vegetarian Food",
+      "Serves Cocktails",
+      "Serves Dessert"
+    ]
+  },
+  {
+    "name": "Raising Cane's Chicken Fingers",
+    "address": {
+      "street": "755 Boylston St",
+      "zipcode": "02116",
+      "state": "MA",
+      "location": {
+        "latitude": 42.3492749,
+        "longitude": -71.08106339999999
+      }
+    },
+    "menuItems": [],
+    "ratingAverage": {
+      "overall": 5,
+      "return": 100
+    },
+    "style": "Fast Food Restaurant",
+    "picture": "https://maps.google.com/?cid=2163632520292191421",
+    "description": "Fast-food chain specializing in fried chicken fingers, crinkle-cut fries & Texas toast.",
+    "tags": ["Serves Lunch", "Serves Dinner"]
+  }
 ]
