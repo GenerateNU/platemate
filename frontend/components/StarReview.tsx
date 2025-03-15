@@ -14,6 +14,8 @@ export interface InteractiveStarsProps {
     rating: number;
     onChange: (value: number) => void;
     starSize?: number;
+    activeColor?: string; // color when a star is filled
+    inactiveColor?: string; // color when a star is not filled
 }
 
 interface StarProps {
@@ -49,7 +51,13 @@ export function Stars({ avgRating, full = true }: StarProps) {
     return <View style={styles.starsContainer}>{stars}</View>;
 }
 
-export function InteractiveStars({ rating, onChange, starSize = 24 }: InteractiveStarsProps) {
+export function InteractiveStars({
+    rating,
+    onChange,
+    starSize = 24,
+    activeColor = "#F7B418", // default yellow for interactive instance
+    inactiveColor = "#FFFFFF", // default white for interactive instance
+}: InteractiveStarsProps) {
     const maxStars = 5;
     return (
         <View style={styles.starRow}>
@@ -58,7 +66,7 @@ export function InteractiveStars({ rating, onChange, starSize = 24 }: Interactiv
                 const StarIcon = isFilled ? ShadedStar : UnshadedStar;
                 return (
                     <TouchableOpacity key={i} onPress={() => onChange(i + 1)}>
-                        <StarIcon width={starSize} height={starSize} />
+                        <StarIcon width={starSize} height={starSize} fill={isFilled ? activeColor : inactiveColor} />
                     </TouchableOpacity>
                 );
             })}
