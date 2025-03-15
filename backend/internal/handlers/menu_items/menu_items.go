@@ -219,6 +219,27 @@ func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
+	// Assign default empty values if nil
+	if queryParams.Tags == nil {
+		queryParams.Tags = []string{}
+	}
+	if queryParams.DietaryRestrictions == nil {
+		queryParams.DietaryRestrictions = []string{}
+	}
+
+	if queryParams.Limit == nil {
+		defaultLimit := 20
+		queryParams.Limit = &defaultLimit
+	}
+
+	// Assign default sorting order if empty
+	if queryParams.SortBy == "" {
+		queryParams.SortBy = "name"
+	}
+	if queryParams.SortOrder == "" {
+		queryParams.SortOrder = "asc"
+	}
+
 	if filter := c.Query("filter"); filter != "" {
 		queryParams.DietaryRestrictions = strings.Split(filter, ",")
 	}
