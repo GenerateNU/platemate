@@ -416,10 +416,14 @@ func (s *Service) GetPopularWithFriends(userID primitive.ObjectID, limit int) ([
 				"from": "reviews",
 				"let":  bson.M{"friendIDs": "$following"},
 				"pipeline": bson.A{
+					// Cast reviewer.id to an ObjectID so it can match friendIDs (ObjectIDs)
 					bson.M{
 						"$match": bson.M{
 							"$expr": bson.M{
-								"$in": []interface{}{"$reviewer.id", "$$friendIDs"},
+								"$in": bson.A{
+									bson.M{"$toObjectId": "$reviewer.id"},
+									"$$friendIDs",
+								},
 							},
 						},
 					},
