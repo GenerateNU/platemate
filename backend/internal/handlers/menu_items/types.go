@@ -42,6 +42,9 @@ type MenuItemsQuery struct {
 	DietaryRestrictions []string `query:"filter"`
 	Limit               *int     `query:"limit"`
 	Skip                int      `query:"skip"`
+	Name				string	 `query:"name"`
+	Longitude			*float64 `query:"longitude"`
+	Latitude			*float64 `query:"latitude"`
 }
 
 type MenuItemReviewQuery struct {
