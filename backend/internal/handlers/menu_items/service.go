@@ -122,6 +122,24 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 		}
 	}
 
+	if menuItemsQuery.Name != "" {
+		filter["$text"] = bson.M{
+			"$search": menuItemsQuery.Name,
+		}
+	}
+
+	if menuItemsQuery.Longitude != nil && menuItemsQuery.Latitude != nil { // return menu items in order of closest location
+		filter["location"] = bson.M{
+			"$near": bson.M{
+				"$geometry": bson.M{
+					"type":        "Point",
+					"coordinates": []float64{*menuItemsQuery.Longitude, *menuItemsQuery.Latitude},
+				},
+				"$maxDistance": 6437.38, // Optional: 4 mile search radius
+			},
+		}
+	}
+
 	options := options.Find()
 	options.SetSkip(int64(menuItemsQuery.Skip)) // Skip the first `Skip` items
 	if menuItemsQuery.Limit != nil {
