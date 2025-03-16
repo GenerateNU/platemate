@@ -256,6 +256,7 @@ func (s *Service) GetSuperStars(rid primitive.ObjectID) (int, error) {
 		for _, reviewId := range reviews {
 			reviewIdObj, _ := primitive.ObjectIDFromHex(reviewId)
 			review, _ := s.reviewService.GetReviewByID(reviewIdObj)
+			// checks if the overall rating is 5
 			rating := review.Rating.Overall
 			if rating == 5 {
 				superStars += 1

@@ -3,8 +3,6 @@ package user_connections
 import (
 	"context"
 	"errors"
-	"fmt"
-
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"github.com/GenerateNU/platemate/internal/xerr"
@@ -399,7 +397,6 @@ func (s *Service) GetFriendReviewsForItem(userId string, menuItemId string) ([]r
 	if err = reviewsCursor.All(ctx, &reviews); err != nil {
 		return nil, err
 	}
-	fmt.Printf("reviews before sending: %+v\n", reviews)
 	return reviews, nil
 
 }

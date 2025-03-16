@@ -150,14 +150,15 @@ func (h *Handler) GetRestaurantFriendsFav(c *fiber.Ctx) error {
 
 // get SuperStars by restaurant ID
 func (h *Handler) GetSuperStars(c *fiber.Ctx) error {
+	fmt.Println("helloooo")
 	restaurantIdParam := c.Params("rid")
-	fmt.Println(restaurantIdParam)
+	fmt.Println("param", restaurantIdParam)
 
 	restaurantObjID, err := primitive.ObjectIDFromHex(restaurantIdParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
-	fmt.Println(restaurantObjID)
+	fmt.Println("object form", restaurantObjID)
 	superStars, err := h.service.GetSuperStars(restaurantObjID)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
