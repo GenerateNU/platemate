@@ -413,7 +413,7 @@ func (h *Handler) GetPopularWithFriends(c *fiber.Ctx) error {
 	if err := c.QueryParser(&query); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
-	userID, err := primitive.ObjectIDFromHex(query.UserID)
+	userID, err := primitive.ObjectIDFromHex(query.UserId)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}

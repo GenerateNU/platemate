@@ -61,7 +61,7 @@ type Service struct {
 }
 
 type PopularWithFriendsQuery struct {
-	UserID string `query:"userID" validate:"required"`
+	UserId string `query:"userId" validate:"required"`
 	Limit  int    `query:"limit"`
 }
 
