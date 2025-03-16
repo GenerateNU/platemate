@@ -3,6 +3,7 @@ package user_connections
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
@@ -24,7 +25,7 @@ type Service struct {
 	menuItems *mongo.Collection
 }
 
-func newService(collections map[string]*mongo.Collection) *Service {
+func NewService(collections map[string]*mongo.Collection) *Service {
 	return &Service{
 		users:     collections["users"],
 		reviews:   collections["reviews"],
@@ -363,7 +364,16 @@ func (s *Service) GetFriendReviewsForItem(userId string, menuItemId string) ([]r
 	if len(user.Following) == 0 || len(user.Followers) == 0 { // No friends :(
 		return []review.ReviewDocument{}, nil
 	}
+	// ADDED to account for type mismatch
+	var followingIDs []string
+	for _, id := range user.Following {
+		followingIDs = append(followingIDs, id.Hex()) // Convert ObjectID to string
+	}
 
+	var followerIDs []string
+	for _, id := range user.Followers {
+		followerIDs = append(followerIDs, id.Hex()) // Convert ObjectID to string
+	}
 	// Query reviews that match both menu item reviews and friends (follower and following)
 	reviewsCursor, err := s.reviews.Find(ctx,
 		bson.M{
@@ -372,10 +382,10 @@ func (s *Service) GetFriendReviewsForItem(userId string, menuItemId string) ([]r
 					"_id": bson.M{"$in": menuItem.Reviews}, // Match reviews related to the menu item
 				},
 				{
-					"reviewer._id": bson.M{"$in": user.Following}, // Reviewer's ID must be in the Following list
+					"reviewer._id": bson.M{"$in": followingIDs}, // Reviewer's ID must be in the Following list
 				},
 				{
-					"reviewer._id": bson.M{"$in": user.Followers}, // Reviewer's ID must also be in the Followers list
+					"reviewer._id": bson.M{"$in": followerIDs}, // Reviewer's ID must be in the Followers list
 				},
 			},
 		},
@@ -385,12 +395,11 @@ func (s *Service) GetFriendReviewsForItem(userId string, menuItemId string) ([]r
 		return nil, err
 	}
 	defer reviewsCursor.Close(ctx)
-
 	var reviews []review.ReviewDocument
 	if err = reviewsCursor.All(ctx, &reviews); err != nil {
 		return nil, err
 	}
-
+	fmt.Printf("reviews before sending: %+v\n", reviews)
 	return reviews, nil
 
 }

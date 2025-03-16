@@ -12,7 +12,7 @@ type RestaurantDocument struct {
 		Street   string `bson:"street"   json:"street"`
 		Zipcode  string `bson:"zipcode"  json:"zipcode"`
 		State    string `bson:"state"     json:"state"`
-		Location []int  `bson:"location" json:"location"`
+		Location []float64  `bson:"location" json:"location"`
 	} `bson:"address" json:"address"`
 
 	MenuItems []primitive.ObjectID `bson:"menuItems" json:"menuItems"`
@@ -27,3 +27,9 @@ type RestaurantDocument struct {
 	Description string   `bson:"description"  json:"description"`
 	Tags        []string `bson:"tags"         json:"tags"`
 }
+
+type FriendsFav struct {
+	IsFriendsFav bool `json:"friends_fav"`
+	FriendsReviewed int `json:"friends_reviewed"`
+}
+

@@ -68,6 +68,7 @@ func run(stderr io.Writer, args []string) {
 		fatal(ctx, "Failed to connect to MongoDB", err)
 	}
 
+
 	app := server.New(db.Collections)
 
 	go func() {
