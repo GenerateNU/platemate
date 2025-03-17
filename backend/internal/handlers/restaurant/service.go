@@ -2,7 +2,6 @@ package restaurant
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
@@ -191,15 +190,14 @@ func (s *Service) GetRestaurantFriendsFav(uid primitive.ObjectID, rid primitive.
 	}
 	for _, menuItemId := range restaurant.MenuItems {
 		// why are the inputs for this method strings when all id's are represented as ObjectID's ???
-		fmt.Println(menuItemId)
 		friendReviews, err := s.userConnectionsService.GetFriendReviewsForItem(uid.Hex(), menuItemId.Hex())
-		fmt.Println(err)
-		fmt.Println("friend reviews for menuItem", len(friendReviews))
+		if err != nil {
+			return nil, err
+		}
 		for _, friendReview := range friendReviews {
 			// storing the friends of the user that reviewed menuItems at the restaurant
-			fmt.Println(friendReview.Reviewer)
 			friend := friendReview.Reviewer.ID
-			fmt.Println("friend id:", friend)
+			// ensure that all the friends added to the list are unique
 			if doesNotContain(friends, friend) {
 				friends = append(friends, friend)
 			}
@@ -265,4 +263,3 @@ func (s *Service) GetSuperStars(rid primitive.ObjectID) (int, error) {
 
 	return superStars, nil
 }
-

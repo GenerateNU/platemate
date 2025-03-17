@@ -2,8 +2,6 @@ package restaurant
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/GenerateNU/platemate/internal/xerr"
 	go_json "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
@@ -122,20 +120,18 @@ func (h *Handler) DeleteRestaurant(c *fiber.Ctx) error {
 // GetRestaurantFriendsFav by ID
 func (h *Handler) GetRestaurantFriendsFav(c *fiber.Ctx) error {
 	restaurantIdParam := c.Params("rid")
-	fmt.Println(restaurantIdParam)
 	userIdParam := c.Params("uid")
-	fmt.Println(userIdParam)
 
 	restaurantObjID, err := primitive.ObjectIDFromHex(restaurantIdParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
-	fmt.Println(restaurantObjID)
+
 	userObjID, err := primitive.ObjectIDFromHex(userIdParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
-	fmt.Println(userObjID)
+
 	friendsFav, err := h.service.GetRestaurantFriendsFav(userObjID, restaurantObjID)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
@@ -150,15 +146,13 @@ func (h *Handler) GetRestaurantFriendsFav(c *fiber.Ctx) error {
 
 // get SuperStars by restaurant ID
 func (h *Handler) GetSuperStars(c *fiber.Ctx) error {
-	fmt.Println("helloooo")
 	restaurantIdParam := c.Params("rid")
-	fmt.Println("param", restaurantIdParam)
 
 	restaurantObjID, err := primitive.ObjectIDFromHex(restaurantIdParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
-	fmt.Println("object form", restaurantObjID)
+
 	superStars, err := h.service.GetSuperStars(restaurantObjID)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
