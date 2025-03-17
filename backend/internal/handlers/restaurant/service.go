@@ -234,7 +234,6 @@ func doesNotContain(slice []string, item string) bool {
 	return true
 }
 
-// super stars: go through all of the reviews for all the menu items at a restaurant and count how many are 5 star reviews
 func (s *Service) GetSuperStars(rid primitive.ObjectID) (int, error) {
 	ctx := context.Background()
 
@@ -266,3 +265,4 @@ func (s *Service) GetSuperStars(rid primitive.ObjectID) (int, error) {
 
 	return superStars, nil
 }
+
