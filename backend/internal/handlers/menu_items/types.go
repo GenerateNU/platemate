@@ -46,7 +46,7 @@ type MenuItemsQuery struct {
 
 type MenuItemReviewQuery struct {
 	UserID *string `query:"userID"`
-	SortBy string `query:"sortBy"`
+	SortBy string  `query:"sortBy"`
 }
 
 /*
