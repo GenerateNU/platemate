@@ -3,11 +3,13 @@ import { View, Text } from "react-native";
 import { StyleSheet } from "react-native";
 import { Button } from "@/components/Button";
 import ArrowUpward from "@/assets/icons/arrow_upward.svg";
+import ArrowDownward from "@/assets/icons/arrow_downward.svg";
 
 interface SortRowProps {
     title: string;
 }
 
+// TODO: figure out if possible to sort by multiple rows, or just one
 export function SortRow({ title }: SortRowProps) {
     const [arrowState, setArrowState] = useState<"up" | "down" | "none">("none");
 
@@ -40,7 +42,7 @@ export function SortRow({ title }: SortRowProps) {
             <Button title="" containerStyle={styles.sortButton} onPress={handleButtonClick}>
                 {/* Conditionally render the arrow icon based on the state */}
                 {arrowState === "up" && <ArrowUpward width={24} height={24} />}
-                {arrowState === "down" && <View style={styles.blankIcon} />}
+                {arrowState === "down" && <ArrowDownward width={24} height={24} />}
                 {arrowState === "none" && <View style={styles.blankIcon} />}
             </Button>
         </View>
