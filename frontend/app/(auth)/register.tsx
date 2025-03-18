@@ -19,6 +19,9 @@ import { makeRequest } from "@/api/base";
 import { router } from "expo-router";
 
 export default function ExploreScreen() {
+    const [firstName, setFirstName] = useState("");
+    const [surname, setSurname] = useState("");
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -55,6 +58,30 @@ export default function ExploreScreen() {
 
                         <View style={styles.formContainer}>
                             <View style={styles.inputContainer}>
+                                <Text style={styles.inputLabel}>First Name</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={firstName}
+                                    onChangeText={setFirstName}
+                                    placeholder="Danny"
+                                    keyboardType="default"
+                                    autoCapitalize="words"
+                                />
+                            </View>
+
+                            <View style={styles.inputContainer}>
+                                <Text style={styles.inputLabel}>Last Name</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={surname}
+                                    onChangeText={setSurname}
+                                    placeholder="Rollo"
+                                    keyboardType="default"
+                                    autoCapitalize="words"
+                                />
+                            </View>
+
+                            <View style={styles.inputContainer}>
                                 <Text style={styles.inputLabel}>Email</Text>
                                 <TextInput
                                     style={styles.input}
@@ -87,9 +114,9 @@ export default function ExploreScreen() {
                         </View>
 
                         <View style={styles.footerContainer}>
-                            <Text style={styles.footerText}>Don't have an account? </Text>
-                            <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
-                                <Text style={styles.signUpText}>Register!</Text>
+                            <Text style={styles.footerText}>Already have an account? </Text>
+                            <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
+                                <Text style={styles.signUpText}>Log in!</Text>
                             </TouchableOpacity>
                         </View>
                     </ScrollView>

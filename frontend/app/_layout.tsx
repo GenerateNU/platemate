@@ -8,6 +8,8 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "react-native";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import StatusBarHeader from "@/app/StatusBarHeader";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -15,9 +17,12 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
     const colorScheme = useColorScheme();
     const [loaded] = useFonts({
-        // Outfit: require("../assets/fonts/Outfit-Variable.ttf"),
-        // SofiaSans: require("../assets/fonts/SofiaSans-Variable.ttf"),
-        SourceSans3: require("../assets/fonts/SourceSans3-Variable.ttf"),
+        DamionRegular: require("../assets/fonts/Damion-Regular.ttf"),
+        Outfit: require("../assets/fonts/Outfit-Variable.ttf"),
+        NeueHaasUnicaProBold: require("../assets/fonts/NeueHaasUnicaPro-Bold.ttf"),
+        NeueHaasUnicaProMedium: require("../assets/fonts/NeueHaasUnicaPro-Medium.ttf"),
+        NeueHaasUnicaProRegular: require("../assets/fonts/NeueHaasUnicaPro-Regular.ttf"),
+        NeueHaasUnicaProHeavy: require("../assets/fonts/NeueHaasUnicaPro-Heavy.ttf"),
     });
 
     useEffect(() => {
@@ -33,17 +38,15 @@ export default function RootLayout() {
     return (
         <AuthProvider>
             <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-                <Stack
-                    screenOptions={{
-                        headerTitleStyle: {
-                            fontFamily: "Source Sans 3",
-                        },
-                        headerShown: false,
-                    }}>
-                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                    <Stack.Screen name="+not-found" />
-                </Stack>
-                <StatusBar style="auto" />
+                <GestureHandlerRootView>
+                    <StatusBarHeader />
+                    <Stack screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                        <Stack.Screen name="+not-found" />
+                        <Stack.Screen name="(auth)/register" />
+                    </Stack>
+                    <StatusBar style="auto" />
+                </GestureHandlerRootView>
             </ThemeProvider>
         </AuthProvider>
     );

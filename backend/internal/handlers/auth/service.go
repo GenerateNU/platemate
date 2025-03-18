@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 
 	"errors"
@@ -37,7 +38,8 @@ func (s *Service) GenerateAccessToken(id string, count float64) (string, error) 
 
 func (s *Service) GetUserCount(id string) (float64, error) {
 	var user User
-	err := s.users.FindOne(context.Background(), bson.M{"_id": id}).Decode(&user)
+	objectId, _ := primitive.ObjectIDFromHex(id)
+	err := s.users.FindOne(context.Background(), bson.M{"_id": objectId}).Decode(&user)
 	if err != nil {
 		return 0, err
 	}

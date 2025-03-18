@@ -105,6 +105,39 @@ func (h *Handler) Test(c *fiber.Ctx) error {
 	return c.SendString("Authorized!")
 }
 
+func (h *Handler) Refresh(c *fiber.Ctx) error {
+
+	var body RefreshRequestBody
+
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
+	}
+
+	// validate the refresh token
+	userId, count, err := h.service.ValidateToken(body.RefreshToken)
+
+	if err != nil {
+		return fiber.NewError(400, "Not Authorized: Access and Refresh Tokens are Expired "+err.Error())
+	}
+
+	// generate new refresh token
+	access, refresh, err := h.service.GenerateTokens(userId, count)
+
+	if err != nil {
+		return fiber.NewError(400, "Not Authorized, Error Generating Tokens")
+	}
+
+	// return new tokens
+	c.Response().Header.Add("access_token", access)
+	c.Response().Header.Add("refresh_token", refresh)
+
+	return c.Status(fiber.StatusOK).JSON(TokenResponse{
+		AccessToken:  access,
+		RefreshToken: refresh,
+		User:         userId,
+	})
+}
+
 func (h *Handler) AuthenticateMiddleware(c *fiber.Ctx) error {
 	header := c.Get("Authorization")
 	refreshToken := c.Get("refresh_token")

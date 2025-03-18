@@ -32,6 +32,7 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	route.Post("/login", handler.Login)
 	route.Post("/register", handler.Register)
 	route.Post("/logout", handler.Logout)
+	route.Post("/refresh", handler.Refresh)
 
 	api := app.Group("/protected")
 	api.Use(handler.AuthenticateMiddleware)
