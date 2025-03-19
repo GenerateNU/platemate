@@ -86,8 +86,8 @@ export function CuisinePreferencesScreen({ onContinue }: CuisinePreferencesScree
                     containerStyle={styles.button}
                     textStyle={styles.buttonText}
                 />
+                <OnboardingProgress currentStep={6} totalSteps={6} />
             </View>
-            <OnboardingProgress currentStep={6} totalSteps={6} />
         </ThemedView>
     );
 }
@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
+        marginBottom: 32,
     },
     header: {
         fontSize: 24,

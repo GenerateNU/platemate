@@ -6,6 +6,8 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 
+// TODO: What does username alr taken error look like here
+
 interface UsernameScreenProps {
     onContinue: (username: string) => void;
 }
@@ -49,8 +51,8 @@ export function UsernameScreen({ onContinue }: UsernameScreenProps) {
                     textStyle={styles.buttonText}
                     disabled={!isValidUsername(username)}
                 />
+                <OnboardingProgress currentStep={4} totalSteps={6} />
             </View>
-            <OnboardingProgress currentStep={4} totalSteps={6} />
         </ThemedView>
     );
 }

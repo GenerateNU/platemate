@@ -52,8 +52,8 @@ export function NameScreen({ onContinue, onNavigateToLogin }: NameScreenProps) {
                         </TouchableOpacity>
                     </View>
                 </View>
+                <OnboardingProgress currentStep={1} totalSteps={6} />
             </View>
-            <OnboardingProgress currentStep={1} totalSteps={6} />
         </ThemedView>
     );
 }

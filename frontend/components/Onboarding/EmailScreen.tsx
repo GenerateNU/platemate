@@ -6,6 +6,8 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 
+// TODO: if email is already taken will it redirect to sign in screen?
+
 interface EmailScreenProps {
     onContinue: (email: string) => void;
 }
@@ -18,6 +20,7 @@ export function EmailScreen({ onContinue }: EmailScreenProps) {
         onContinue(email);
     };
 
+    // TODO: What does email already taken error look like here
     const isValidEmail = (email: string) => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     };
@@ -46,8 +49,8 @@ export function EmailScreen({ onContinue }: EmailScreenProps) {
                     textStyle={styles.buttonText}
                     disabled={!isValidEmail(email)}
                 />
+                <OnboardingProgress currentStep={2} totalSteps={6} />
             </View>
-            <OnboardingProgress currentStep={2} totalSteps={6} />
         </ThemedView>
     );
 }

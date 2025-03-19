@@ -6,6 +6,8 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 
+// What do password requirements look like here
+
 interface PasswordScreenProps {
     onContinue: (password: string) => void;
 }
@@ -58,8 +60,8 @@ export function PasswordScreen({ onContinue }: PasswordScreenProps) {
                     textStyle={styles.buttonText}
                     disabled={!isValidPassword(password)}
                 />
+                <OnboardingProgress currentStep={3} totalSteps={6} />
             </View>
-            <OnboardingProgress currentStep={3} totalSteps={6} />
         </ThemedView>
     );
 }

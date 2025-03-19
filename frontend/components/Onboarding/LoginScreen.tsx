@@ -5,6 +5,8 @@ import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
+// TODO: Add logo/branding
+
 interface LoginScreenProps {
     onLogin: (email: string, password: string) => void;
     onNavigateToOnboarding: () => void;

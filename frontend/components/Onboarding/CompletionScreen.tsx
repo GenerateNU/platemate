@@ -6,6 +6,9 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 
+// TODO: Will this open up to recommended page?
+// How will the app know location - will it automate location request to see things near the new user
+
 interface CompletionScreenProps {
     onComplete: () => void;
 }

@@ -73,8 +73,8 @@ export function DietaryRestrictionsScreen({ onContinue }: DietaryRestrictionsScr
                     containerStyle={styles.button}
                     textStyle={styles.buttonText}
                 />
+                <OnboardingProgress currentStep={5} totalSteps={6} />
             </View>
-            <OnboardingProgress currentStep={5} totalSteps={6} />
         </ThemedView>
     );
 }
@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
+        marginBottom: 32,
     },
     content: {
         flex: 1,
