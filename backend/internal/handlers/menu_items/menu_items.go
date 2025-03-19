@@ -354,18 +354,14 @@ func (h *Handler) GetMenuItemReviews(c *fiber.Ctx) error {
 
 	var reviews []review.ReviewDocument
 	var err error
-	sortParam := query.SortBy
+	sortParam := "timestamp"
+	if ValidSortingParams[query.SortBy] {
+		sortParam = query.SortBy
+	}
 	// checks if the menu item reviews should be sorted
-	if ValidSortingParams[sortParam] {
-		reviews, err = h.service.GetMenuItemReviews(objID, userObjID, sortParam)
-		if err != nil {
-			return err
-		}
-	} else {
-		reviews, err = h.service.GetMenuItemReviews(objID, userObjID, "timestamp")
-		if err != nil {
-			return err
-		}
+	reviews, err = h.service.GetMenuItemReviews(objID, userObjID, sortParam)
+	if err != nil {
+		return err
 	}
 	return c.Status(fiber.StatusOK).JSON(reviews)
 }

@@ -207,16 +207,9 @@ func (s *Service) GetRestaurantFriendsFav(uid primitive.ObjectID, rid primitive.
 	}
 	avgRating = float64(totalRating) / float64(numOfRatings)
 	// the restaurant is a friends fav
-	if avgRating >= 4 {
-		friendsFav = &FriendsFav{
-			IsFriendsFav:    true,
-			FriendsReviewed: len(friends),
-		}
-	} else {
-		friendsFav = &FriendsFav{
-			IsFriendsFav:    false,
-			FriendsReviewed: len(friends),
-		}
+	friendsFav = &FriendsFav{
+		IsFriendsFav:    avgRating >= 4,
+		FriendsReviewed: len(friends),
 	}
 
 	return friendsFav, nil
@@ -238,13 +231,9 @@ func (s *Service) GetSuperStars(rid primitive.ObjectID) (int, error) {
 	var restaurant RestaurantDocument
 	var superStars int
 
-	// restaurant is stored in doc
 	err := s.restaurants.FindOne(ctx, bson.M{"_id": rid}).Decode(&restaurant)
-	if err == mongo.ErrNoDocuments {
-		// No matching restaurant found
-		return 0, mongo.ErrNoDocuments
-	} else if err != nil {
-		// Different error occurred
+	if err != nil {
+		// error occurred
 		return 0, err
 	}
 	for _, menuItemId := range restaurant.MenuItems {
