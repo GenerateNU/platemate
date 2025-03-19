@@ -61,7 +61,7 @@ var (
 					"location": bson.M{
 						"bsonType": "array",
 						"items": bson.M{
-							"bsonType": "double",
+							"bsonType": "float",
 						},
 						"minItems": 2,
 						"maxItems": 2,
@@ -71,7 +71,7 @@ var (
 			"menuItems": bson.M{
 				"bsonType": "array",
 				"items": bson.M{
-					"bsonType": "objectId",
+					"bsonType": "int",
 				},
 			},
 			"ratingAvg": bson.M{

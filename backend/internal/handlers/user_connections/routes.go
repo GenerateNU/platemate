@@ -6,7 +6,7 @@ import (
 )
 
 func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
-	service := newService(collections)
+	service := NewService(collections)
 	handler := Handler{service}
 
 	// Group under API Version 1

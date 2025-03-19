@@ -9,7 +9,7 @@ import (
 Router maps endpoints to handlers
 */
 func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
-	service := newService(collections)
+	service := NewService(collections)
 	handler := Handler{service}
 	menuGroup := app.Group("/api/v1/menu-items")
 	menuGroup.Get("/popular-with-friends", handler.GetPopularWithFriends)

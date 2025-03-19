@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -40,6 +41,13 @@ var ValidDietaryRestrictions = map[string]bool{
 	"high-protein":       true,
 	"raw-food":           true,
 	"lactose-intolerant": true,
+}
+
+var ValidSortingParams = map[string]bool{
+	"portion": true,
+	"taste":   true,
+	"value":   true,
+	"overall": true,
 }
 
 func PreprocessMenuItemRequest(menuItem MenuItemRequest) MenuItemRequest {
@@ -386,7 +394,14 @@ func (h *Handler) GetMenuItemReviews(c *fiber.Ctx) error {
 		userObjID = &parsedUserID
 	}
 
-	reviews, err := h.service.GetMenuItemReviews(objID, userObjID)
+	var reviews []review.ReviewDocument
+	var err error
+	sortParam := "timestamp"
+	if ValidSortingParams[query.SortBy] {
+		sortParam = query.SortBy
+	}
+	// checks if the menu item reviews should be sorted
+	reviews, err = h.service.GetMenuItemReviews(objID, userObjID, sortParam)
 	if err != nil {
 		return err
 	}
