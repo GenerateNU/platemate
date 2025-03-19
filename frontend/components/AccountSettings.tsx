@@ -21,6 +21,8 @@ export interface AccountSettingsProps {
     keto?: boolean;
     diabetic?: boolean;
     soyFree?: boolean;
+    porkFree?: boolean;
+    beefFree?: boolean;
     cameraAccess?: boolean;
     contactSync?: boolean;
 }
@@ -39,6 +41,8 @@ const AccountSettings = ({
     keto,
     diabetic,
     soyFree,
+    porkFree,
+    beefFree,
     cameraAccess,
     contactSync,
 }: AccountSettingsProps) => {
@@ -54,6 +58,8 @@ const AccountSettings = ({
     const [ketoValue, setKetoValue] = useState(keto || false);
     const [diabeticValue, setDiabeticValue] = useState(diabetic || false);
     const [soyFreeValue, setSoyFreeValue] = useState(soyFree || false);
+    const [porkFreeValue, setPortFreeValue] = useState(porkFree || false);
+    const [beefFreeValue, setBeefFreeValue] = useState(beefFree || false);
     const [cameraAccessValue, setCameraAccessValue] = useState(cameraAccess || false);
     const [contactSyncValue, setContactSyncValue] = useState(contactSync || false);
 
