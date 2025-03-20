@@ -63,7 +63,5 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         gap: 25,
         rowGap: 24,
-        // borderWidth: 1,
-        // borderColor: "#000000",
     },
 });

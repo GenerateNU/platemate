@@ -5,6 +5,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
+import BackChevron from "@/assets/icons/arrow_back_ios.svg";
+import { Text, View, Platform} from "react-native";
 
 import { useColorScheme } from "react-native";
 
@@ -40,6 +42,42 @@ export default function RootLayout() {
                 }}>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
+                <Stack.Screen
+                    name="filter"
+                    options={{
+                        headerShown: true,
+                        headerTransparent: true,
+                        headerBackVisible: false,
+                        // headerTitleAlign: "left",
+                        headerLeft: ({ canGoBack }) => (canGoBack ? <BackChevron style={{ }} /> : null),
+                        headerBackButtonDisplayMode: "minimal",
+                        headerTitle: () => (
+                            <View style={{ flex: 1}}>
+                              <Text
+                                style={{
+                                  fontFamily: "Inter",
+                                  fontWeight: "700",
+                                  fontSize: 28,
+                                  color: "#151619",
+                                }}
+                              >
+                                Filters
+                              </Text>
+                            </View>
+                        ),
+                        headerStyle: {
+                            backgroundColor: "transparent",
+                        },
+                        headerShadowVisible: false,
+                        ...Platform.select({
+                            ios: {
+                                headerBlurEffect: "light",
+                            },
+                        }),
+                        animation: "slide_from_right",
+                        
+                    }}
+                />                
             </Stack>
             <StatusBar style="auto" />
         </ThemeProvider>

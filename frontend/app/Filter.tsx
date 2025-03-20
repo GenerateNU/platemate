@@ -3,8 +3,10 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button } from "../components/Button";
 import { SortBy, SortOption } from "../components/SortBy";
+import { ThemedView } from "@/components/ThemedView";
+import { ScrollView } from "react-native";
 
-export function Filter() {
+export default function Filter() {
     const [cuisineTags, setCuisineTags] = useState([
         { id: "Fast Food", selected: false },
         { id: "Pizza", selected: false },
@@ -97,17 +99,21 @@ export function Filter() {
 
     return (
         // <SafeAreaView style={styles.container}>
-        <View style={styles.container}>
-            <SortBy sortOptions={selectedSort} onSortOptionPress={cycleSelectedSort} />
-            <FilterGrid filters={cuisineTags} title="🍝 Cuisines" onTagPress={toggleCuisineTag} />
-            <FilterGrid filters={specificationTags} title="🍽️ Specifications" onTagPress={toggleSpecificationTag} />
-            <Button
-                title={"Apply Filters"}
-                onPress={() => {}}
-                containerStyle={styles.applyButtonContainer}
-                textStyle={styles.applyButtonText}
-            />
-        </View>
+        <ScrollView style={{ flex: 1, paddingTop: 10, backgroundColor: "#FFF" }}>
+        
+            <ThemedView style={styles.container}>
+                <SortBy sortOptions={selectedSort} onSortOptionPress={cycleSelectedSort} />
+                <FilterGrid filters={cuisineTags} title="🍝 Cuisines" onTagPress={toggleCuisineTag} />
+                <FilterGrid filters={specificationTags} title="🍽️ Specifications" onTagPress={toggleSpecificationTag} />
+                <Button
+                    title={"Apply Filters"}
+                    onPress={() => {}}
+                    containerStyle={styles.applyButtonContainer}
+                    textStyle={styles.applyButtonText}
+                />
+            </ThemedView>
+        </ScrollView>
+        
         // </SafeAreaView>
     );
 }
@@ -117,8 +123,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingVertical: 99,
         paddingHorizontal: 31,
-        gap: 30,
-        // backgroundColor: "red",
+        gap: 30
     },
     applyButtonContainer: {
         paddingVertical: 4,
