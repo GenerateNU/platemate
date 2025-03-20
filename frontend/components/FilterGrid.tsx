@@ -1,31 +1,42 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { StyleSheet } from "react-native";
-import { TagButton } from "@/components/RestaurantTags";
+import { FilterTagButton } from "@/components/FilterTags";
 
-interface FilterProps {
-    filters: string[];
-    title: string;
-    // TODO: emoji: string;
+interface FilterTagData {
+    id: string;
+    selected?: boolean;
 }
 
-export function Filter({ filters, title }: FilterProps) {
+interface FilterProps {
+    filters: FilterTagData[];
+    onTagPress?: (id: string) => void;
+    title: string;
+}
+
+export function FilterGrid({ filters, onTagPress, title }: FilterProps) {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>{title}</Text>
-            <FilterGrid filters={filters} />
+            <FilterTagGrid filters={filters} onTagPress={onTagPress} />
         </View>
     );
 }
 interface FilterGridProps {
-    filters: string[];
+    filters: FilterTagData[];
+    onTagPress?: (id: string) => void;
 }
 
-export function FilterGrid({ filters }: FilterGridProps) {
+export function FilterTagGrid({ filters, onTagPress }: FilterGridProps) {
     return (
         <View style={styles.filterContainer}>
-            {filters.map((filterTag, index) => (
-                <TagButton key={index} title={filterTag} filter={true} />
+            {filters.map((tag, index) => (
+                <FilterTagButton
+                    key={index}
+                    title={tag.id}
+                    onPress={() => onTagPress?.(tag.id)}
+                    selected={tag.selected}
+                />
             ))}
         </View>
     );
@@ -52,5 +63,7 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         gap: 25,
         rowGap: 24,
+        // borderWidth: 1,
+        // borderColor: "#000000",
     },
 });

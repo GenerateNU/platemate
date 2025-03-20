@@ -9,9 +9,7 @@ import ClockIcon from "@/assets/icons/clock.svg";
 import { StarReview } from "@/components/StarReview";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
-import { Filter } from "@/components/Filter";
-import { Button } from "@/components/Button";
-import { SortBy } from "@/components/SortBy";
+import { Filter } from "@/app/Filter";
 
 export default function Feed() {
     const [activeTab, setActiveTab] = React.useState(0);
@@ -131,83 +129,9 @@ export default function Feed() {
                     <RestaurantDetailItem text={"Open | Closes 1 AM"} Icon={ClockIcon} />
                 </ThemedView>
             </ThemedView>
-            <ThemedView style={{ flex: 1, alignItems: "center", paddingVertical: 64, paddingHorizontal: 24, gap: 40 }}>
-                <ThemedView
-                    style={{ flex: 1, alignItems: "center", paddingVertical: 64, paddingHorizontal: 24, gap: 30 }}>
-                    <SortBy titles={["Taste Rating", "Value Rating", "Portion Rating", "Overall Rating"]} />
-                    <Filter
-                        filters={[
-                            "Fast Food",
-                            "Pizza",
-                            "Chinese",
-                            "Sushi",
-                            "Mexico",
-                            "Indian",
-                            "Burgers",
-                            "Wings",
-                            "Thai",
-                            "Coffee",
-                            "Bubble Tea",
-                            "Korean",
-                            "Halal",
-                            "Vietnamese",
-                            "Hot Pot",
-                            "Greek",
-                            "Ice cream",
-                            "BBQ",
-                            "Italian",
-                            "Asian",
-                            "Seafood",
-                            "Soup",
-                            "Japanese",
-                            "Salad",
-                            "American",
-                            "Comfort food",
-                            "Breakfast",
-                            "Caribbean",
-                            "Bakery",
-                            "Bar",
-                        ]}
-                        title="🍝 Cuisines"
-                    />
-                    <Filter
-                        filters={[
-                            "Vegan",
-                            "Healthy",
-                            "Small-Business",
-                            "Trending",
-                            "Low-Cal",
-                            "Sit-Down",
-                            "To-Go",
-                            "BYOB",
-                            "Delivery-Available",
-                            "Reservation-Required",
-                        ]}
-                        title="🍽️ Specifications"
-                    />
-                    <Button
-                        title={"Apply Filters"}
-                        onPress={() => {}}
-                        containerStyle={[
-                            {
-                                paddingVertical: 12,
-                                paddingHorizontal: 24,
-                                borderRadius: 25,
-                                backgroundColor: "#285852",
-                            },
-                        ]}
-                        textStyle={[
-                            {
-                                fontFamily: "Source Sans 3",
-                                fontSize: 14,
-                                fontWeight: "500",
-                                lineHeight: 18,
-                                letterSpacing: 0,
-                                color: "#FFFFFF",
-                            },
-                        ]}
-                    />
-                </ThemedView>
+            <ThemedView>
+                {/* <ThemedView style={{ flex: 1, alignItems: "center", paddingVertical: 64, paddingHorizontal: 50, gap: 40 }}> */}
+                <Filter />
             </ThemedView>
         </ScrollView>
     );

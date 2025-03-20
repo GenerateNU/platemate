@@ -1,7 +1,7 @@
 import { ThemedView } from "@/components/ThemedView";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
-import { RestaurantTags } from "@/components/RestaurantTags";
+import { FilterTags } from "@/components/RestaurantTags";
 import { StarReview } from "@/components/StarReview";
 import { MenuItemCard } from "@/components/MenuItemCard";
 import React from "react";
@@ -51,7 +51,7 @@ export default function RestaurantView() {
                 </ThemedView>
 
                 <ThemedView style={styles.tagsContainer}>
-                    <RestaurantTags tags={restaurantTags} />
+                    <FilterTags tags={restaurantTags} />
                 </ThemedView>
 
                 <ThemedView style={styles.chefsPickContainer}>
