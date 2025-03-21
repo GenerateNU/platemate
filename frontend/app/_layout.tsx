@@ -19,12 +19,8 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
     const colorScheme = useColorScheme();
     const [loaded] = useFonts({
-        DamionRegular: require("../assets/fonts/Damion-Regular.ttf"),
-        Outfit: require("../assets/fonts/Outfit-Variable.ttf"),
-        NeueHaasUnicaProBold: require("../assets/fonts/NeueHaasUnicaPro-Bold.ttf"),
-        NeueHaasUnicaProMedium: require("../assets/fonts/NeueHaasUnicaPro-Medium.ttf"),
-        NeueHaasUnicaProRegular: require("../assets/fonts/NeueHaasUnicaPro-Regular.ttf"),
-        NeueHaasUnicaProHeavy: require("../assets/fonts/NeueHaasUnicaPro-Heavy.ttf"),
+        DamionRegular: require("../assets/fonts/Damion-Regular.otf"),
+        Outfit: require("../assets/fonts/Outfit-Variable.otf"),
     });
 
     useEffect(() => {
