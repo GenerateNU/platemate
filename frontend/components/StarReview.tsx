@@ -42,8 +42,8 @@ export function Stars({ avgRating, full = true }: StarProps) {
 const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
-        alignItems: "center", // Ensures vertical alignment
-        justifyContent: "center", // Centers items horizontally
+        // alignItems: "center", // Ensures vertical alignment
+        // justifyContent: "center", // Centers items horizontally
         gap: 7,
     },
     text: {

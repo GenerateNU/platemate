@@ -12,7 +12,7 @@ import (
 	"github.com/GenerateNU/platemate/internal/handlers/restaurant"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"github.com/GenerateNU/platemate/internal/handlers/s3bucket"
-	"github.com/GenerateNU/platemate/internal/handlers/user_connections"
+	"github.com/GenerateNU/platemate/internal/handlers/users"
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -68,7 +68,7 @@ func New(collections map[string]*mongo.Collection) *fiber.App {
 	menu_items.Routes(app, collections)
 	restaurant.Routes(app, collections)
 
-	user_connections.Routes(app, collections)
+	users.Routes(app, collections)
 	return app
 }
 

@@ -1,8 +1,7 @@
-package user_connections
+package users
 
 import (
 	"errors"
-
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
@@ -11,6 +10,30 @@ import (
 
 type Handler struct {
 	service *Service
+}
+
+func (h *Handler) GetUserById(c *fiber.Ctx) error {
+
+	var query GetUserByIdParam
+
+	if err := c.ParamsParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	errs := xvalidator.Validator.Validate(query)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
+	}
+
+	user, err := h.service.GetUserById(query.UserID)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserID))
+		}
+		return err
+	}
+
+	return c.JSON(user)
 }
 
 // GetFollowers returns a paginated list of followers for a user
