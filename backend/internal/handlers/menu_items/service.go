@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"strings"
 
 	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
@@ -18,7 +19,7 @@ func newService(collections map[string]*mongo.Collection) *Service {
 	if collections["menuItems"] == nil {
 		slog.Info("menuItems collection is nil!")
 	}
-	return &Service{collections["menuItems"], collections["reviews"]}
+	return &Service{collections["menuItems"], collections["reviews"], collections["users"]}
 }
 
 var ErrInvalidID = errors.New("the provided hex string is not a valid ObjectID")
@@ -109,7 +110,6 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 	ApplyRatingFilter(filter, "avgRating.value", menuItemsQuery.MinRatingValue, menuItemsQuery.MaxRatingValue)
 	ApplyRatingFilter(filter, "avgRating.overall", menuItemsQuery.MinRatingOverall, menuItemsQuery.MaxRatingOverall)
 
-	slog.Info("tags", "tags", menuItemsQuery.Tags)
 	if len(menuItemsQuery.Tags) > 0 {
 		filter["tags"] = bson.M{"$in": menuItemsQuery.Tags}
 	}
@@ -122,13 +122,27 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 		}
 	}
 
-	options := options.Find()
-	options.SetSkip(int64(menuItemsQuery.Skip)) // Skip the first `Skip` items
+	// Build find options
+	opts := options.Find()
+	opts.SetSkip(int64(menuItemsQuery.Skip)) // Skip the first `Skip` items
 	if menuItemsQuery.Limit != nil {
-		options.SetLimit(int64(*menuItemsQuery.Limit)) // Limit the number of results to `Limit`
+		opts.SetLimit(int64(*menuItemsQuery.Limit)) // Limit the number of results to `Limit`
 	}
+
+	// Sorting
+	if menuItemsQuery.SortBy != "" {
+		sortOrder := 1 // default: asc
+		if strings.ToLower(menuItemsQuery.SortOrder) == "desc" {
+			sortOrder = -1
+		}
+		// This respects the sortBy and sortOrder passed via query parameters,
+		// so we rely on menuItemsQuery.SortBy being a valid, known field
+		// e.g. sort by "avgRating.overall" or "name"
+		opts.SetSort(bson.D{{Key: menuItemsQuery.SortBy, Value: sortOrder}})
+	}
+
 	// Query the database
-	cursor, err := s.menuItems.Find(context.Background(), filter, options)
+	cursor, err := s.menuItems.Find(context.Background(), filter, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -365,4 +379,142 @@ func (s *Service) GetMenuItemReviewPictures(idObj primitive.ObjectID) ([]string,
 	}
 
 	return reviewPictures, nil
+}
+
+// Aggregates friend reviews to rank items by popularity.
+func (s *Service) GetPopularWithFriends(userID primitive.ObjectID, limit int) ([]MenuItemResponse, error) {
+	ctx := context.Background()
+
+	if limit <= 0 {
+		limit = 20 // default or however many we want
+	}
+
+	/*
+		This pipeline starts from the "users" collection.
+		1) Match the user doc
+		2) $lookup reviews whose "reviewer._id" is in that user's "following"
+		3) Unwind the resulting array of "friendReviews" so we can group them
+		4) Group by friendReviews.menuItem => compute count (quantity), averageOverall (quality)
+		5) Project a final "score" that weighs quantity + quality using score = averageOverall + 0.5 * ln(count + 1)
+			The formula can be adjusted by:
+			- Changing the weight of review count (using a different multiplier instead of 0.5)
+			- Applying a different scaling function (e.g., sqrt(count + 1))
+			- (later) Incorporating additional factors like recency or variance in ratings
+		6) Sort by score (default desc)
+		7) Limit (default 20)
+		8) $lookup the actual menuItems for each group result by _id => menuItem doc
+	*/
+
+	pipeline := mongo.Pipeline{
+		// 1) Match the user doc
+		bson.D{{Key: "$match", Value: bson.M{"_id": userID}}},
+
+		// 2) Lookup reviews where the reviewer is in the user's "following" list
+		bson.D{{
+			Key: "$lookup",
+			Value: bson.M{
+				"from": "reviews",
+				"let":  bson.M{"friendIDs": "$following"},
+				"pipeline": bson.A{
+					// Cast reviewer.id to an ObjectID so it can match friendIDs (ObjectIDs)
+					bson.M{
+						"$match": bson.M{
+							"$expr": bson.M{
+								"$in": bson.A{
+									bson.M{"$toObjectId": "$reviewer.id"},
+									"$$friendIDs",
+								},
+							},
+						},
+					},
+					// Convert "menuItem" string field to ObjectId so we can join with menuItems
+					bson.M{
+						"$addFields": bson.M{
+							"menuItemObjId": bson.M{"$toObjectId": "$menuItem"},
+						},
+					},
+				},
+				"as": "friendReviews",
+			},
+		}},
+
+		// 3) Unwind "friendReviews" so we can group them
+		bson.D{{Key: "$unwind", Value: "$friendReviews"}},
+
+		// 4) Group by friendReviews.menuItemObjId (converted ObjectId)
+		bson.D{{
+			Key: "$group",
+			Value: bson.M{
+				"_id":            "$friendReviews.menuItemObjId",
+				"count":          bson.M{"$sum": 1},
+				"averageOverall": bson.M{"$avg": "$friendReviews.rating.overall"},
+			},
+		}},
+
+		// 5) Project a "score"
+		bson.D{{
+			Key: "$project",
+			Value: bson.M{
+				"count":          1,
+				"averageOverall": 1,
+				"score": bson.M{"$add": bson.A{
+					"$averageOverall",
+					bson.M{"$multiply": bson.A{
+						0.5,
+						bson.M{"$ln": bson.M{"$add": bson.A{"$count", 1}}},
+					}},
+				}},
+			},
+		}},
+
+		// 6) Sort by "score" descending
+		bson.D{{Key: "$sort", Value: bson.M{"score": -1}}},
+
+		// 7) Limit
+		bson.D{{Key: "$limit", Value: limit}},
+
+		// 8) Lookup menuItems where _id matches the converted menuItemObjId
+		bson.D{{
+			Key: "$lookup",
+			Value: bson.M{
+				"from":         "menuItems",
+				"localField":   "_id", // This is now ObjectID
+				"foreignField": "_id",
+				"as":           "itemDoc",
+			},
+		}},
+		// Unwind itemDoc to get a single doc per record
+		bson.D{{Key: "$unwind", Value: "$itemDoc"}},
+	}
+
+	// Pipeline starts from the "users" collection
+	cursor, err := s.users.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	// Decode into a temporary struct
+	type popResult struct {
+		ID             primitive.ObjectID `bson:"_id"`
+		Count          int                `bson:"count"`
+		AverageOverall float64            `bson:"averageOverall"`
+		Score          float64            `bson:"score"`
+
+		// The looked-up menu item doc
+		ItemDoc MenuItemDocument `bson:"itemDoc"`
+	}
+
+	var results []popResult
+	if err := cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+
+	// Convert each popResult.ItemDoc to MenuItemResponse
+	final := make([]MenuItemResponse, 0, len(results))
+	for _, r := range results {
+		final = append(final, ToMenuItemResponse(r.ItemDoc))
+	}
+
+	return final, nil
 }

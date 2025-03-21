@@ -12,7 +12,7 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	service := newService(collections)
 	handler := Handler{service}
 	menuGroup := app.Group("/api/v1/menu-items")
-
+	menuGroup.Get("/popular-with-friends", handler.GetPopularWithFriends)
 	menuGroup.Post("/", handler.CreateMenuItem)
 	menuGroup.Get("/", handler.GetMenuItems)
 	menuGroup.Get("/:id", handler.GetMenuItemById)
