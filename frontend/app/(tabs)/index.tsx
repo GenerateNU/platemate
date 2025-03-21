@@ -3,9 +3,8 @@ import { ScrollView } from "react-native";
 
 import { ThemedView } from "@/components/ThemedView";
 import FeedTabs from "@/components/Feed/FeedTabs";
-import { RestaurantDetailItem } from "@/components/RestaurantDetailItem";
+import { RestaurantDetailItem } from "@/components/restaurant/RestaurantDetailItem";
 
-import ClockIcon from "@/assets/icons/clock.svg";
 import { StarReview } from "@/components/StarReview";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
@@ -111,7 +110,7 @@ export default function Feed() {
 
     return (
         <ScrollView style={{ flex: 1, marginBottom: 84 }}>
-            <ThemedView style={{ flex: 1, alignItems: "center", paddingVertical: 64, paddingHorizontal: 24, gap: 12 }}>
+            <ThemedView style={{ flex: 1, alignItems: "center", padding: 24, gap: 12 }}>
                 <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
                 <ThemedView style={{ flex: 1, width: "100%", gap: 16 }}>
                     <ScrollView horizontal contentContainerStyle={{ gap: 16 }} showsHorizontalScrollIndicator={false}>
@@ -124,11 +123,6 @@ export default function Feed() {
                             return <MenuItemPreview key={index} {...item} />;
                         })}
                     </ScrollView>
-                </ThemedView>
-                <ThemedView>
-                    <StarReview avgRating={1.9} numRatings={500} full={true} />
-                    <StarReview avgRating={1.9} numRatings={500} full={false} />
-                    <RestaurantDetailItem text={"Open | Closes 1 AM"} Icon={ClockIcon} />
                 </ThemedView>
             </ThemedView>
             <ThemedView>

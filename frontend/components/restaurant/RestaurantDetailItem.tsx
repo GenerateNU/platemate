@@ -1,16 +1,16 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { SvgProps } from "react-native-svg";
+import { ClockIcon, MarkerIcon } from "@/components/icons/Icons";
 
 interface IconTextProps {
     text: string;
-    Icon: React.FC<SvgProps>;
+    icon: "clock" | "marker";
 }
 
-export const RestaurantDetailItem = ({ text, Icon }: IconTextProps) => {
+export const RestaurantDetailItem = ({ text, icon }: IconTextProps) => {
     return (
         <View style={styles.container}>
-            <Icon width={18} height={18} stroke="black" />
+            {icon === "clock" ? <ClockIcon /> : <MarkerIcon />}
             <Text style={styles.text}>{text}</Text>
         </View>
     );
@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 14,
         color: "#285852",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Outfit",
+        fontWeight: 500,
     },
 });
