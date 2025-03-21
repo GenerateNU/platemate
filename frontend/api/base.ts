@@ -7,6 +7,8 @@ export type RequestMethod = "GET" | "POST" | "PUT" | "DELETE";
 export async function makeRequest(endpoint: string, method: RequestMethod, body?: any, message?: string): Promise<any> {
     const url = BASE_URL + endpoint;
 
+    console.log(url);
+
     const config: AxiosRequestConfig = {
         method: method,
         data: body,

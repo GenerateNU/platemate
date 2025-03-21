@@ -27,6 +27,7 @@ export const useGetUserById = (userId?: string) => {
                 }
 
                 const data = await response.json();
+                console.log(data);
                 setUser(data);
             } catch (err) {
                 setError(err instanceof Error ? err.message : "An unknown error occurred");

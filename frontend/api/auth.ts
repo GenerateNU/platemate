@@ -12,7 +12,7 @@ export async function login(body: LoginRequestBody) {
         "/api/v1/auth/login",
         "POST",
         { email: body.email, password: body.password },
-        "Failed to login"
+        "Failed to login",
     );
     if (!response) {
         throw new Error(response.message || "an unknown error occurred");
@@ -30,7 +30,7 @@ export async function register(body: RegisterRequestBody) {
             email: body.email,
             password: body.password,
         },
-        "failed to register user"
+        "failed to register user",
     );
     if (!response) {
         throw new Error(response.message || "an unknown error occurred");

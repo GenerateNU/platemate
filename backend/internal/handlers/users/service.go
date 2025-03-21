@@ -53,13 +53,13 @@ func (s *Service) GetUserById(userId string) (UserResponse, error) {
 
 	return UserResponse{
 		ID:             user.ID.Hex(),
+		Email:          user.Email,
 		Username:       user.Username,
 		ProfilePicture: user.ProfilePicture,
 		FollowersCount: user.FollowersCount,
 		FollowingCount: user.FollowingCount,
 		Reviews:        reviews,
-		FirstName:      user.FirstName,
-		Surname:        user.Surname,
+		Name:           user.Name,
 	}, nil
 }
 

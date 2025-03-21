@@ -42,7 +42,7 @@ export default function TabLayout() {
                 headerShown: false,
                 tabBarShowLabel: false,
                 headerTitleStyle: {
-                    fontFamily: "NeueHaasUnicaPro",
+                    fontFamily: "Outfit",
                 },
                 tabBarButton: HapticTab,
                 tabBarBackground: TabBarBackground,

@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/GenerateNU/platemate/internal/config"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -25,21 +26,22 @@ type TokenResponse struct {
 }
 
 type User struct {
-	Email        string  `bson:"email"`
-	Password     string  `bson:"password"`
-	ID           string  `bson:"_id"`
-	RefreshToken string  `bson:"refresh_token"`
-	TokenUsed    bool    `bson:"token_used"`
-	Count        float64 `bson:"count"`
-	FirstName    string  `bson:"first_name"`
-	Surname      string  `bson:"surname"`
+	ID                primitive.ObjectID `bson:"_id"`
+	Name              string             `bson:"name"`
+	Email             string             `bson:"email"`
+	Password          string             `bson:"password"`
+	FollowingCount    int64              `bson:"followingCount"`
+	FollowersCount    int64              `bson:"followersCount"`
+	ProfilePictureURL string             `bson:"profile_picture"`
 }
+
 type LoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=8"`
 }
 
 type RegisterRequest struct {
+	Name     string `json:"name" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=8"`
 }

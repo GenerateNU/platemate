@@ -6,6 +6,7 @@ import (
 
 type User struct {
 	ID             primitive.ObjectID   `bson:"_id,omitempty"`
+	Email          string               `bson:"email"`
 	Username       string               `bson:"username"`
 	Reviews        []primitive.ObjectID `bson:"reviews"`
 	Following      []primitive.ObjectID `bson:"following,omitempty"`
@@ -13,19 +14,18 @@ type User struct {
 	FollowingCount int                  `bson:"followingCount"`
 	FollowersCount int                  `bson:"followersCount"`
 	ProfilePicture string               `bson:"profile_picture,omitempty"`
-	FirstName      string               `bson:"firstName,omitempty"`
-	Surname        string               `bson:"surname,omitempty"`
+	Name           string               `bson:"name,omitempty"`
 }
 
 type UserResponse struct {
 	ID             string   `json:"id"`
 	Username       string   `json:"username"`
+	Email          string   `json:"email"`
 	ProfilePicture string   `json:"profile_picture,omitempty"`
 	FollowersCount int      `json:"followersCount"`
 	FollowingCount int      `json:"followingCount"`
 	Reviews        []string `json:"reviews,omitempty"`
-	FirstName      string   `json:"first_name,omitempty"`
-	Surname        string   `json:"surname,omitempty"`
+	Name           string   `json:"name,omitempty"`
 }
 
 type FollowRequest struct {

@@ -1,8 +1,8 @@
 // components/PersistentHeader.tsx
 import { View, Text, StyleSheet } from "react-native";
 
-const StatusBarHeader = () => {
-    return <View style={styles.header} />;
+const StatusBarHeader = ({ additionalStyles }: any) => {
+    return <View style={[styles.header, additionalStyles]} />;
 };
 
 const styles = StyleSheet.create({
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        zIndex: 1000,
+        zIndex: 4,
     },
 });
 
