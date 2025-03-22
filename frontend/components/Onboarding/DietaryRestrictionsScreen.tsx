@@ -5,7 +5,10 @@ import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
-import { Switch } from "react-native";
+import ToggleOff from "@/assets/icons/toggle_off.svg";
+import ToggleOn from "@/assets/icons/toggle_on.svg";
+import { TouchableOpacity } from "react-native";
+import { sharedOnboardingStyles } from "./onboardingStyles";
 
 // TODO: Try to use the account settings screen for this
 
@@ -29,9 +32,16 @@ interface DietaryRestrictionsScreenProps {
     onContinue: (restrictions: string[]) => void;
 }
 
+const Toggle = ({ value, onValueChange }: { value: boolean; onValueChange: (newValue: boolean) => void }) => {
+    return (
+        <TouchableOpacity onPress={() => onValueChange(!value)}>
+            {value ? <ToggleOn width={40} height={24} /> : <ToggleOff width={40} height={24} />}
+        </TouchableOpacity>
+    );
+};
+
 export function DietaryRestrictionsScreen({ onContinue }: DietaryRestrictionsScreenProps) {
     const [selectedRestrictions, setSelectedRestrictions] = useState<string[]>([]);
-    const { colors } = useTheme();
 
     const handleToggleRestriction = (restrictionId: string) => {
         setSelectedRestrictions((prev) => {
@@ -47,9 +57,11 @@ export function DietaryRestrictionsScreen({ onContinue }: DietaryRestrictionsScr
     };
 
     return (
-        <ThemedView style={styles.container}>
-            <View style={styles.content}>
-                <ThemedText style={styles.header}>Any Dietary Restrictions?</ThemedText>
+        <ThemedView style={[sharedOnboardingStyles.container]}>
+            <View style={sharedOnboardingStyles.content}>
+                <View style={sharedOnboardingStyles.headerContainer}>
+                    <ThemedText style={sharedOnboardingStyles.header}>Any Dietary Restrictions?</ThemedText>
+                </View>
 
                 <ScrollView style={styles.scrollView}>
                     {DIETARY_RESTRICTIONS.map((restriction) => (
@@ -58,11 +70,9 @@ export function DietaryRestrictionsScreen({ onContinue }: DietaryRestrictionsScr
                                 <ThemedText style={styles.restrictionName}>{restriction.name}</ThemedText>
                                 <ThemedText style={styles.restrictionDescription}>{restriction.description}</ThemedText>
                             </View>
-                            <Switch
+                            <Toggle
                                 value={selectedRestrictions.includes(restriction.id)}
                                 onValueChange={() => handleToggleRestriction(restriction.id)}
-                                trackColor={{ false: colors.border, true: colors.primary }}
-                                thumbColor={colors.background}
                             />
                         </View>
                     ))}
@@ -70,30 +80,16 @@ export function DietaryRestrictionsScreen({ onContinue }: DietaryRestrictionsScr
                 <Button
                     title="Continue"
                     onPress={handleContinue}
-                    containerStyle={styles.button}
-                    textStyle={styles.buttonText}
+                    containerStyle={sharedOnboardingStyles.button}
+                    textStyle={sharedOnboardingStyles.buttonText}
                 />
-                <OnboardingProgress currentStep={5} totalSteps={6} />
             </View>
+            <OnboardingProgress currentStep={5} totalSteps={6} />
         </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        marginBottom: 32,
-    },
-    content: {
-        flex: 1,
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: "bold",
-        textAlign: "center",
-        marginBottom: 24,
-    },
     scrollView: {
         flex: 1,
         marginTop: 16,
@@ -118,17 +114,5 @@ const styles = StyleSheet.create({
     restrictionDescription: {
         fontSize: 14,
         opacity: 0.7,
-    },
-    button: {
-        height: 48,
-        borderRadius: 24,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#FFCF0F",
-    },
-    buttonText: {
-        color: "#FFFFFF",
-        fontSize: 16,
-        fontWeight: "600",
     },
 });

@@ -5,6 +5,7 @@ import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
+import { sharedOnboardingStyles } from "./onboardingStyles";
 
 interface NameScreenProps {
     onContinue: (name: string) => void;
@@ -20,91 +21,48 @@ export function NameScreen({ onContinue, onNavigateToLogin }: NameScreenProps) {
     };
 
     return (
-        <ThemedView style={styles.container}>
-            <View style={styles.content}>
-                <ThemedText style={styles.header}>Let's get started</ThemedText>
-                <ThemedText style={styles.subtext}>What is your name?</ThemedText>
+        <ThemedView style={[sharedOnboardingStyles.container]}>
+            <View style={sharedOnboardingStyles.content}>
+                <View style={sharedOnboardingStyles.headerContainer}>
+                    <ThemedText style={sharedOnboardingStyles.header}>Let's get started</ThemedText>
+                    <ThemedText style={sharedOnboardingStyles.subtext}>What is your name?</ThemedText>
+                </View>
 
                 <TextInput
-                    style={[styles.input, { borderColor: colors.border }]}
+                    style={[sharedOnboardingStyles.input, { borderColor: colors.border }]}
                     placeholder="Enter Name"
                     placeholderTextColor={colors.text}
                     value={name}
                     onChangeText={setName}
                     autoCapitalize="words"
                 />
-
-                <Button
-                    title="Continue"
-                    onPress={handleContinue}
-                    containerStyle={styles.button}
-                    textStyle={styles.buttonText}
-                    disabled={!name.trim()}
-                />
-
-                <View style={styles.linkContainer}>
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                        <ThemedText style={styles.linkText}>Already have an account? </ThemedText>
-                        <TouchableOpacity onPress={onNavigateToLogin}>
-                            <ThemedText style={{ color: "#FFCF0F", textDecorationLine: "underline" }}>
-                                Sign in
-                            </ThemedText>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                <OnboardingProgress currentStep={1} totalSteps={6} />
             </View>
+
+            <View style={sharedOnboardingStyles.linkContainer}>
+                <View style={sharedOnboardingStyles.linkContent}>
+                    <ThemedText style={sharedOnboardingStyles.linkText}>Don't have an account? </ThemedText>
+                    <TouchableOpacity onPress={onNavigateToLogin}>
+                        <ThemedText style={styles.createAccountText}>Create one</ThemedText>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            <Button
+                title="Continue"
+                onPress={handleContinue}
+                containerStyle={sharedOnboardingStyles.button}
+                textStyle={sharedOnboardingStyles.buttonText}
+                disabled={!name.trim()}
+            />
+            <OnboardingProgress currentStep={1} totalSteps={6} />
         </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-    },
-    content: {
-        flex: 1,
-        justifyContent: "center",
-        gap: 16,
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: "bold",
-        textAlign: "left",
-    },
-    subtext: {
-        fontSize: 16,
-        marginTop: -5,
-        textAlign: "left",
-        opacity: 0.7,
-    },
-    input: {
-        height: 48,
-        borderWidth: 1,
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        fontSize: 16,
-        marginTop: 8,
-    },
-    button: {
-        height: 48,
-        borderRadius: 24,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#FFCF0F",
-        marginTop: 24,
-    },
-    buttonText: {
-        color: "#FFFFFF",
-        fontSize: 16,
-        fontWeight: "600",
-    },
-    linkContainer: {
-        alignItems: "center",
-        marginTop: 16,
-    },
-    linkText: {
-        fontSize: 14,
+    createAccountText: {
+        color: "#FFCF0F",
+        textDecorationLine: "underline",
+        fontSize: 13,
     },
 });

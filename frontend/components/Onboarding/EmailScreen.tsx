@@ -5,6 +5,7 @@ import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
+import { sharedOnboardingStyles } from "./onboardingStyles";
 
 // TODO: if email is already taken will it redirect to sign in screen?
 
@@ -26,13 +27,15 @@ export function EmailScreen({ onContinue }: EmailScreenProps) {
     };
 
     return (
-        <ThemedView style={styles.container}>
-            <View style={styles.content}>
-                <ThemedText style={styles.header}>Account Information</ThemedText>
-                <ThemedText style={styles.subtext}>What is your email?</ThemedText>
+        <ThemedView style={[sharedOnboardingStyles.container]}>
+            <View style={sharedOnboardingStyles.content}>
+                <View style={sharedOnboardingStyles.headerContainer}>
+                    <ThemedText style={sharedOnboardingStyles.header}>Account Information</ThemedText>
+                    <ThemedText style={sharedOnboardingStyles.subtext}>What is your email?</ThemedText>
+                </View>
 
                 <TextInput
-                    style={[styles.input, { borderColor: colors.border }]}
+                    style={[sharedOnboardingStyles.input, { borderColor: colors.border }]}
                     placeholder="Enter Email"
                     placeholderTextColor={colors.text}
                     value={email}
@@ -41,60 +44,16 @@ export function EmailScreen({ onContinue }: EmailScreenProps) {
                     autoCapitalize="none"
                     autoComplete="email"
                 />
-
-                <Button
-                    title="Continue"
-                    onPress={handleContinue}
-                    containerStyle={styles.button}
-                    textStyle={styles.buttonText}
-                    disabled={!isValidEmail(email)}
-                />
-                <OnboardingProgress currentStep={2} totalSteps={6} />
             </View>
+
+            <Button
+                title="Continue"
+                onPress={handleContinue}
+                containerStyle={sharedOnboardingStyles.button}
+                textStyle={sharedOnboardingStyles.buttonText}
+                disabled={!isValidEmail(email)}
+            />
+            <OnboardingProgress currentStep={2} totalSteps={6} />
         </ThemedView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-    },
-    content: {
-        flex: 1,
-        justifyContent: "center",
-        gap: 16,
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: "bold",
-        textAlign: "left",
-    },
-    subtext: {
-        fontSize: 16,
-        marginTop: -5,
-        textAlign: "left",
-        opacity: 0.7,
-    },
-    input: {
-        height: 48,
-        borderWidth: 1,
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        fontSize: 16,
-        marginTop: 8,
-    },
-    button: {
-        height: 48,
-        borderRadius: 24,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#FFCF0F",
-        marginTop: 24,
-    },
-    buttonText: {
-        color: "#FFFFFF",
-        fontSize: 16,
-        fontWeight: "600",
-    },
-});

@@ -5,7 +5,7 @@ import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
-
+import { sharedOnboardingStyles } from "./onboardingStyles";
 interface Cuisine {
     id: string;
     name: string;
@@ -48,9 +48,11 @@ export function CuisinePreferencesScreen({ onContinue }: CuisinePreferencesScree
     };
 
     return (
-        <ThemedView style={styles.container}>
-            <View style={styles.content}>
-                <ThemedText style={styles.header}>Any Cuisine Preferences?</ThemedText>
+        <ThemedView style={[sharedOnboardingStyles.container]}>
+            <View style={sharedOnboardingStyles.content}>
+                <View style={sharedOnboardingStyles.headerContainer}>
+                    <ThemedText style={sharedOnboardingStyles.header}>Any Cuisine Preferences?</ThemedText>
+                </View>
 
                 <ScrollView style={styles.scrollView}>
                     <View style={styles.grid}>
@@ -80,34 +82,19 @@ export function CuisinePreferencesScreen({ onContinue }: CuisinePreferencesScree
                         ))}
                     </View>
                 </ScrollView>
-                <Button
-                    title="Continue"
-                    onPress={handleContinue}
-                    containerStyle={styles.button}
-                    textStyle={styles.buttonText}
-                />
-                <OnboardingProgress currentStep={6} totalSteps={6} />
             </View>
+            <Button
+                title="Continue"
+                onPress={handleContinue}
+                containerStyle={sharedOnboardingStyles.button}
+                textStyle={sharedOnboardingStyles.buttonText}
+            />
+            <OnboardingProgress currentStep={6} totalSteps={6} />
         </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-    },
-    content: {
-        flex: 1,
-        marginBottom: 32,
-    },
-    header: {
-        fontSize: 24,
-        lineHeight: 32,
-        fontWeight: "bold",
-        textAlign: "left",
-        marginBottom: 24,
-    },
     scrollView: {
         flex: 1,
         marginTop: 16,
@@ -129,17 +116,5 @@ const styles = StyleSheet.create({
     cuisineText: {
         fontSize: 16,
         fontWeight: "500",
-    },
-    button: {
-        height: 48,
-        borderRadius: 24,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#FFCF0F",
-    },
-    buttonText: {
-        color: "#FFFFFF",
-        fontSize: 16,
-        fontWeight: "600",
     },
 });

@@ -5,6 +5,7 @@ import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
+import { sharedOnboardingStyles } from "./onboardingStyles";
 
 // TODO: What does username alr taken error look like here
 
@@ -25,13 +26,15 @@ export function UsernameScreen({ onContinue }: UsernameScreenProps) {
     };
 
     return (
-        <ThemedView style={styles.container}>
-            <View style={styles.content}>
-                <ThemedText style={styles.header}>Account Information</ThemedText>
-                <ThemedText style={styles.subtext}>Pick a username</ThemedText>
+        <ThemedView style={[sharedOnboardingStyles.container]}>
+            <View style={sharedOnboardingStyles.content}>
+                <View style={sharedOnboardingStyles.headerContainer}>
+                    <ThemedText style={sharedOnboardingStyles.header}>Account Information</ThemedText>
+                    <ThemedText style={sharedOnboardingStyles.subtext}>Pick a username</ThemedText>
+                </View>
 
                 <TextInput
-                    style={[styles.input, { borderColor: colors.border }]}
+                    style={[sharedOnboardingStyles.input, { borderColor: colors.border }]}
                     placeholder="Enter Username"
                     placeholderTextColor={colors.text}
                     value={username}
@@ -43,67 +46,25 @@ export function UsernameScreen({ onContinue }: UsernameScreenProps) {
                 <ThemedText style={styles.requirements}>
                     Username must be at least 3 characters long and can only contain letters, numbers, and underscores
                 </ThemedText>
-
-                <Button
-                    title="Continue"
-                    onPress={handleContinue}
-                    containerStyle={styles.button}
-                    textStyle={styles.buttonText}
-                    disabled={!isValidUsername(username)}
-                />
-                <OnboardingProgress currentStep={4} totalSteps={6} />
             </View>
+
+            <Button
+                title="Continue"
+                onPress={handleContinue}
+                containerStyle={sharedOnboardingStyles.button}
+                textStyle={sharedOnboardingStyles.buttonText}
+                disabled={!isValidUsername(username)}
+            />
+            <OnboardingProgress currentStep={4} totalSteps={6} />
         </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-    },
-    content: {
-        flex: 1,
-        justifyContent: "center",
-        gap: 16,
-    },
-    header: {
-        fontSize: 24,
-        lineHeight: 32,
-        fontWeight: "bold",
-        textAlign: "left",
-    },
-    subtext: {
-        fontSize: 16,
-        marginTop: -5,
-        textAlign: "left",
-        opacity: 0.7,
-    },
-    input: {
-        height: 48,
-        borderWidth: 1,
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        fontSize: 16,
-        marginTop: 8,
-    },
     requirements: {
         fontSize: 12,
         opacity: 0.7,
         textAlign: "left",
         marginTop: 8,
-    },
-    button: {
-        height: 48,
-        borderRadius: 24,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 24,
-        backgroundColor: "#FFCF0F",
-    },
-    buttonText: {
-        color: "#FFFFFF",
-        fontSize: 16,
-        fontWeight: "600",
     },
 });

@@ -4,6 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
+import { sharedOnboardingStyles } from "./onboardingStyles";
 
 // TODO: Add logo/branding
 
@@ -22,45 +23,47 @@ export function LoginScreen({ onLogin, onNavigateToOnboarding }: LoginScreenProp
     };
 
     return (
-        <ThemedView style={styles.container}>
-            <ThemedText style={styles.header}>Login to your account</ThemedText>
+        <ThemedView style={[sharedOnboardingStyles.container]}>
+            <View style={sharedOnboardingStyles.content}>
+                <View style={sharedOnboardingStyles.headerContainer}>
+                    <ThemedText style={sharedOnboardingStyles.header}>Login to your account</ThemedText>
+                </View>
 
-            <View style={styles.inputContainer}>
-                <TextInput
-                    style={[styles.input, { borderColor: colors.border }]}
-                    placeholder="Email"
-                    placeholderTextColor={colors.text}
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                />
+                <View style={sharedOnboardingStyles.inputContainer}>
+                    <TextInput
+                        style={[sharedOnboardingStyles.input, { borderColor: colors.border }]}
+                        placeholder="Email"
+                        placeholderTextColor={colors.text}
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                    />
 
-                <TextInput
-                    style={[styles.input, { borderColor: colors.border }]}
-                    placeholder="Password"
-                    placeholderTextColor={colors.text}
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
+                    <TextInput
+                        style={[sharedOnboardingStyles.input, { borderColor: colors.border }]}
+                        placeholder="Password"
+                        placeholderTextColor={colors.text}
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry
+                    />
+                </View>
+
+                <Button
+                    title="Login"
+                    onPress={handleLogin}
+                    containerStyle={sharedOnboardingStyles.button}
+                    textStyle={sharedOnboardingStyles.buttonText}
+                    disabled={!email || !password}
                 />
             </View>
 
-            <Button
-                title="Login"
-                onPress={handleLogin}
-                containerStyle={styles.button}
-                textStyle={styles.buttonText}
-                disabled={!email || !password}
-            />
-
-            <View style={styles.linkContainer}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <ThemedText style={styles.linkText}>Don't have an account? </ThemedText>
+            <View style={sharedOnboardingStyles.linkContainer}>
+                <View style={sharedOnboardingStyles.linkContent}>
+                    <ThemedText style={sharedOnboardingStyles.linkText}>Don't have an account? </ThemedText>
                     <TouchableOpacity onPress={onNavigateToOnboarding}>
-                        <ThemedText style={{ color: "#FFCF0F", textDecorationLine: "underline" }}>
-                            Create one
-                        </ThemedText>
+                        <ThemedText style={styles.createAccountText}>Create one</ThemedText>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -69,46 +72,9 @@ export function LoginScreen({ onLogin, onNavigateToOnboarding }: LoginScreenProp
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        justifyContent: "center",
-    },
-    header: {
-        fontSize: 24,
-        lineHeight: 32,
-        fontWeight: "bold",
-        marginBottom: 32,
-        textAlign: "left",
-    },
-    inputContainer: {
-        gap: 16,
-        marginBottom: 24,
-    },
-    input: {
-        height: 48,
-        borderWidth: 1,
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        fontSize: 16,
-    },
-    button: {
-        height: 48,
-        borderRadius: 24,
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 16,
-        backgroundColor: "#FFCF0F",
-    },
-    buttonText: {
-        color: "#FFFFFF",
-        fontSize: 16,
-        fontWeight: "600",
-    },
-    linkContainer: {
-        alignItems: "center",
-    },
-    linkText: {
-        fontSize: 14,
+    createAccountText: {
+        color: "#FFCF0F",
+        textDecorationLine: "underline",
+        fontSize: 13,
     },
 });
