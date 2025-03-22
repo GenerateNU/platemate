@@ -2,7 +2,7 @@ import { Dimensions, Image, Text, View, ScrollView } from "react-native";
 import React from "react";
 import { ThemedText } from "../ThemedText";
 import Entypo from "@expo/vector-icons/build/Entypo";
-import Trending from "@/assets/images/trending.svg";
+import { TrendingIcon } from "@/components/icons/Icons";
 
 type Props = {
     plateName: string;
@@ -26,11 +26,10 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
             }}>
             <View style={{ gap: 0, width: "70%" }}>
                 {trending && (
-                    <Trending
+                    <TrendingIcon
                         fill={trending ? "#0a7ea4" : "#000"}
                         height={Dimensions.get("window").width * 0.07}
                         width={Dimensions.get("window").width * 0.3}
-                        style={{}}
                     />
                 )}
                 <View style={{ gap: 10, padding: 16, flexDirection: "column", width: "100%", marginTop: 0 }}>
@@ -40,6 +39,7 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
                             type="default"
                             style={{
                                 width: "100%",
+                                fontFamily: "Outfit",
                             }}>
                             {content}
                         </ThemedText>
@@ -58,6 +58,7 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
                                     paddingVertical: 4,
                                     borderRadius: 20,
                                     fontSize: 14,
+                                    fontFamily: "Outfit",
                                 }}>
                                 {tag}
                             </Text>
@@ -69,7 +70,9 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
                     </View>
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                         <Entypo name="location-pin" size={24} color="black" />
-                        <ThemedText type="default">{restaurantName}</ThemedText>
+                        <ThemedText type="default" style={{ fontFamily: "Outfit" }}>
+                            {restaurantName}
+                        </ThemedText>
                     </View>
                 </View>
             </View>
