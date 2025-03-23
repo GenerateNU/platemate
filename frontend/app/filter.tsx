@@ -2,13 +2,13 @@ import { FilterGrid } from "../components/filter/FilterGrid";
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button } from "../components/Button";
-import { TSortOption } from "@/types/filter";
 import { SortBy } from "../components/filter/SortBy";
 import { ThemedView } from "@/components/ThemedView";
 import { ScrollView } from "react-native";
+import { TSortOption, TFilterItem, TFilterId } from "@/types/filter";
 
 export default function Filter() {
-    const [cuisineTags, setCuisineTags] = useState([
+    const [cuisineTags, setCuisineTags] = useState<TFilterItem[]>([
         { id: "Fast Food", selected: false },
         { id: "Pizza", selected: false },
         { id: "Chinese", selected: false },
@@ -40,7 +40,7 @@ export default function Filter() {
         { id: "Bakery", selected: false },
         { id: "Bar", selected: false },
     ]);
-    const [specificationTags, setSpecificationTags] = useState([
+    const [specificationTags, setSpecificationTags] = useState<TFilterItem[]>([
         { id: "Vegan", selected: false },
         { id: "Healthy", selected: false },
         { id: "Small-Business", selected: false },
@@ -67,10 +67,13 @@ export default function Filter() {
                     // Cycle through directions: "none" -> "up" -> "down" -> "none"
                     switch (item.direction) {
                         case "none":
+                            // console.log(`Changing ${item.id} from none to up`);
                             return { ...item, direction: "up" };
                         case "up":
+                            // console.log(`Changing ${item.id} from up to down`);
                             return { ...item, direction: "down" };
                         case "down":
+                            // console.log(`Changing ${item.id} from down to none`);
                             return { ...item, direction: "none" };
                     }
                 }
@@ -82,8 +85,8 @@ export default function Filter() {
     };
 
     const toggleTag = (
-        id: string,
-        setTags: React.Dispatch<React.SetStateAction<{ id: string; selected: boolean }[]>>
+        id: TFilterId,
+        setTags: React.Dispatch<React.SetStateAction<TFilterItem[]>>
     ) => {
         setTags((prevTags) => {
             const updated = prevTags.map((t) => (t.id === id ? { ...t, selected: !t.selected } : t));
@@ -95,9 +98,8 @@ export default function Filter() {
         });
     };
 
-    const toggleCuisineTag = (id: string) => toggleTag(id, setCuisineTags);
-    const toggleSpecificationTag = (id: string) => toggleTag(id, setSpecificationTags);
-
+    const toggleCuisineTag = (id: TFilterId) => toggleTag(id, setCuisineTags);
+    const toggleSpecificationTag = (id: TFilterId) => toggleTag(id, setSpecificationTags);
     return (
         // <SafeAreaView style={styles.container}>
         <ScrollView style={{ flex: 1, backgroundColor: "#FFF" }}>

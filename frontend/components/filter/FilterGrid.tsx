@@ -2,15 +2,12 @@ import React from "react";
 import { View, Text } from "react-native";
 import { StyleSheet } from "react-native";
 import { FilterTagButton } from "@/components/filter/FilterTags";
+import { TFilterItem, TFilterId } from "@/types/filter";
 
-interface FilterTagData {
-    id: string;
-    selected?: boolean;
-}
 
 interface FilterProps {
-    filters: FilterTagData[];
-    onTagPress?: (id: string) => void;
+    filters: TFilterItem[];
+    onTagPress?: (id: TFilterId) => void;
     title: string;
 }
 
@@ -23,8 +20,8 @@ export function FilterGrid({ filters, onTagPress, title }: FilterProps) {
     );
 }
 interface FilterGridProps {
-    filters: FilterTagData[];
-    onTagPress?: (id: string) => void;
+    filters: TFilterItem[];
+    onTagPress?: (id: TFilterId) => void;
 }
 
 export function FilterTagGrid({ filters, onTagPress }: FilterGridProps) {
@@ -33,7 +30,7 @@ export function FilterTagGrid({ filters, onTagPress }: FilterGridProps) {
             {filters.map((tag, index) => (
                 <FilterTagButton
                     key={index}
-                    title={tag.id}
+                    id={tag.id}
                     onPress={() => onTagPress?.(tag.id)}
                     selected={tag.selected}
                 />

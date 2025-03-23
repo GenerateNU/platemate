@@ -1,13 +1,13 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Button } from "@/components/Button";
+import { TFilterId, TFilterItem} from "@/types/filter";
 
-interface FilterTagButtonProp {
-    title: string;
+type FilterTagButtonProp = TFilterItem & {
     onPress: () => void;
-    selected?: boolean;
-}
-export const FilterTagButton = ({ title, onPress, selected = false }: FilterTagButtonProp) => {
+};
+
+export const FilterTagButton = ({ id: title, onPress, selected = false }: FilterTagButtonProp) => {
     return (
         <Button
             title={title}

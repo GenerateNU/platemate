@@ -30,10 +30,6 @@ type FilterKey =
     | "Bakery"
     | "Bar";
 
-type FilterItem = {
-    id: FilterKey;
-    selected: boolean;
-};
 
 type SpecificationKey =
     | "Vegan"
@@ -47,11 +43,6 @@ type SpecificationKey =
     | "Delivery-Available"
     | "Reservation-Required";
 
-type SpecificationItem = {
-    id: SpecificationKey;
-    selected: boolean;
-};
-
 export type TSortOptionKey = "Taste Rating" | "Value Rating" | "Portion Rating" | "Overall Rating";
 
 export type TSortOption = {
@@ -59,3 +50,9 @@ export type TSortOption = {
     direction: "none" | "up" | "down";
 };
 
+
+export type TFilterId = FilterKey | SpecificationKey;
+export type TFilterItem =  {
+    id: TFilterId;
+    selected: boolean;
+}

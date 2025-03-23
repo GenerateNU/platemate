@@ -3,15 +3,11 @@ import { View, Text } from "react-native";
 import { StyleSheet } from "react-native";
 import { Button } from "@/components/Button";
 import { ArrowUpward, ArrowDownward } from "@/components/icons/Icons";
- 
-interface SortOption {
-    id: string;
-    direction: "none" | "up" | "down";
-}
+import { TSortOption } from "@/types/filter";
 
 interface SortRowProps {
     id: string;
-    selectedSort: SortOption; // the title of the current row selected, if any and the direction
+    selectedSort: TSortOption; // the title of the current row selected, if any and the direction
     // Function to update the sort selection in the parent
     onPress: () => void;
 }
@@ -46,7 +42,7 @@ export function SortRow({ id: id, selectedSort, onPress }: SortRowProps) {
 }
 
 interface SortByProps {
-    sortOptions: SortOption[];
+    sortOptions: TSortOption[];
     onSortOptionPress: (title: string) => void;
 }
 
