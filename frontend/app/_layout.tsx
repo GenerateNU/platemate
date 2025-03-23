@@ -5,7 +5,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
 import "react-native-reanimated";
-import BackChevron from "@/assets/icons/arrow_back_ios.svg";
+import { BackChevron } from "@/components/icons/Icons";
+
 import { Text, View, Platform} from "react-native";
 
 import { SafeAreaView, useColorScheme } from "react-native";
@@ -14,12 +15,12 @@ import { UserProvider } from "@/context/user-context";
 import { AuthInitializer } from "@/components/AuthInitializer";
 import { Host } from "react-native-portalize";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
+
     const [loaded] = useFonts({
         DamionRegular: require("../assets/fonts/Damion-Regular.otf"),
         Outfit: require("../assets/fonts/Outfit-Variable.otf"),
@@ -50,41 +51,42 @@ export default function RootLayout() {
                                     <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
                                     <Stack.Screen name="[...missing]" options={{ title: "Not Found" }} />
                                     <Stack.Screen name="filter"
-                    options={{
-                        headerShown: true,
-                        headerTransparent: true,
-                        headerBackVisible: false,
-                        // headerTitleAlign: "left",
-                        headerLeft: ({ canGoBack }) => (canGoBack ? <BackChevron style={{ }} /> : null),
-                        headerBackButtonDisplayMode: "minimal",
-                        headerTitle: () => (
-                            <View style={{ flex: 1}}>
-                              <Text
-                                style={{
-                                  fontFamily: "Inter",
-                                  fontWeight: "700",
-                                  fontSize: 28,
-                                  color: "#151619",
-                                }}
-                              >
-                                Filters
-                              </Text>
-                            </View>
-                        ),
-                        headerStyle: {
-                            backgroundColor: "transparent",
-                        },
-                        headerShadowVisible: false,
-                        ...Platform.select({
-                            ios: {
-                                headerBlurEffect: "light",
-                            },
-                        }),
-                        animation: "slide_from_right",
-                        
-                    }}
-                />                
-            </Stack>
+                                        options={{
+                                            headerShown: true,
+                                            headerTransparent: true,
+                                            headerBackVisible: false,
+                                            contentStyle: { paddingTop: 0 }, 
+                                            statusBarTranslucent: true,
+                                            // headerTitleAlign: "left",
+                                            headerLeft: ({ canGoBack }) => (canGoBack ? <BackChevron style={{ marginLeft: 8, marginRight: 8 }} /> : null),
+                                            headerBackButtonDisplayMode: "minimal",
+                                            headerTitle: () => (
+                                                <View style={{ flex: 1}}>
+                                                <Text
+                                                    style={{
+                                                    fontFamily: "Inter",
+                                                    fontWeight: "700",
+                                                    fontSize: 28,
+                                                    color: "#151619",
+                                                    }}
+                                                >
+                                                    Filters
+                                                </Text>
+                                                </View>
+                                            ),
+                                            headerStyle: {
+                                                backgroundColor: "transparent",
+                                            },
+                                            headerShadowVisible: false,
+                                            ...Platform.select({
+                                                ios: {
+                                                    headerBlurEffect: "light",
+                                                },
+                                            }),
+                                            animation: "slide_from_right",
+                                        }}
+                                    />                
+                                </Stack>
                             </BottomSheetModalProvider>
                         </GestureHandlerRootView>
                     </ThemeProvider>

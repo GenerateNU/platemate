@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { StyleSheet } from "react-native";
-import { FilterTagButton } from "@/components/FilterTags";
+import { FilterTagButton } from "@/components/filter/FilterTags";
 
 interface FilterTagData {
     id: string;

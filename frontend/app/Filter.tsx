@@ -1,8 +1,9 @@
-import { FilterGrid } from "../components/FilterGrid";
+import { FilterGrid } from "../components/filter/FilterGrid";
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { Button } from "../components/Button";
-import { SortBy, SortOption } from "../components/SortBy";
+import { TSortOption } from "@/types/filter";
+import { SortBy } from "../components/filter/SortBy";
 import { ThemedView } from "@/components/ThemedView";
 import { ScrollView } from "react-native";
 
@@ -52,17 +53,17 @@ export default function Filter() {
         { id: "Reservation-Required", selected: false },
     ]);
 
-    const [selectedSort, setSelectedSort] = useState<SortOption[]>([
-        { title: "Taste Rating", direction: "none" },
-        { title: "Value Rating", direction: "none" },
-        { title: "Portion Rating", direction: "none" },
-        { title: "Overall Rating", direction: "none" },
+    const [selectedSort, setSelectedSort] = useState<TSortOption[]>([
+        { id: "Taste Rating", direction: "none" },
+        { id: "Value Rating", direction: "none" },
+        { id: "Portion Rating", direction: "none" },
+        { id: "Overall Rating", direction: "none" },
     ]);
 
     const cycleSelectedSort = (title: string) => {
         setSelectedSort((prevSort) => {
             return prevSort.map((item) => {
-                if (item.title === title) {
+                if (item.id === title) {
                     // Cycle through directions: "none" -> "up" -> "down" -> "none"
                     switch (item.direction) {
                         case "none":
@@ -99,7 +100,7 @@ export default function Filter() {
 
     return (
         // <SafeAreaView style={styles.container}>
-        <ScrollView style={{ flex: 1, paddingTop: 10, backgroundColor: "#FFF" }}>
+        <ScrollView style={{ flex: 1, backgroundColor: "#FFF" }}>
         
             <ThemedView style={styles.container}>
                 <SortBy sortOptions={selectedSort} onSortOptionPress={cycleSelectedSort} />
@@ -121,9 +122,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: "center",
-        paddingVertical: 99,
-        paddingHorizontal: 31,
-        gap: 30
+        paddingTop: 56,
+        paddingBottom: 101,
+        paddingLeft: 29,
+        paddingRight: 33,
+        gap: 30,
     },
     applyButtonContainer: {
         paddingVertical: 4,

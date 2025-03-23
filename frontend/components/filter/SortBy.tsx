@@ -1,24 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text } from "react-native";
 import { StyleSheet } from "react-native";
 import { Button } from "@/components/Button";
-import ArrowUpward from "@/assets/icons/arrow_upward.svg";
-import ArrowDownward from "@/assets/icons/arrow_downward.svg";
-
-export interface SortOption {
-    title: string;
+import { ArrowUpward, ArrowDownward } from "@/components/icons/Icons";
+ 
+interface SortOption {
+    id: string;
     direction: "none" | "up" | "down";
 }
 
 interface SortRowProps {
-    title: string;
+    id: string;
     selectedSort: SortOption; // the title of the current row selected, if any and the direction
     // Function to update the sort selection in the parent
     onPress: () => void;
 }
 
 // TODO: figure out if possible to sort by multiple rows, or just one
-export function SortRow({ title, selectedSort, onPress }: SortRowProps) {
+export function SortRow({ id: id, selectedSort, onPress }: SortRowProps) {
     const getSubtitle = () => {
         switch (selectedSort.direction) {
             case "up":
@@ -33,12 +32,12 @@ export function SortRow({ title, selectedSort, onPress }: SortRowProps) {
     return (
         <View style={styles.rowContainer}>
             <View style={styles.textContainer}>
-                <Text style={styles.sortFieldTitle}>{title}</Text>
+                <Text style={styles.sortFieldTitle}>{id}</Text>
                 <Text style={styles.subTitle}>{getSubtitle()}</Text>
             </View>
             <Button title="" containerStyle={styles.sortButton} onPress={onPress}>
                 {/* Conditionally render the arrow icon based on the state */}
-                {selectedSort.direction === "up" && <ArrowUpward width={24} height={24} />}
+                {selectedSort.direction === "up" && <ArrowUpward/>}
                 {selectedSort.direction === "down" && <ArrowDownward width={24} height={24} />}
                 {selectedSort.direction === "none" && <View style={styles.blankIcon} />}
             </Button>
@@ -47,7 +46,7 @@ export function SortRow({ title, selectedSort, onPress }: SortRowProps) {
 }
 
 interface SortByProps {
-    sortOptions: { title: string; direction: "up" | "down" | "none" }[];
+    sortOptions: SortOption[];
     onSortOptionPress: (title: string) => void;
 }
 
@@ -59,9 +58,9 @@ export function SortBy({ sortOptions, onSortOptionPress }: SortByProps) {
                 {sortOptions.map((option, index) => (
                     <SortRow
                         key={index}
-                        title={option.title}
+                        id={option.id}
                         selectedSort={option}
-                        onPress={() => onSortOptionPress(option.title)}
+                        onPress={() => onSortOptionPress(option.id)}
                     />
                 ))}
             </View>
