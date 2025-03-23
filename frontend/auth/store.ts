@@ -4,7 +4,7 @@ import axios from "axios";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 
-interface User {
+interface User { // eslint-disable-line
     userId: string;
     email: string;
     name: string;

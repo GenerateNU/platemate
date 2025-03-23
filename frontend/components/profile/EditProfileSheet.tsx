@@ -174,6 +174,8 @@ const EditProfileSheet = forwardRef<EditProfileSheetRef, { user: User }>(({ user
     );
 });
 
+EditProfileSheet.displayName = "EditProfileSheet";
+
 const styles = StyleSheet.create({
     bottomSheetBackground: {
         backgroundColor: "#fff",

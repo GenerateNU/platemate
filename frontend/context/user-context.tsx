@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from "react";
 import axios from "axios";
 import useAuthStore from "@/auth/store";
 
@@ -39,7 +39,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchUserProfile = async (): Promise<User | null> => {
+    const fetchUserProfile = useCallback(async (): Promise<User | null> => {
         if (!accessToken) {
             setError("No access token available");
             return null;
@@ -78,7 +78,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [accessToken, userId, refreshAccessToken, logout]);
 
     useEffect(() => {
         if (isAuthenticated && !user && !isLoading) {
