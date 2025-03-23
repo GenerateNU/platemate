@@ -75,14 +75,14 @@ export default function RootLayout() {
                                                 </View>
                                             ),
                                             headerStyle: {
-                                                backgroundColor: "transparent",
+                                                backgroundColor: "white",
                                             },
                                             headerShadowVisible: false,
-                                            ...Platform.select({
-                                                ios: {
-                                                    headerBlurEffect: "light",
-                                                },
-                                            }),
+                                            // ...Platform.select({
+                                            //     ios: {
+                                            //         headerBlurEffect: "light",
+                                            //     },
+                                            // }),
                                             animation: "slide_from_right",
                                         }}
                                     />                
