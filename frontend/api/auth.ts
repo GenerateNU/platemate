@@ -1,8 +1,6 @@
 import { makeRequest } from "@/api/base";
 import { LoginRequestBody, RegisterRequestBody } from "@/types/auth";
 
-const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
-
 export async function getUserById(userId: string) {
     return await makeRequest(`/api/v1/users/${userId}`, "GET");
 }

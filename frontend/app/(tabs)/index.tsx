@@ -3,9 +3,7 @@ import { ScrollView } from "react-native";
 
 import { ThemedView } from "@/components/ThemedView";
 import FeedTabs from "@/components/Feed/FeedTabs";
-import { RestaurantDetailItem } from "@/components/restaurant/RestaurantDetailItem";
 
-import { StarReview } from "@/components/StarReview";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 

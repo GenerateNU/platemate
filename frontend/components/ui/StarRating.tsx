@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import UnshadedStar from "@/assets/icons/unshaded_star_rate.svg";
 import { StarIcon } from "@/components/icons/Icons";
 
 export interface StarReviewProps {

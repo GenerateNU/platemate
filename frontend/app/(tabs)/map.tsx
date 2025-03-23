@@ -14,9 +14,8 @@ export default function MapScreen() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        // Initialize auth on component mount
         initializeAuth();
-    }, []);
+    }, [initializeAuth]);
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -27,8 +26,8 @@ export default function MapScreen() {
         setError("");
         try {
             await login(email, password);
-        } catch (err) {
-            setError("Login failed. Please check your credentials.");
+        } catch (err: any) {
+            setError("Login failed. Please check your credentials." + err.message);
         }
     };
 
@@ -46,8 +45,8 @@ export default function MapScreen() {
         setError("");
         try {
             await register(email, password, name);
-        } catch (err) {
-            setError("Registration failed. Please try again.");
+        } catch (err: any) {
+            setError("Registration failed. Please try again." + err.message);
         }
     };
 
