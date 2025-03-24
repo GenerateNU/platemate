@@ -1,4 +1,5 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import { StyleSheet } from "react-native";
 import { Button } from "@/components/Button";
@@ -13,22 +14,29 @@ interface SortRowProps {
 }
 
 export function SortRow({ id: id, selectedSort, onPress }: SortRowProps) {
-    const getSubtitle = () => {
+
+    const [subtitle, setSubtitle] = useState<string>("-");
+    // Update subtitle when direction changes
+    useEffect(() => {
         switch (selectedSort.direction) {
             case "up":
-                return "Highest to lowest";
+                setSubtitle("Highest to lowest");
+                break;
             case "down":
-                return "Lowest to highest";
+                setSubtitle("Lowest to highest");
+                break;
             case "none":
-                return "-";
+                setSubtitle("-");
+                break;
         }
-    };
+    }, [selectedSort.direction]);
+
 
     return (
         <View style={styles.rowContainer}>
             <View style={styles.textContainer}>
                 <Text style={styles.sortFieldTitle}>{id}</Text>
-                <Text style={styles.subTitle}>{getSubtitle()}</Text>
+                <Text style={styles.subTitle}>{subtitle}</Text>
             </View>
             <Button title="" containerStyle={styles.sortButton} onPress={onPress}>
                 {/* Conditionally render the arrow icon based on the state */}
