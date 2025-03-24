@@ -8,6 +8,7 @@ import ToggleSetting from "@/components/profile/settings/ToggleSetting";
 import SettingsSection from "@/components/profile/settings/SettingsSection";
 import SettingsMenuItem from "@/components/profile/settings/SettingsMenuItem";
 import { TSettingsData } from "@/types/settingsData";
+import { Button } from "@/components/Button";
 
 export default function SettingsScreen() {
     const insets = useSafeAreaInsets();
@@ -111,7 +112,9 @@ export default function SettingsScreen() {
                     ))}
                 </SettingsSection>
 
-                <View style={{ height: insets.bottom + 20 }} />
+                <Button title="Log Out" containerStyle={styles.buttonContainer} textStyle={styles.buttonText}/>
+
+                <View style={{ height: insets.bottom + 50 }} />
             </View>
         </ScrollView>
     );
@@ -123,6 +126,30 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
     content: {
+        fontFamily: "Inter",
         padding: 20,
     },
-});
+    buttonContainer: {
+        display: "flex",
+        paddingVertical: 4,
+        paddingHorizontal: 12,
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 4,
+        borderRadius: 25,
+        backgroundColor: "#285852",
+        alignSelf: "center",
+        width: 100,
+        height: 30,
+    },
+    buttonText: {
+        color: "#FFF",
+        textAlign: "center",
+        fontFamily: "Source Sans 3",
+        fontSize: 14,
+        fontStyle: "normal",
+        fontWeight: 500,
+        lineHeight: 18,
+    }
+} 
+);

@@ -39,7 +39,7 @@ export default function ProfileLayout() {
                     title: "PlateMate Settings",
                     headerTitleAlign: "left",
                     headerTitleStyle: {
-                        fontFamily: "Outfit",
+                        fontFamily: "Inter",
                         fontWeight: "600",
                         fontSize: 20,
                         color: "#333",
@@ -52,7 +52,7 @@ export default function ProfileLayout() {
                     title: "Your Followers",
                     headerTitleAlign: "left",
                     headerTitleStyle: {
-                        fontFamily: "Outfit",
+                        fontFamily: "Inter",
                         fontWeight: "600",
                         fontSize: 20,
                         color: "#333",
