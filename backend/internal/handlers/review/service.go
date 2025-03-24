@@ -174,18 +174,10 @@ func (s *Service) GetComments(reviewID primitive.ObjectID) ([]CommentDocument, e
 	ctx := context.Background()
 	filter := bson.M{"_id": reviewID}
 	pipeline := []bson.M{
-		bson.M{
-			"$match": filter,
-		},
-		bson.M{
-			"$project": bson.M{"comments": 1, "_id": 0},
-		},
-		bson.M{"$unwind": "$comments"},
-		bson.M{
-			"$sort": bson.M{
-				"comments.timestamp": -1,
-			},
-		},
+		{"$match": filter},
+		{"$project": bson.M{"comments": 1, "_id": 0}},
+		{"$unwind": "$comments"},
+		{"$sort": bson.M{"comments.timestamp": -1}},
 	}
 
 	cursor, err := s.reviews.Aggregate(ctx, pipeline)
@@ -255,4 +247,67 @@ func (s *Service) updateRestaurantAverageRating(restaurantID primitive.ObjectID)
 	// Update the restaurant document with the new average
 	_, err = s.restaurants.UpdateOne(ctx, bson.M{"_id": restaurantID}, update)
 	return err
+}
+
+// GetReviewsByUser retrieves all reviews where reviewer.id matches the provided userID
+func (s *Service) GetReviewsByUser(userID string) ([]ReviewDocument, error) {
+	ctx := context.Background()
+	filter := bson.M{"reviewer.id": userID}
+
+	cursor, err := s.reviews.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var results []ReviewDocument
+	if err := cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+
+	// Return empty slice instead of nil if no reviews are found
+	if len(results) == 0 {
+		return []ReviewDocument{}, nil
+	}
+
+	return results, nil
+}
+
+// SearchUserReviews fetches reviews from a user, matching the given query in content
+func (s *Service) SearchUserReviews(userID, query string) ([]ReviewDocument, error) {
+	ctx := context.Background()
+
+	// Build a filter for:
+	// - THIS user’s reviews
+	// - "content" that (case-insensitive) matches "query"
+	// - menuitem
+	// - comments.content to search replies or discussions under a review
+	// - restaurantId to search with a specific restaurant ID
+	filter := bson.M{
+		"reviewer.id": userID,
+		"$or": []bson.M{
+			{"content": bson.M{"$regex": primitive.Regex{Pattern: query, Options: "i"}}},
+			{"menuItem": bson.M{"$regex": primitive.Regex{Pattern: query, Options: "i"}}},
+			{"restaurantId": bson.M{"$regex": primitive.Regex{Pattern: query, Options: "i"}}},
+			{"comments.content": bson.M{"$regex": primitive.Regex{Pattern: query, Options: "i"}}},
+		},
+	}
+
+	cursor, err := s.reviews.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var results []ReviewDocument
+	if err := cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+
+	// Return an empty slice instead of nil if nothing found
+	if len(results) == 0 {
+		return []ReviewDocument{}, nil
+	}
+
+	return results, nil
 }

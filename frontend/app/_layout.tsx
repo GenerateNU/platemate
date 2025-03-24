@@ -3,10 +3,15 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import "react-native-reanimated";
 
-import { useColorScheme } from "react-native";
+import { SafeAreaView, useColorScheme } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { UserProvider } from "@/context/user-context";
+import { AuthInitializer } from "@/components/AuthInitializer";
+import { Host } from "react-native-portalize";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -14,9 +19,8 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
     const colorScheme = useColorScheme();
     const [loaded] = useFonts({
-        // Outfit: require("../assets/fonts/Outfit-Variable.ttf"),
-        // SofiaSans: require("../assets/fonts/SofiaSans-Variable.ttf"),
-        SourceSans3: require("../assets/fonts/SourceSans3-Variable.ttf"),
+        DamionRegular: require("../assets/fonts/Damion-Regular.otf"),
+        Outfit: require("../assets/fonts/Outfit-Variable.otf"),
     });
 
     useEffect(() => {
@@ -30,18 +34,25 @@ export default function RootLayout() {
     }
 
     return (
-        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-            <Stack
-                screenOptions={{
-                    headerTitleStyle: {
-                        fontFamily: "Source Sans 3",
-                    },
-                    headerShown: false,
-                }}>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" />
-        </ThemeProvider>
+        <Host>
+            <AuthInitializer>
+                <UserProvider>
+                    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+                        <SafeAreaView>
+                            <StatusBar backgroundColor={"black"} animated={true} style={"dark"} translucent={false} />
+                        </SafeAreaView>
+                        <GestureHandlerRootView style={{ flex: 1 }}>
+                            <BottomSheetModalProvider>
+                                <Stack>
+                                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                                    <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
+                                    <Stack.Screen name="[...missing]" options={{ title: "Not Found" }} />
+                                </Stack>
+                            </BottomSheetModalProvider>
+                        </GestureHandlerRootView>
+                    </ThemeProvider>
+                </UserProvider>
+            </AuthInitializer>
+        </Host>
     );
 }

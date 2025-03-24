@@ -24,21 +24,21 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
                 gap: 10,
                 borderRadius: 12,
                 paddingTop: 24,
-                width: Dimensions.get("window").width * 0.75,
+                // width: Dimensions.get("window").width * 0.75,
                 height: Dimensions.get("window").height * 0.4,
             }}>
             <UserInfoRowBase
-                name={"Beak"}
-                username={"beakerboy"}
+                name={"Ben Petrillo"}
+                username={"benpetrillo26"}
                 right={<View />}
-                icon={"https://ca.slack-edge.com/T2CHL6FEG-U07KG3RKBDX-a3dd191230d7-512"}
+                icon={"https://avatars.githubusercontent.com/u/66958528?v=4"}
             />
             <View style={{ gap: 10 }}>
                 <View>
-                    <ThemedText type="subtitle" style={{ fontFamily: "Source Sans 3" }}>
+                    <ThemedText type="subtitle" style={{ fontFamily: "Outfit" }}>
                         {plateName}
                     </ThemedText>
-                    <ThemedText type="default" style={{ fontFamily: "Source Sans 3" }}>
+                    <ThemedText type="default" style={{ fontFamily: "Outfit" }}>
                         {restaurantName}
                     </ThemedText>
                 </View>
@@ -52,11 +52,7 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
                         </Text>
                     ))}
                 </ScrollView>
-                <ThemedText
-                    type="default"
-                    style={{ fontFamily: "Source Sans 3" }}
-                    numberOfLines={3}
-                    ellipsizeMode="tail">
+                <ThemedText type="default" style={{ fontFamily: "Outfit" }} numberOfLines={3} ellipsizeMode="tail">
                     {content}
                 </ThemedText>
             </View>
@@ -94,5 +90,6 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         borderRadius: 20,
         fontSize: 12,
+        fontFamily: "Outfit",
     },
 });

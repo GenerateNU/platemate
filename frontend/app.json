@@ -10,13 +10,17 @@
         "newArchEnabled": true,
         "platforms": ["ios", "android"],
         "ios": {
-            "supportsTablet": true
+            "supportsTablet": true,
+            "infoPlist": {
+                "NSLocationWhenInUseUsageDescription": "We use your location to look up nearby restaurants and addresses."
+            }
         },
         "android": {
             "adaptiveIcon": {
                 "foregroundImage": "./assets/images/icon.png",
                 "backgroundColor": "#ffffff"
-            }
+            },
+            "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
         },
         "web": {
             "bundler": "metro",

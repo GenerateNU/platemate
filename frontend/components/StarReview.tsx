@@ -77,8 +77,8 @@ export function InteractiveStars({
 const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "flex-start",
+        // alignItems: "center", // Ensures vertical alignment
+        // justifyContent: "center", // Centers items horizontally
         gap: 7,
     },
     text: {

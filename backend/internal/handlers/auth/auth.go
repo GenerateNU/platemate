@@ -42,15 +42,25 @@ func (h *Handler) Login(c *fiber.Ctx) error {
 	}
 
 	// database call to find the user and verify credentials and get count
-	id, count, err := h.service.LoginFromCredentials(req.Email, req.Password)
+	id, err := h.service.LoginFromCredentials(req.Email, req.Password)
 	if err != nil {
 		return err
 	}
 
-	access, refresh, err := h.service.GenerateTokens(id, count)
+	access, refresh, err := h.service.GenerateTokens(id)
+
+	if err != nil {
+		return err
+	}
+
 	c.Response().Header.Add("access_token", access)
 	c.Response().Header.Add("refresh_token", refresh)
-	return err
+
+	return c.Status(fiber.StatusOK).JSON(TokenResponse{
+		AccessToken:  access,
+		RefreshToken: refresh,
+		User:         id,
+	})
 }
 
 func (h *Handler) Register(c *fiber.Ctx) error {
@@ -64,23 +74,25 @@ func (h *Handler) Register(c *fiber.Ctx) error {
 	}
 
 	id := primitive.NewObjectID().Hex()
+	oidHex, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
 
-	access, refresh, err := h.service.GenerateTokens(id, 0) // new users use count = 0
+	access, refresh, err := h.service.GenerateTokens(id)
 
 	if err != nil {
 		return err
 	}
 
-	c.Response().Header.Add("access_token", access)
-	c.Response().Header.Add("refresh_token", refresh)
-
 	user := User{
-		Email:        req.Email,
-		Password:     req.Password,
-		ID:           id,
-		RefreshToken: refresh,
-		TokenUsed:    false,
-		Count:        0,
+		ID:                oidHex,
+		Name:              req.Name,
+		Email:             req.Email,
+		Password:          req.Password,
+		FollowingCount:    0,
+		FollowersCount:    0,
+		ProfilePictureURL: "",
 	}
 
 	if err = user.Validate(); err != nil {
@@ -88,11 +100,56 @@ func (h *Handler) Register(c *fiber.Ctx) error {
 	}
 
 	err = h.service.CreateUser(user)
-	return err
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	c.Response().Header.Add("access_token", access)
+	c.Response().Header.Add("refresh_token", refresh)
+
+	return c.Status(fiber.StatusOK).JSON(TokenResponse{
+		AccessToken:  access,
+		RefreshToken: refresh,
+		User:         id,
+	})
 }
 
 func (h *Handler) Test(c *fiber.Ctx) error {
 	return c.SendString("Authorized!")
+}
+
+func (h *Handler) Refresh(c *fiber.Ctx) error {
+
+	var body RefreshRequestBody
+
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
+	}
+
+	// validate the refresh token
+	userId, err := h.service.ValidateToken(body.RefreshToken)
+
+	if err != nil {
+		return fiber.NewError(400, "Not Authorized: Access and Refresh Tokens are Expired "+err.Error())
+	}
+
+	// generate new refresh token
+	access, refresh, err := h.service.GenerateTokens(userId)
+
+	if err != nil {
+		return fiber.NewError(400, "Not Authorized, Error Generating Tokens")
+	}
+
+	// return new tokens
+	c.Response().Header.Add("access_token", access)
+	c.Response().Header.Add("refresh_token", refresh)
+
+	return c.Status(fiber.StatusOK).JSON(TokenResponse{
+		AccessToken:  access,
+		RefreshToken: refresh,
+		User:         userId,
+	})
 }
 
 func (h *Handler) AuthenticateMiddleware(c *fiber.Ctx) error {
@@ -125,20 +182,13 @@ func (h *Handler) AuthenticateMiddleware(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func (h *Handler) ValidateRefreshToken(c *fiber.Ctx, refreshToken string) (float64, error) {
+func (h *Handler) ValidateRefreshToken(c *fiber.Ctx, refreshToken string) error {
 	// Okay, so the access token is invalid now we check if the refresh token is valid
-	user_id, count, err := h.service.ValidateToken(refreshToken)
+	_, err := h.service.ValidateToken(refreshToken)
 	if err != nil {
-		return 0, fiber.NewError(400, "Not Authorized: Access and Refresh Tokens are Expired "+err.Error())
+		return fiber.NewError(400, "Not Authorized: Access and Refresh Tokens are Expired "+err.Error())
 	}
-	// Check if the refresh token is unused
-	used, err := h.service.CheckIfTokenUsed(user_id)
-	if err != nil {
-		return 0, fiber.NewError(400, "Not Authorized, Error Validating Token Reusage "+err.Error())
-	} else if used {
-		return 0, fiber.NewError(400, "Not Authorized, Token Reuse Detected")
-	}
-	return count, nil
+	return nil
 }
 
 /*
@@ -151,22 +201,18 @@ func (h *Handler) ValidateAndGenerateTokens(c *fiber.Ctx, accessToken string, re
 		Check our tokens are valid by first checking if the access token is valid
 		and then checking if the refresh token is valid if the access token is invalid
 	*/
-	user_id, count, err := h.service.ValidateToken(accessToken)
+	userId, err := h.service.ValidateToken(accessToken)
 	if err != nil {
-		count, err = h.ValidateRefreshToken(c, refreshToken)
+		err = h.ValidateRefreshToken(c, refreshToken)
 		if err != nil {
 			return "", "", err
 		}
 	}
 	// use the same count as the existing token
 	// Our refresh token is valid and unused, so we can use it to generate a new set of tokens
-	access, refresh, err := h.service.GenerateTokens(user_id, count)
+	access, refresh, err := h.service.GenerateTokens(userId)
 	if err != nil {
 		return "", "", fiber.NewError(400, "Not Authorized, Error Generating Tokens")
-	}
-
-	if err := h.service.UseToken(user_id); err != nil {
-		return "", "", fiber.NewError(400, "Not Authorized, Error Updating Token Usage")
 	}
 
 	return access, refresh, nil
@@ -195,7 +241,7 @@ func (h *Handler) Logout(c *fiber.Ctx) error {
 		return fiber.NewError(400, "Not Authorized, Invalid Token Type")
 	}
 	// increase the count by one
-	user_id, _, err := h.service.ValidateToken(accessToken)
+	user_id, err := h.service.ValidateToken(accessToken)
 	if err != nil {
 		return err
 	}
