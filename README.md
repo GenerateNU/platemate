@@ -2,7 +2,7 @@
 
 PlateMate is an application designed to empower restaurants using data-driven insights.
 
-# Tech Stack
+# Tech _layout
 
 - **Backend:** Go, Fiber
 - **Frontend**: React Native, TypeScript, Expo SDK 52

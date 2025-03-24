@@ -8,7 +8,7 @@ import (
 )
 
 func (r *RegisterRequest) Validate() error {
-	required := []string{"Email", "Password"}
+	required := []string{"Email", "Password", "Name"}
 	err := VerifyRequiredFieldsPresent(required, r)
 	return err
 }
@@ -19,7 +19,7 @@ func (r *LoginRequest) Validate() error {
 }
 
 func (r *User) Validate() error {
-	required := []string{"Email", "Password", "ID", "RefreshToken"}
+	required := []string{"Email", "Password", "ID", "Name"}
 	err := VerifyRequiredFieldsPresent(required, r)
 	return err
 }
