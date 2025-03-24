@@ -58,7 +58,6 @@ export default function RootLayout() {
                                             headerBackVisible: false,
                                             contentStyle: { paddingTop: 0 },
                                             statusBarTranslucent: true,
-                                            // headerTitleAlign: "left",
                                             headerLeft: ({ canGoBack }) =>
                                                 canGoBack ? (
                                                     <BackChevron style={{ marginLeft: 8, marginRight: 8 }} />
@@ -81,11 +80,6 @@ export default function RootLayout() {
                                                 backgroundColor: "white",
                                             },
                                             headerShadowVisible: false,
-                                            // ...Platform.select({
-                                            //     ios: {
-                                            //         headerBlurEffect: "light",
-                                            //     },
-                                            // }),
                                             animation: "slide_from_right",
                                         }}
                                     />

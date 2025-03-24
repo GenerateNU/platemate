@@ -67,17 +67,13 @@ export default function Filter() {
                     // Cycle through directions: "none" -> "up" -> "down" -> "none"
                     switch (item.direction) {
                         case "none":
-                            // console.log(`Changing ${item.id} from none to up`);
                             return { ...item, direction: "up" };
                         case "up":
-                            // console.log(`Changing ${item.id} from up to down`);
                             return { ...item, direction: "down" };
                         case "down":
-                            // console.log(`Changing ${item.id} from down to none`);
                             return { ...item, direction: "none" };
                     }
                 }
-                // console.log(`Selected sort:`, item);
 
                 return { ...item, direction: "none" }; // Set all others to "none"
             });
@@ -88,9 +84,6 @@ export default function Filter() {
         setTags((prevTags) => {
             const updated = prevTags.map((t) => (t.id === id ? { ...t, selected: !t.selected } : t));
 
-            // const selectedTags = updated.filter((t) => t.selected);
-            // console.log(`Selected tags:`, selectedTags);
-
             return updated;
         });
     };
@@ -98,7 +91,6 @@ export default function Filter() {
     const toggleCuisineTag = (id: TFilterId) => toggleTag(id, setCuisineTags);
     const toggleSpecificationTag = (id: TFilterId) => toggleTag(id, setSpecificationTags);
     return (
-        // <SafeAreaView style={styles.container}>
         <ScrollView style={{ flex: 1, backgroundColor: "#FFF" }}>
             <ThemedView style={styles.container}>
                 <SortBy sortOptions={selectedSort} onSortOptionPress={cycleSelectedSort} />
@@ -113,7 +105,6 @@ export default function Filter() {
             </ThemedView>
         </ScrollView>
 
-        // </SafeAreaView>
     );
 }
 const styles = StyleSheet.create({
