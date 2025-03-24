@@ -41,7 +41,7 @@ export function SortRow({ id: id, selectedSort, onPress }: SortRowProps) {
             <Button title="" containerStyle={styles.sortButton} onPress={onPress}>
                 {/* Conditionally render the arrow icon based on the state */}
                 {selectedSort.direction === "up" && <ArrowUpward />}
-                {selectedSort.direction === "down" && <ArrowDownward width={24} height={24} />}
+                {selectedSort.direction === "down" && <ArrowDownward />}
                 {selectedSort.direction === "none" && <View style={styles.blankIcon} />}
             </Button>
         </View>
@@ -98,8 +98,8 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     sortButton: {
-        paddingVertical: 9,
-        paddingHorizontal: 9, // increased padding to make the border on the outside
+        paddingVertical: 8,
+        paddingHorizontal: 8, // increased padding to make the border on the outside
         borderRadius: 12,
         borderWidth: 1,
         borderColor: "#DDD",
@@ -132,6 +132,6 @@ const styles = StyleSheet.create({
     },
     blankIcon: {
         width: 24,
-        height: 24, // same as size as the arrow icon i think? DOUBLE CHECK
+        height: 24,
     },
 });

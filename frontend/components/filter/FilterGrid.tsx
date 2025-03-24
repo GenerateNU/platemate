@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: "column", // Stack the title and grid vertically
         alignItems: "flex-start", // Align both title and grid to the left
-        gap: 14, // Space between title and grid
+        gap: 12, // Space between title and grid
     },
     title: {
         fontFamily: "Inter",
@@ -46,13 +46,13 @@ const styles = StyleSheet.create({
         lineHeight: 28,
         letterSpacing: 0,
         color: "#151619",
-        marginBottom: 11,
+        marginBottom: 12,
     },
     filterContainer: {
         flexDirection: "row",
         flexWrap: "wrap",
         alignItems: "flex-start",
-        gap: 25,
+        gap: 24,
         rowGap: 24,
     },
 });

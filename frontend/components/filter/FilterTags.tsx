@@ -23,7 +23,7 @@ export const FilterTagButton = ({ id: title, onPress, selected = false }: Filter
 
 const styles = StyleSheet.create({
     filterButton: {
-        paddingVertical: 3,
+        paddingVertical: 4,
         paddingHorizontal: 8,
         borderRadius: 12,
         borderWidth: 1,
