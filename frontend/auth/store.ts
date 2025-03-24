@@ -17,6 +17,7 @@ interface AuthState {
     userId: string | null;
     isAuthenticated: boolean;
     loading: boolean;
+    email: string | undefined;
     initializeAuth: () => Promise<void>;
     login: (email: string, password: string) => Promise<void>;
     register: (email: string, password: string, name: string) => Promise<void>;
@@ -30,12 +31,14 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
     userId: null,
     isAuthenticated: false,
     loading: true,
+    email: undefined,
 
     initializeAuth: async () => {
         try {
             const storedAccessToken = await AsyncStorage.getItem("accessToken");
             const storedRefreshToken = await AsyncStorage.getItem("refreshToken");
             const storedUserId = await AsyncStorage.getItem("userId");
+            const storedEmail = (await AsyncStorage.getItem("email")) || undefined;
 
             if (storedAccessToken && storedRefreshToken) {
                 set({
@@ -43,6 +46,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
                     refreshToken: storedRefreshToken,
                     userId: storedUserId,
                     isAuthenticated: true,
+                    email: storedEmail,
                 });
 
                 // Optionally refresh token if needed
@@ -66,18 +70,22 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
             const accessToken = response.data.access_token;
             const refreshToken = response.data.refresh_token;
             const userId = response.data.user;
+            const userEmail = email;
 
             await AsyncStorage.setItem("accessToken", accessToken);
             await AsyncStorage.setItem("refreshToken", refreshToken);
             await AsyncStorage.setItem("userId", userId);
+            await AsyncStorage.setItem("email", userEmail); // storing email so that on the user setting page the email can be displayed once the user logs in, is this okay???
 
             set({
                 accessToken,
                 refreshToken,
                 userId: userId,
                 isAuthenticated: true,
+                email: userEmail,
             });
 
+            console.log("Stored Email:", await AsyncStorage.getItem("email"));
             return response.data;
         } catch (error: any) {
             console.error("Login error:", error.response?.data || error.message);
@@ -120,7 +128,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
 
     // Refresh access token
     refreshAccessToken: async () => {
-        const { refreshToken } = get(); // This is valid - get() returns the current state
+        const { refreshToken, email } = get(); // This is valid - get() returns the current state
 
         if (!refreshToken) {
             console.warn("No refresh token available, user needs to log in again.");
@@ -142,7 +150,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
                 set({ refreshToken: newRefreshToken });
             }
 
-            set({ accessToken: newAccessToken, userId: newUserId });
+            set({ accessToken: newAccessToken, userId: newUserId, email});
             return response.data;
         } catch (error) {
             console.error("Error refreshing token:", error);
@@ -159,6 +167,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
             await AsyncStorage.removeItem("accessToken");
             await AsyncStorage.removeItem("refreshToken");
             await AsyncStorage.removeItem("userId");
+            await AsyncStorage.removeItem("email");
 
             // Reset state
             set({
@@ -166,6 +175,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
                 refreshToken: null,
                 isAuthenticated: false,
                 userId: null,
+                email: undefined,
             });
         } catch (error) {
             console.error("Logout error:", error);
