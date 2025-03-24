@@ -27,7 +27,6 @@ export default function Feed() {
     ]);
     const router = useRouter();
 
-
     const [friends] = useState([
         {
             plateName: "Spicy Chicken Sandwich",
@@ -133,4 +132,3 @@ export default function Feed() {
         </ScrollView>
     );
 }
- 

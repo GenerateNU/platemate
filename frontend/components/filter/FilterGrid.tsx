@@ -4,7 +4,6 @@ import { StyleSheet } from "react-native";
 import { FilterTagButton } from "@/components/filter/FilterTags";
 import { TFilterItem, TFilterId } from "@/types/filter";
 
-
 interface FilterProps {
     filters: TFilterItem[];
     onTagPress?: (id: TFilterId) => void;
@@ -28,12 +27,7 @@ export function FilterTagGrid({ filters, onTagPress }: FilterGridProps) {
     return (
         <View style={styles.filterContainer}>
             {filters.map((tag, index) => (
-                <FilterTagButton
-                    key={index}
-                    id={tag.id}
-                    onPress={() => onTagPress?.(tag.id)}
-                    selected={tag.selected}
-                />
+                <FilterTagButton key={index} id={tag.id} onPress={() => onTagPress?.(tag.id)} selected={tag.selected} />
             ))}
         </View>
     );

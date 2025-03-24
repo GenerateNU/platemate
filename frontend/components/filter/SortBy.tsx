@@ -33,7 +33,7 @@ export function SortRow({ id: id, selectedSort, onPress }: SortRowProps) {
             </View>
             <Button title="" containerStyle={styles.sortButton} onPress={onPress}>
                 {/* Conditionally render the arrow icon based on the state */}
-                {selectedSort.direction === "up" && <ArrowUpward/>}
+                {selectedSort.direction === "up" && <ArrowUpward />}
                 {selectedSort.direction === "down" && <ArrowDownward width={24} height={24} />}
                 {selectedSort.direction === "none" && <View style={styles.blankIcon} />}
             </Button>

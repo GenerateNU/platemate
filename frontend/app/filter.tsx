@@ -84,10 +84,7 @@ export default function Filter() {
         });
     };
 
-    const toggleTag = (
-        id: TFilterId,
-        setTags: React.Dispatch<React.SetStateAction<TFilterItem[]>>
-    ) => {
+    const toggleTag = (id: TFilterId, setTags: React.Dispatch<React.SetStateAction<TFilterItem[]>>) => {
         setTags((prevTags) => {
             const updated = prevTags.map((t) => (t.id === id ? { ...t, selected: !t.selected } : t));
 
@@ -103,7 +100,6 @@ export default function Filter() {
     return (
         // <SafeAreaView style={styles.container}>
         <ScrollView style={{ flex: 1, backgroundColor: "#FFF" }}>
-        
             <ThemedView style={styles.container}>
                 <SortBy sortOptions={selectedSort} onSortOptionPress={cycleSelectedSort} />
                 <FilterGrid filters={cuisineTags} title="🍝 Cuisines" onTagPress={toggleCuisineTag} />
@@ -116,7 +112,7 @@ export default function Filter() {
                 />
             </ThemedView>
         </ScrollView>
-        
+
         // </SafeAreaView>
     );
 }

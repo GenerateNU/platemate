@@ -1,4 +1,4 @@
-type FilterKey = 
+type FilterKey =
     | "Fast Food"
     | "Pizza"
     | "Chinese"
@@ -30,7 +30,6 @@ type FilterKey =
     | "Bakery"
     | "Bar";
 
-
 type SpecificationKey =
     | "Vegan"
     | "Healthy"
@@ -50,9 +49,8 @@ export type TSortOption = {
     direction: "none" | "up" | "down";
 };
 
-
 export type TFilterId = FilterKey | SpecificationKey;
-export type TFilterItem =  {
+export type TFilterItem = {
     id: TFilterId;
     selected: boolean;
-}
+};

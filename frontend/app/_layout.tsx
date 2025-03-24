@@ -7,7 +7,7 @@ import React, { useEffect } from "react";
 import "react-native-reanimated";
 import { BackChevron } from "@/components/icons/Icons";
 
-import { Text, View, Platform} from "react-native";
+import { Text, View, Platform } from "react-native";
 
 import { SafeAreaView, useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -50,28 +50,31 @@ export default function RootLayout() {
                                     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                                     <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
                                     <Stack.Screen name="[...missing]" options={{ title: "Not Found" }} />
-                                    <Stack.Screen name="filter"
+                                    <Stack.Screen
+                                        name="filter"
                                         options={{
                                             headerShown: true,
                                             headerTransparent: true,
                                             headerBackVisible: false,
-                                            contentStyle: { paddingTop: 0 }, 
+                                            contentStyle: { paddingTop: 0 },
                                             statusBarTranslucent: true,
                                             // headerTitleAlign: "left",
-                                            headerLeft: ({ canGoBack }) => (canGoBack ? <BackChevron style={{ marginLeft: 8, marginRight: 8 }} /> : null),
+                                            headerLeft: ({ canGoBack }) =>
+                                                canGoBack ? (
+                                                    <BackChevron style={{ marginLeft: 8, marginRight: 8 }} />
+                                                ) : null,
                                             headerBackButtonDisplayMode: "minimal",
                                             headerTitle: () => (
-                                                <View style={{ flex: 1}}>
-                                                <Text
-                                                    style={{
-                                                    fontFamily: "Inter",
-                                                    fontWeight: "700",
-                                                    fontSize: 28,
-                                                    color: "#151619",
-                                                    }}
-                                                >
-                                                    Filters
-                                                </Text>
+                                                <View style={{ flex: 1 }}>
+                                                    <Text
+                                                        style={{
+                                                            fontFamily: "Inter",
+                                                            fontWeight: "700",
+                                                            fontSize: 28,
+                                                            color: "#151619",
+                                                        }}>
+                                                        Filters
+                                                    </Text>
                                                 </View>
                                             ),
                                             headerStyle: {
@@ -85,7 +88,7 @@ export default function RootLayout() {
                                             // }),
                                             animation: "slide_from_right",
                                         }}
-                                    />                
+                                    />
                                 </Stack>
                             </BottomSheetModalProvider>
                         </GestureHandlerRootView>
