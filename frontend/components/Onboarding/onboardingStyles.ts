@@ -15,7 +15,7 @@ export const sharedOnboardingStyles = StyleSheet.create({
     },
     headerContainer: {
         marginBottom: 24,
-        gap: 11,
+        gap: 12,
     },
     header: {
         fontSize: 24,
@@ -34,7 +34,7 @@ export const sharedOnboardingStyles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: 20,
         fontSize: 13,
-        color: "#808080",
+        color: "#000000",
     },
     button: {
         height: 48,
@@ -64,4 +64,4 @@ export const sharedOnboardingStyles = StyleSheet.create({
     linkText: {
         fontSize: 13,
     },
-}); 
+});
