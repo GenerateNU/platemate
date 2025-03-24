@@ -11,7 +11,7 @@ interface TagButtonProps {
     tags: string[];
 }
 
-export function FilterTags({ tags }: TagButtonProps) {
+export function RestaurantTags({ tags }: TagButtonProps) {
     return (
         <ThemedView style={styles.tagContainer}>
             {tags.map((tag, index) => (

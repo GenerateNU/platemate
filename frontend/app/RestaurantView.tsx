@@ -1,7 +1,7 @@
 import { ThemedView } from "@/components/ThemedView";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
-import { FilterTags } from "@/components/RestaurantTags";
+import { RestaurantTags } from "@/components/RestaurantTags";
 import { StarReview } from "@/components/StarReview";
 import React from "react";
 
@@ -34,7 +34,7 @@ export default function RestaurantView() {
                 </ThemedView>
 
                 <ThemedView style={styles.tagsContainer}>
-                    <FilterTags tags={restaurantTags} />
+                    <RestaurantTags tags={restaurantTags} />
                 </ThemedView>
             </ThemedView>
         </ScrollView>

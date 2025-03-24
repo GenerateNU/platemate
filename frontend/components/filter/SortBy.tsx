@@ -12,7 +12,6 @@ interface SortRowProps {
     onPress: () => void;
 }
 
-// TODO: figure out if possible to sort by multiple rows, or just one
 export function SortRow({ id: id, selectedSort, onPress }: SortRowProps) {
     const getSubtitle = () => {
         switch (selectedSort.direction) {
