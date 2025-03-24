@@ -120,3 +120,33 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 });
+
+// Example Usage:
+// import React, { useState } from "react";
+// import { ScrollView, View, StyleSheet } from "react-native";
+// import { OnboardingFlow } from "../../components/Onboarding/OnboardingFlow";
+// import { Button } from "../../components/Button";
+
+// const ExampleScreen = () => {
+//     const [showOnboarding, setShowOnboarding] = useState(false);
+
+//     const handleOnboardingComplete = (data: any) => {
+//         console.log("Onboarding completed:", data);
+//         setShowOnboarding(false);
+//     };
+
+//     if (showOnboarding) {
+//         return <OnboardingFlow onComplete={handleOnboardingComplete} />;
+//     }
+
+//     return (
+//         <ScrollView contentContainerStyle={{ padding: 1 }}>
+//             <View>
+//                 <Button
+//                     title="Start Onboarding"
+//                     onPress={() => setShowOnboarding(true)}
+//                 />
+//             </View>
+//         </ScrollView>
+//     );
+// };
