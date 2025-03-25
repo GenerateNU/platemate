@@ -105,17 +105,20 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
             const accessToken = response.data.access_token;
             const refreshToken = response.data.refresh_token;
             const userId = response.data.user;
+            const userEmail = response.data.userEmail;
 
             if (accessToken && refreshToken) {
                 await AsyncStorage.setItem("accessToken", accessToken);
                 await AsyncStorage.setItem("refreshToken", refreshToken);
                 await AsyncStorage.setItem("userId", userId);
+                await AsyncStorage.setItem("email", userEmail);
 
                 set({
                     accessToken,
                     refreshToken,
                     userId: userId,
                     isAuthenticated: true,
+                    email: userEmail,
                 });
             }
 

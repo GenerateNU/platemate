@@ -1,6 +1,12 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 
+type Follower = {
+    name: string;
+    username: string;
+    avatar: string;
+};
+
 type FollowerItemProps = {
     follower: Follower;
 };

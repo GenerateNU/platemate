@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { Avatar } from "../Avatar";
 
@@ -10,20 +10,23 @@ type Props = {
     icon: string;
     id?: string;
     large?: boolean;
+    onPress: () => void 
 };
 
-const UserInfoRowBase = ({ name, username, right, icon, large }: Props) => (
+const UserInfoRowBase = ({ name, username, right, icon, large, onPress }: Props) => (
     <View style={{ flexDirection: "row", alignItems: "center", width: "100%" }}>
         <View style={styles.row}>
             <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
                 <Avatar imageSource={{ uri: icon }} size={large ? 64 : 48} />
                 <View style={{ gap: 0 }}>
-                    <ThemedText numberOfLines={1} ellipsizeMode="tail" type="default" style={{ fontWeight: "700" }}>
-                        {name}
-                    </ThemedText>
-                    <ThemedText numberOfLines={1} ellipsizeMode="tail" type="caption">
-                        @{username}
-                    </ThemedText>
+                    <TouchableOpacity onPress={onPress}>
+                        <ThemedText numberOfLines={1} ellipsizeMode="tail" type="default" style={{ fontWeight: "700" }}>
+                            {name}
+                        </ThemedText>
+                        <ThemedText numberOfLines={1} ellipsizeMode="tail" type="caption">
+                            @{username}
+                        </ThemedText>
+                    </TouchableOpacity>
                 </View>
             </View>
             {right}

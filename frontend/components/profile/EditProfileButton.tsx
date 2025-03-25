@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     buttonText: {
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
         fontSize: 14,
         fontWeight: "500",
     },

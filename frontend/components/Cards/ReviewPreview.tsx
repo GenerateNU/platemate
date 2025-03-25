@@ -4,6 +4,7 @@ import UserInfoRowBase from "../UserInfo/UserInfoRowBase";
 import { ThemedText } from "../ThemedText";
 import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
+import { router } from "expo-router";
 
 type Props = {
     plateName: string;
@@ -32,6 +33,7 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
                 username={"benpetrillo26"}
                 right={<View />}
                 icon={"https://avatars.githubusercontent.com/u/66958528?v=4"}
+                onPress={() => router.push(`/friend`)}
             />
             <View style={{ gap: 10 }}>
                 <View>

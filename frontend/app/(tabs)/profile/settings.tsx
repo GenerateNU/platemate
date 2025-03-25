@@ -2,7 +2,7 @@
 
 import { ScrollView, View, StyleSheet, TextInput, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import ToggleSetting from "@/components/profile/settings/ToggleSetting";
 import SettingsSection from "@/components/profile/settings/SettingsSection";
@@ -10,38 +10,81 @@ import SettingsMenuItem from "@/components/profile/settings/SettingsMenuItem";
 import { TSettingsData } from "@/types/settingsData";
 import { Button } from "@/components/Button";
 import useAuthStore from "@/auth/store";
+// import { useUser } from "@/context/user-context";
 
 export default function SettingsScreen() {
     const insets = useSafeAreaInsets();
     const router = useRouter();
+    // const { fetchUserProfile } = useUser();
+    const { email } = useAuthStore(); //userId asw
 
-    const [settings, setSettings] = useState({
-        vegetarian: false,
-        vegan: false,
-        nutFree: false,
-        shellfishAllergy: false,
-        glutenFree: false,
-        dairyFree: false,
-        kosher: false,
-        halal: false,
-        pescatarian: false,
-        keto: false,
-        diabetic: false,
-        soyFree: false,
-        cameraAccess: false,
-        contactSync: false,
-        porkFree: false,
-        beefFree: false,
-    });
+    const dietaryOptions = [
+        "vegetarian",
+        "vegan",
+        "nutFree",
+        "shellfishAllergy",
+        "glutenFree",
+        "dairyFree",
+        "kosher",
+        "halal",
+        "pescatarian",
+        "keto",
+        "diabetic",
+        "soyFree",
+        "porkFree",
+        "beefFree",
+    ];
 
-    const { email } = useAuthStore();
+    const [settings, setSettings] = useState<Record<string, boolean>>(
+        Object.fromEntries(dietaryOptions.map((option) => [option, false]))
+    );
 
+
+    // useEffect(() => {
+    //     const fetchPreferences = async () => {
+    //         try {
+    //             const userData = await fetchUserProfile(); // Fetch user profile using the context function
+                
+    //             if (!userData) return; // Ensure userData exists before proceeding
+                
+    //             const userRestrictions: string[] = userData.preferences || [];
+                
+    //             // Convert restrictions array to object { vegetarian: true, glutenFree: true, keto: true, ... }
+    //             const updatedSettings = dietaryOptions.reduce((acc, option) => {
+    //                 acc[option] = userRestrictions.includes(option);
+    //                 return acc;
+    //             }, {} as Record<string, boolean>);
+    
+    //             setSettings(updatedSettings);
+    //         } catch (error) {
+    //             console.error("Error fetching user preferences:", error);
+    //         }
+    //     };
+    
+    //     fetchPreferences();
+    // }, [fetchUserProfile]);
+
+    // i dont think this updates it if you exit settings, should i save toggle states in AsyncStorage?
     const updateSetting = (key: string, value: boolean) => {
         setSettings((prevSettings) => ({
             ...prevSettings,
-            [key]: value,
+            [`${key}`]: value,
         }));
     };
+
+    // const updateSetting = async (key: string, value: boolean) => {
+    //     try {
+    //         const updatedSettings = { ...settings, [key]: value };
+    //         setSettings(updatedSettings);
+
+    //         // Send updated preferences to the server
+    //         await axios.put(`${process.env.API_BASE_URL}/api/v1/user/${userId}`, {
+    //             preferences: { restrictions: Object.keys(updatedSettings).filter((k) => updatedSettings[k]) },
+    //         });
+    //     } catch (error) {
+    //         console.error("Error saving setting:", error);
+    //     }
+    // };
 
     const settingsData: TSettingsData = {
         credentials: [
@@ -80,6 +123,7 @@ export default function SettingsScreen() {
             { label: "Terms and Conditions", onPress: () => console.log("navigating to terms of service") },
         ],
     };
+    console.log(email);
 
     return (
         <ScrollView contentContainerStyle={[styles.container, { paddingTop: 60 }]} showsVerticalScrollIndicator={false}>
