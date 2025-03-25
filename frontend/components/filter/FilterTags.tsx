@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Button } from "@/components/Button";
 import { TFilterId, TFilterItem } from "@/types/filter";
+import { Colors } from "@/constants/Colors";
 
 type FilterTagButtonProp = TFilterItem & {
     onPress: () => void;
@@ -27,20 +28,20 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: "#000000",
+        borderColor: Colors.black,
     },
     filterHighlightedButton: {
-        backgroundColor: "#FFCF0F",
-        borderColor: "#FFCF0F",
+        backgroundColor: Colors.yellow,
+        borderColor: Colors.yellow,
     },
     filterUnhighlightedButton: {
-        backgroundColor: "#FFFFFF",
-        borderColor: "#FFCF0F",
+        backgroundColor: Colors.white,
+        borderColor: Colors.yellow,
     },
 
     filterText: {
         textAlign: "center",
-        color: "#000000",
+        color: Colors.black,
         fontFamily: "Poppins",
         fontWeight: "500",
         fontSize: 12,

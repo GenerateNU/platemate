@@ -5,6 +5,7 @@ import { StyleSheet } from "react-native";
 import { Button } from "@/components/Button";
 import { ArrowUpward, ArrowDownward } from "@/components/icons/Icons";
 import { TSortOption } from "@/types/filter";
+import { Colors } from "@/constants/Colors";
 
 interface SortRowProps {
     id: string;
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         lineHeight: 28,
         letterSpacing: 0,
-        color: "#151619",
+        color: Colors.darkGrey,
         marginBottom: 4, // Bottom margin
     },
     sortRowsContainer: {
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8, // increased padding to make the border on the outside
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: "#DDD",
+        borderColor: Colors.borderPrimary,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 28,
         letterSpacing: 0,
-        color: "#000000",
+        color: Colors.black,
         marginBottom: 0,
     },
     subTitle: {
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         lineHeight: 28,
         letterSpacing: 0,
-        color: "#727272",
+        color: Colors.grey,
         marginLeft: 2,
         marginTop: -8, // line height of title and subtitle overlap by 8
     },

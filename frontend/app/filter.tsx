@@ -6,6 +6,7 @@ import { SortBy } from "../components/filter/SortBy";
 import { ThemedView } from "@/components/ThemedView";
 import { ScrollView } from "react-native";
 import { TSortOption, TFilterItem, TFilterId } from "@/types/filter";
+import { Colors } from "@/constants/Colors";
 
 export default function Filter() {
     const [cuisineTags, setCuisineTags] = useState<TFilterItem[]>([
@@ -113,15 +114,15 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingTop: 56,
         paddingBottom: 100,
-        paddingLeft: 28,
-        paddingRight: 32,
+        paddingLeft: 24,
+        paddingRight: 24,
         gap: 28,
     },
     applyButtonContainer: {
         paddingVertical: 4,
         paddingHorizontal: 12,
         borderRadius: 25,
-        backgroundColor: "#285852",
+        backgroundColor: Colors.primary,
     },
     applyButtonText: {
         fontFamily: "Source Sans 3",
@@ -129,6 +130,6 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         lineHeight: 18,
         letterSpacing: 0,
-        color: "#FFFFFF",
+        color: Colors.white,
     },
 });

@@ -3,6 +3,7 @@ import { View, Text } from "react-native";
 import { StyleSheet } from "react-native";
 import { FilterTagButton } from "@/components/filter/FilterTags";
 import { TFilterItem, TFilterId } from "@/types/filter";
+import { Colors } from "@/constants/Colors";
 
 interface FilterProps {
     filters: TFilterItem[];
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         lineHeight: 28,
         letterSpacing: 0,
-        color: "#151619",
+        color: Colors.darkGrey,
         marginBottom: 12,
     },
     filterContainer: {

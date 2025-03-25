@@ -15,6 +15,7 @@ import { UserProvider } from "@/context/user-context";
 import { AuthInitializer } from "@/components/AuthInitializer";
 import { Host } from "react-native-portalize";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { Colors } from "@/constants/Colors";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -60,7 +61,7 @@ export default function RootLayout() {
                                             statusBarTranslucent: true,
                                             headerLeft: ({ canGoBack }) =>
                                                 canGoBack ? (
-                                                    <BackChevron style={{ marginLeft: 8, marginRight: 8 }} />
+                                                    <BackChevron style={{ marginLeft: 4, marginRight: 8 }} />
                                                 ) : null,
                                             headerBackButtonDisplayMode: "minimal",
                                             headerTitle: () => (
@@ -70,14 +71,14 @@ export default function RootLayout() {
                                                             fontFamily: "Inter",
                                                             fontWeight: "700",
                                                             fontSize: 28,
-                                                            color: "#151619",
+                                                            color: Colors.darkGrey,
                                                         }}>
                                                         Filters
                                                     </Text>
                                                 </View>
                                             ),
                                             headerStyle: {
-                                                backgroundColor: "white",
+                                                backgroundColor: Colors.white,
                                             },
                                             headerShadowVisible: false,
                                             animation: "slide_from_right",
