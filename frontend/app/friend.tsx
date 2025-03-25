@@ -12,6 +12,7 @@ import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import { SearchBox } from "@/components/SearchBox";
 import Vector from "@/assets/icons/Vector.svg";
+import EditFriendSheet from "@/components/profile/followers/FriendProfileOptions";
 
 import { FollowButton } from "@/components/profile/followers/FollowButton";
 
@@ -21,7 +22,7 @@ const ProfileScreen = () => {
     const { user, isLoading, error, fetchUserProfile } = useUser();
     const [searchText, setSearchText] = React.useState("");
 
-    const editProfileRef = useRef<{ open: () => void; close: () => void }>(null);
+    const editFriend = useRef<{ open: () => void; close: () => void }>(null);
 
     useEffect(() => {
         if (!user && !isLoading) {
@@ -56,8 +57,10 @@ const ProfileScreen = () => {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
             />
-            <TouchableOpacity style={styles.hamburgerButton} onPress={() => editProfileRef.current?.open()}>
-                {/* TODO: ADD BLOCK USER REPORT USER ETC */}
+            <TouchableOpacity style={styles.ellipseButton} onPress={() => {
+                console.log("Button Pressed!"); 
+                console.log("editFriend Ref:", editFriend.current);
+                editFriend.current?.open()}}>
                 <Ionicons name="ellipsis-horizontal" size={30} color="#333" />
             </TouchableOpacity>
             <ScrollView style={styles.container}>
@@ -87,15 +90,16 @@ const ProfileScreen = () => {
 
                 </ThemedView>
             </ScrollView>
-            <EditProfileSheet user={user} ref={editProfileRef} />
+            <EditFriendSheet user={user} ref={editFriend} />
         </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
-    hamburgerButton: {
+    ellipseButton: {
         position: "absolute", // This will allow you to position the button outside the normal flow
         right: 10,
+        zIndex: 100, // Had to put this to make it clickable
     },
     container: {
         flex: 1,
