@@ -8,6 +8,9 @@ export interface StarReviewProps {
     avgRating: number;
     numRatings: number;
     full?: boolean; // If true, show 5 stars, else show 1
+    showAvgRating?: boolean; // Controls display of the average rating number
+    showNumRatings?: boolean; // Controls display of the number of ratings
+    showNumRatingsText?: boolean; // Controls display of "reviews" text
 }
 
 export interface InteractiveStarsProps {
@@ -23,12 +26,24 @@ interface StarProps {
     full?: boolean;
 }
 
-export function StarReview({ avgRating, numRatings, full = true }: StarReviewProps) {
+export function StarReview({
+    avgRating,
+    numRatings,
+    full = true,
+    showAvgRating = true,
+    showNumRatings = true,
+    showNumRatingsText = true,
+}: StarReviewProps) {
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>{avgRating.toFixed(1)}</Text>
-            <Stars avgRating={avgRating} full={full} />
-            <Text style={styles.text}>({numRatings})</Text>
+            {avgRating > 0 && showAvgRating && <Text style={styles.text}>{avgRating.toFixed(1)}</Text>}
+            {avgRating > 0 && <Stars avgRating={avgRating} full={full} />}
+            {numRatings > 0 && showNumRatings && (
+                <Text style={styles.text}>
+                    ({numRatings}
+                    {showNumRatingsText ? " reviews" : ""})
+                </Text>
+            )}
         </View>
     );
 }

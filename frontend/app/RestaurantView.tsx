@@ -25,7 +25,7 @@ export default function RestaurantView() {
                 </ThemedView>
 
                 <ThemedView style={styles.ratingContainer}>
-                    <StarReview avgRating={1.9} numRatings={500} full={true} />
+                    <StarReview avgRating={1.9} numRatings={500} showAvgRating={false} />
                 </ThemedView>
 
                 <ThemedView style={styles.detailsContainer}>
