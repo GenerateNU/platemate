@@ -105,7 +105,6 @@ export default function Filter() {
                 />
             </ThemedView>
         </ScrollView>
-
     );
 }
 const styles = StyleSheet.create({

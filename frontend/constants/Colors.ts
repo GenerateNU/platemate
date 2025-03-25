@@ -26,5 +26,5 @@ export const Colors = {
     darkGrey: "#151619",
     borderPrimary: "#DDD",
     grey: "#727272",
-    primary: "#285852" 
+    primary: "#285852",
 };

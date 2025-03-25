@@ -15,7 +15,6 @@ interface SortRowProps {
 }
 
 export function SortRow({ id: id, selectedSort, onPress }: SortRowProps) {
-
     const [subtitle, setSubtitle] = useState<string>("-");
     // Update subtitle when direction changes
     useEffect(() => {
@@ -31,7 +30,6 @@ export function SortRow({ id: id, selectedSort, onPress }: SortRowProps) {
                 break;
         }
     }, [selectedSort.direction]);
-
 
     return (
         <View style={styles.rowContainer}>
