@@ -280,8 +280,8 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     filterButton: {
-        paddingVertical: 8,
-        paddingHorizontal: 16,
+        paddingVertical: 4,
+        paddingHorizontal: 12,
         borderRadius: 12,
         backgroundColor: "#f5f5f5",
     },
