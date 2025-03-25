@@ -3,11 +3,12 @@ import { ScrollView, StyleSheet, View, Image, Pressable } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarReview } from "@/components/StarReview";
 import React from "react";
-import { RestaurantTags } from "@/components/RestaurantTags";
-import { StatCard } from "@/components/Cards/StatCard";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import ReviewDetail from "@/components/review/ReviewDetail";
+import { ThemedTag } from "@/components/themed/ThemedTag";
+import { RestaurantTags } from "@/components/RestaurantTags";
+import { StatCard } from "@/components/Cards/StatCard";
 
 // Temporary icons - you may want to create proper icons
 const FriendsIcon = () => (
@@ -30,7 +31,23 @@ const SatisfactionIcon = () => (
 
 export default function MenuItemView() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
-    const dishTags = ["Gluten-free", "Spicy", "Healthy"];
+    const dishTags = [
+        {
+            title: "Gluten-free",
+            backgroundColor: "#FFF3E0",
+            textColor: "#EF6C00",
+        },
+        {
+            title: "Spicy",
+            backgroundColor: "#FFEBEE",
+            textColor: "#C62828",
+        },
+        {
+            title: "Healthy",
+            backgroundColor: "#E8F5E9",
+            textColor: "#2E7D32",
+        },
+    ];
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -59,7 +76,16 @@ export default function MenuItemView() {
 
                 {/* Tags Section */}
                 <ThemedView style={styles.tagsContainer}>
-                    <RestaurantTags tags={dishTags} />
+                    <View style={styles.tagRow}>
+                        {dishTags.map((tag, index) => (
+                            <ThemedTag
+                                key={index}
+                                title={tag.title}
+                                backgroundColor={tag.backgroundColor}
+                                textColor={tag.textColor}
+                            />
+                        ))}
+                    </View>
                 </ThemedView>
 
                 {/* Description Section */}
@@ -267,5 +293,9 @@ const styles = StyleSheet.create({
     },
     filterTextActive: {
         fontWeight: "600",
+    },
+    tagRow: {
+        flexDirection: "row",
+        gap: 8,
     },
 });
