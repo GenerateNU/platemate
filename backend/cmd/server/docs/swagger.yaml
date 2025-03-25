@@ -7,8 +7,8 @@ definitions:
         minLength: 8
         type: string
     required:
-    - email
-    - password
+      - email
+      - password
     type: object
 info:
   contact: {}
@@ -16,17 +16,17 @@ paths:
   /login:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Logs in a user and returns JWT tokens
       parameters:
-      - description: User credentials
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/auth.LoginRequest'
+        - description: User credentials
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/auth.LoginRequest"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Tokens in response headers
@@ -54,5 +54,5 @@ paths:
             type: object
       summary: Authenticate user
       tags:
-      - auth
+        - auth
 swagger: "2.0"

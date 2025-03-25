@@ -30,15 +30,22 @@ func (h *Handler) CreateReview(c *fiber.Ctx) error {
 
 	// do some validations on the inputs
 
+	// Convert the string restaurantId to ObjectID
+	restaurantOID, err := primitive.ObjectIDFromHex(params.RestaurantID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
 	review = ReviewDocument{
-		Rating:    params.Rating,
-		Picture:   params.Picture,
-		Content:   params.Content,
-		Reviewer:  params.Reviewer,
-		Timestamp: time.Now(),
-		MenuItem:  params.MenuItem,
-		ID:        primitive.NewObjectID(),
-		Comments:  []CommentDocument{},
+		Rating:       params.Rating,
+		Picture:      params.Picture,
+		Content:      params.Content,
+		Reviewer:     params.Reviewer,
+		Timestamp:    time.Now(),
+		MenuItem:     params.MenuItem,
+		ID:           primitive.NewObjectID(),
+		Comments:     []CommentDocument{},
+		RestaurantID: restaurantOID,
 	}
 
 	result, err := h.service.InsertReview(review)
@@ -48,6 +55,7 @@ func (h *Handler) CreateReview(c *fiber.Ctx) error {
 		if sErr.HasErrorCode(121) {        // Indicates that the document failed validation
 			return xerr.WriteException(c, sErr) // Handle the error by returning a 121 and the error message
 		}
+		return err // Any other error
 	}
 
 	return c.JSON(result)
@@ -191,4 +199,29 @@ func (h *Handler) GetComments(c *fiber.Ctx) error {
 		return err
 	}
 	return c.JSON(comments)
+}
+
+// GetReviewsByUser returns all review documents for a specific user
+func (h *Handler) GetReviewsByUser(c *fiber.Ctx) error {
+	userID := c.Params("userId")
+
+	reviews, err := h.service.GetReviewsByUser(userID)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(reviews)
+}
+
+// SearchUserReviews handles GET /api/v1/review/user/:userId/search?query=...
+func (h *Handler) SearchUserReviews(c *fiber.Ctx) error {
+	userID := c.Params("userId")
+	queryParam := c.Query("query", "") // If query param provided, defaults to empty string
+
+	results, err := h.service.SearchUserReviews(userID, queryParam)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(results)
 }

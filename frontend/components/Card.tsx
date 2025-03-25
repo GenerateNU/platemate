@@ -10,7 +10,7 @@ import {
     type ImageStyle,
 } from "react-native";
 
-interface CardProps extends ViewProps, PropsWithChildren<{}> {
+interface CardProps extends ViewProps, PropsWithChildren<object> {
     imageSource: ImageSourcePropType;
     imageStyle?: StyleProp<ImageStyle>;
     contentContainerStyle?: StyleProp<ViewStyle>;

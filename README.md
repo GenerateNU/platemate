@@ -2,7 +2,7 @@
 
 PlateMate is an application designed to empower restaurants using data-driven insights.
 
-# Tech Stack
+# Tech _layout
 
 - **Backend:** Go, Fiber
 - **Frontend**: React Native, TypeScript, Expo SDK 52
@@ -10,7 +10,7 @@ PlateMate is an application designed to empower restaurants using data-driven in
 
 # Environment Setup
 
-We use **Nix** as our devshell. ***It is very cool.***
+We use **Nix** as our devshell. **_It is very cool._**
 
 ```text
 PLATEMATE DEVELOPMENT ENVIRONMENT
@@ -26,7 +26,7 @@ PLATEMATE DEVELOPMENT ENVIRONMENT
 │ frontend-run-wsl │ # Runs the frontend server in tunnel mode.      │
 │ frontend-test    │ # Runs the frontend tests.                      │
 ╰──────────────────┴─────────────────────────────────────────────────╯
-(nix:devenv-shell-env) (devenv) ben@thinkpad:~/dev/platemate$ 
+(nix:devenv-shell-env) (devenv) ben@thinkpad:~/dev/platemate$
 ```
 
 This guide assumes that you are using Linux/macOS. **If you are using Windows, please install [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)**.
@@ -37,14 +37,14 @@ If you'd prefer, you can [clone it via SSH](https://docs.github.com/en/repositor
 ### NIX Installation (Recommended)
 
 1. [Install Nix](https://zero-to-nix.com/start/install)
-    <!-- markdownlint-disable MD013 -->
-    ```sh
-    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
-    ```
-    <!-- markdownlint-enable MD013 -->
+   <!-- markdownlint-disable MD013 -->
+   ```sh
+   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+   ```
+   <!-- markdownlint-enable MD013 -->
 
--   Type in computer password if prompted.
--   Say yes to prompt.
+- Type in computer password if prompted.
+- Say yes to prompt.
 
 2. In a new terminal activate the development environment by running the following:
 

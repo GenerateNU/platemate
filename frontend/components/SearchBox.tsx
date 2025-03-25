@@ -3,6 +3,7 @@ import { TextInput, TextInputProps, StyleSheet, View, Dimensions, TouchableOpaci
 import { ThemedText } from "./ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useRecentSearch } from "@/hooks/useRecentSearch";
+import FontAwesome5 from "@expo/vector-icons/build/FontAwesome5";
 
 interface SearchBoxProps extends TextInputProps {
     value: string;
@@ -24,6 +25,7 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
         if (recent) setRecentItems(await getRecents());
         else setRecentItems([]);
     }
+
     async function clearRecents() {
         setRecentItems([]);
     }
@@ -38,7 +40,7 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
 
     useEffect(() => {
         fetchRecents();
-    }, []);
+    });
 
     const onSubmitEditing = () => {
         if (recent)
@@ -77,7 +79,8 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
                                     onSubmit();
                                     appendSearch(term);
                                 }}>
-                                <ThemedText>{term}</ThemedText>
+                                <FontAwesome5 name="redo" size={12} color="gray" />
+                                <ThemedText style={{ fontFamily: "Source Sans 3" }}>{term}</ThemedText>
                             </TouchableOpacity>
                         );
                     })}
@@ -92,14 +95,22 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignItems: "flex-start",
         position: "absolute",
+        backgroundColor: "#ffffff",
+        zIndex: 10,
+        paddingBottom: 8,
         width: "100%",
+        fontFamily: "Source Sans 3",
     },
     recent: {
         width: "100%",
         padding: 16,
-        paddingVertical: 4,
+        paddingVertical: 6,
         backgroundColor: "#ffffff50",
         flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        fontFamily: "Source Sans 3",
     },
     container: {
         flexDirection: "row",
@@ -109,10 +120,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         paddingHorizontal: 12,
         paddingVertical: 8,
+        fontFamily: "Source Sans 3",
     },
     input: {
         flex: 1,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     icon: {
         marginLeft: 8,

@@ -32,12 +32,16 @@ bson.D{
 **JSON Equivalent**:
 
 ```json
-[{ "name": "Alice" }, { "age": 30 }, { "hobbies": ["reading", "traveling", "coding"] }]
+[
+  { "name": "Alice" },
+  { "age": 30 },
+  { "hobbies": ["reading", "traveling", "coding"] }
+]
 ```
 
 Explanation:
 
--   `bson.D` is serialized as an **array of objects** in JSON to preserve the order of the fields.
+- `bson.D` is serialized as an **array of objects** in JSON to preserve the order of the fields.
 
 ---
 
@@ -57,15 +61,15 @@ bson.M{
 
 ```json
 {
-	"name": "Alice",
-	"age": 30,
-	"hobbies": ["reading", "traveling", "coding"]
+  "name": "Alice",
+  "age": 30,
+  "hobbies": ["reading", "traveling", "coding"]
 }
 ```
 
 Explanation:
 
--   `bson.M` is serialized as a **single JSON object** since JSON objects inherently do not guarantee order.
+- `bson.M` is serialized as a **single JSON object** since JSON objects inherently do not guarantee order.
 
 ---
 
@@ -85,12 +89,17 @@ bson.A{
 **JSON Equivalent**:
 
 ```json
-["Alice", 30, { "hobby": "reading" }, [{ "key1": "value1" }, { "key2": "value2" }]]
+[
+  "Alice",
+  30,
+  { "hobby": "reading" },
+  [{ "key1": "value1" }, { "key2": "value2" }]
+]
 ```
 
 Explanation:
 
--   `bson.A` is serialized as a **JSON array**, maintaining the order of elements.
+- `bson.A` is serialized as a **JSON array**, maintaining the order of elements.
 
 ---
 
@@ -110,7 +119,7 @@ bson.E{"name", "Alice"}
 
 Explanation:
 
--   `bson.E` is serialized as a **single JSON object** representing the key-value pair.
+- `bson.E` is serialized as a **single JSON object** representing the key-value pair.
 
 ---
 
@@ -138,20 +147,20 @@ bson.D{
 
 ```json
 [
-	{ "name": "Alice" },
-	{
-		"details": {
-			"age": 30,
-			"hobbies": ["reading", "coding"]
-		}
-	},
-	{ "attributes": [{ "height": 5.4 }, { "weight": 120 }] }
+  { "name": "Alice" },
+  {
+    "details": {
+      "age": 30,
+      "hobbies": ["reading", "coding"]
+    }
+  },
+  { "attributes": [{ "height": 5.4 }, { "weight": 120 }] }
 ]
 ```
 
 Explanation:
 
--   The `bson.D` outermost layer is represented as a **JSON array of objects** to preserve order.
--   The `bson.M` (map) is serialized as a **JSON object**.
--   The `bson.A` (array) is serialized as a **JSON array**.
--   The inner `bson.D` (ordered document) is serialized as a **JSON array of objects** to preserve its order.
+- The `bson.D` outermost layer is represented as a **JSON array of objects** to preserve order.
+- The `bson.M` (map) is serialized as a **JSON object**.
+- The `bson.A` (array) is serialized as a **JSON array**.
+- The inner `bson.D` (ordered document) is serialized as a **JSON array of objects** to preserve its order.

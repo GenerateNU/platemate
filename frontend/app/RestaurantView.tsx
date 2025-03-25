@@ -1,28 +1,43 @@
 import { ThemedView } from "@/components/ThemedView";
-import { Dimensions, Image, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
+import { RestaurantTags } from "@/components/RestaurantTags";
+import { StarReview } from "@/components/StarReview";
+import React from "react";
 
-export default function RestaurantView({}) {
+import { PhoneIcon, WebsiteIcon } from "@/components/icons/Icons";
+import { RestaurantDetailItem } from "@/components/restaurant/RestaurantDetailItem";
+import BannerAndAvatar from "@/components/restaurant/RestaurantBanner";
+
+export default function RestaurantView() {
+    const restaurantTags = ["Fast Food", "Fried Chicken", "Chicken Sandwiches", "Order Online"];
+
     return (
-        <>
-            <View style={styles.bannerContainer}>
-                <Image
-                    source={{
-                        uri: "https://png.pngtree.com/thumb_back/fw800/background/20240724/pngtree-thai-stir-fried-noodles-with-shrimps-and-egg-wrap-pad-thai-image_15912377.jpg",
-                    }}
-                    style={styles.bannerImage}
-                />
-                <View style={styles.avatarContainer}>
-                    <Image
-                        source={{ uri: "https://media-cdn.tripadvisor.com/media/photo-p/12/4c/95/45/logo.jpg" }}
-                        style={styles.avatar}
-                    />
-                </View>
-            </View>
+        <ScrollView showsVerticalScrollIndicator={false}>
+            <BannerAndAvatar bannerURL={"https://shorturl.at/zZdqT"} avatarURL={"https://shorturl.at/Yn9SH"} />
             <ThemedView style={styles.container}>
-                <ThemedText>Wowzas</ThemedText>
+                <ThemedView style={styles.headerContainer}>
+                    <ThemedText style={styles.titleText}>Popeyes</ThemedText>
+                    <View style={styles.iconContainer}>
+                        <PhoneIcon />
+                        <WebsiteIcon />
+                    </View>
+                </ThemedView>
+
+                <ThemedView style={styles.ratingContainer}>
+                    <StarReview avgRating={1.9} numRatings={500} full={true} />
+                </ThemedView>
+
+                <ThemedView style={styles.detailsContainer}>
+                    <RestaurantDetailItem text={"360 Huntington Ave, Boston, MA 02115"} icon={"marker"} />
+                    <RestaurantDetailItem text={"Open | Closes 6 PM"} icon={"clock"} />
+                </ThemedView>
+
+                <ThemedView style={styles.tagsContainer}>
+                    <RestaurantTags tags={restaurantTags} />
+                </ThemedView>
             </ThemedView>
-        </>
+        </ScrollView>
     );
 }
 
@@ -33,22 +48,34 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         backgroundColor: "white",
     },
-    bannerImage: {
-        width: "100%",
-        height: 190,
+    headerContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
-    avatarContainer: {
-        position: "absolute",
-        bottom: -50,
-        left: 20,
-        zIndex: 1,
+    detailsContainer: {
+        paddingVertical: 4,
+        gap: 4,
     },
-    avatar: {
-        width: 144,
-        height: 144,
-        borderRadius: 72,
-        borderWidth: 3,
-        borderColor: "white",
+    ratingContainer: {
+        paddingVertical: 4,
+    },
+    tagsContainer: {
+        paddingVertical: 8,
+        gap: 4,
+    },
+    chefsPickContainer: {
+        paddingVertical: 4,
+    },
+    titleText: {
+        fontWeight: "bold",
+        fontFamily: "Outfit",
+        fontSize: 28,
+        paddingTop: 6,
+    },
+    iconContainer: {
+        flexDirection: "row",
+        gap: 16,
     },
     container: {
         flex: 1,

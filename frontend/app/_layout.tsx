@@ -1,13 +1,17 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import "react-native-reanimated";
 
-import { useColorScheme } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView, useColorScheme } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { UserProvider } from "@/context/user-context";
+import { AuthInitializer } from "@/components/AuthInitializer";
+import { Host } from "react-native-portalize";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -15,8 +19,8 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
     const colorScheme = useColorScheme();
     const [loaded] = useFonts({
-        Outfit: require("../assets/fonts/Outfit-Variable.ttf"),
-        SofiaSans: require("../assets/fonts/SofiaSans-Variable.ttf"),
+        DamionRegular: require("../assets/fonts/Damion-Regular.otf"),
+        Outfit: require("../assets/fonts/Outfit-Variable.otf"),
     });
 
     useEffect(() => {
@@ -30,45 +34,25 @@ export default function RootLayout() {
     }
 
     return (
-        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-            <Stack
-                screenOptions={{
-                    headerTitleStyle: {
-                        fontFamily: "Outfit",
-                    },
-                    headerShown: false,
-                }}>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="+not-found" />
-                <Stack.Screen
-                    name={"feed"}
-                    options={{
-                        title: "PlateMate",
-                        headerLeft: () => (
-                            <Ionicons name={"chevron-back"} size={24} color={"#20c1e6"} onPress={() => router.back()} />
-                        ),
-                    }}
-                />
-                <Stack.Screen
-                    name={"Dev1"}
-                    options={{
-                        title: "Development Environment 1",
-                        headerLeft: () => (
-                            <Ionicons name={"chevron-back"} size={24} color={"#20c1e6"} onPress={() => router.back()} />
-                        ),
-                    }}
-                />
-                <Stack.Screen
-                    name={"RestaurantView"}
-                    options={{
-                        title: "Restaurant View",
-                        headerLeft: () => (
-                            <Ionicons name={"chevron-back"} size={24} color={"#20c1e6"} onPress={() => router.back()} />
-                        ),
-                    }}
-                />
-            </Stack>
-            <StatusBar style="auto" />
-        </ThemeProvider>
+        <Host>
+            <AuthInitializer>
+                <UserProvider>
+                    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+                        <SafeAreaView>
+                            <StatusBar backgroundColor={"black"} animated={true} style={"dark"} translucent={false} />
+                        </SafeAreaView>
+                        <GestureHandlerRootView style={{ flex: 1 }}>
+                            <BottomSheetModalProvider>
+                                <Stack>
+                                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                                    <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
+                                    <Stack.Screen name="[...missing]" options={{ title: "Not Found" }} />
+                                </Stack>
+                            </BottomSheetModalProvider>
+                        </GestureHandlerRootView>
+                    </ThemeProvider>
+                </UserProvider>
+            </AuthInitializer>
+        </Host>
     );
 }

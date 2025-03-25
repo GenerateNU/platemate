@@ -19,45 +19,6 @@ type Handler struct {
 	service *Service
 }
 
-type AvgRatingRequest struct {
-	Portion *float64 `json:"portion"`
-	Taste   *float64 `json:"taste"`
-	Value   *float64 `json:"value"`
-	Overall *float64 `json:"overall"`
-	Return  *bool    `json:"return"`
-}
-
-type MenuItemRequest struct {
-	Name                string           `json:"name"`
-	Picture             string           `json:"picture"`
-	AvgRating           AvgRatingRequest `json:"avgRating"`
-	Reviews             []string         `json:"reviews"`
-	Description         string           `json:"description"`
-	Location            []float64        `json:"location"`
-	Tags                []string         `json:"tags"`
-	DietaryRestrictions []string         `json:"dietaryRestrictions"`
-}
-
-type MenuItemResponse struct {
-	ID string `json:"id"`
-	MenuItemRequest
-}
-
-type MenuItemsQuery struct {
-	MinRatingPortion    *float64 `query:"minRatingPortion"`
-	MaxRatingPortion    *float64 `query:"maxRatingPortion"`
-	MinRatingTaste      *float64 `query:"minRatingTaste"`
-	MaxRatingTaste      *float64 `query:"maxRatingTaste"`
-	MinRatingValue      *float64 `query:"minRatingValue"`
-	MaxRatingValue      *float64 `query:"maxRatingValue"`
-	MinRatingOverall    *float64 `query:"minRatingOverall"`
-	MaxRatingOverall    *float64 `query:"maxRatingOverall"`
-	Tags                []string `query:"tags"`
-	DietaryRestrictions []string `query:"filter"`
-	Limit               *int     `query:"limit"`
-	Skip                int      `query:"skip"`
-}
-
 var ValidDietaryRestrictions = map[string]bool{
 	"vegan":              true,
 	"vegetarian":         true,
@@ -197,6 +158,27 @@ func ValidateQueryParams(queryParams MenuItemsQuery) error {
 		queryParams.DietaryRestrictions = validRestrictions
 	}
 
+	// Validate sorting
+	validSortFields := map[string]bool{
+		"name":              true,
+		"avgRating.overall": true,
+		"avgRating.portion": true,
+		"avgRating.taste":   true,
+		"avgRating.value":   true,
+		// If we add other fields, add them here
+	}
+	if queryParams.SortBy != "" {
+		if !validSortFields[queryParams.SortBy] {
+			return fmt.Errorf("invalid sortBy field: %s", queryParams.SortBy)
+		}
+		// Sort order can be “asc” (default) or “desc”
+		if queryParams.SortOrder != "" &&
+			strings.ToLower(queryParams.SortOrder) != "asc" &&
+			strings.ToLower(queryParams.SortOrder) != "desc" {
+			return fmt.Errorf("invalid sortOrder: %s (must be 'asc' or 'desc')", queryParams.SortOrder)
+		}
+	}
+
 	// Validate limit
 	if queryParams.Limit != nil && *queryParams.Limit <= 0 {
 		return fmt.Errorf("limit must be greater than 0, but got %d", *queryParams.Limit)
@@ -237,6 +219,27 @@ func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
+	// Assign default empty values if nil
+	if queryParams.Tags == nil {
+		queryParams.Tags = []string{}
+	}
+	if queryParams.DietaryRestrictions == nil {
+		queryParams.DietaryRestrictions = []string{}
+	}
+
+	if queryParams.Limit == nil {
+		defaultLimit := 20
+		queryParams.Limit = &defaultLimit
+	}
+
+	// Assign default sorting order if empty
+	if queryParams.SortBy == "" {
+		queryParams.SortBy = "name"
+	}
+	if queryParams.SortOrder == "" {
+		queryParams.SortOrder = "asc"
+	}
+
 	if filter := c.Query("filter"); filter != "" {
 		queryParams.DietaryRestrictions = strings.Split(filter, ",")
 	}
@@ -269,6 +272,25 @@ func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 		return err
 	}
 	return c.Status(fiber.StatusOK).JSON(menuItem)
+}
+
+func (h *Handler) GetSimilarMenuItems(c *fiber.Ctx) error {
+	id := c.Params("id")
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	similarItems, err := h.service.GetSimilarMenuItems(objID)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item", "id", id))
+		}
+		slog.Error("Error finding similar items", "error", err)
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(similarItems)
 }
 
 func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
@@ -339,4 +361,68 @@ func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
 		return err
 	}
 	return c.Status(fiber.StatusOK).JSON(menuItemDeleted)
+}
+
+func (h *Handler) GetMenuItemReviews(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var query MenuItemReviewQuery
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	objID, errID := primitive.ObjectIDFromHex(id)
+	if errID != nil {
+		// Invalid ID format
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(errID))
+	}
+
+	// Convert user ID only if it's provided
+	var userObjID *primitive.ObjectID
+	if query.UserID != nil {
+		parsedUserID, err := primitive.ObjectIDFromHex(*query.UserID)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+		}
+		userObjID = &parsedUserID
+	}
+
+	reviews, err := h.service.GetMenuItemReviews(objID, userObjID)
+	if err != nil {
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(reviews)
+}
+
+func (h *Handler) GetMenuItemReviewPictures(c *fiber.Ctx) error {
+	id := c.Params("id")
+	objID, errID := primitive.ObjectIDFromHex(id)
+	if errID != nil {
+		// Invalid ID format
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(errID))
+	}
+	pictures, err := h.service.GetMenuItemReviewPictures(objID)
+	if err != nil {
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(pictures)
+}
+
+func (h *Handler) GetPopularWithFriends(c *fiber.Ctx) error {
+	var query PopularWithFriendsQuery
+
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+	userID, err := primitive.ObjectIDFromHex(query.UserId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	items, err := h.service.GetPopularWithFriends(userID, query.Limit)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(xerr.InternalServerError())
+	}
+
+	return c.JSON(items)
 }
