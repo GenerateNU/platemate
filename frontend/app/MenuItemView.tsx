@@ -1,6 +1,6 @@
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedView } from "@/components/themed/ThemedView";
 import { ScrollView, StyleSheet, View, Image, Pressable } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
+import { ThemedText } from "@/components/themed/ThemedText";
 import { StarReview } from "@/components/StarReview";
 import React from "react";
 import { RestaurantTags } from "@/components/RestaurantTags";

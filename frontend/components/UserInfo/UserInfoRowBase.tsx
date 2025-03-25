@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { ThemedText } from "../ThemedText";
+import { ThemedText } from "../themed/ThemedText";
 import { Avatar } from "../Avatar";
 
 type Props = {

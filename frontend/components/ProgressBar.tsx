@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, LayoutChangeEvent } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedView } from "@/components/themed/ThemedView";
 
 interface ProgressBarProps {
     progress: 25 | 50 | 75 | 100;

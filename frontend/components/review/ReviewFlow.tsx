@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, ScrollView, Dimensions } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/themed/ThemedText";
+import { ThemedView } from "@/components/themed/ThemedView";
 import { MyReview } from "@/components/MyReview";
 
 const ReviewFlow = () => {

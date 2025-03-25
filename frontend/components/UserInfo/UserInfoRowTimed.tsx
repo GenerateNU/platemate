@@ -1,5 +1,5 @@
 import React from "react";
-import { ThemedText } from "../ThemedText";
+import { ThemedText } from "../themed/ThemedText";
 import UserInfoRowBase from "./UserInfoRowBase";
 
 type Props = {
