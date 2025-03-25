@@ -174,18 +174,10 @@ func (s *Service) GetComments(reviewID primitive.ObjectID) ([]CommentDocument, e
 	ctx := context.Background()
 	filter := bson.M{"_id": reviewID}
 	pipeline := []bson.M{
-		bson.M{
-			"$match": filter,
-		},
-		bson.M{
-			"$project": bson.M{"comments": 1, "_id": 0},
-		},
-		bson.M{"$unwind": "$comments"},
-		bson.M{
-			"$sort": bson.M{
-				"comments.timestamp": -1,
-			},
-		},
+		{"$match": filter},
+		{"$project": bson.M{"comments": 1, "_id": 0}},
+		{"$unwind": "$comments"},
+		{"$sort": bson.M{"comments.timestamp": -1}},
 	}
 
 	cursor, err := s.reviews.Aggregate(ctx, pipeline)

@@ -42,6 +42,8 @@ type MenuItemsQuery struct {
 	DietaryRestrictions []string `query:"filter"`
 	Limit               *int     `query:"limit"`
 	Skip                int      `query:"skip"`
+	SortBy              string   `query:"sortBy"`    // Could also be an enum if needed
+	SortOrder           string   `query:"sortOrder"` // “asc” or “desc"
 	Name				string	 `query:"name"`
 	Longitude			*float64 `query:"longitude"`
 	Latitude			*float64 `query:"latitude"`
@@ -58,6 +60,12 @@ Database layer of the application
 type Service struct {
 	menuItems *mongo.Collection
 	reviews   *mongo.Collection
+	users     *mongo.Collection
+}
+
+type PopularWithFriendsQuery struct {
+	UserId string `query:"userId" validate:"required"`
+	Limit  int    `query:"limit"`
 }
 
 type MenuItemDocument struct {

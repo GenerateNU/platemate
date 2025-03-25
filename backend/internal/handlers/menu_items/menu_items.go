@@ -158,6 +158,27 @@ func ValidateQueryParams(queryParams MenuItemsQuery) error {
 		queryParams.DietaryRestrictions = validRestrictions
 	}
 
+	// Validate sorting
+	validSortFields := map[string]bool{
+		"name":              true,
+		"avgRating.overall": true,
+		"avgRating.portion": true,
+		"avgRating.taste":   true,
+		"avgRating.value":   true,
+		// If we add other fields, add them here
+	}
+	if queryParams.SortBy != "" {
+		if !validSortFields[queryParams.SortBy] {
+			return fmt.Errorf("invalid sortBy field: %s", queryParams.SortBy)
+		}
+		// Sort order can be “asc” (default) or “desc”
+		if queryParams.SortOrder != "" &&
+			strings.ToLower(queryParams.SortOrder) != "asc" &&
+			strings.ToLower(queryParams.SortOrder) != "desc" {
+			return fmt.Errorf("invalid sortOrder: %s (must be 'asc' or 'desc')", queryParams.SortOrder)
+		}
+	}
+
 	// Validate limit
 	if queryParams.Limit != nil && *queryParams.Limit <= 0 {
 		return fmt.Errorf("limit must be greater than 0, but got %d", *queryParams.Limit)
@@ -196,6 +217,27 @@ func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 	var queryParams MenuItemsQuery
 	if err := c.QueryParser(&queryParams); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	// Assign default empty values if nil
+	if queryParams.Tags == nil {
+		queryParams.Tags = []string{}
+	}
+	if queryParams.DietaryRestrictions == nil {
+		queryParams.DietaryRestrictions = []string{}
+	}
+
+	if queryParams.Limit == nil {
+		defaultLimit := 20
+		queryParams.Limit = &defaultLimit
+	}
+
+	// Assign default sorting order if empty
+	if queryParams.SortBy == "" {
+		queryParams.SortBy = "name"
+	}
+	if queryParams.SortOrder == "" {
+		queryParams.SortOrder = "asc"
 	}
 
 	if filter := c.Query("filter"); filter != "" {
@@ -363,4 +405,24 @@ func (h *Handler) GetMenuItemReviewPictures(c *fiber.Ctx) error {
 		return err
 	}
 	return c.Status(fiber.StatusOK).JSON(pictures)
+}
+
+func (h *Handler) GetPopularWithFriends(c *fiber.Ctx) error {
+	var query PopularWithFriendsQuery
+
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+	userID, err := primitive.ObjectIDFromHex(query.UserId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	items, err := h.service.GetPopularWithFriends(userID, query.Limit)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(xerr.InternalServerError())
+	}
+
+	return c.JSON(items)
 }
