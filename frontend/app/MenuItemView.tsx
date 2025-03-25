@@ -9,6 +9,7 @@ import ReviewDetail from "@/components/review/ReviewDetail";
 import { ThemedTag } from "@/components/themed/ThemedTag";
 import { RestaurantTags } from "@/components/RestaurantTags";
 import { StatCard } from "@/components/Cards/StatCard";
+import { ReviewButton } from "@/components/review/ReviewButton";
 
 // Temporary icons - you may want to create proper icons
 const FriendsIcon = () => (
@@ -50,111 +51,114 @@ export default function MenuItemView() {
     ];
 
     return (
-        <ScrollView showsVerticalScrollIndicator={false}>
-            <ThemedView style={styles.bannerContainer}>
-                <Image source={{ uri: "https://shorturl.at/zZdqT" }} style={styles.bannerImage} />
-            </ThemedView>
-            <ThemedView style={styles.container}>
-                {/* Header Section */}
-                <ThemedView style={styles.headerContainer}>
-                    <View style={styles.titleRow}>
-                        <ThemedText style={styles.titleText}>Pad Thai</ThemedText>
-                        <View style={styles.titleIcons}>
-                            <Pressable style={styles.iconButton}>
-                                <Ionicons name="share-outline" size={24} color="#666" />
-                            </Pressable>
-                            <Pressable style={styles.iconButton}>
-                                <Ionicons name="heart-outline" size={24} color="#666" />
+        <>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <ThemedView style={styles.bannerContainer}>
+                    <Image source={{ uri: "https://shorturl.at/zZdqT" }} style={styles.bannerImage} />
+                </ThemedView>
+                <ThemedView style={styles.container}>
+                    {/* Header Section */}
+                    <ThemedView style={styles.headerContainer}>
+                        <View style={styles.titleRow}>
+                            <ThemedText style={styles.titleText}>Pad Thai</ThemedText>
+                            <View style={styles.titleIcons}>
+                                <Pressable style={styles.iconButton}>
+                                    <Ionicons name="share-outline" size={24} color="#666" />
+                                </Pressable>
+                                <Pressable style={styles.iconButton}>
+                                    <Ionicons name="heart-outline" size={24} color="#666" />
+                                </Pressable>
+                            </View>
+                        </View>
+                        <View style={styles.restaurantContainer}>
+                            <Ionicons name="restaurant-outline" size={20} color="#666" />
+                            <ThemedText style={styles.restaurantText}>Pad Thai Kitchen</ThemedText>
+                        </View>
+                    </ThemedView>
+
+                    {/* Tags Section */}
+                    <ThemedView style={styles.tagsContainer}>
+                        <View style={styles.tagRow}>
+                            {dishTags.map((tag, index) => (
+                                <ThemedTag
+                                    key={index}
+                                    title={tag.title}
+                                    backgroundColor={tag.backgroundColor}
+                                    textColor={tag.textColor}
+                                />
+                            ))}
+                        </View>
+                    </ThemedView>
+
+                    {/* Description Section */}
+                    <ThemedView style={styles.descriptionContainer}>
+                        <ThemedText style={styles.descriptionText}>
+                            flavorful Thai stir-fried noodle dish with a perfect sweet-savory balance.
+                        </ThemedText>
+                        <View style={styles.allergyRow}>
+                            <ThemedText style={styles.allergyText}>
+                                Rice noodles, eggs, tofu/shrimp, peanuts, tamarind.
+                            </ThemedText>
+                            <Pressable>
+                                <ThemedText style={styles.viewAllText}>see allergy</ThemedText>
                             </Pressable>
                         </View>
-                    </View>
-                    <View style={styles.restaurantContainer}>
-                        <Ionicons name="restaurant-outline" size={20} color="#666" />
-                        <ThemedText style={styles.restaurantText}>Pad Thai Kitchen</ThemedText>
-                    </View>
-                </ThemedView>
+                    </ThemedView>
 
-                {/* Tags Section */}
-                <ThemedView style={styles.tagsContainer}>
-                    <View style={styles.tagRow}>
-                        {dishTags.map((tag, index) => (
-                            <ThemedTag
-                                key={index}
-                                title={tag.title}
-                                backgroundColor={tag.backgroundColor}
-                                textColor={tag.textColor}
-                            />
+                    {/* Stats Cards Section */}
+                    <View style={styles.sectionHeader}>
+                        <ThemedText style={styles.sectionTitle}>Overall Ratings</ThemedText>
+                        <Pressable>
+                            <ThemedText style={styles.viewAllText}>view all</ThemedText>
+                        </Pressable>
+                    </View>
+                    <View style={styles.statsContainer}>
+                        <StatCard icon={<FriendsIcon />} title="Friends' Fav" subtitle="100+ Friends' refers" />
+                        <StatCard icon={<StarsIcon />} title="Super Stars" subtitle="200+ Five Stars" />
+                        <StatCard icon={<SatisfactionIcon />} title="Satisfaction" subtitle="70% revisited" />
+                    </View>
+
+                    {/* Reviews Section */}
+                    <View style={styles.sectionHeader}>
+                        <ThemedText style={styles.sectionTitle}>Reviews</ThemedText>
+                        <Pressable>
+                            <ThemedText style={styles.viewAllText}>view all</ThemedText>
+                        </Pressable>
+                    </View>
+                    <View style={styles.reviewStats}>
+                        <View style={styles.ratingContainer}>
+                            <ThemedText style={styles.ratingText}>4/5</ThemedText>
+                            <StarReview avgRating={4} numRatings={428} showAvgRating={false} />
+                        </View>
+                    </View>
+
+                    {/* Review Filters */}
+                    <View style={styles.filterContainer}>
+                        {["My Reviews", "Friends", "All"].map((filter) => (
+                            <Pressable
+                                key={filter}
+                                style={[styles.filterButton, selectedFilter === filter && styles.filterButtonActive]}
+                                onPress={() => setSelectedFilter(filter)}>
+                                <ThemedText
+                                    style={[styles.filterText, selectedFilter === filter && styles.filterTextActive]}>
+                                    {filter}
+                                </ThemedText>
+                            </Pressable>
                         ))}
                     </View>
+
+                    {/* Sample Review Preview */}
+                    <ReviewPreview
+                        plateName="Pad Thai"
+                        restaurantName="Pad Thai Kitchen"
+                        tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
+                        rating={4}
+                        content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                    />
                 </ThemedView>
-
-                {/* Description Section */}
-                <ThemedView style={styles.descriptionContainer}>
-                    <ThemedText style={styles.descriptionText}>
-                        flavorful Thai stir-fried noodle dish with a perfect sweet-savory balance.
-                    </ThemedText>
-                    <View style={styles.allergyRow}>
-                        <ThemedText style={styles.allergyText}>
-                            Rice noodles, eggs, tofu/shrimp, peanuts, tamarind.
-                        </ThemedText>
-                        <Pressable>
-                            <ThemedText style={styles.viewAllText}>see allergy</ThemedText>
-                        </Pressable>
-                    </View>
-                </ThemedView>
-
-                {/* Stats Cards Section */}
-                <View style={styles.sectionHeader}>
-                    <ThemedText style={styles.sectionTitle}>Overall Ratings</ThemedText>
-                    <Pressable>
-                        <ThemedText style={styles.viewAllText}>view all</ThemedText>
-                    </Pressable>
-                </View>
-                <View style={styles.statsContainer}>
-                    <StatCard icon={<FriendsIcon />} title="Friends' Fav" subtitle="100+ Friends' refers" />
-                    <StatCard icon={<StarsIcon />} title="Super Stars" subtitle="200+ Five Stars" />
-                    <StatCard icon={<SatisfactionIcon />} title="Satisfaction" subtitle="70% revisited" />
-                </View>
-
-                {/* Reviews Section */}
-                <View style={styles.sectionHeader}>
-                    <ThemedText style={styles.sectionTitle}>Reviews</ThemedText>
-                    <Pressable>
-                        <ThemedText style={styles.viewAllText}>view all</ThemedText>
-                    </Pressable>
-                </View>
-                <View style={styles.reviewStats}>
-                    <View style={styles.ratingContainer}>
-                        <ThemedText style={styles.ratingText}>4/5</ThemedText>
-                        <StarReview avgRating={4} numRatings={428} showAvgRating={false} />
-                    </View>
-                </View>
-
-                {/* Review Filters */}
-                <View style={styles.filterContainer}>
-                    {["My Reviews", "Friends", "All"].map((filter) => (
-                        <Pressable
-                            key={filter}
-                            style={[styles.filterButton, selectedFilter === filter && styles.filterButtonActive]}
-                            onPress={() => setSelectedFilter(filter)}>
-                            <ThemedText
-                                style={[styles.filterText, selectedFilter === filter && styles.filterTextActive]}>
-                                {filter}
-                            </ThemedText>
-                        </Pressable>
-                    ))}
-                </View>
-
-                {/* Sample Review Preview */}
-                <ReviewPreview
-                    plateName="Pad Thai"
-                    restaurantName="Pad Thai Kitchen"
-                    tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
-                    rating={4}
-                    content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
-                />
-            </ThemedView>
-        </ScrollView>
+            </ScrollView>
+            <ReviewButton onPress={() => console.log("Open review flow")} />
+        </>
     );
 }
 

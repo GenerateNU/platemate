@@ -4,6 +4,7 @@ import { ThemedView } from "@/components/themed/ThemedView";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "./ReviewPreview";
+import { ReviewButton } from "@/components/review/ReviewButton";
 
 export default function AllReviews() {
     const [selectedMainFilter, setSelectedMainFilter] = React.useState("My Reviews");
@@ -15,56 +16,68 @@ export default function AllReviews() {
     };
 
     return (
-        <ScrollView style={styles.container}>
-            <ThemedView style={styles.content}>
-                {/* Header */}
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-                        <Ionicons name="chevron-back" size={24} color="black" />
-                    </TouchableOpacity>
-                    <ThemedText style={styles.headerTitle}>All Reviews</ThemedText>
-                </View>
-
-                {/* Main Filters */}
-                <View style={styles.filterContainer}>
-                    {["My Reviews", "Friends", "All"].map((filter) => (
-                        <TouchableOpacity
-                            key={filter}
-                            style={[styles.filterButton, selectedMainFilter === filter && styles.filterButtonActive]}
-                            onPress={() => setSelectedMainFilter(filter)}>
-                            <ThemedText
-                                style={[styles.filterText, selectedMainFilter === filter && styles.filterTextActive]}>
-                                {filter}
-                            </ThemedText>
+        <>
+            <ScrollView style={styles.container}>
+                <ThemedView style={styles.content}>
+                    {/* Header */}
+                    <View style={styles.header}>
+                        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                            <Ionicons name="chevron-back" size={24} color="black" />
                         </TouchableOpacity>
-                    ))}
-                </View>
+                        <ThemedText style={styles.headerTitle}>All Reviews</ThemedText>
+                    </View>
 
-                {/* Sub Filters */}
-                <View style={styles.filterContainer}>
-                    {["Portion", "Taste", "Value", "Overall"].map((filter) => (
-                        <TouchableOpacity
-                            key={filter}
-                            style={[styles.filterButton, selectedSubFilter === filter && styles.filterButtonActive]}
-                            onPress={() => setSelectedSubFilter(filter)}>
-                            <ThemedText
-                                style={[styles.filterText, selectedSubFilter === filter && styles.filterTextActive]}>
-                                {filter}
-                            </ThemedText>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+                    {/* Main Filters */}
+                    <View style={styles.filterContainer}>
+                        {["My Reviews", "Friends", "All"].map((filter) => (
+                            <TouchableOpacity
+                                key={filter}
+                                style={[
+                                    styles.filterButton,
+                                    selectedMainFilter === filter && styles.filterButtonActive,
+                                ]}
+                                onPress={() => setSelectedMainFilter(filter)}>
+                                <ThemedText
+                                    style={[
+                                        styles.filterText,
+                                        selectedMainFilter === filter && styles.filterTextActive,
+                                    ]}>
+                                    {filter}
+                                </ThemedText>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
 
-                {/* Sample Review Preview */}
-                <ReviewPreview
-                    plateName="Pad Thai"
-                    restaurantName="Pad Thai Kitchen"
-                    tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
-                    rating={4}
-                    content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
-                />
-            </ThemedView>
-        </ScrollView>
+                    {/* Sub Filters */}
+                    <View style={styles.filterContainer}>
+                        {["Portion", "Taste", "Value", "Overall"].map((filter) => (
+                            <TouchableOpacity
+                                key={filter}
+                                style={[styles.filterButton, selectedSubFilter === filter && styles.filterButtonActive]}
+                                onPress={() => setSelectedSubFilter(filter)}>
+                                <ThemedText
+                                    style={[
+                                        styles.filterText,
+                                        selectedSubFilter === filter && styles.filterTextActive,
+                                    ]}>
+                                    {filter}
+                                </ThemedText>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+
+                    {/* Sample Review Preview */}
+                    <ReviewPreview
+                        plateName="Pad Thai"
+                        restaurantName="Pad Thai Kitchen"
+                        tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
+                        rating={4}
+                        content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                    />
+                </ThemedView>
+            </ScrollView>
+            <ReviewButton onPress={() => console.log("Open review flow")} />
+        </>
     );
 }
 
@@ -72,6 +85,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
+        position: "relative",
     },
     content: {
         padding: 16,
