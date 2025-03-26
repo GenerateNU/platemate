@@ -10,8 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// newService receives the map of collections and picks out reviews
-func newService(collections map[string]*mongo.Collection) *Service {
+// NewService receives the map of collections and picks out reviews
+func NewService(collections map[string]*mongo.Collection) *Service {
 	return &Service{
 		reviews:     collections["reviews"],
 		restaurants: collections["restaurants"],
