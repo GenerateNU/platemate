@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ScrollView } from "react-native";
 
 import { ThemedView } from "@/components/ThemedView";
-import FeedTabs from "@/components/Feed/FeedTabs";
+import FeedTabs from "@/components/feed/FeedTabs";
 import { RestaurantDetailItem } from "@/components/restaurant/RestaurantDetailItem";
 
 import { StarReview } from "@/components/StarReview";

@@ -4,8 +4,8 @@ import { ThemedView } from "@/components/ThemedView";
 import React, { useState } from "react";
 import { SearchBox } from "@/components/SearchBox";
 import SearchIcon from "@/assets/icons/search.svg";
-import FeedTabs from "@/components/Feed/FeedTabs";
-import FeedContent from "@/components/Feed/FeedContent";
+import FeedTabs from "@/components/feed/FeedTabs";
+import FeedContent from "@/components/feed/FeedContent";
 
 export default function FeedScreen() {
     const [searchText, setSearchText] = React.useState("");
