@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { useTheme } from "@react-navigation/native";
 import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
@@ -9,8 +8,6 @@ import ToggleOff from "@/assets/icons/toggle_off.svg";
 import ToggleOn from "@/assets/icons/toggle_on.svg";
 import ChevronLeft from "@/assets/icons/chevron_left.svg";
 import { sharedOnboardingStyles } from "./onboardingStyles";
-
-// TODO: Try to use the account settings screen for this
 
 interface DietaryRestriction {
     id: string;

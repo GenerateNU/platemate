@@ -1,6 +1,5 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
 import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
