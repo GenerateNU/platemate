@@ -1,6 +1,6 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
@@ -16,11 +16,13 @@ import { AuthInitializer } from "@/components/AuthInitializer";
 import { Host } from "react-native-portalize";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Colors } from "@/constants/Colors";
+
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
+    const router = useRouter();
 
     const [loaded] = useFonts({
         DamionRegular: require("../assets/fonts/Damion-Regular.otf"),
@@ -48,6 +50,7 @@ export default function RootLayout() {
                         <GestureHandlerRootView style={{ flex: 1 }}>
                             <BottomSheetModalProvider>
                                 <Stack>
+                                    <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
                                     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                                     <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
                                     <Stack.Screen name="[...missing]" options={{ title: "Not Found" }} />
