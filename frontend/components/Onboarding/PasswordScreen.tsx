@@ -48,7 +48,7 @@ export function PasswordScreen({ onContinue, onBack }: PasswordScreenProps) {
 
     return (
         <ThemedView style={[sharedOnboardingStyles.container]}>
-            <TouchableOpacity style={styles.backButton} onPress={onBack}>
+            <TouchableOpacity style={sharedOnboardingStyles.backButton} onPress={onBack}>
                 <ChevronLeft width={24} height={24} />
             </TouchableOpacity>
             <View style={sharedOnboardingStyles.content}>
@@ -77,9 +77,9 @@ export function PasswordScreen({ onContinue, onBack }: PasswordScreenProps) {
                     autoCapitalize="none"
                 />
 
-                {!allRequirementsMet && (
+                {!allRequirementsMet && (password === confirmPassword || confirmPassword === "") && (
                     <View style={styles.requirementsContainer}>
-                        <ThemedText style={styles.requirements}>Password requirements:</ThemedText>
+                        <ThemedText style={styles.requirements}>Password strength too weak:</ThemedText>
                         <ThemedText
                             style={[styles.requirementListItem, requirements.hasMinLength && styles.requirementMet]}>
                             • At least 8 characters long
@@ -96,6 +96,12 @@ export function PasswordScreen({ onContinue, onBack }: PasswordScreenProps) {
                             style={[styles.requirementListItem, requirements.hasNumber && styles.requirementMet]}>
                             • One number
                         </ThemedText>
+                    </View>
+                )}
+
+                {password !== confirmPassword && confirmPassword !== "" && (
+                    <View style={styles.passwordMatchContainer}>
+                        <ThemedText style={styles.warningText}>Passwords do not match</ThemedText>
                     </View>
                 )}
             </View>
@@ -120,6 +126,7 @@ const styles = StyleSheet.create({
     },
     requirementsContainer: {
         marginTop: 8,
+        marginBottom: -108,
     },
     requirementListItem: {
         fontSize: 12,
@@ -130,11 +137,18 @@ const styles = StyleSheet.create({
         opacity: 0.5,
         textDecorationLine: "line-through",
     },
-    backButton: {
-        position: "absolute",
-        top: 16,
-        left: 16,
-        zIndex: 1,
-        padding: 8,
+    warningText: {
+        color: "#D32246",
+        fontSize: 13,
+    },
+    linkContainer: {
+        paddingBottom: 180,
+        marginTop: -180,
+        alignItems: "flex-start",
+        paddingLeft: 8,
+    },
+    passwordMatchContainer: {
+        alignItems: "flex-start",
+        paddingLeft: 8,
     },
 });

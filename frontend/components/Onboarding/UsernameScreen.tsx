@@ -45,9 +45,11 @@ export function UsernameScreen({ onContinue, onBack }: UsernameScreenProps) {
                     autoCapitalize="none"
                     autoCorrect={false}
                 />
+            </View>
 
-                {/* TODO: This should only come up once we have checked auth etc... */}
-                <ThemedText style={styles.inUseText}>This username is already in use</ThemedText>
+            {/* TODO: This should only come up once we have checked auth etc... */}
+            <View style={styles.linkContainer}>
+                <ThemedText style={styles.inUseText}>This username is already in use </ThemedText>
             </View>
 
             <Button
@@ -74,5 +76,12 @@ const styles = StyleSheet.create({
         marginTop: -180,
         alignItems: "flex-start",
         paddingLeft: 8,
+        color: "#D32246",
+    },
+    linkContainer: {
+        alignItems: "flex-start",
+        paddingLeft: 4,
+        marginTop: -20,
+        paddingBottom: 20,
     },
 });

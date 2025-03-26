@@ -58,7 +58,7 @@ export function DietaryRestrictionsScreen({ onContinue, onBack }: DietaryRestric
     };
 
     return (
-        <ThemedView style={[sharedOnboardingStyles.container]}>
+        <ThemedView style={[sharedOnboardingStyles.container, { paddingTop: 70 }]}>
             <TouchableOpacity style={sharedOnboardingStyles.backButton} onPress={onBack}>
                 <ChevronLeft width={24} height={24} />
             </TouchableOpacity>
