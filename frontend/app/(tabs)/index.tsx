@@ -8,7 +8,8 @@ import { RestaurantDetailItem } from "@/components/restaurant/RestaurantDetailIt
 import { StarReview } from "@/components/StarReview";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
-
+import { useRouter } from "expo-router";
+import { Button } from "@/components/Button";
 export default function Feed() {
     const [activeTab, setActiveTab] = React.useState(0);
 
@@ -24,6 +25,7 @@ export default function Feed() {
             picture: "https://dishingouthealth.com/wp-content/uploads/2022/01/SpicyMisoRamen_Square.jpg",
         },
     ]);
+    const router = useRouter();
 
     const [friends] = useState([
         {
@@ -120,6 +122,11 @@ export default function Feed() {
                             return <MenuItemPreview key={index} {...item} />;
                         })}
                     </ScrollView>
+                </ThemedView>
+            </ThemedView>
+            <ThemedView>
+                <ThemedView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Button title="Go to Filter" onPress={() => router.push("/filter")} />
                 </ThemedView>
             </ThemedView>
         </ScrollView>
