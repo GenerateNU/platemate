@@ -13,8 +13,7 @@ import { router } from "expo-router";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import { SearchBox } from "@/components/SearchBox";
-import SearchIcon from "@/assets/icons/search.svg";
-import Vector from "@/assets/icons/Vector.svg";
+import { SortIcon } from "@/components/icons/Icons";
 
 const { width } = Dimensions.get("window");
 
@@ -69,7 +68,7 @@ const ProfileScreen = () => {
                     <ThemedText style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
                         My Reviews
                     </ThemedText>
-                    {/* <ThemedText style={styles.searchContainer}> */}
+                    <ThemedText style={styles.searchContainer}>
                         <SearchBox
                             style={styles.searchBoxContainer}
                             placeholder="Search my reviews"
@@ -79,8 +78,8 @@ const ProfileScreen = () => {
                             value={searchText}
                             onChangeText={(text) => setSearchText(text)}
                         />
-                        <Vector style={styles.vector} />
-                    {/* </ThemedText> */}
+                        <SortIcon width={20} height={30}/>
+                    </ThemedText>
                     <ReviewPreview plateName="Ceasar Salad" restaurantName="Luigi's" tags={["Vegan", "Green", "Healthy", "Low Cal"]} rating={4.5} content={"It was pretty good."}>
                     </ReviewPreview>
 
