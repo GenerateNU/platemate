@@ -15,6 +15,7 @@ import Vector from "@/assets/icons/Vector.svg";
 import EditFriendSheet from "@/components/profile/followers/FriendProfileOptions";
 
 import { FollowButton } from "@/components/profile/followers/FollowButton";
+import { SortIcon } from "@/components/icons/Icons";
 
 const { width } = Dimensions.get("window");
 
@@ -71,7 +72,7 @@ const ProfileScreen = () => {
                 <FollowButton text={"Following"} /> 
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
-                        My Reviews
+                         Ben's Food Journal
                     </ThemedText>
                     {/* <ThemedText style={styles.searchContainer}> */}
                         <SearchBox
@@ -83,7 +84,7 @@ const ProfileScreen = () => {
                             value={searchText}
                             onChangeText={(text) => setSearchText(text)}
                         />
-                        <Vector style={styles.vector} />
+                        <SortIcon style={styles.vector} />
                     {/* </ThemedText> */}
                     <ReviewPreview plateName="Ceasar Salad" restaurantName="Luigi's" tags={["Vegan", "Green", "Healthy", "Low Cal"]} rating={4.5} content={"It was pretty good."}>
                     </ReviewPreview>

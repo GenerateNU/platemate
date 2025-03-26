@@ -5,6 +5,7 @@ import { ThemedText } from "../ThemedText";
 import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
 import { router } from "expo-router";
+import { ReviewComponentStarIcon } from "../icons/Icons";
 
 type Props = {
     plateName: string;
@@ -36,13 +37,21 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
                 onPress={() => router.push(`/friend`)}
             />
             <View style={{ gap: 10 }}>
-                <View>
-                    <ThemedText type="subtitle" style={{ fontFamily: "Outfit" }}>
-                        {plateName}
-                    </ThemedText>
-                    <ThemedText type="default" style={{ fontFamily: "Outfit" }}>
-                        {restaurantName}
-                    </ThemedText>
+                <View style={styles.plateInfoContainer}>
+                    <View style={styles.nameContainer}>
+                        <ThemedText type="subtitle" style={[styles.nameText, { fontWeight: 700 }]}>
+                            {plateName}
+                        </ThemedText>
+                        <ThemedText type="default" style={[styles.nameText, { fontWeight: 400 }]}>
+                            {restaurantName}
+                        </ThemedText>
+                    </View>
+                    <View style={styles.numericalRatingContainer}>
+                        <ThemedText style={[styles.nameText, { fontWeight: 400 }]}>
+                            {rating}
+                        </ThemedText>
+                        <ReviewComponentStarIcon width={35} height={35} style={ {marginBottom: -5} }/>
+                    </View>
                 </View>
                 <ScrollView
                     horizontal
@@ -54,7 +63,7 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
                         </Text>
                     ))}
                 </ScrollView>
-                <ThemedText type="default" style={{ fontFamily: "Outfit" }} numberOfLines={3} ellipsizeMode="tail">
+                <ThemedText type="default" style={styles.contentContainer} numberOfLines={3} ellipsizeMode="tail">
                     {content}
                 </ThemedText>
             </View>
@@ -92,6 +101,46 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         borderRadius: 20,
         fontSize: 12,
-        fontFamily: "Outfit",
+        fontFamily: "Poppins",
+        fontWeight: 500,
     },
+    plateInfoContainer: {
+        display: "flex",
+        flexDirection: "row",
+        width: 267,
+        paddingVertical: 3,
+        paddingRight: 10,
+        paddingLeft: 4,
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    nameContainer: {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        gap: 2,
+    },
+    nameText: {
+        color: "#000",
+        fontFamily: "Poppins",
+        fontSize: 16,
+        fontStyle: "normal",
+    },
+    numericalRatingContainer: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 2,
+        alignSelf: "stretch",
+        marginLeft: 10,
+    },
+    contentContainer: {
+        overflow: "hidden",
+        color: "#000",
+        textOverflow: "ellipsis",
+        fontFamily: "Neue Haas Unica Pro",
+        fontSize: 14,
+        fontWeight: 400,
+    }
 });

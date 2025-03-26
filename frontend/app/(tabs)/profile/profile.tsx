@@ -66,8 +66,12 @@ const ProfileScreen = () => {
                 <EditProfileButton text={"Edit profile"} onPress={() => router.navigate("/profile/settings")} />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
-                        My Reviews
+                        {/* Currently we are only saving the whole name */}
+                        {user.name}'s Food Journal
                     </ThemedText>
+                    {/* TODO: Fix search box and sort icon ilignment  */}
+                    {/* TODO: Add rating and star icon to review component  */}
+                    {/* TODO: Redo view your friends page */}
                     <ThemedText style={styles.searchContainer}>
                         <SearchBox
                             style={styles.searchBoxContainer}
