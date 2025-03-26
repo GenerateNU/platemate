@@ -143,7 +143,7 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 	options := options.Find()
 	options.SetSkip(int64(menuItemsQuery.Skip)) // Skip the first `Skip` items
 	if menuItemsQuery.Limit != nil {
-		opts.SetLimit(int64(*menuItemsQuery.Limit)) // Limit the number of results to `Limit`
+		options.SetLimit(int64(*menuItemsQuery.Limit)) // Limit the number of results to `Limit`
 	}
 
 	// Sorting
@@ -155,11 +155,11 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 		// This respects the sortBy and sortOrder passed via query parameters,
 		// so we rely on menuItemsQuery.SortBy being a valid, known field
 		// e.g. sort by "avgRating.overall" or "name"
-		opts.SetSort(bson.D{{Key: menuItemsQuery.SortBy, Value: sortOrder}})
+		options.SetSort(bson.D{{Key: menuItemsQuery.SortBy, Value: sortOrder}})
 	}
 
 	// Query the database
-	cursor, err := s.menuItems.Find(context.Background(), filter, opts)
+	cursor, err := s.menuItems.Find(context.Background(), filter, options)
 	if err != nil {
 		return nil, err
 	}
