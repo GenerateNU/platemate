@@ -39,7 +39,7 @@ export function MyReview() {
     const toggleTagSelected = (
         tags: typeof tasteTags,
         setTags: React.Dispatch<React.SetStateAction<typeof tasteTags>>,
-        id: string
+        id: string,
     ) => {
         setTags(
             tags.map((tag) => {
@@ -47,7 +47,7 @@ export function MyReview() {
                     return { ...tag, selected: !tag.selected };
                 }
                 return tag;
-            })
+            }),
         );
     };
 
@@ -161,7 +161,7 @@ export function MyReview() {
             <View style={styles.imageContainer}>
                 <Image
                     source={{
-                        uri: "https://s3-alpha-sig.figma.com/img/296c/9b5f/e826d9e1747de9010166f3934746adf1?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=tWwsc0gbL-fRy7HRvoDFlUj9SLvS8EN0adQdGd2lZhLNVnyDRH49VezfgfiKO37YJYa80RhBVB14KBqCI4Sz7XaYDoe-6cz3wbzLIoB7Cd-lBaxxGQrA2QZv7zKLGeWU19Pu7qiVamUQWz4odayUWme3~68I3-uD8xFvvrTEZzKwbAnKneaeduoX7tqCalDPs5v9S0or7bYw~85sfTmknQ8vDkkhEVLO0b2cbxDXMbp~9Iek2v72ZIHRLHLNn2qxxnr4VEqrdAAqohd1f0pIZN6Vvz3yUAU8UXzLFcJk2MWJu5897Os7HkjymHNN0Grcrj09rhd~UC0RkLbdAOEXxw__",
+                        uri: "https://s3-alpha-sig.figma.com/img/296c/9b5f/e826d9e1747de9010166f3934746adf1?Expires=1743984000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Gr9ywhylTdZqfzVKJYh1XvcRQk9wD284~bcNy-jZ15dxG~abTxWe9CrFEfy5CvDSwyFzlPcuSGBY7PB5xzJbA67Ig36cXUffXxCUsn6oJiJ~JJihfCY55QE3eS22DaPB2ZJ1cMI7vTQ5duqrA0gEf3fwEQxzGY9heTjrUEBZVg81XezecvSY6II2GDHix~W80NbpDKn9ecJlBcld08Z38-a5aB7XN~YtUKnKMsH2r5CLmT4mej6avtZsgaTnR3zb2V1I1XlRv57siEvNj03TWjnvwrjXMdgsrO4tHXn-UxQmMp~qHUBCebvxMBGTBFR-hFnmHwaIu8W2tp0CnLkMaA__",
                     }}
                     style={styles.dishImage}
                 />

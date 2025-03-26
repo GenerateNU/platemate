@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, StyleSheet, ViewStyle } from "react-native";
-import { ThemedTouchable } from "./ThemedTouchable";
+import { ThemedTouchable } from "./themed/ThemedTouchable";
 
 interface EmojiTagProps {
     emoji: string;
