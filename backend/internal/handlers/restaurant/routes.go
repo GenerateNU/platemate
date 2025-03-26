@@ -3,13 +3,13 @@ package restaurant
 import (
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
-	"github.com/GenerateNU/platemate/internal/handlers/user_connections"
+	"github.com/GenerateNU/platemate/internal/handlers/users"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
-	userConnectionsService := user_connections.NewService(collections)
+	userConnectionsService := users.NewService(collections)
 	menuItemsService := menu_items.NewService(collections)
 	reviewService := review.NewService(collections)
 	service := newService(collections, userConnectionsService, menuItemsService, reviewService)
