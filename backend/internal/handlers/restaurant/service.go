@@ -9,7 +9,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/GenerateNU/platemate/xutils"
 )
+
 
 type Service struct {
 	restaurants            *mongo.Collection
@@ -174,7 +176,7 @@ func (s *Service) GetRestaurantFriendsFav(uid primitive.ObjectID, rid primitive.
 	ctx := context.Background()
 
 	var restaurant RestaurantDocument
-	var friends []string
+	var friends []primitive.ObjectID
 	var totalRating int
 	var numOfRatings int
 	var avgRating float64
@@ -189,8 +191,7 @@ func (s *Service) GetRestaurantFriendsFav(uid primitive.ObjectID, rid primitive.
 		return nil, err
 	}
 	for _, menuItemId := range restaurant.MenuItems {
-		// why are the inputs for this method strings when all id's are represented as ObjectID's ???
-		friendReviews, err := s.userConnectionsService.GetFriendReviewsForItem(uid.Hex(), menuItemId.Hex())
+		friendReviews, err := s.userConnectionsService.GetFriendReviewsForItem(uid, menuItemId)
 		if err != nil {
 			return nil, err
 		}
@@ -198,7 +199,7 @@ func (s *Service) GetRestaurantFriendsFav(uid primitive.ObjectID, rid primitive.
 			// storing the friends of the user that reviewed menuItems at the restaurant
 			friend := friendReview.Reviewer.ID
 			// ensure that all the friends added to the list are unique
-			if doesNotContain(friends, friend) {
+			if xutils.DoesNotContain(friends, friend) {
 				friends = append(friends, friend)
 			}
 			totalRating += friendReview.Rating.Overall
@@ -213,16 +214,6 @@ func (s *Service) GetRestaurantFriendsFav(uid primitive.ObjectID, rid primitive.
 	}
 
 	return friendsFav, nil
-}
-
-// checks if an element is not in a slice
-func doesNotContain(slice []string, item string) bool {
-	for _, element := range slice {
-		if element == item {
-			return false
-		}
-	}
-	return true
 }
 
 func (s *Service) GetSuperStars(rid primitive.ObjectID) (int, error) {

@@ -3,6 +3,7 @@ package user_connections
 import (
 	"context"
 	"errors"
+
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
 	"github.com/GenerateNU/platemate/internal/xerr"
@@ -327,24 +328,13 @@ func (s *Service) GetFollowingReviewsForItem(userId string, menuItemId string) (
 
 // GetFriendReviewsForItem gets reviews for a specific menu item from friends (users that follow each other)
 // AKA users in the current user's following and follower list
-func (s *Service) GetFriendReviewsForItem(userId string, menuItemId string) ([]review.ReviewDocument, error) {
+func (s *Service) GetFriendReviewsForItem(userObjID primitive.ObjectID, menuItemObjID primitive.ObjectID) ([]review.ReviewDocument, error) {
 
 	ctx := context.Background()
-	userObjID, err := primitive.ObjectIDFromHex(userId)
-	if err != nil {
-		badReq := xerr.BadRequest(err)
-		return nil, &badReq
-	}
-
-	menuItemObjID, err := primitive.ObjectIDFromHex(menuItemId)
-	if err != nil {
-		badReq := xerr.BadRequest(err)
-		return nil, &badReq
-	}
 
 	// Get the menu item to check its reviews
 	var menuItem menu_items.MenuItemDocument
-	err = s.menuItems.FindOne(ctx, bson.M{"_id": menuItemObjID}).Decode(&menuItem)
+	err := s.menuItems.FindOne(ctx, bson.M{"_id": menuItemObjID}).Decode(&menuItem)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return []review.ReviewDocument{}, nil
@@ -362,16 +352,7 @@ func (s *Service) GetFriendReviewsForItem(userId string, menuItemId string) ([]r
 	if len(user.Following) == 0 || len(user.Followers) == 0 { // No friends :(
 		return []review.ReviewDocument{}, nil
 	}
-	// ADDED to account for type mismatch
-	var followingIDs []string
-	for _, id := range user.Following {
-		followingIDs = append(followingIDs, id.Hex()) // Convert ObjectID to string
-	}
 
-	var followerIDs []string
-	for _, id := range user.Followers {
-		followerIDs = append(followerIDs, id.Hex()) // Convert ObjectID to string
-	}
 	// Query reviews that match both menu item reviews and friends (follower and following)
 	reviewsCursor, err := s.reviews.Find(ctx,
 		bson.M{
@@ -380,10 +361,10 @@ func (s *Service) GetFriendReviewsForItem(userId string, menuItemId string) ([]r
 					"_id": bson.M{"$in": menuItem.Reviews}, // Match reviews related to the menu item
 				},
 				{
-					"reviewer._id": bson.M{"$in": followingIDs}, // Reviewer's ID must be in the Following list
+					"reviewer._id": bson.M{"$in": user.Following}, // Reviewer's ID must be in the Following list
 				},
 				{
-					"reviewer._id": bson.M{"$in": followerIDs}, // Reviewer's ID must be in the Followers list
+					"reviewer._id": bson.M{"$in": user.Followers}, // Reviewer's ID must be in the Followers list
 				},
 			},
 		},
