@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TextInput } from "react-native";
+import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 import { sharedOnboardingStyles } from "./onboardingStyles";
+import ChevronLeft from "@/assets/icons/chevron_left.svg";
 
 interface PasswordScreenProps {
     onContinue: (password: string) => void;
+    onBack: () => void;
 }
 
 interface PasswordRequirements {
@@ -18,7 +20,7 @@ interface PasswordRequirements {
     hasNumber: boolean;
 }
 
-export function PasswordScreen({ onContinue }: PasswordScreenProps) {
+export function PasswordScreen({ onContinue, onBack }: PasswordScreenProps) {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const { colors } = useTheme();
@@ -46,6 +48,9 @@ export function PasswordScreen({ onContinue }: PasswordScreenProps) {
 
     return (
         <ThemedView style={[sharedOnboardingStyles.container]}>
+            <TouchableOpacity style={styles.backButton} onPress={onBack}>
+                <ChevronLeft width={24} height={24} />
+            </TouchableOpacity>
             <View style={sharedOnboardingStyles.content}>
                 <View style={sharedOnboardingStyles.headerContainer}>
                     <ThemedText style={sharedOnboardingStyles.header}>Account Information</ThemedText>
@@ -124,5 +129,12 @@ const styles = StyleSheet.create({
     requirementMet: {
         opacity: 0.5,
         textDecorationLine: "line-through",
+    },
+    backButton: {
+        position: "absolute",
+        top: 16,
+        left: 16,
+        zIndex: 1,
+        padding: 8,
     },
 });

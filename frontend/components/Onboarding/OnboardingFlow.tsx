@@ -82,6 +82,28 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
         setCurrentScreen("login");
     };
 
+    const handleBack = () => {
+        switch (currentScreen) {
+            case "email":
+                setCurrentScreen("name");
+                break;
+            case "password":
+                setCurrentScreen("email");
+                break;
+            case "username":
+                setCurrentScreen("password");
+                break;
+            case "dietary":
+                setCurrentScreen("username");
+                break;
+            case "cuisine":
+                setCurrentScreen("dietary");
+                break;
+            default:
+                break;
+        }
+    };
+
     const renderScreen = () => {
         switch (currentScreen) {
             case "login":
@@ -89,15 +111,21 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             case "name":
                 return <NameScreen onContinue={handleNameSubmit} onNavigateToLogin={handleNavigateToLogin} />;
             case "email":
-                return <EmailScreen onContinue={handleEmailSubmit} onNavigateToLogin={handleNavigateToLogin} />;
+                return (
+                    <EmailScreen
+                        onContinue={handleEmailSubmit}
+                        onNavigateToLogin={handleNavigateToLogin}
+                        onBack={handleBack}
+                    />
+                );
             case "password":
-                return <PasswordScreen onContinue={handlePasswordSubmit} />;
+                return <PasswordScreen onContinue={handlePasswordSubmit} onBack={handleBack} />;
             case "username":
-                return <UsernameScreen onContinue={handleUsernameSubmit} />;
+                return <UsernameScreen onContinue={handleUsernameSubmit} onBack={handleBack} />;
             case "dietary":
-                return <DietaryRestrictionsScreen onContinue={handleDietarySubmit} />;
+                return <DietaryRestrictionsScreen onContinue={handleDietarySubmit} onBack={handleBack} />;
             case "cuisine":
-                return <CuisinePreferencesScreen onContinue={handleCuisineSubmit} />;
+                return <CuisinePreferencesScreen onContinue={handleCuisineSubmit} onBack={handleBack} />;
             case "complete":
                 return <CompletionScreen onComplete={handleComplete} />;
             default:

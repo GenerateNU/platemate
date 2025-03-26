@@ -64,4 +64,11 @@ export const sharedOnboardingStyles = StyleSheet.create({
     linkText: {
         fontSize: 13,
     },
+    backButton: {
+        position: "absolute",
+        top: 16,
+        left: 16,
+        zIndex: 1,
+        padding: 8,
+    },
 });

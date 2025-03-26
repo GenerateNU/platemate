@@ -6,6 +6,8 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 import { sharedOnboardingStyles } from "./onboardingStyles";
+import ChevronLeft from "@/assets/icons/chevron_left.svg";
+
 interface Cuisine {
     id: string;
     name: string;
@@ -28,9 +30,10 @@ const CUISINES: Cuisine[] = [
 
 interface CuisinePreferencesScreenProps {
     onContinue: (preferences: string[]) => void;
+    onBack: () => void;
 }
 
-export function CuisinePreferencesScreen({ onContinue }: CuisinePreferencesScreenProps) {
+export function CuisinePreferencesScreen({ onContinue, onBack }: CuisinePreferencesScreenProps) {
     const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
     const { colors } = useTheme();
 
@@ -49,6 +52,9 @@ export function CuisinePreferencesScreen({ onContinue }: CuisinePreferencesScree
 
     return (
         <ThemedView style={[sharedOnboardingStyles.container]}>
+            <TouchableOpacity style={sharedOnboardingStyles.backButton} onPress={onBack}>
+                <ChevronLeft width={24} height={24} />
+            </TouchableOpacity>
             <View style={sharedOnboardingStyles.content}>
                 <View style={sharedOnboardingStyles.headerContainer}>
                     <ThemedText style={sharedOnboardingStyles.header}>Any Cuisine Preferences?</ThemedText>

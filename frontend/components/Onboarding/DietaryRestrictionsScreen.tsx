@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
@@ -7,7 +7,7 @@ import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 import ToggleOff from "@/assets/icons/toggle_off.svg";
 import ToggleOn from "@/assets/icons/toggle_on.svg";
-import { TouchableOpacity } from "react-native";
+import ChevronLeft from "@/assets/icons/chevron_left.svg";
 import { sharedOnboardingStyles } from "./onboardingStyles";
 
 // TODO: Try to use the account settings screen for this
@@ -30,6 +30,7 @@ const DIETARY_RESTRICTIONS: DietaryRestriction[] = [
 
 interface DietaryRestrictionsScreenProps {
     onContinue: (restrictions: string[]) => void;
+    onBack: () => void;
 }
 
 const Toggle = ({ value, onValueChange }: { value: boolean; onValueChange: (newValue: boolean) => void }) => {
@@ -40,7 +41,7 @@ const Toggle = ({ value, onValueChange }: { value: boolean; onValueChange: (newV
     );
 };
 
-export function DietaryRestrictionsScreen({ onContinue }: DietaryRestrictionsScreenProps) {
+export function DietaryRestrictionsScreen({ onContinue, onBack }: DietaryRestrictionsScreenProps) {
     const [selectedRestrictions, setSelectedRestrictions] = useState<string[]>([]);
 
     const handleToggleRestriction = (restrictionId: string) => {
@@ -58,6 +59,9 @@ export function DietaryRestrictionsScreen({ onContinue }: DietaryRestrictionsScr
 
     return (
         <ThemedView style={[sharedOnboardingStyles.container]}>
+            <TouchableOpacity style={sharedOnboardingStyles.backButton} onPress={onBack}>
+                <ChevronLeft width={24} height={24} />
+            </TouchableOpacity>
             <View style={sharedOnboardingStyles.content}>
                 <View style={sharedOnboardingStyles.headerContainer}>
                     <ThemedText style={sharedOnboardingStyles.header}>Any Dietary Restrictions?</ThemedText>

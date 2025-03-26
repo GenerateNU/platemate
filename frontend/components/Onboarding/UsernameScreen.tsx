@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TextInput } from "react-native";
+import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 import { sharedOnboardingStyles } from "./onboardingStyles";
+import ChevronLeft from "@/assets/icons/chevron_left.svg";
 
 interface UsernameScreenProps {
     onContinue: (username: string) => void;
+    onBack: () => void;
 }
 
-export function UsernameScreen({ onContinue }: UsernameScreenProps) {
+export function UsernameScreen({ onContinue, onBack }: UsernameScreenProps) {
     const [username, setUsername] = useState("");
     const { colors } = useTheme();
 
@@ -25,6 +27,9 @@ export function UsernameScreen({ onContinue }: UsernameScreenProps) {
 
     return (
         <ThemedView style={[sharedOnboardingStyles.container]}>
+            <TouchableOpacity style={sharedOnboardingStyles.backButton} onPress={onBack}>
+                <ChevronLeft width={24} height={24} />
+            </TouchableOpacity>
             <View style={sharedOnboardingStyles.content}>
                 <View style={sharedOnboardingStyles.headerContainer}>
                     <ThemedText style={sharedOnboardingStyles.header}>Account Information</ThemedText>

@@ -6,13 +6,15 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 import { sharedOnboardingStyles } from "./onboardingStyles";
+import ChevronLeft from "@/assets/icons/chevron_left.svg";
 
 interface EmailScreenProps {
     onContinue: (email: string) => void;
     onNavigateToLogin: () => void;
+    onBack: () => void;
 }
 
-export function EmailScreen({ onContinue, onNavigateToLogin }: EmailScreenProps) {
+export function EmailScreen({ onContinue, onNavigateToLogin, onBack }: EmailScreenProps) {
     const [email, setEmail] = useState("");
     const { colors } = useTheme();
 
@@ -26,6 +28,9 @@ export function EmailScreen({ onContinue, onNavigateToLogin }: EmailScreenProps)
 
     return (
         <ThemedView style={[sharedOnboardingStyles.container]}>
+            <TouchableOpacity style={sharedOnboardingStyles.backButton} onPress={onBack}>
+                <ChevronLeft width={24} height={24} />
+            </TouchableOpacity>
             <View style={sharedOnboardingStyles.content}>
                 <View style={sharedOnboardingStyles.headerContainer}>
                     <ThemedText style={sharedOnboardingStyles.header}>Account Information</ThemedText>
