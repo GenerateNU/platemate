@@ -38,11 +38,11 @@ export function NameScreen({ onContinue, onNavigateToLogin }: NameScreenProps) {
                 />
             </View>
 
-            <View style={sharedOnboardingStyles.linkContainer}>
+            <View style={styles.linkContainer}>
                 <View style={sharedOnboardingStyles.linkContent}>
-                    <ThemedText style={sharedOnboardingStyles.linkText}>Don't have an account? </ThemedText>
+                    <ThemedText style={sharedOnboardingStyles.linkText}>Already have an account? </ThemedText>
                     <TouchableOpacity onPress={onNavigateToLogin}>
-                        <ThemedText style={styles.createAccountText}>Create one</ThemedText>
+                        <ThemedText style={styles.createAccountText}>Sign in</ThemedText>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -64,5 +64,11 @@ const styles = StyleSheet.create({
         color: "#FFCF0F",
         textDecorationLine: "underline",
         fontSize: 13,
+    },
+    linkContainer: {
+        paddingBottom: 180,
+        marginTop: -180,
+        alignItems: "flex-start",
+        paddingLeft: 8,
     },
 });

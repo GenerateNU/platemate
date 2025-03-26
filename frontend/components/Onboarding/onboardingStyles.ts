@@ -11,20 +11,20 @@ export const sharedOnboardingStyles = StyleSheet.create({
     content: {
         flex: 1,
         justifyContent: "center",
-        gap: 16,
+        gap: 8,
     },
     headerContainer: {
         marginBottom: 24,
-        gap: 12,
+        gap: 4,
     },
     header: {
-        fontSize: 24,
-        lineHeight: 32,
-        fontWeight: "bold",
+        fontSize: 22,
+        lineHeight: 24,
+        fontWeight: "600",
         textAlign: "left",
     },
     subtext: {
-        fontSize: 16,
+        fontSize: 13,
         textAlign: "left",
         opacity: 0.7,
     },
@@ -44,7 +44,7 @@ export const sharedOnboardingStyles = StyleSheet.create({
         backgroundColor: "#FFCF0F",
     },
     buttonText: {
-        color: "#FFFFFF",
+        color: "#000000",
         fontSize: 16,
         fontWeight: "600",
     },

@@ -7,8 +7,6 @@ import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 import { sharedOnboardingStyles } from "./onboardingStyles";
 
-// TODO: What does username alr taken error look like here
-
 interface UsernameScreenProps {
     onContinue: (username: string) => void;
 }
@@ -43,9 +41,8 @@ export function UsernameScreen({ onContinue }: UsernameScreenProps) {
                     autoCorrect={false}
                 />
 
-                <ThemedText style={styles.requirements}>
-                    Username must be at least 3 characters long and can only contain letters, numbers, and underscores
-                </ThemedText>
+                {/* TODO: This should only come up once we have checked auth etc... */}
+                <ThemedText style={styles.inUseText}>This username is already in use</ThemedText>
             </View>
 
             <Button
@@ -66,5 +63,11 @@ const styles = StyleSheet.create({
         opacity: 0.7,
         textAlign: "left",
         marginTop: 8,
+    },
+    inUseText: {
+        paddingBottom: 180,
+        marginTop: -180,
+        alignItems: "flex-start",
+        paddingLeft: 8,
     },
 });

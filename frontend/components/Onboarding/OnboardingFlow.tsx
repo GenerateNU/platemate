@@ -89,7 +89,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             case "name":
                 return <NameScreen onContinue={handleNameSubmit} onNavigateToLogin={handleNavigateToLogin} />;
             case "email":
-                return <EmailScreen onContinue={handleEmailSubmit} />;
+                return <EmailScreen onContinue={handleEmailSubmit} onNavigateToLogin={handleNavigateToLogin} />;
             case "password":
                 return <PasswordScreen onContinue={handlePasswordSubmit} />;
             case "username":

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TextInput } from "react-native";
+import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Button } from "../Button";
 import { ThemedText } from "../ThemedText";
@@ -7,13 +7,12 @@ import { ThemedView } from "../ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 import { sharedOnboardingStyles } from "./onboardingStyles";
 
-// TODO: if email is already taken will it redirect to sign in screen?
-
 interface EmailScreenProps {
     onContinue: (email: string) => void;
+    onNavigateToLogin: () => void;
 }
 
-export function EmailScreen({ onContinue }: EmailScreenProps) {
+export function EmailScreen({ onContinue, onNavigateToLogin }: EmailScreenProps) {
     const [email, setEmail] = useState("");
     const { colors } = useTheme();
 
@@ -21,7 +20,6 @@ export function EmailScreen({ onContinue }: EmailScreenProps) {
         onContinue(email);
     };
 
-    // TODO: What does email already taken error look like here
     const isValidEmail = (email: string) => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     };
@@ -46,6 +44,16 @@ export function EmailScreen({ onContinue }: EmailScreenProps) {
                 />
             </View>
 
+            {/* TODO: This should only come up once we have checked auth etc... */}
+            <View style={styles.linkContainer}>
+                <View style={sharedOnboardingStyles.linkContent}>
+                    <ThemedText style={styles.warningText}>This email is already in use </ThemedText>
+                    <TouchableOpacity onPress={onNavigateToLogin}>
+                        <ThemedText style={styles.warningLinkText}>Sign in</ThemedText>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
             <Button
                 title="Continue"
                 onPress={handleContinue}
@@ -57,3 +65,26 @@ export function EmailScreen({ onContinue }: EmailScreenProps) {
         </ThemedView>
     );
 }
+
+const styles = StyleSheet.create({
+    warningText: {
+        color: "#D32246",
+        fontSize: 13,
+    },
+    warningLinkText: {
+        color: "#D32246",
+        fontSize: 13,
+        textDecorationLine: "underline",
+    },
+    createAccountText: {
+        color: "#FFCF0F",
+        textDecorationLine: "underline",
+        fontSize: 13,
+    },
+    linkContainer: {
+        paddingBottom: 180,
+        marginTop: -180,
+        alignItems: "flex-start",
+        paddingLeft: 8,
+    },
+});

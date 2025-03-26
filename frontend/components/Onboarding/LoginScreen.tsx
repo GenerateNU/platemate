@@ -51,7 +51,7 @@ export function LoginScreen({ onLogin, onNavigateToOnboarding }: LoginScreenProp
                 </View>
 
                 <Button
-                    title="Login"
+                    title="Log in"
                     onPress={handleLogin}
                     containerStyle={sharedOnboardingStyles.button}
                     textStyle={sharedOnboardingStyles.buttonText}
