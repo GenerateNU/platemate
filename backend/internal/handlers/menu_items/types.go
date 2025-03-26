@@ -44,6 +44,9 @@ type MenuItemsQuery struct {
 	Skip                int      `query:"skip"`
 	SortBy              string   `query:"sortBy"`    // Could also be an enum if needed
 	SortOrder           string   `query:"sortOrder"` // “asc” or “desc"
+	Name                string   `query:"name"`
+	Longitude           *float64 `query:"longitude"`
+	Latitude            *float64 `query:"latitude"`
 }
 
 type MenuItemReviewQuery struct {
