@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, View, ScrollView, Dimensions } from "react-native";
+// import { StyleSheet, View, ScrollView, Dimensions } from "react-native";
+import { StyleSheet, ScrollView, Dimensions } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { MyReview } from "@/components/MyReview";

@@ -4,7 +4,7 @@ import { ThemedView } from "@/components/themed/ThemedView";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarReview } from "@/components/StarReview";
 import { Ionicons } from "@expo/vector-icons";
-import { RestaurantTags } from "@/components/RestaurantTags";
+// import { RestaurantTags } from "@/components/RestaurantTags";
 import { Entypo } from "@expo/vector-icons";
 
 // Mock doc structure

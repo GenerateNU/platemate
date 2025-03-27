@@ -5,9 +5,9 @@ import { StarReview } from "@/components/StarReview";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
-import ReviewDetail from "@/components/review/ReviewDetail";
+// import ReviewDetail from "@/components/review/ReviewDetail";
 import { ThemedTag } from "@/components/themed/ThemedTag";
-import { RestaurantTags } from "@/components/RestaurantTags";
+// import { RestaurantTags } from "@/components/RestaurantTags";
 import { StatCard } from "@/components/Cards/StatCard";
 import { ReviewButton } from "@/components/review/ReviewButton";
 

@@ -1,5 +1,6 @@
 // components/PersistentHeader.tsx
-import { View, Text, StyleSheet } from "react-native";
+// import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 const StatusBarHeader = ({ additionalStyles }: any) => {
     return <View style={[styles.header, additionalStyles]} />;

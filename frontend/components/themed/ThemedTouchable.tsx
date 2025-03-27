@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, TouchableOpacityProps } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor"; // Adjust import path as needed
+// import { useThemeColor } from "@/hooks/useThemeColor"; // Adjust import path as needed
 
 export function ThemedTouchable({ style, children, ...rest }: TouchableOpacityProps) {
     return (

@@ -3,12 +3,12 @@ import { ScrollView } from "react-native";
 
 import { ThemedView } from "@/components/themed/ThemedView";
 import FeedTabs from "@/components/Feed/FeedTabs";
-import { RestaurantDetailItem } from "@/components/restaurant/RestaurantDetailItem";
+// import { RestaurantDetailItem } from "@/components/restaurant/RestaurantDetailItem";
 
-import { StarReview } from "@/components/StarReview";
+// import { StarReview } from "@/components/StarReview";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
-import MenuItemView from "../MenuItemView";
+// import MenuItemView from "../MenuItemView";
 
 import { useRouter } from "expo-router";
 import { Button } from "@/components/Button";

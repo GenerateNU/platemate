@@ -60,7 +60,7 @@ const EditProfileSheet = forwardRef<EditProfileSheetRef, { user: User }>(({ user
                 style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
             />
         ),
-        [],
+        []
     );
 
     useImperativeHandle(ref, () => ({
@@ -173,6 +173,8 @@ const EditProfileSheet = forwardRef<EditProfileSheetRef, { user: User }>(({ user
         </Portal>
     );
 });
+
+EditProfileSheet.displayName = "EditProfileSheet";
 
 const styles = StyleSheet.create({
     bottomSheetBackground: {
