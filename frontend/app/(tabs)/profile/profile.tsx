@@ -13,7 +13,6 @@ import { router } from "expo-router";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
-import { SortIcon } from "@/components/icons/Icons";
 
 const { width } = Dimensions.get("window");
 
@@ -66,13 +65,10 @@ const ProfileScreen = () => {
                 <EditProfileButton text={"Edit profile"} onPress={() => router.navigate("/profile/settings")} />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
-                        {/* Currently we are only saving the whole name */}
-                        {user.name}'s Food Journal
+                        {user.name.split(" ")[0]}'s Food Journal
                     </ThemedText>
-                    {/* TODO: Redo view your friends page */}
-                    {/* Decided to make a search box with a filter/sort component as its own component */}
+                    {/* Made a search box with a filter/sort component as its own component */}
                     <SearchBoxFilter
-                        style={styles.searchBoxContainer}
                         placeholder="Search my reviews"
                         recent={true}
                         onSubmit={() => console.log("submit")}
@@ -122,16 +118,6 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: width / 2.5,
         borderBottomRightRadius: width / 2.5,
         zIndex: 0,
-    },
-    searchContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        width: "100%",  
-        justifyContent: "space-between",
-    },
-    searchBoxContainer: {
-        flex: 1,             
-        marginRight: 10,
     },
 
 });

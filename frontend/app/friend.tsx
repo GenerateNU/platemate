@@ -11,11 +11,8 @@ import ProfileMetrics from "@/components/profile/ProfileMetrics";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
-import Vector from "@/assets/icons/Vector.svg";
 import EditFriendSheet from "@/components/profile/followers/FriendProfileOptions";
-
 import { FollowButton } from "@/components/profile/followers/FollowButton";
-import { SortIcon } from "@/components/icons/Icons";
 
 const { width } = Dimensions.get("window");
 
@@ -68,13 +65,11 @@ const ProfileScreen = () => {
                 <ProfileAvatar url={user.profile_picture || "https://shorturl.at/Dhcvo"} />
                 <ProfileIdentity name={"Ben Petrillo"} username={"benpetrillo26"} />
                 <ProfileMetrics numFriends={100} numReviews={100} averageRating={4.6} />
-                {/* this component can be extracted out into just a button */}
                 <FollowButton text={"Following"} /> 
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
                          Ben's Food Journal
                     </ThemedText>
-                    {/* <ThemedText style={styles.searchContainer}> */}
                         <SearchBoxFilter
                             style={styles.searchBoxContainer}
                             placeholder="Search Ben's reviews"
@@ -83,7 +78,6 @@ const ProfileScreen = () => {
                             value={searchText}
                             onChangeText={(text) => setSearchText(text)}
                         />
-                    {/* </ThemedText> */}
                     <ReviewPreview plateName="Ceasar Salad" restaurantName="Luigi's" tags={["Vegan", "Green", "Healthy", "Low Cal"]} rating={4.5} content={"It was pretty good."}>
                     </ReviewPreview>
 
@@ -96,7 +90,7 @@ const ProfileScreen = () => {
 
 const styles = StyleSheet.create({
     ellipseButton: {
-        position: "absolute", // This will allow you to position the button outside the normal flow
+        position: "absolute",
         right: 10,
         zIndex: 100, // Had to put this to make it clickable
     },
@@ -125,21 +119,15 @@ const styles = StyleSheet.create({
         zIndex: 0,
     },
     searchContainer: {
-        flexDirection: "row",  // Makes SearchBox and Vector sit next to each other
+        flexDirection: "row",  
         alignItems: "center",
-        width: "100%",         // Ensures full width
+        width: "100%",        
         paddingHorizontal: 12,
         gap: 12,
     },
     searchBoxContainer: {
-        flex: 1,               // Allows it to take most of the space
+        flex: 1,               
     },
-    vector: {
-        width: 24,             // Adjust as needed
-        height: 24,
-        marginLeft: 1000,        // Ensures proper spacing from search bar
-    },
-
 });
 
 

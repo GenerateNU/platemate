@@ -19,7 +19,7 @@ export const FollowButton: React.FC<{ text: string; }> = ({ text }) => {
 
     return (
         <TouchableOpacity
-            style={[styles.button, { backgroundColor: isPressed ? "#FFFCE4" : "#FFCF0F" }]} // Set color dynamically
+            style={[styles.button, { backgroundColor: isPressed ? "#FFFCE4" : "#FFCF0F" }]} // set color dynamically
             onPress={handlePress}
         >
             <ThemedText style={styles.buttonText}>{buttonText}</ThemedText>
