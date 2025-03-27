@@ -60,7 +60,7 @@ const EditProfileSheet = forwardRef<EditProfileSheetRef, { user: User }>(({ user
                 style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
             />
         ),
-        []
+        [],
     );
 
     useImperativeHandle(ref, () => ({
