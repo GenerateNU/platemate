@@ -10,7 +10,7 @@ import ProfileIdentity from "@/components/profile/ProfileIdentity";
 import ProfileMetrics from "@/components/profile/ProfileMetrics";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
-import { SearchBox } from "@/components/SearchBox";
+import { SearchBoxFilter } from "@/components/SearchBoxFilter";
 import Vector from "@/assets/icons/Vector.svg";
 import EditFriendSheet from "@/components/profile/followers/FriendProfileOptions";
 
@@ -75,16 +75,14 @@ const ProfileScreen = () => {
                          Ben's Food Journal
                     </ThemedText>
                     {/* <ThemedText style={styles.searchContainer}> */}
-                        <SearchBox
+                        <SearchBoxFilter
                             style={styles.searchBoxContainer}
                             placeholder="Search Ben's reviews"
                             recent={true}
-                            name="general"
                             onSubmit={() => console.log("submit")}
                             value={searchText}
                             onChangeText={(text) => setSearchText(text)}
                         />
-                        <SortIcon style={styles.vector} />
                     {/* </ThemedText> */}
                     <ReviewPreview plateName="Ceasar Salad" restaurantName="Luigi's" tags={["Vegan", "Green", "Healthy", "Low Cal"]} rating={4.5} content={"It was pretty good."}>
                     </ReviewPreview>

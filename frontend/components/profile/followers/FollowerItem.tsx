@@ -1,5 +1,6 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
+import { FollowButton } from "./FollowButton";
 
 type Follower = {
     name: string;
@@ -19,13 +20,12 @@ const FollowerItem = ({ follower }: FollowerItemProps) => {
                 style={styles.avatar}
                 defaultSource={{ uri: "/api/placeholder/50/50" }}
             />
-            <View style={styles.followerInfo}>
-                <Text style={styles.followerName}>{follower.name}</Text>
+            <View style={styles.namesContainer}>
                 <Text style={styles.followerUsername}>{follower.username}</Text>
+                <Text style={styles.followerName}>{follower.name}</Text>
             </View>
-            <TouchableOpacity style={styles.followButton}>
-                <Text style={styles.followButtonText}>Following</Text>
-            </TouchableOpacity>
+            {/* Hard coded "Friends" for now */}
+            <FollowButton text={"Friends"}/> 
         </TouchableOpacity>
     );
 };
@@ -37,26 +37,35 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         borderBottomWidth: 1,
         borderBottomColor: "#F0F0F0",
+        width: "95%",
+        gap: 8, 
     },
     avatar: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
+        width: 78.897,
+        height: 78.897,
+        borderRadius: 78.897,
     },
     followerInfo: {
         flex: 1,
         marginLeft: 12,
     },
-    followerName: {
-        fontSize: 16,
-        fontWeight: "500",
-        color: "#151619",
-        fontFamily: "Outfit",
-    },
     followerUsername: {
-        fontSize: 14,
-        color: "#727272",
-        fontFamily: "Outfit",
+        color: "#000",
+        fontFamily: "Inter",
+        fontSize: 12,
+        fontStyle: "normal",
+        fontWeight: 400,
+        lineHeight: 20,
+        letterSpacing: -0.132,
+    },
+    followerName: {
+        color: "#000",
+        fontFamily: "Inter",
+        fontSize: 15,
+        fontStyle: "normal",
+        fontWeight: 700,
+        lineHeight: 20,
+        letterSpacing: -0.165,
     },
     followButton: {
         backgroundColor: "#F0F0F0",
@@ -67,9 +76,33 @@ const styles = StyleSheet.create({
     followButtonText: {
         fontSize: 14,
         color: "#151619",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
         fontWeight: "500",
     },
+    namesContainer: {
+        display: "flex",
+        flex: 1,
+        width: 103,
+        flexDirection: "column",
+        alignItems: "flex-start",
+    },
+    friendsStatsContainer: {
+        display: "flex",
+        width: 175.295,
+        height: 37,
+        paddingVertical: 6,
+        alignItems: "center",
+        gap: 10,
+        flexShrink: 0,
+    },
+    friendsStatsText: {
+        color: "#000",
+        fontFamily: "Inter",
+        fontSize: 10,
+        fontWeight: 400,
+        lineHeight: 20,
+        letterSpacing: -0.11,
+    }
 });
 
 export default FollowerItem;

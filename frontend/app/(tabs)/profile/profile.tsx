@@ -12,7 +12,7 @@ import { EditProfileButton } from "@/components/profile/EditProfileButton";
 import { router } from "expo-router";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
-import { SearchBox } from "@/components/SearchBox";
+import { SearchBoxFilter } from "@/components/SearchBoxFilter";
 import { SortIcon } from "@/components/icons/Icons";
 
 const { width } = Dimensions.get("window");
@@ -69,21 +69,16 @@ const ProfileScreen = () => {
                         {/* Currently we are only saving the whole name */}
                         {user.name}'s Food Journal
                     </ThemedText>
-                    {/* TODO: Fix search box and sort icon ilignment  */}
-                    {/* TODO: Add rating and star icon to review component  */}
                     {/* TODO: Redo view your friends page */}
-                    <ThemedText style={styles.searchContainer}>
-                        <SearchBox
-                            style={styles.searchBoxContainer}
-                            placeholder="Search my reviews"
-                            recent={true}
-                            name="general"
-                            onSubmit={() => console.log("submit")}
-                            value={searchText}
-                            onChangeText={(text) => setSearchText(text)}
-                        />
-                        <SortIcon width={20} height={30}/>
-                    </ThemedText>
+                    {/* Decided to make a search box with a filter/sort component as its own component */}
+                    <SearchBoxFilter
+                        style={styles.searchBoxContainer}
+                        placeholder="Search my reviews"
+                        recent={true}
+                        onSubmit={() => console.log("submit")}
+                        value={searchText}
+                        onChangeText={(text) => setSearchText(text)}
+                    />
                     <ReviewPreview plateName="Ceasar Salad" restaurantName="Luigi's" tags={["Vegan", "Green", "Healthy", "Low Cal"]} rating={4.5} content={"It was pretty good."}>
                     </ReviewPreview>
 
@@ -129,19 +124,14 @@ const styles = StyleSheet.create({
         zIndex: 0,
     },
     searchContainer: {
-        flexDirection: "row",  // Makes SearchBox and Vector sit next to each other
+        flexDirection: "row",
         alignItems: "center",
-        width: "100%",         // Ensures full width
-        paddingHorizontal: 12,
-        gap: 12,
+        width: "100%",  
+        justifyContent: "space-between",
     },
     searchBoxContainer: {
-        flex: 1,               // Allows it to take most of the space
-    },
-    vector: {
-        width: 24,             // Adjust as needed
-        height: 24,
-        marginLeft: 1000,        // Ensures proper spacing from search bar
+        flex: 1,             
+        marginRight: 10,
     },
 
 });

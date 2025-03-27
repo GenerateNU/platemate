@@ -5,7 +5,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { useRecentSearch } from "@/hooks/useRecentSearch";
 import FontAwesome5 from "@expo/vector-icons/build/FontAwesome5";
 
-interface SearchBoxProps extends TextInputProps {
+export interface SearchBoxProps extends TextInputProps {
     value: string;
     recent?: boolean;
     name?: string;
@@ -40,7 +40,7 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
 
     useEffect(() => {
         fetchRecents();
-    });
+    }, [recent]);
 
     const onSubmitEditing = () => {
         if (recent)
@@ -131,3 +131,5 @@ const styles = StyleSheet.create({
         resizeMode: "contain",
     },
 });
+
+

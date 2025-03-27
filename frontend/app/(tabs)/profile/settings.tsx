@@ -113,7 +113,7 @@ export default function SettingsScreen() {
         ],
         account: [
             {
-                label: "View Followers",
+                label: "View Friends",
                 onPress: () => router.push("/(tabs)/profile/followers"),
                 showChevron: true,
             },
