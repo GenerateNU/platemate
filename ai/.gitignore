@@ -1,2 +1,3 @@
+# Ignore the .env file
 .env
 __pycache__/

@@ -1,13 +1,14 @@
 __package__ = "reccomendation"
 
-from reccomendation import g_db, get_embedding
+from bson import ObjectId
+from reccomendation import g_db, get_embedding, vectorQuery
 import requests
 
 def create_user_taste_profiles():
   # get all users
   users = g_db.users.find()
 
-  for user in users:
+  for user in users: 
     print(user["_id"])
     top = requests.get(f"http://localhost:8080/api/v1/review/user/{user['_id']}/top")
     top = top.json()
