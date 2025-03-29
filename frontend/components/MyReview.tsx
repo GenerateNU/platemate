@@ -1,18 +1,49 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, SafeAreaView } from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, SafeAreaView, Alert } from "react-native";
 import { IconSymbol } from "../components/ui/IconSymbol";
 import { ProgressBar } from "./ProgressBar";
 import { EmojiTagsGrid } from "./EmojiTagsGrid";
 import { InteractiveStars } from "./ui/StarReview";
+import { createReview } from "@/api/review";
+import useAuthStore from "@/auth/store";
 
-export function MyReview() {
+interface MyReviewProps {
+    restaurantId?: string;
+    menuItemName?: string;
+    dishImageUrl?: string;
+    onClose: () => void;
+}
+
+function generateValidObjectId() {
+    const timestamp = Math.floor(new Date().getTime() / 1000).toString(16);
+    const machineId = Math.floor(Math.random() * 16777216)
+        .toString(16)
+        .padStart(6, "0");
+    const processId = Math.floor(Math.random() * 65536)
+        .toString(16)
+        .padStart(4, "0");
+    const counter = Math.floor(Math.random() * 16777216)
+        .toString(16)
+        .padStart(6, "0");
+
+    return timestamp + machineId + processId + counter;
+}
+
+export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: MyReviewProps) {
     const [step, setStep] = useState(1);
+    const user = useAuthStore((state) => state.userId);
 
     // Track star ratings
     const [tasteRating, setTasteRating] = useState(0);
     const [portionRating, setPortionRating] = useState(0);
     const [valueRating, setValueRating] = useState(0);
+    const [overallRating, setOverallRating] = useState(0);
+    const [tasteRatingText, setTasteRatingText] = useState("");
+    const [portionRatingText, setPortionRatingText] = useState("");
+    const [valueRatingText, setValueRatingText] = useState("");
     const [overallText, setOverallText] = useState("");
+    const [returnRating, setReturnRating] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Example tag data for taste/portion/value
     const [tasteTags, setTasteTags] = useState([
@@ -67,20 +98,225 @@ export function MyReview() {
         }
     };
 
-    const handleNext = () => {
+    // const handleNext = async () => {
+    //     if (step < 4) {
+    //         setStep((prev) => prev + 1);
+    //     } else {
+    //         // console.log("Submit review!");
+    //         try {
+    //             setIsSubmitting(true);
+
+    //             if (!user) {
+    //                 console.error("User data is missing");
+    //                 Alert.alert("Error", "User information is missing. Please log in again.");
+    //                 return;
+    //             }
+
+    //             const reviewData = {
+    //                 rating: {
+    //                     taste: tasteRating,
+    //                     portion: portionRating,
+    //                     value: valueRating,
+    //                     overall: overallRating,
+    //                     return: returnRating,
+    //                 },
+    //                 content: `Overall: ${overallText} Taste: ${tasteRatingText} Portion: ${portionRatingText} Value: ${valueRatingText} Return: ${returnRating}`,
+    //                 reviewer: {
+    //                     _id: user.id,
+    //                     pfp: user.profile_picture || "",
+    //                     username: user.username,
+    //                 },
+    //                 menuItem: menuItemName,
+    //                 restaurantId: restaurantId,
+    //             };
+
+    //             await createReview(reviewData);
+    //             Alert.alert("Success", "Your review has been submitted!");
+    //             onClose();
+    //         } catch (error) {
+    //             console.error("Error submitting review:", error);
+    //             Alert.alert("Error", "Failed to submit your review. Please try again.");
+    //         } finally {
+    //             setIsSubmitting(false);
+    //         }
+    //     }
+    // };
+
+
+    // const handleNext = async () => {
+    //     if (step < 4) {
+    //         setStep((prev) => prev + 1);
+    //     } else {
+    //         try {
+    //             setIsSubmitting(true);
+
+    //             // if (!isAuthenticated || !user) {
+    //             //     Alert.alert("Error", "You must be logged in to submit a review");
+    //             //     setIsSubmitting(false);
+    //             //     return;
+    //             // }
+
+    //             // if (!restaurantId || !menuItemName) {
+    //             //     Alert.alert("Error", "Missing restaurant or menu item information");
+    //             //     setIsSubmitting(false);
+    //             //     return;
+    //             // }
+
+    //             // Validate that restaurantId is a valid MongoDB ObjectID (24 hex characters)
+    //             const isValidObjectId = (id: string) => /^[0-9a-fA-F]{24}$/.test(id);
+
+    //             // if (!isValidObjectId(restaurantId)) {
+    //             //     console.error("Invalid restaurantId format:", restaurantId);
+    //             //     Alert.alert("Error", "Invalid restaurant ID format");
+    //             //     setIsSubmitting(false);
+    //             //     return;
+    //             // }
+
+    //             // Make sure user is a valid ObjectID
+    //             if (!user || !isValidObjectId(user)) {
+    //                 console.error("Invalid user ID format:", user);
+    //                 Alert.alert("Error", "Invalid user ID format");
+    //                 setIsSubmitting(false);
+    //                 return;
+    //             }
+
+    //             // Collect all the selected tags
+    //             const selectedTasteTags = tasteTags.filter((tag) => tag.selected).map((tag) => tag.text);
+    //             const selectedPortionTags = portionTags.filter((tag) => tag.selected).map((tag) => tag.text);
+    //             const selectedValueTags = valueTags.filter((tag) => tag.selected).map((tag) => tag.text);
+
+    //             // Combine tags for content enhancement
+    //             let tagDescription = "";
+    //             if (selectedTasteTags.length > 0) {
+    //                 tagDescription += `Taste: ${selectedTasteTags.join(", ")}. `;
+    //             }
+    //             if (selectedPortionTags.length > 0) {
+    //                 tagDescription += `Portion: ${selectedPortionTags.join(", ")}. `;
+    //             }
+    //             if (selectedValueTags.length > 0) {
+    //                 tagDescription += `Value: ${selectedValueTags.join(", ")}. `;
+    //             }
+
+    //             // Combine user text with tags
+    //             const finalContent = overallText + (tagDescription ? "\n\n" + tagDescription : "");
+
+    //             // Create review payload
+    //             const reviewData = {
+    //                 rating: {
+    //                     portion: portionRating,
+    //                     taste: tasteRating,
+    //                     value: valueRating,
+    //                     overall: overallRating,
+    //                     return: overallRating >= 3, // Simple logic: would return if rated 3+
+    //                 },
+    //                 content: finalContent,
+    //                 reviewer: {
+    //                     _id: user,
+    //                     pfp: "",
+    //                     username: "",
+    //                 },
+    //                 menuItem: menuItemName,
+    //                 restaurantId: restaurantId,
+    //             };
+
+    //             console.log("Submitting review:", JSON.stringify(reviewData));
+
+    //             await createReview(reviewData);
+    //             Alert.alert("Success", "Your review has been submitted!");
+    //             onClose(); // Close the review screen
+    //         } catch (error) {
+    //             const err = error as any;
+    //             console.error("Error submitting review:", err);
+    //             // Log more details about the error
+    //             if (err.response) {
+    //                 console.error("Response data:", err.response.data);
+    //                 console.error("Response status:", err.response.status);
+    //                 Alert.alert("Error", `Failed to submit review: ${JSON.stringify(err.response.data)}`);
+    //             } else {
+    //                 Alert.alert("Error", "Failed to submit review. Please try again.");
+    //             }
+    //         } finally {
+    //             setIsSubmitting(false);
+    //         }
+    //     }
+    // };
+
+    const handleNext = async () => {
         if (step < 4) {
             setStep((prev) => prev + 1);
         } else {
-            // Submit logic here
-            console.log("Submit review!");
+            try {
+                setIsSubmitting(true);
+    
+                // For testing: Use hardcoded valid MongoDB ObjectIDs
+                // These are examples - they follow the MongoDB ObjectID format (24 hex chars)
+                const validUserId = "64f5a95cc7330b78d33265f0";
+                const validRestaurantId = "64f5a95cc7330b78d33265f1";
+                
+                // Generate a fresh ObjectID if needed (for testing only)
+                // const testObjectId = generateValidObjectId();
+                
+                // Collect all the selected tags
+                const selectedTasteTags = tasteTags.filter((tag) => tag.selected).map((tag) => tag.text);
+                const selectedPortionTags = portionTags.filter((tag) => tag.selected).map((tag) => tag.text);
+                const selectedValueTags = valueTags.filter((tag) => tag.selected).map((tag) => tag.text);
+    
+                // Combine tags for content enhancement
+                let tagDescription = "";
+                if (selectedTasteTags.length > 0) {
+                    tagDescription += `Taste: ${selectedTasteTags.join(", ")}. `;
+                }
+                if (selectedPortionTags.length > 0) {
+                    tagDescription += `Portion: ${selectedPortionTags.join(", ")}. `;
+                }
+                if (selectedValueTags.length > 0) {
+                    tagDescription += `Value: ${selectedValueTags.join(", ")}. `;
+                }
+    
+                // Combine user text with tags
+                const finalContent = overallText + (tagDescription ? "\n\n" + tagDescription : "");
+    
+                // Create review payload with valid ObjectIds
+                const reviewData = {
+                    rating: {
+                        portion: portionRating,
+                        taste: tasteRating,
+                        value: valueRating,
+                        overall: overallRating,
+                        return: overallRating >= 3,
+                    },
+                    content: finalContent,
+                    reviewer: {
+                        _id: validUserId, // Use the valid ObjectID here
+                        pfp: "",
+                        username: "TestUser",
+                    },
+                    menuItem: menuItemName || "Test Menu Item",
+                    restaurantId: validRestaurantId, // Use the valid ObjectID here
+                };
+    
+                console.log("Submitting review:", JSON.stringify(reviewData));
+    
+                await createReview(reviewData);
+                Alert.alert("Success", "Your review has been submitted!");
+                onClose();
+            } catch (error) {
+                // ... error handling (keep as is)
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     };
 
     const handleBack = () => {
-        // Placeholder navigation back action
-        // In your app, you might do something like:
-        // navigation.goBack();
-        console.log("Go back pressed!");
+        //console.log("Go back pressed!");
+        if (step > 1) {
+            setStep((prev) => prev - 1);
+        } else {
+            if (onClose && typeof onClose === "function") {
+                onClose();
+            }
+        }
     };
     // Step content configuration
     const stepContent = [
@@ -113,6 +349,9 @@ export function MyReview() {
             return (
                 <View style={styles.stepContainer}>
                     <Text style={styles.stepTitle}>Overall rating or feedback?</Text>
+                    <View style={styles.starsContainer}>
+                        <InteractiveStars rating={overallRating} onChange={setOverallRating} />
+                    </View>
                     <TextInput
                         style={styles.textInput}
                         placeholder="Let others know what you thought..."
@@ -161,7 +400,9 @@ export function MyReview() {
             <View style={styles.imageContainer}>
                 <Image
                     source={{
-                        uri: "https://s3-alpha-sig.figma.com/img/296c/9b5f/e826d9e1747de9010166f3934746adf1?Expires=1743984000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Gr9ywhylTdZqfzVKJYh1XvcRQk9wD284~bcNy-jZ15dxG~abTxWe9CrFEfy5CvDSwyFzlPcuSGBY7PB5xzJbA67Ig36cXUffXxCUsn6oJiJ~JJihfCY55QE3eS22DaPB2ZJ1cMI7vTQ5duqrA0gEf3fwEQxzGY9heTjrUEBZVg81XezecvSY6II2GDHix~W80NbpDKn9ecJlBcld08Z38-a5aB7XN~YtUKnKMsH2r5CLmT4mej6avtZsgaTnR3zb2V1I1XlRv57siEvNj03TWjnvwrjXMdgsrO4tHXn-UxQmMp~qHUBCebvxMBGTBFR-hFnmHwaIu8W2tp0CnLkMaA__",
+                        uri:
+                            dishImageUrl ||
+                            "https://s3-alpha-sig.figma.com/img/296c/9b5f/e826d9e1747de9010166f3934746adf1?Expires=1743984000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Gr9ywhylTdZqfzVKJYh1XvcRQk9wD284~bcNy-jZ15dxG~abTxWe9CrFEfy5CvDSwyFzlPcuSGBY7PB5xzJbA67Ig36cXUffXxCUsn6oJiJ~JJihfCY55QE3eS22DaPB2ZJ1cMI7vTQ5duqrA0gEf3fwEQxzGY9heTjrUEBZVg81XezecvSY6II2GDHix~W80NbpDKn9ecJlBcld08Z38-a5aB7XN~YtUKnKMsH2r5CLmT4mej6avtZsgaTnR3zb2V1I1XlRv57siEvNj03TWjnvwrjXMdgsrO4tHXn-UxQmMp~qHUBCebvxMBGTBFR-hFnmHwaIu8W2tp0CnLkMaA__",
                     }}
                     style={styles.dishImage}
                 />
@@ -171,7 +412,7 @@ export function MyReview() {
             {renderStep()}
 
             {/* Next / Submit button */}
-            <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+            <TouchableOpacity style={styles.nextButton} onPress={handleNext} disabled={isSubmitting}>
                 <Text style={styles.nextButtonText}>{step === 4 ? "Submit" : "Next"}</Text>
             </TouchableOpacity>
         </SafeAreaView>
