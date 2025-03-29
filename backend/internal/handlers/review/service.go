@@ -199,8 +199,25 @@ func (s *Service) GetComments(reviewID primitive.ObjectID) ([]CommentDocument, e
 	return comments, err
 }
 
+// appendMenuItemReviews appends the review ID to the menu item's reviews array
+func (s *Service) appendMenuItemReviews(reviewDoc ReviewDocument) error {
+	ctx := context.Background()
+
+	menuId := reviewDoc.MenuItem
+
+	// Update the menu item document with the new review ID
+	update := bson.M{
+		"$push": bson.M{
+			"reviews": reviewDoc.ID,
+		},
+	}
+
+	// Update the menu item document with the new review ID
+	_, err := s.menuItems.UpdateOne(ctx, bson.M{"_id": menuId}, update)
+	return err
+}
+
 // updateMenuItemAverageRatings recalculates and updates the average rating for the menu item
-// and appends the review ID to the menu item's reviews array
 func (s *Service) updateMenuItemAverageRatings(reviewDoc ReviewDocument) error {
 	ctx := context.Background()
 
@@ -249,9 +266,6 @@ func (s *Service) updateMenuItemAverageRatings(reviewDoc ReviewDocument) error {
 				"overall": newOverall,
 				"return":  returnThreshold,
 			},
-		},
-		"$push": bson.M{
-			"reviews": reviewDoc.ID,
 		},
 	}
 
