@@ -24,7 +24,7 @@ var (
 		"properties": bson.M{
 			"_id": bson.M{
 				"bsonType":    "objectId",
-				"description": "must be an ObjectID string and is required",
+				"description": "must be an objectId string and is required",
 			},
 		},
 	}
@@ -115,32 +115,88 @@ var (
 
 	usersValidator = bson.M{
 		"bsonType":             "object",
-		"required":             []string{"_id", "name"},
-		"additionalProperties": true, // generally bad,
+		"required":             []string{
+			"_id",
+			"name", 
+			"email",
+			"password",
+		  "followingCount",
+			"followersCount",
+			"profile_picture",
+			"count",
+			"reviews",
+			"username",
+			"refresh_token",
+			"token_used",
+		},
+		"additionalProperties": false, // generally bad,
 		"properties": bson.M{
 			"_id": bson.M{
-				"bsonType":    "ObjectId",
-				"description": "must be an ObjectID string and is required",
+				"bsonType":    "objectId",
+				"description": "must be an objectId string and is required",
 			},
 			"name": bson.M{
-				"bson.type":   "string",
+				"bsonType":   "string",
 				"description": "must be a string and is required",
+			},
+			"email": bson.M{
+				"bsonType":   "string",
+				"description": "must be a string and is required",
+			},
+			"password": bson.M{
+				"bsonType":   "string",
+				"description": "must be a string and is required",
+			},
+			"followingCount": bson.M{
+				"bsonType":   "double",
+				"description": "must be an double and is required",
+			},
+			"followersCount": bson.M{
+				"bsonType":   "double",
+				"description": "must be an double and is required",
+			},
+			"profile_picture": bson.M{
+				"bsonType":   "string",
+				"description": "must be a string and is required",
+			},
+			"reviews": bson.M{
+				"bsonType":   "array",
+				"description": "must be an array and is required",
+				"items": bson.M{
+					"bsonType": "objectId",
+				},
+			},
+			"username": bson.M{
+				"bsonType":   "string",
+				"description": "must be a string and is required",
+			},
+			"refresh_token": bson.M{
+				"bsonType":   "string",
+				"description": "must be a string and is required",
+			},
+			"token_used": bson.M{
+				"bsonType":   "bool",
+				"description": "must be a boolean and is required",
+			},
+			"count": bson.M{
+				"bsonType":   "int",
+				"description": "must be an integer and is required",
 			},
 		},
 	}
 	menuItemsValidator = bson.M{
 		"bsonType": "object",
 		"required": []string{
-			"_id",
-			"name",
-			"avgRating",
-			"prevAvgRating",
-			"picture",
-			"reviews",
-			"description",
-			"location",
-			"tags",
-			"dietaryRestrictions",
+			"_id", 
+			"name",  
+			"avgRating", 
+			"prevAvgRating", 
+			"picture", 
+			"reviews", 
+			"description", 
+			"location", 
+			"tags", 
+			"dietaryRestrictions", 
 		},
 		"properties": bson.M{
 			"_id": bson.M{
@@ -156,23 +212,23 @@ var (
 				"bsonType": "object",
 				"properties": bson.M{
 					"portion": bson.M{
-						"bsonType":    bson.M{"$in": []string{"double", "null"}},
+						"bsonType":    bson.M{"$in": []string{"double"}},
 						"description": "Rating for portion size",
 					},
 					"taste": bson.M{
-						"bsonType":    bson.M{"$in": []string{"double", "null"}},
+						"bsonType":    bson.M{"$in": []string{"double"}},
 						"description": "Rating for taste",
 					},
 					"value": bson.M{
-						"bsonType":    bson.M{"$in": []string{"double", "null"}},
+						"bsonType":    bson.M{"$in": []string{"double"}},
 						"description": "Rating for value",
 					},
 					"overall": bson.M{
-						"bsonType":    bson.M{"$in": []string{"double", "null"}},
+						"bsonType":    bson.M{"$in": []string{"double"}},
 						"description": "Overall rating",
 					},
 					"return": bson.M{
-						"bsonType":    bson.M{"$in": []string{"bool", "null"}},
+						"bsonType":    bson.M{"$in": []string{"bool"}},
 						"description": "Would you return?",
 					},
 				},
@@ -240,7 +296,7 @@ var (
 		"properties": bson.M{
 			"_id": bson.M{
 				"bsonType":    "objectId",
-				"description": "must be an ObjectID string and is required",
+				"description": "must be an objectId string and is required",
 			},
 			"mentions": bson.M{
 				"bsonType": "array",
@@ -307,7 +363,7 @@ var (
 				"properties": bson.M{
 					"_id": bson.M{
 						"bsonType":    "objectId",
-						"description": "must be an ObjectID string and is required",
+						"description": "must be an objectId string and is required",
 					},
 					"pfp": bson.M{
 						"bsonType":    "string",

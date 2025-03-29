@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"strconv"
 	"strings"
 
 	"github.com/GenerateNU/platemate/internal/xerr"
@@ -64,9 +65,6 @@ func ValidateMenuItemRequest(menuItem MenuItemRequest) error {
 	if err := ValidateLocation(menuItem.Location); err != nil {
 		return err
 	}
-	if err := ValidateAvgRatingRequest(menuItem.AvgRating); err != nil {
-		return err
-	}
 
 	// Validate dietary restrictions
 	validRestrictions, err := ValidateDietaryRestrictions(menuItem.DietaryRestrictions)
@@ -94,21 +92,19 @@ func ValidateLocation(location []float64) error {
 
 func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
 	// Ensure all ratings are [1,5], if provided
-	ratings := []*float64{avgRating.Portion, avgRating.Taste, avgRating.Value, avgRating.Overall}
+	ratings := []float64{avgRating.Portion, avgRating.Taste, avgRating.Value, avgRating.Overall}
 
 	// Loop through each rating field
 	for _, rating := range ratings {
-		if rating != nil {
-			if err := ValidateRating(*rating); err != nil {
+			if err := ValidateRating(rating); err != nil {
 				return err
 			}
-		}
 	}
 	return nil
 }
 
 func ValidateRating(rating float64) error {
-	if rating < 1 || rating > 5 {
+	if rating <= 1 || rating >= 5 {
 		return fmt.Errorf("rating must be between 1 and 5, but got %f", rating)
 	}
 	return nil
@@ -257,6 +253,18 @@ func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 
 }
 
+func (h *Handler) GetRandomMenuItems(c *fiber.Ctx) error {
+	limitInput := c.Query("limit", "20")
+	limit, err := strconv.Atoi(limitInput)
+
+	items, err := h.service.GetRandomMenuItems(limit)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(items)
+}
+
 func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 	id := c.Params("id")
 	objID, errID := primitive.ObjectIDFromHex(id)
@@ -265,6 +273,23 @@ func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(errID))
 	}
 	menuItem, err := h.service.GetMenuItemById(objID)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item", "id", id))
+		}
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(menuItem)
+}
+
+func (h *Handler) GetMenuItemByRestaurant(c *fiber.Ctx) error {
+	id := c.Params("id")
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	menuItem, err := h.service.GetMenuItemByRestaurant(objID)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item", "id", id))

@@ -2,14 +2,26 @@
 // MongoDB Playground
 // Use Ctrl+Space inside a snippet or a string literal to trigger completions.
 
-const database = "Production";
-const collection = "restaurants";
+const database = 'Featurethon';
+const collection = 'users';
 
 // The current database to use.
 use(database);
 
 // Create a new collection.
-db.createCollection(collection);
+db.getCollection(collection).aggregate([
+	{
+		$addFields: {
+			reviews: [],
+			count: 0,
+			refresh_token: '',
+			token_used: false,
+		},
+	},
+	{
+		$out: 'users',
+	},
+]);
 
 // The prototype form to create a collection:
 /* db.createCollection( <name>,

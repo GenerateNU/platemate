@@ -30,9 +30,13 @@ type User struct {
 	Name              string             `bson:"name"`
 	Email             string             `bson:"email"`
 	Password          string             `bson:"password"`
-	FollowingCount    int64              `bson:"followingCount"`
-	FollowersCount    int64              `bson:"followersCount"`
+	FollowingCount    int              `bson:"followingCount"`
+	FollowersCount    int              `bson:"followersCount"`
 	ProfilePictureURL string             `bson:"profile_picture"`
+	RefreshToken      string             `bson:"refresh_token"`
+	TokenUsed         bool               `bson:"token_used"`
+	Reviews           []primitive.ObjectID `bson:"reviews"`
+	Count             int              `bson:"count"`
 }
 
 type LoginRequest struct {

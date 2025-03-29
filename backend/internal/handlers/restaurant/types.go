@@ -12,7 +12,7 @@ type RestaurantDocument struct {
 		Street   string `bson:"street"   json:"street"`
 		Zipcode  string `bson:"zipcode"  json:"zipcode"`
 		State    string `bson:"state"     json:"state"`
-		Location []int  `bson:"location" json:"location"`
+		Location []float64  `bson:"location,truncate" json:"location"`
 	} `bson:"address" json:"address"`
 
 	MenuItems []primitive.ObjectID `bson:"menuItems" json:"menuItems"`
@@ -22,8 +22,9 @@ type RestaurantDocument struct {
 		Return  int `bson:"return" json:"return"`
 	} `bson:"ratingAvg" json:"ratingAvg"`
 
-	Style       string   `bson:"style"        json:"style"`   // could be an array
+	Style       []string   `bson:"style"        json:"style"`   // could be an array
 	Picture     string   `bson:"picture"      json:"picture"` // could be an array
 	Description string   `bson:"description"  json:"description"`
 	Tags        []string `bson:"tags"         json:"tags"`
 }
+

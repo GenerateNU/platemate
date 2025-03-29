@@ -126,9 +126,6 @@ func (s *Service) UpdatePartialReview(id primitive.ObjectID, updated ReviewDocum
 	if len(updated.Comments) > 0 {
 		updateFields["comments"] = updated.Comments
 	}
-	if updated.MenuItem != "" {
-		updateFields["menuItem"] = updated.MenuItem
-	}
 	if !updated.Timestamp.IsZero() {
 		updateFields["timestamp"] = updated.Timestamp
 	}
@@ -233,13 +230,14 @@ func (s *Service) updateRestaurantAverageRating(restaurantID primitive.ObjectID)
 
 	// Cast to int after math for storage
 	count := float64(len(reviews))
-	avgOverall := int(math.Round(totalOverall / count))                // 1..5 scale
+	 // to 2 decimal places
+	avgOverall := int(math.Round(totalOverall / count * 100.0)) / 100.0
 	avgReturnPercent := int(math.Round((totalReturn / count) * 100.0)) // 0..100%
 
 	// Update the restaurant's document
 	update := bson.M{
 		"$set": bson.M{
-			"ratingAvg.overall": avgOverall,
+			"ratingAvg.overall": float64(avgOverall),
 			"ratingAvg.return":  avgReturnPercent,
 		},
 	}

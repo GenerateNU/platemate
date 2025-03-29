@@ -117,3 +117,28 @@ func (h *Handler) DeleteRestaurant(c *fiber.Ctx) error {
 	}
 	return c.SendStatus(fiber.StatusNoContent)
 }
+
+// AddMenuItem adds a menu item to a restaurant
+func (h *Handler) AddMenuItem(c *fiber.Ctx) error {
+	idParam := c.Params("id")
+	objID, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	menuItemIDParam := c.Query("menuItemID")
+	menuItemObjID, err := primitive.ObjectIDFromHex(menuItemIDParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	err = h.service.AddMenuItem(objID, menuItemObjID)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).
+				JSON(xerr.NotFound("Restaurant", "id", idParam))
+		}
+		return xerr.ErrorHandler(c, err)
+	}
+	return c.SendStatus(fiber.StatusOK)
+}

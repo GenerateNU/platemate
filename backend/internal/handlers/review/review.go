@@ -25,13 +25,16 @@ func (h *Handler) CreateReview(c *fiber.Ctx) error {
 	var params CreateReviewParams
 
 	if err := gojson.Unmarshal(c.Body(), &params); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.ErrorHandler(c, err))
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
 	}
-
-	// do some validations on the inputs
 
 	// Convert the string restaurantId to ObjectID
 	restaurantOID, err := primitive.ObjectIDFromHex(params.RestaurantID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	menuItemOID, err := primitive.ObjectIDFromHex(params.MenuItem)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
@@ -42,7 +45,7 @@ func (h *Handler) CreateReview(c *fiber.Ctx) error {
 		Content:      params.Content,
 		Reviewer:     params.Reviewer,
 		Timestamp:    time.Now(),
-		MenuItem:     params.MenuItem,
+		MenuItem:     menuItemOID,
 		ID:           primitive.NewObjectID(),
 		Comments:     []CommentDocument{},
 		RestaurantID: restaurantOID,

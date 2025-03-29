@@ -2,6 +2,7 @@ package users
 
 import (
 	"errors"
+
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
@@ -34,6 +35,14 @@ func (h *Handler) GetUserById(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(user)
+}
+
+func (h *Handler) GetUsers(c *fiber.Ctx) error {
+	users, err := h.service.GetUsers()
+	if err != nil {
+		return err
+	}
+	return c.JSON(users)
 }
 
 // GetFollowers returns a paginated list of followers for a user
