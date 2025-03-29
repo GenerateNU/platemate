@@ -103,7 +103,7 @@ export default function FriendsScreen() {
         if (friends.length > 0 && !hasMoreData && !isLoadingMore) {
             return (
                 <View style={styles.noMoreDataContainer}>
-                    <Text style={styles.noMoreDataText}>No more followers to load.</Text>
+                    <Text style={styles.noMoreDataText}>No more friends to load.</Text>
                 </View>
             );
         }
@@ -136,7 +136,7 @@ export default function FriendsScreen() {
                     showsVerticalScrollIndicator={false}
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>No followers found.</Text>
+                            <Text style={styles.emptyText}>No friends found.</Text>
                         </View>
                     }
                     ListHeaderComponent={

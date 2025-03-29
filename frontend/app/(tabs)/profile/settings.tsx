@@ -17,6 +17,9 @@ export default function SettingsScreen() {
     const router = useRouter();
     const { email, userId } = useAuthStore();
 
+    // const userIdStr = JSON.stringify(userId);
+    console.log(userId);
+
     const { logout } = useAuthStore();
 
     const dietaryOptions: Record<string, string> = {
@@ -148,7 +151,8 @@ export default function SettingsScreen() {
         account: [
             {
                 label: "View Friends",
-                onPress: () => router.push("/(tabs)/profile/friends"),
+                //confused...
+                onPress: () => router.push(`/profile/friends?userId=${userId}`),
                 showChevron: true,
             },
         ],

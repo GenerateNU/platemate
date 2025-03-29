@@ -20,7 +20,7 @@ const ProfileMetrics = (props: ProfileMetricProps) => {
             </View>
 
             <View style={{ alignItems: "center", backgroundColor: "transparent" }}>
-                <TouchableOpacity onPress={() => { router.push("/(tabs)/profile/followers") }}>
+                <TouchableOpacity onPress={() => { router.push("/(tabs)/profile/friends") }}>
                     <ThemedText style={styles.statNumber}>{props.numFriends}</ThemedText>
                     <ThemedText style={styles.statLabel}>friends</ThemedText>
                 </TouchableOpacity>
