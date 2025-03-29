@@ -34,39 +34,39 @@ const styles = StyleSheet.create({
     default: {
         fontSize: 16,
         lineHeight: 24,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     defaultSemiBold: {
         fontSize: 16,
         lineHeight: 24,
         fontWeight: "600",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     title: {
         fontSize: 32,
         fontWeight: "bold",
         lineHeight: 32,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     subtitle: {
         fontSize: 20,
         fontWeight: "bold",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     sectionTitle: {
         fontSize: 24,
         fontWeight: "bold",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     caption: {
         fontSize: 14,
         fontWeight: "regular",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     link: {
         lineHeight: 30,
         fontSize: 16,
         color: "#0a7ea4",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
 });

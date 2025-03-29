@@ -3,6 +3,8 @@ package review
 import (
 	"context"
 
+	"go.mongodb.org/mongo-driver/mongo/options"
+
 	"math"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -19,19 +21,34 @@ func NewService(collections map[string]*mongo.Collection) *Service {
 }
 
 // GetAllReviews fetches all review documents from MongoDB
-func (s *Service) GetAllReviews() ([]ReviewDocument, error) {
+func (s *Service) GetReviews(page int, limit int) ([]ReviewDocument, int64, error) {
 	ctx := context.Background()
-	cursor, err := s.reviews.Find(ctx, bson.M{})
+
+	skip := (page - 1) * limit
+
+	totalCount, err := s.reviews.CountDocuments(ctx, bson.M{})
 	if err != nil {
-		return nil, err
+		return nil, 0, err
+	}
+
+	findOptions := options.Find()
+	findOptions.SetLimit(int64(limit))
+	findOptions.SetSkip(int64(skip))
+
+	findOptions.SetSort(bson.M{"createdAt": -1})
+
+	cursor, err := s.reviews.Find(ctx, bson.M{}, findOptions)
+	if err != nil {
+		return nil, 0, err
 	}
 	defer cursor.Close(ctx)
 
 	var results []ReviewDocument
 	if err := cursor.All(ctx, &results); err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return results, nil
+
+	return results, totalCount, nil
 }
 
 // GetReviewByID returns a single review document by its ObjectID
@@ -42,7 +59,6 @@ func (s *Service) GetReviewByID(id primitive.ObjectID) (*ReviewDocument, error) 
 	var review ReviewDocument
 	err := s.reviews.FindOne(ctx, filter).Decode(&review)
 	if err == mongo.ErrNoDocuments {
-		// No matching review found
 		return nil, mongo.ErrNoDocuments
 	} else if err != nil {
 		// Different error occurred
@@ -125,9 +141,6 @@ func (s *Service) UpdatePartialReview(id primitive.ObjectID, updated ReviewDocum
 	}
 	if len(updated.Comments) > 0 {
 		updateFields["comments"] = updated.Comments
-	}
-	if updated.MenuItem != "" {
-		updateFields["menuItem"] = updated.MenuItem
 	}
 	if !updated.Timestamp.IsZero() {
 		updateFields["timestamp"] = updated.Timestamp
@@ -233,13 +246,14 @@ func (s *Service) updateRestaurantAverageRating(restaurantID primitive.ObjectID)
 
 	// Cast to int after math for storage
 	count := float64(len(reviews))
-	avgOverall := int(math.Round(totalOverall / count))                // 1..5 scale
+	// to 2 decimal places
+	avgOverall := int(math.Round(totalOverall/count*100.0)) / 100.0
 	avgReturnPercent := int(math.Round((totalReturn / count) * 100.0)) // 0..100%
 
 	// Update the restaurant's document
 	update := bson.M{
 		"$set": bson.M{
-			"ratingAvg.overall": avgOverall,
+			"ratingAvg.overall": float64(avgOverall),
 			"ratingAvg.return":  avgReturnPercent,
 		},
 	}
@@ -307,6 +321,67 @@ func (s *Service) SearchUserReviews(userID, query string) ([]ReviewDocument, err
 	// Return an empty slice instead of nil if nothing found
 	if len(results) == 0 {
 		return []ReviewDocument{}, nil
+	}
+
+	return results, nil
+}
+
+func (s *Service) GetTopReviews(userID string) ([]TopReviewDocument, error) {
+	ctx := context.Background()
+	cursor, err := s.reviews.Aggregate(ctx, bson.A{
+		bson.D{{Key: "$match", Value: bson.D{{Key: "reviewer.id", Value: userID}}}},
+		bson.D{
+			{Key: "$lookup",
+				Value: bson.D{
+					{Key: "from", Value: "menuItems"},
+					{Key: "localField", Value: "menuItem"},
+					{Key: "foreignField", Value: "_id"},
+					{Key: "as", Value: "items"},
+				},
+			},
+		},
+		bson.D{
+			{Key: "$addFields",
+				Value: bson.D{
+					{Key: "averageRate",
+						Value: bson.D{
+							{Key: "$divide",
+								Value: bson.A{
+									bson.D{
+										{Key: "$sum",
+											Value: bson.A{
+												"$rating.overall",
+												"$rating.portion",
+												"$rating.taste",
+												"$rating.value",
+											},
+										},
+									},
+									4,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		bson.D{{Key: "$sort", Value: bson.D{{Key: "averageRate", Value: -1}}}},
+		bson.D{{Key: "$limit", Value: 10}},
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var results []TopReviewDocument
+	if err := cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+
+	// Return an empty slice instead of nil if nothing found
+	if len(results) == 0 {
+		return []TopReviewDocument{}, nil
 	}
 
 	return results, nil

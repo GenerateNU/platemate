@@ -65,10 +65,16 @@ const ProfileScreen = () => {
                 <EditProfileButton text={"Edit profile"} onPress={() => router.navigate("/profile/settings")} />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
-                        style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
+                        style={{
+                            fontSize: 24,
+                            fontWeight: "bold",
+                            fontFamily: "Source Sans 3",
+                            marginBottom: 12,
+                            lineHeight: 28,
+                        }}>
                         {user.name.split(" ")[0]}'s Food Journal
                     </ThemedText>
-                    {/* Made a search box with a filter/sort component as its own component */}
+
                     <SearchBoxFilter
                         placeholder="Search my reviews"
                         recent={true}
@@ -76,12 +82,6 @@ const ProfileScreen = () => {
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
                     />
-                    <ReviewPreview
-                        plateName="Ceasar Salad"
-                        restaurantName="Luigi's"
-                        tags={["Vegan", "Green", "Healthy", "Low Cal"]}
-                        rating={4.5}
-                        content={"It was pretty good."}></ReviewPreview>
                 </ThemedView>
             </ScrollView>
             <EditProfileSheet user={user} ref={editProfileRef} />
