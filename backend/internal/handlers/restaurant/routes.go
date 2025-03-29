@@ -24,6 +24,8 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	rest.Put("/:id", handler.UpdateRestaurant)          // PUT /api/v1/restaurant/:id (full update)
 	rest.Patch("/:id", handler.UpdatePartialRestaurant) // PATCH /api/v1/restaurant/:id (partial update)
 	rest.Delete("/:id", handler.DeleteRestaurant)
+
+	rest.Post("/:id/menu-items", handler.AddMenuItem) // POST /api/v1/restaurant/:id/menu-items
 	rest.Get("/:rid/super-stars", handler.GetSuperStars)
 	rest.Get("/:uid/:rid", handler.GetRestaurantFriendsFav)
 }

@@ -47,7 +47,7 @@ def google_places_search():
     location_restriction = {
         "circle": {
             "center": { # coordinates of Boston, MA
-                "latitude": 42.361145,
+                "latitude": 42.661145,
                 "longitude": -71.057083
                 },
             "radius": 32000 # about 20 miles
@@ -106,14 +106,17 @@ def convert_to_mongo_db_format():
         state_and_zip = inputted_address[2].split(" ")
         restaurant_for_mongo['address'] = {}
         restaurant_for_mongo['address']['street'] = inputted_address[0]
-        restaurant_for_mongo['address']['zipcode'] = state_and_zip[2]
+        if len(state_and_zip) > 2: 
+            restaurant_for_mongo['address']['zipcode'] = state_and_zip[2]
+        else:
+            restaurant_for_mongo['address']['zipcode'] = ""
         restaurant_for_mongo['address']['state'] = state_and_zip[1] 
-        restaurant_for_mongo['address']['location'] = restaurant["location"]
+        restaurant_for_mongo['address']['location'] = [restaurant["location"]["latitude"], restaurant["location"]["longitude"]]
         restaurant_for_mongo['menuItems'] = []
         restaurant_for_mongo['ratingAvg'] = {}
         restaurant_for_mongo['ratingAvg']['overall'] = 5.0
         restaurant_for_mongo['ratingAvg']['return'] = 100
-        restaurant_for_mongo['style'] = restaurant['primaryTypeDisplayName']['text']
+        restaurant_for_mongo['style'] = [restaurant['primaryTypeDisplayName']['text']]
         restaurant_for_mongo['picture'] = restaurant['googleMapsUri']
         if 'editorialSummary' in restaurant.keys():  
             restaurant_for_mongo['description'] = restaurant['editorialSummary']['text']
@@ -173,5 +176,5 @@ def generate_mock_restaurant_data():
     return mock_restaurants
     
     
-#google_places_search()
-#convert_to_mongo_db_format()
+google_places_search()
+convert_to_mongo_db_format()

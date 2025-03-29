@@ -6,22 +6,22 @@ import (
 )
 
 type AvgRatingRequest struct {
-	Portion *float64 `json:"portion"`
-	Taste   *float64 `json:"taste"`
-	Value   *float64 `json:"value"`
-	Overall *float64 `json:"overall"`
-	Return  *bool    `json:"return"`
+	Portion float64 `json:"portion"`
+	Taste   float64 `json:"taste"`
+	Value   float64 `json:"value"`
+	Overall float64 `json:"overall"`
+	Return  float64 `json:"return"`
 }
 
 type MenuItemRequest struct {
-	Name                string           `json:"name"`
-	Picture             string           `json:"picture"`
-	AvgRating           AvgRatingRequest `json:"avgRating"`
-	Reviews             []string         `json:"reviews"`
-	Description         string           `json:"description"`
-	Location            []float64        `json:"location"`
-	Tags                []string         `json:"tags"`
-	DietaryRestrictions []string         `json:"dietaryRestrictions"`
+	Name                string             `json:"name"`
+	Picture             string             `json:"picture"`
+	Reviews             []string           `json:"reviews"`
+	Description         string             `json:"description"`
+	Location            []float64          `json:"location"`
+	Tags                []string           `json:"tags"`
+	DietaryRestrictions []string           `json:"dietaryRestrictions"`
+	RestaurantID        primitive.ObjectID `json:"restaurantID"`
 }
 
 type MenuItemResponse struct {
@@ -79,12 +79,13 @@ type MenuItemDocument struct {
 	Location            []float64            `bson:"location"`
 	Tags                []string             `bson:"tags"`
 	DietaryRestrictions []string             `bson:"dietaryRestrictions"`
+	RestaurantID        primitive.ObjectID   `bson:"restaurantid"`
 }
 
 type AvgRatingDocument struct {
-	Portion *float64 `bson:"portion"`
-	Taste   *float64 `bson:"taste"`
-	Value   *float64 `bson:"value"`
-	Overall *float64 `bson:"overall"`
-	Return  *bool    `bson:"return"` // @TODO: figure out if boolean or number
+	Portion float64 `bson:"portion"`
+	Taste   float64 `bson:"taste"`
+	Value   float64 `bson:"value"`
+	Overall float64 `bson:"overall"`
+	Return  float64 `bson:"return"` // @TODO: figure out if boolean or number
 }

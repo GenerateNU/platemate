@@ -63,6 +63,23 @@ func (s *Service) GetUserById(userId string) (UserResponse, error) {
 	}, nil
 }
 
+func (s *Service) GetUsers() ([]User, error) {
+	ctx := context.Background()
+
+	cursor, err := s.users.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var results []User
+	if err := cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
 // GetUserFollowers retrieves a paginated list of users who follow the specified user
 func (s *Service) GetUserFollowers(userId string, page, limit int) ([]UserResponse, error) {
 	ctx := context.Background()

@@ -24,7 +24,7 @@ type ReviewDocument struct {
 	Reviewer     Reviewer           `bson:"reviewer" json:"reviewer"`
 	Timestamp    time.Time          `bson:"timestamp" json:"timestamp"`
 	Comments     []CommentDocument  `bson:"comments" json:"comments"`
-	MenuItem     string             `bson:"menuItem" json:"menuItem"`
+	MenuItem     primitive.ObjectID `bson:"menuItem" json:"menuItem"`
 	RestaurantID primitive.ObjectID `bson:"restaurantId" json:"restaurantId"`
 }
 
