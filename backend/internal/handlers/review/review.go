@@ -36,13 +36,19 @@ func (h *Handler) CreateReview(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
+	// Convert the string menuItem to ObjectID
+	menuItemOID, err := primitive.ObjectIDFromHex(params.MenuItem)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
 	review = ReviewDocument{
 		Rating:       params.Rating,
 		Picture:      params.Picture,
 		Content:      params.Content,
 		Reviewer:     params.Reviewer,
 		Timestamp:    time.Now(),
-		MenuItem:     params.MenuItem,
+		MenuItem:     menuItemOID,
 		ID:           primitive.NewObjectID(),
 		Comments:     []CommentDocument{},
 		RestaurantID: restaurantOID,
