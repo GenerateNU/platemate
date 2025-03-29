@@ -5,22 +5,21 @@ import (
 
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
-	"github.com/GenerateNU/platemate/internal/handlers/user_connections"
+	"github.com/GenerateNU/platemate/internal/handlers/users"
+	"github.com/GenerateNU/platemate/xutils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"github.com/GenerateNU/platemate/xutils"
 )
-
 
 type Service struct {
 	restaurants            *mongo.Collection
-	userConnectionsService *user_connections.Service
+	userConnectionsService *users.Service
 	menuItemsService       *menu_items.Service
 	reviewService          *review.Service
 }
 
-func newService(collections map[string]*mongo.Collection, userConnectionsService *user_connections.Service, menuItemsService *menu_items.Service, reviewService *review.Service) *Service {
+func newService(collections map[string]*mongo.Collection, userConnectionsService *users.Service, menuItemsService *menu_items.Service, reviewService *review.Service) *Service {
 	return &Service{
 		restaurants:            collections["restaurants"],
 		userConnectionsService: userConnectionsService,

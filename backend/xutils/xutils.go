@@ -3,7 +3,6 @@ package xutils
 import "crypto/rand"
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-
 func GenerateOTP(length int) (string, error) {
 
 	const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
