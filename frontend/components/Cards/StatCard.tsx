@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     statCard: {
         aspectRatio: 1,
         alignItems: "center",
-        padding: 16,
+        padding: 12,
         backgroundColor: "#f5f5f5",
         borderRadius: 16,
     },
@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
         lineHeight: 28,
         fontWeight: "600",
         textAlign: "center",
-        marginBottom: 4,
         color: "#000000",
         fontFamily: "Outfit",
     },

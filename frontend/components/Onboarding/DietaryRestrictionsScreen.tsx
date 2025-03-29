@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Button } from "../Button";
-import { ThemedText } from "../ThemedText";
-import { ThemedView } from "../ThemedView";
+import { ThemedText } from "@/components/themed/ThemedText";
+import { ThemedView } from "@/components/themed/ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 import ToggleOff from "@/assets/icons/toggle_off.svg";
 import ToggleOn from "@/assets/icons/toggle_on.svg";
-import ChevronLeft from "@/assets/icons/chevron_left.svg";
+import { ChevronLeft } from "@/components/icons/Icons";
 import { sharedOnboardingStyles } from "./onboardingStyles";
 
 interface DietaryRestriction {

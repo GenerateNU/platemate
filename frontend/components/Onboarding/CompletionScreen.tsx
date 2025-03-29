@@ -1,8 +1,8 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Button } from "../Button";
-import { ThemedText } from "../ThemedText";
-import { ThemedView } from "../ThemedView";
+import { ThemedText } from "@/components/themed/ThemedText";
+import { ThemedView } from "@/components/themed/ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 import { sharedOnboardingStyles } from "./onboardingStyles";
 

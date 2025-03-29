@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
         paddingTop: 6,
     },
     restaurantContainer: {
-        marginBottom: 8,
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
@@ -214,7 +213,7 @@ const styles = StyleSheet.create({
         color: "#666",
     },
     tagsContainer: {
-        paddingVertical: 16,
+        paddingVertical: 12,
         pointerEvents: "none",
     },
     descriptionContainer: {
@@ -223,11 +222,12 @@ const styles = StyleSheet.create({
     },
     descriptionText: {
         fontSize: 16,
-        lineHeight: 24,
+        lineHeight: 16,
     },
     allergyText: {
         fontSize: 14,
         color: "#666",
+        lineHeight: 14,
     },
     allergyRow: {
         flexDirection: "row",
@@ -250,8 +250,8 @@ const styles = StyleSheet.create({
     },
     statsContainer: {
         flexDirection: "row",
-        justifyContent: "center",
-        gap: 16,
+        justifyContent: "space-between",
+        gap: 8,
         marginBottom: 32,
     },
     statsIcon: {
@@ -300,6 +300,5 @@ const styles = StyleSheet.create({
     },
     tagRow: {
         flexDirection: "row",
-        gap: 8,
     },
 });
