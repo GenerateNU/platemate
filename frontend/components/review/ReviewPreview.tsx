@@ -27,7 +27,7 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
                 borderRadius: 12,
                 paddingTop: 24,
                 // width: Dimensions.get("window").width * 0.75,
-                height: Dimensions.get("window").height * 0.4,
+                height: Dimensions.get("window").height * 0.35,
             }}>
             <UserInfoRowBase
                 name={"Ben Petrillo"}
@@ -140,5 +140,6 @@ const styles = StyleSheet.create({
         fontFamily: "Neue Haas Unica Pro",
         fontSize: 14,
         fontWeight: 400,
+        lineHeight: 16,
     },
 });
