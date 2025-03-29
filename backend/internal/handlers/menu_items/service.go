@@ -15,7 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func newService(collections map[string]*mongo.Collection) *Service {
+func NewService(collections map[string]*mongo.Collection) *Service {
 	if collections["menuItems"] == nil {
 		slog.Info("menuItems collection is nil!")
 	}
@@ -310,7 +310,7 @@ func (s *Service) GetSimilarMenuItems(itemID primitive.ObjectID) ([]MenuItemResp
 	return similarItems, nil
 }
 
-func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID, userID *primitive.ObjectID) ([]review.ReviewDocument, error) {
+func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID, userID *primitive.ObjectID, sortParam string) ([]review.ReviewDocument, error) {
 	var menuItemDoc MenuItemDocument
 	ctx := context.Background()
 	err := s.menuItems.FindOne(ctx, bson.M{"_id": idObj}).Decode(&menuItemDoc)
@@ -332,8 +332,13 @@ func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID, userID *primitive
 
 	}
 
-	// Query reviews that match menu item and user, if provided
-	reviewsCursor, err := s.reviews.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}))
+	// Query reviews that match menu item and user and sorts if provided
+
+	// edits the sorting paramater to properly query
+	if sortParam != "timestamp" {
+		sortParam = "rating." + sortParam
+	}
+	reviewsCursor, err := s.reviews.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: sortParam, Value: -1}}))
 	if err != nil {
 		slog.Error("Error finding reviews", "error", err)
 		return nil, err

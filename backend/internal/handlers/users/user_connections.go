@@ -5,6 +5,7 @@ import (
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -108,7 +109,16 @@ func (h *Handler) GetFriendReviewsForItem(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(errs)
 	}
 
-	reviews, err := h.service.GetFriendReviewsForItem(query.UserId, query.ItemId)
+	userIdObj, err := primitive.ObjectIDFromHex(query.UserId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+	itemIdObj, err := primitive.ObjectIDFromHex(query.ItemId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	reviews, err := h.service.GetFriendReviewsForItem(userIdObj, itemIdObj)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserId))
