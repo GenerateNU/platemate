@@ -1,7 +1,7 @@
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { PersonWavingIcon, PhoneIcon, ThumbsUpIcon, WebsiteIcon } from "@/components/icons/Icons";
 import { RestaurantDetailItem } from "@/components/restaurant/RestaurantDetailItem";
@@ -11,10 +11,11 @@ import { StarRating } from "@/components/ui/StarReview";
 import RestaurantReviewSummary from "@/components/restaurant/RestaurantReviewSummary";
 import HighlightCard from "@/components/restaurant/HighlightCard";
 import FeedTabs from "@/components/Feed/FeedTabs";
-import { filter } from "domutils";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 import { useRouter } from "expo-router";
+import { getRestaurant } from "@/api/restaurant";
+import { TRestaurant } from "@/types/restaurant";
 
 export default function RestaurantView() {
     const restaurantTags = ["Fast Food", "Fried Chicken", "Chicken Sandwiches", "Order Online"];
@@ -23,12 +24,33 @@ export default function RestaurantView() {
 
     const router = useRouter();
 
+    const id = "67e22ab00387c709ab3f77f4";
+    const [restaurant, setRestaurant] = React.useState<TRestaurant | null>(null);
+
+    useEffect(() => {
+        getRestaurant(id).then((res) => {
+            setRestaurant(res);
+        });
+    }, []);
+
+    const formattedAddress =
+        restaurant?.address.street +
+        ", " +
+        restaurant?.address.city +
+        ", " +
+        restaurant?.address.state +
+        " " +
+        restaurant?.address.zipcode;
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <BannerAndAvatar bannerURL={"https://shorturl.at/zZdqT"} avatarURL={"https://shorturl.at/Yn9SH"} />
+            <BannerAndAvatar
+                bannerURL={"https://shorturl.at/zZdqT"}
+                avatarURL={restaurant?.picture || "https://shorturl.at/Yn9SH"}
+            />
             <ThemedView style={styles.container}>
                 <ThemedView style={styles.headerContainer}>
-                    <ThemedText style={styles.titleText}>Popeyes</ThemedText>
+                    <ThemedText style={styles.titleText}>{restaurant?.name}</ThemedText>
                     <View style={styles.iconContainer}>
                         <PhoneIcon />
                         <WebsiteIcon />
@@ -40,15 +62,18 @@ export default function RestaurantView() {
                 </ThemedView>
 
                 <ThemedView style={styles.detailsContainer}>
-                    <RestaurantDetailItem text={"360 Huntington Ave, Boston, MA 02115"} icon={"marker"} />
-                    <RestaurantDetailItem text={"Open | Closes 6 PM"} icon={"clock"} />
+                    <RestaurantDetailItem
+                        text={formattedAddress || "360 Huntington Ave, Boston, MA 02115"}
+                        icon={"marker"}
+                    />
+                    <RestaurantDetailItem text={"Open | Closes 8 PM"} icon={"clock"} />
                 </ThemedView>
 
                 <ScrollView
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.tagsScrollViewContent}>
-                    {restaurantTags.map((tag, index) => (
+                    {restaurant?.tags.map((tag, index) => (
                         <View key={index} style={index < restaurantTags.length - 1 ? styles.tagWrapper : null}>
                             <Tag text={tag} />
                         </View>
@@ -56,7 +81,7 @@ export default function RestaurantView() {
                 </ScrollView>
 
                 <RestaurantReviewSummary
-                    rating={4}
+                    rating={restaurant?.ratingAvg.overall}
                     friendsReviewCount={12}
                     highlight={"This is a really good dish. I liked the part when the chef added the sauce..."}
                     maxRating={5}

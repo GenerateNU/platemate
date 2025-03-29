@@ -6,6 +6,8 @@ import { Entypo, Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarRating } from "@/components/ui/StarReview";
 import React, { useEffect } from "react";
+import { TReview } from "@/types/review";
+import { getReviewById } from "@/api/reviews";
 
 type ReviewDocument = {
     _id: string;
@@ -85,10 +87,14 @@ export default function Route() {
     const { id } = useLocalSearchParams<{
         id: string;
     }>();
+    const [review, setReview] = React.useState<TReview | null>(null);
 
     const navigation = useNavigation();
 
     useEffect(() => {
+        getReviewById(id).then((res) => {
+            setReview(res);
+        });
         navigation.setOptions({ headerShown: false });
     }, [navigation]);
 
@@ -118,10 +124,10 @@ export default function Route() {
                 {/* User Info */}
                 <View style={styles.userInfo}>
                     <View style={styles.userInfoLeft}>
-                        <Image source={{ uri: mockReview.user.avatarUrl }} style={styles.profilePicture} />
+                        <Image source={{ uri: review?.reviewer.pfp }} style={styles.profilePicture} />
                         <View>
-                            <ThemedText style={styles.userName}>{mockReview.user.name}</ThemedText>
-                            <ThemedText style={styles.userHandle}>@{mockReview.user.username}</ThemedText>
+                            <ThemedText style={styles.userName}>{review?.reviewer.id}</ThemedText>
+                            <ThemedText style={styles.userHandle}>@{review?.reviewer.username}</ThemedText>
                         </View>
                     </View>
                 </View>
@@ -133,7 +139,7 @@ export default function Route() {
                             <View style={styles.ratingBox}>
                                 <ThemedText style={styles.ratingTitle}>Overall</ThemedText>
                                 <StarRating
-                                    avgRating={mockReview.ratings.overall}
+                                    avgRating={review?.rating.overall}
                                     numRatings={-1}
                                     showAvgRating={false}
                                     showNumRatings={false}
@@ -142,7 +148,7 @@ export default function Route() {
                             <View style={styles.ratingBox}>
                                 <ThemedText style={styles.ratingTitle}>Value</ThemedText>
                                 <StarRating
-                                    avgRating={mockReview.ratings.value}
+                                    avgRating={review?.rating.value}
                                     numRatings={-1}
                                     showAvgRating={false}
                                     showNumRatings={false}
@@ -187,7 +193,7 @@ export default function Route() {
                 </View>
 
                 {/* Content */}
-                <ThemedText style={styles.reviewContent}>{mockReview.content}</ThemedText>
+                <ThemedText style={styles.reviewContent}>{review?.content}</ThemedText>
 
                 {/* Images */}
                 <ScrollView

@@ -28,7 +28,7 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
                 gap: 10,
                 borderRadius: 12,
                 paddingTop: 24,
-                // width: Dimensions.get("window").width * 0.75,
+                width: Dimensions.get("window").width * 0.75,
                 height: Dimensions.get("window").height * 0.35,
             }}>
             <UserInfoRowBase
