@@ -10,9 +10,15 @@ import Tag from "@/components/ui/Tag";
 import { StarRating } from "@/components/ui/StarReview";
 import RestaurantReviewSummary from "@/components/restaurant/RestaurantReviewSummary";
 import HighlightCard from "@/components/restaurant/HighlightCard";
+import FeedTabs from "@/components/Feed/FeedTabs";
+import { filter } from "domutils";
+import ReviewPreview from "@/components/review/ReviewPreview";
+import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 
 export default function RestaurantView() {
     const restaurantTags = ["Fast Food", "Fried Chicken", "Chicken Sandwiches", "Order Online"];
+    const [activeTab, setActiveTab] = React.useState(0);
+    const [filterTab, setFilterTab] = React.useState(0);
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -63,6 +69,25 @@ export default function RestaurantView() {
                     <HighlightCard title={"Super Stars"} subtitle={"200+ 5-star reviews"} icon={<ThumbsUpIcon />} />
                     <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} />
                 </View>
+
+                <FeedTabs tabs={["Reviews", "Menu"]} activeTab={filterTab} setActiveTab={setFilterTab} />
+
+                <ThemedView>
+                    { filterTab == 0 && (
+                        <>
+                            <ThemedView style={{ paddingVertical: 12 }}>
+                                <FeedTabs tabs={["Friends", "Top Reviews", "My Reviews"]} activeTab={activeTab} setActiveTab={setActiveTab} />
+                            </ThemedView>
+                            <ReviewPreview plateName={"Big Whopper"} restaurantName={"Burger King"} tags={["juicy", "artificial", "fake meat"]} rating={4} content={"This is fake meat and is not good for you. Not sure why we are even serving it."} />
+                        </>
+                    )}
+
+                    { filterTab == 1 && (
+                        <>
+                            <MenuItemPreview plateName={"Whopper"} restaurantName={"Burger King"} tags={["juicy", "fake meat", "unhealthy"]} rating={4.2} content={"a juicy burger that is not meant to be consumed"} picture={"https://media-cdn.grubhub.com/image/upload/d_search:browse-images:default.jpg/w_150,q_auto:low,fl_lossy,dpr_2.0,c_fill,f_auto,h_150/yzbd3ocqb3s8o2jkd2jn"} />
+                        </>
+                    )}
+                </ThemedView>
             </ThemedView>
         </ScrollView>
     );

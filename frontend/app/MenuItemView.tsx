@@ -10,6 +10,8 @@ import { ThemedTag } from "@/components/themed/ThemedTag";
 // import { RestaurantTags } from "@/components/RestaurantTags";
 import { StatCard } from "@/components/Cards/StatCard";
 import { ReviewButton } from "@/components/review/ReviewButton";
+import HighlightCard from "@/components/restaurant/HighlightCard";
+import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
 
 // Temporary icons - you may want to create proper icons
 const FriendsIcon = () => (
@@ -96,11 +98,13 @@ export default function MenuItemView() {
                             flavorful Thai stir-fried noodle dish with a perfect sweet-savory balance.
                         </ThemedText>
                         <View style={styles.allergyRow}>
-                            <ThemedText style={styles.allergyText}>
-                                Rice noodles, eggs, tofu/shrimp, peanuts, tamarind.
-                            </ThemedText>
-                            <Pressable>
-                                <ThemedText style={styles.viewAllText}>see allergy</ThemedText>
+                            <View style={styles.allergyItemsContainer}>
+                                <ThemedText style={styles.allergyText}>
+                                    Rice noodles, eggs, tofu/shrimp, peanuts, tamarind
+                                </ThemedText>
+                            </View>
+                            <Pressable style={styles.allergyButton}>
+                                <ThemedText style={styles.viewAllText}>see allergens</ThemedText>
                             </Pressable>
                         </View>
                     </ThemedView>
@@ -113,9 +117,13 @@ export default function MenuItemView() {
                         </Pressable>
                     </View>
                     <View style={styles.statsContainer}>
-                        <StatCard icon={<FriendsIcon />} title="Friends' Fav" subtitle="100+ Friends' refers" />
-                        <StatCard icon={<StarsIcon />} title="Super Stars" subtitle="200+ Five Stars" />
-                        <StatCard icon={<SatisfactionIcon />} title="Satisfaction" subtitle="70% revisited" />
+                        <HighlightCard
+                            title={"Friend's Fave"}
+                            subtitle={"100+ friend referrals"}
+                            icon={<PersonWavingIcon />}
+                        />
+                        <HighlightCard title={"Super Stars"} subtitle={"200+ 5-star reviews"} icon={<ThumbsUpIcon />} />
+                        <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} />
                     </View>
 
                     {/* Reviews Section */}
@@ -224,15 +232,34 @@ const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 16,
     },
+    allergyLabel: {
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#444",
+        lineHeight: 18,
+    },
     allergyText: {
         fontSize: 14,
         color: "#666",
-        lineHeight: 14,
+        lineHeight: 18,
+        flexShrink: 1,
     },
     allergyRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        marginTop: 4,
+    },
+    allergyItemsContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        flexShrink: 1,
+        flexWrap: "wrap",
+        maxWidth: "75%",
+    },
+    allergyButton: {
+        paddingVertical: 4,
+        paddingHorizontal: 8,
     },
     sectionHeader: {
         flexDirection: "row",
@@ -247,6 +274,7 @@ const styles = StyleSheet.create({
     viewAllText: {
         color: "#007AFF",
         textDecorationLine: "underline",
+        fontSize: 14,
     },
     statsContainer: {
         flexDirection: "row",
