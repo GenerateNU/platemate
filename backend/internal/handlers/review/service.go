@@ -304,15 +304,14 @@ func (s *Service) updateMenuItemAverageRatings(reviewDoc ReviewDocument) error {
 	newOverall := totalOverall / float64(reviewCount)
 	returnThreshold := float64(totalReturn)/float64(reviewCount) >= 0.5
 
+	// Create the update document using the values directly
 	update := bson.M{
 		"$set": bson.M{
-			"avgRating": bson.M{
-				"portion": newPortion,
-				"taste":   newTaste,
-				"value":   newValue,
-				"overall": newOverall,
-				"return":  returnThreshold,
-			},
+			"avgRating.portion": newPortion,
+			"avgRating.taste":   newTaste,
+			"avgRating.value":   newValue,
+			"avgRating.overall": newOverall,
+			"avgRating.return":  returnThreshold,
 		},
 	}
 
