@@ -114,13 +114,13 @@ var (
 	}
 
 	usersValidator = bson.M{
-		"bsonType":             "object",
-		"required":             []string{
+		"bsonType": "object",
+		"required": []string{
 			"_id",
-			"name", 
+			"name",
 			"email",
 			"password",
-		  "followingCount",
+			"followingCount",
 			"followersCount",
 			"profile_picture",
 			"count",
@@ -136,50 +136,50 @@ var (
 				"description": "must be an objectId string and is required",
 			},
 			"name": bson.M{
-				"bsonType":   "string",
+				"bsonType":    "string",
 				"description": "must be a string and is required",
 			},
 			"email": bson.M{
-				"bsonType":   "string",
+				"bsonType":    "string",
 				"description": "must be a string and is required",
 			},
 			"password": bson.M{
-				"bsonType":   "string",
+				"bsonType":    "string",
 				"description": "must be a string and is required",
 			},
 			"followingCount": bson.M{
-				"bsonType":   "double",
+				"bsonType":    "double",
 				"description": "must be an double and is required",
 			},
 			"followersCount": bson.M{
-				"bsonType":   "double",
+				"bsonType":    "double",
 				"description": "must be an double and is required",
 			},
 			"profile_picture": bson.M{
-				"bsonType":   "string",
+				"bsonType":    "string",
 				"description": "must be a string and is required",
 			},
 			"reviews": bson.M{
-				"bsonType":   "array",
+				"bsonType":    "array",
 				"description": "must be an array and is required",
 				"items": bson.M{
 					"bsonType": "objectId",
 				},
 			},
 			"username": bson.M{
-				"bsonType":   "string",
+				"bsonType":    "string",
 				"description": "must be a string and is required",
 			},
 			"refresh_token": bson.M{
-				"bsonType":   "string",
+				"bsonType":    "string",
 				"description": "must be a string and is required",
 			},
 			"token_used": bson.M{
-				"bsonType":   "bool",
+				"bsonType":    "bool",
 				"description": "must be a boolean and is required",
 			},
 			"count": bson.M{
-				"bsonType":   "int",
+				"bsonType":    "int",
 				"description": "must be an integer and is required",
 			},
 		},
@@ -187,16 +187,16 @@ var (
 	menuItemsValidator = bson.M{
 		"bsonType": "object",
 		"required": []string{
-			"_id", 
-			"name",  
-			"avgRating", 
-			"prevAvgRating", 
-			"picture", 
-			"reviews", 
-			"description", 
-			"location", 
-			"tags", 
-			"dietaryRestrictions", 
+			"_id",
+			"name",
+			"avgRating",
+			"prevAvgRating",
+			"picture",
+			"reviews",
+			"description",
+			"location",
+			"tags",
+			"dietaryRestrictions",
 		},
 		"properties": bson.M{
 			"_id": bson.M{

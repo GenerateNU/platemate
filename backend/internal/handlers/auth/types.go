@@ -26,17 +26,17 @@ type TokenResponse struct {
 }
 
 type User struct {
-	ID                primitive.ObjectID `bson:"_id"`
-	Name              string             `bson:"name"`
-	Email             string             `bson:"email"`
-	Password          string             `bson:"password"`
-	FollowingCount    int              `bson:"followingCount"`
-	FollowersCount    int              `bson:"followersCount"`
-	ProfilePictureURL string             `bson:"profile_picture"`
-	RefreshToken      string             `bson:"refresh_token"`
-	TokenUsed         bool               `bson:"token_used"`
+	ID                primitive.ObjectID   `bson:"_id"`
+	Name              string               `bson:"name"`
+	Email             string               `bson:"email"`
+	Password          string               `bson:"password"`
+	FollowingCount    int                  `bson:"followingCount"`
+	FollowersCount    int                  `bson:"followersCount"`
+	ProfilePictureURL string               `bson:"profile_picture"`
+	RefreshToken      string               `bson:"refresh_token"`
+	TokenUsed         bool                 `bson:"token_used"`
 	Reviews           []primitive.ObjectID `bson:"reviews"`
-	Count             int              `bson:"count"`
+	Count             int                  `bson:"count"`
 }
 
 type LoginRequest struct {

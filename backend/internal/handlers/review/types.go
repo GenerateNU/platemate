@@ -13,7 +13,7 @@ type CreateReviewParams struct {
 	Content      string   `json:"content"`
 	Reviewer     Reviewer `json:"reviewer"`
 	MenuItem     string   `json:"menuItem"`
-	RestaurantID string   `json:"restaurantId`
+	RestaurantID string   `json:"restaurantId"`
 }
 
 type ReviewDocument struct {

@@ -56,7 +56,8 @@ func (s *Service) GetRestaurantByID(id primitive.ObjectID) (*RestaurantDocument,
 	}
 	return &doc, nil
 }
-// GET all Restaurants 
+
+// GET all Restaurants
 
 func (s *Service) GetAllRestaurants() ([]RestaurantDocument, error) {
 	ctx := context.Background()

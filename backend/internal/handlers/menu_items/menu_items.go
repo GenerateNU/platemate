@@ -96,9 +96,9 @@ func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
 
 	// Loop through each rating field
 	for _, rating := range ratings {
-			if err := ValidateRating(rating); err != nil {
-				return err
-			}
+		if err := ValidateRating(rating); err != nil {
+			return err
+		}
 	}
 	return nil
 }

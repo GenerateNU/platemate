@@ -230,8 +230,8 @@ func (s *Service) updateRestaurantAverageRating(restaurantID primitive.ObjectID)
 
 	// Cast to int after math for storage
 	count := float64(len(reviews))
-	 // to 2 decimal places
-	avgOverall := int(math.Round(totalOverall / count * 100.0)) / 100.0
+	// to 2 decimal places
+	avgOverall := int(math.Round(totalOverall/count*100.0)) / 100.0
 	avgReturnPercent := int(math.Round((totalReturn / count) * 100.0)) // 0..100%
 
 	// Update the restaurant's document

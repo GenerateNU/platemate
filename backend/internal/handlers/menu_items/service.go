@@ -88,8 +88,8 @@ func ToMenuItemResponse(menuItem MenuItemDocument) MenuItemResponse {
 	return MenuItemResponse{
 		ID: menuItem.ID.Hex(),
 		MenuItemRequest: MenuItemRequest{
-			Name:    menuItem.Name,
-			Picture: menuItem.Picture,
+			Name:                menuItem.Name,
+			Picture:             menuItem.Picture,
 			Reviews:             reviews,
 			Description:         menuItem.Description,
 			Location:            menuItem.Location,
@@ -248,7 +248,7 @@ func (s *Service) GetMenuItemByRestaurant(idObj primitive.ObjectID) ([]MenuItemD
 	cursor, err := s.menuItems.Find(context.Background(), bson.M{"restaurantid": idObj})
 	if err != nil {
 		slog.Error("Error finding document", "error", err)
-		return []MenuItemDocument{}, err 
+		return []MenuItemDocument{}, err
 	}
 	defer cursor.Close(context.Background())
 
