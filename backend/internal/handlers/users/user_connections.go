@@ -2,6 +2,7 @@ package users
 
 import (
 	"errors"
+
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
@@ -179,4 +180,19 @@ func (h *Handler) UnfollowUser(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
+}
+
+// GetDietaryPreferences retrieves the dietary preferences of a user 
+func (h *Handler) GetDietaryPreferences(c *fiber.Ctx) error {
+	userId := c.Params("id")
+
+	preferences, err := h.service.GetDietaryPreferences(userId)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", userId))
+		}
+		return err
+	}
+
+	return c.JSON(preferences)
 }

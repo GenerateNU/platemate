@@ -24,4 +24,8 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	item := apiV1.Group("/item")
 	item.Get("/:id/followReviews", handler.GetFollowingReviewsForItem)
 	item.Get("/:id/friendReviews", handler.GetFriendReviewsForItem)
+
+	// User settings
+	settings := apiV1.Group("/settings")
+	settings.Get("/:id/dietaryPreferences", handler.GetDietaryPreferences)
 }

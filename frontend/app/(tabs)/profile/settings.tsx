@@ -63,7 +63,6 @@ export default function SettingsScreen() {
     //     fetchPreferences();
     // }, [fetchUserProfile]);
 
-    // i dont think this updates it if you exit settings, should i save toggle states in AsyncStorage?
     const updateSetting = (key: string, value: boolean) => {
         setSettings((prevSettings) => ({
             ...prevSettings,
@@ -116,20 +115,17 @@ export default function SettingsScreen() {
                 onPress: () => router.push("/(tabs)/profile/followers"),
                 showChevron: true,
             },
-            {
-                label: "Logout",
-                onPress: () => {
-                    logout();
-                    router.replace("/(onboarding)");
-                },
-                showChevron: false,
-            },
         ],
         additional: [
             { label: "Blocked Users", onPress: () => console.log("navigating to blocked users") },
             { label: "Terms and Conditions", onPress: () => console.log("navigating to terms of service") },
         ],
     };
+
+    const handleLogOut = () => {
+        logout();
+        router.replace("/(onboarding)");
+    }
 
     return (
         <ScrollView contentContainerStyle={[styles.container, { paddingTop: 60 }]} showsVerticalScrollIndicator={false}>
@@ -196,7 +192,7 @@ export default function SettingsScreen() {
                     ))}
                 </SettingsSection>
 
-                <Button title="Log Out" containerStyle={styles.buttonContainer} textStyle={styles.buttonText} />
+                <Button title="Log Out" containerStyle={styles.buttonContainer} textStyle={styles.buttonText} onPress={handleLogOut} />
 
                 <View style={{ height: insets.bottom + 50 }} />
             </View>
@@ -221,13 +217,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 4,
         borderRadius: 25,
-        backgroundColor: "#285852",
+        backgroundColor: "#FFCF0F",
         alignSelf: "center",
-        width: 100,
+        width: 90,
         height: 30,
     },
     buttonText: {
-        color: "#FFF",
+        color: "#000",
         textAlign: "center",
         fontFamily: "Source Sans 3",
         fontSize: 14,

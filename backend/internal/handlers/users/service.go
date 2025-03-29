@@ -412,3 +412,23 @@ func (s *Service) GetFriendReviewsForItem(userObjID primitive.ObjectID, menuItem
 	return reviews, nil
 
 }
+
+func (s *Service) GetDietaryPreferences(userId string) ([]string, error) {
+	ctx := context.Background()
+	userObjID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return nil, &badReq
+	}
+
+	// Find the user and get their followers
+	var user User
+	err = s.users.FindOne(ctx, bson.M{"_id": userObjID}).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	dietaryRestrictions := user.Preferences
+
+	return dietaryRestrictions, nil
+}

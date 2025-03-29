@@ -122,7 +122,7 @@ export default function FollowersScreen() {
             {loading && page === 1 ? (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color="#F7B418" />
-                    <Text style={styles.loadingText}>Loading followers...</Text>
+                    <Text style={styles.loadingText}>Loading friends...</Text>
                 </View>
             ) : (
                 <FlatList
