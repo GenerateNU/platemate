@@ -35,7 +35,7 @@ export default function Feed() {
 
     useEffect(() => {
         setLoading(true);
-        Promise.all([getReviews(1, 20), getMenuItems(1, 20)])
+        Promise.all([getReviews(1, 20), getMenuItems({page: 1, limit: 20})])
             .then(([reviewsData, menuItemsData]) => {
                 setReviews(reviewsData.data as any);
                 setMenuItems(menuItemsData);
@@ -104,7 +104,7 @@ export default function Feed() {
                                 <MenuItemPreview
                                     key={index}
                                     plateName={item.name}
-                                    content={item.content}
+                                    content={item.description}
                                     tags={item.tags}
                                     picture={item.picture}
                                     rating={0}

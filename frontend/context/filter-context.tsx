@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from "
 import axios from "axios";
 import { TSortOption, TFilterItem, TSortOptionKey, TFilterId, TMenuItemSearchResult } from "@/types/filter";
 import { TMenuItem } from "@/types/menu-item";
+import { getMenuItems } from "@/api/menu-items";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 export interface MenuItemQuery {
@@ -118,7 +119,7 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
         const selectedSpecificationTags = specificationTags.filter((tag) => tag.selected).map((tag) => tag.id);
         const selectedSortOption = selectedSort.find((option) => option.direction !== "none");
         const sortOrder =
-            selectedSortOption?.direction === "up" ? "asc" : selectedSortOption?.direction === "down" ? "desc" : null;
+            selectedSortOption?.direction === "up" ? "asc" : selectedSortOption?.direction === "down" ? "desc" : undefined;
 
         const sortFieldMapping: Record<TSortOptionKey, string> = {
             "Taste Rating": "avgRating.taste",
@@ -126,7 +127,7 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
             "Portion Rating": "avgRating.portion",
             "Overall Rating": "avgRating.overall",
         };
-        const sortBy = sortFieldMapping[selectedSortOption?.id || ""] || null;
+        const sortBy = sortFieldMapping[selectedSortOption?.id || ""] || undefined;
 
         const queryParams = {
             name: searchText,
@@ -139,23 +140,16 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
         console.log("Query Params:", queryParams);
 
         try {
-            console.log(`${API_BASE_URL}/api/v1/menu-items`);
-            const response = await axios.get(`${API_BASE_URL}/api/v1/menu-items`, { params: queryParams });
-            console.log("Search results:", response.data);
-
-            const transformedResults: TMenuItem[] = response.data.map((item: any) => ({
-                id: item.id,
-                name: item.name,
-                restaurantName: "Unknown", //item.restaurantid
-                tags: item.tags || [],
-                rating: item.avgRating?.overall ?? 0, // Use avgRating.overall or default to 0
-                content: item.description,
-                trending: false, // TBD!
-                picture: item.picture,
-            }));
-
-            setSearchResults(transformedResults);
-            console.log("Transformed Results:", transformedResults);
+            const response = await getMenuItems({
+                name: queryParams.name,
+                tags: queryParams.tags,
+                page: queryParams.skip,  // Correctly map skip to page
+                limit: queryParams.limit,
+                sortBy: queryParams.sortBy,
+                sortOrder: queryParams.sortOrder,
+            });
+            setSearchResults(response);
+            console.log("Transformed Results:", response);
         } catch (error) {
             console.error("Error fetching search results:", error);
         }

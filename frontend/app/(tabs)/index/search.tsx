@@ -37,7 +37,7 @@ export default function SearchScreen() {
                     <MenuItemPreview
                         key={index}
                         plateName={item.name}
-                        content={item.content}
+                        content={item.description}
                         tags={item.tags}
                         picture={item.picture}
                         rating={item.avgRating?.overall ?? 0}
