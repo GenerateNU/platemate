@@ -17,6 +17,7 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	user.Get("/:id", handler.GetUserById)
 
 	user.Get("/followers", handler.GetFollowers)
+	user.Get("/:id/following", handler.GetFollowing)
 	user.Post("/follow", handler.FollowUser)
 	user.Delete("/follow", handler.UnfollowUser)
 
@@ -24,4 +25,10 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	item := apiV1.Group("/item")
 	item.Get("/:id/followReviews", handler.GetFollowingReviewsForItem)
 	item.Get("/:id/friendReviews", handler.GetFriendReviewsForItem)
+
+	// User settings
+	settings := apiV1.Group("/settings")
+	settings.Get("/:id/dietaryPreferences", handler.GetDietaryPreferences)
+	settings.Post("/:id/dietaryPreferences", handler.PostDietaryPreferences)
+	settings.Delete("/:id/dietaryPreferences", handler.DeleteDietaryPreferences)
 }

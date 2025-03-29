@@ -1,7 +1,8 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { ThemedView } from "@/components/themed/ThemedView";
 import React from "react";
+import { useRouter } from "expo-router";
 
 type ProfileMetricProps = {
     numFriends: number;
@@ -10,6 +11,7 @@ type ProfileMetricProps = {
 };
 
 const ProfileMetrics = (props: ProfileMetricProps) => {
+    const router = useRouter();
     return (
         <ThemedView style={styles.container}>
             <View style={{ alignItems: "center", marginRight: 24, backgroundColor: "transparent" }}>
@@ -18,8 +20,13 @@ const ProfileMetrics = (props: ProfileMetricProps) => {
             </View>
 
             <View style={{ alignItems: "center", backgroundColor: "transparent" }}>
-                <ThemedText style={styles.statNumber}>{props.numFriends}</ThemedText>
-                <ThemedText style={styles.statLabel}>friends</ThemedText>
+                <TouchableOpacity
+                    onPress={() => {
+                        router.push("/(tabs)/profile/friends");
+                    }}>
+                    <ThemedText style={styles.statNumber}>{props.numFriends}</ThemedText>
+                    <ThemedText style={styles.statLabel}>friends</ThemedText>
+                </TouchableOpacity>
             </View>
 
             <View style={{ alignItems: "center", marginLeft: 24, backgroundColor: "transparent" }}>

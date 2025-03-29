@@ -4,58 +4,63 @@ import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, FlatList, TextInput, ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FollowerItem from "@/components/profile/followers/FollowerItem";
-import { TFollower } from "@/types/follower";
+import { TFriend } from "@/types/follower";
+import useAuthStore from "@/auth/store";
 
-export default function FollowersScreen() {
+export default function FriendsScreen() {
     const insets = useSafeAreaInsets();
     const [searchQuery, setSearchQuery] = useState("");
-    const [followers, setFollowers] = useState<TFollower[]>([]);
+    const [friends, setFriends] = useState<TFriend[]>([]);
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [page, setPage] = useState(1);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [hasMoreData, setHasMoreData] = useState(true);
+    const { userId } = useAuthStore();
 
     useEffect(() => {
-        fetchRandomUsers();
+        fetchFriends();
     }, []);
 
-    const fetchRandomUsers = async (pageNum = 1, isRefresh = false) => {
-        if (pageNum === 1) {
+    const fetchFriends = async (pageNum = 1, isRefresh = false) => {
+        if (friends.length == 0) {
             setLoading(true);
-        } else {
-            setIsLoadingMore(true);
         }
 
         try {
-            const response = await fetch(`https://randomuser.me/api/?results=10&page=${pageNum}`);
+            const response = await fetch(
+                `https://externally-exotic-orca.ngrok-free.app/api/v1/user/${userId}/following`,
+            );
             const data = await response.json();
 
-            if (data.results && data.results.length > 0) {
-                const formattedUsers = data.results.map((user) => ({
-                    id: user.login.uuid,
-                    name: `${user.name.first} ${user.name.last}`,
-                    username: `@${user.login.username}`,
-                    avatar: user.picture.medium,
+            if (data && data.length > 0) {
+                const formattedUsers = data.map((user) => ({
+                    id: user.id,
+                    name: `${user.name}`,
+                    username: `@${user.username}`,
+                    avatar: user.profile_picture,
                 }));
 
-                if (isRefresh) {
-                    setFollowers(formattedUsers);
-                    setPage(2);
-                } else if (pageNum === 1) {
-                    setFollowers(formattedUsers);
-                    setPage(2);
-                } else {
-                    setFollowers((prevFollowers) => [...prevFollowers, ...formattedUsers]);
-                    setPage(pageNum + 1);
-                }
+                setFriends(formattedUsers);
 
-                setHasMoreData(pageNum < 15);
+                // dont think this stuff is needed anymore but left it in case
+                // if (isRefresh) {
+                //     setFollowers(formattedUsers);
+                //     setPage(2);
+                // } else if (pageNum === 1) {
+                //     setFollowers(formattedUsers);
+                //     setPage(2);
+                // } else {
+                //     setFollowers((prevFollowers) => [...prevFollowers, ...formattedUsers]);
+                //     setPage(pageNum + 1);
+                // }
+
+                // setHasMoreData(pageNum < 15);
             } else {
-                setHasMoreData(false);
+                // setHasMoreData(false);
             }
         } catch (error) {
-            console.error("Error fetching random users:", error);
+            console.error("Error fetching users:", error);
         } finally {
             setLoading(false);
             setIsLoadingMore(false);
@@ -67,23 +72,23 @@ export default function FollowersScreen() {
         if (!refreshing) {
             setRefreshing(true);
             setHasMoreData(true);
-            fetchRandomUsers(1, true);
+            fetchFriends(1, true);
         }
     }, [refreshing]);
 
     const handleLoadMore = useCallback(() => {
         if (!isLoadingMore && hasMoreData && !loading && !refreshing) {
-            fetchRandomUsers(page);
+            fetchFriends(page);
         }
     }, [isLoadingMore, hasMoreData, loading, refreshing, page]);
 
-    const filteredFollowers = followers.filter(
+    const filteredFollowers = friends.filter(
         (follower) =>
             follower.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             follower.username.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
-    const renderFollower = ({ item }: { item: TFollower }) => <FollowerItem follower={item} />;
+    const renderFollower = ({ item }: { item: TFriend }) => <FollowerItem follower={item} />;
 
     const renderFooter = () => {
         if (!isLoadingMore) return null;
@@ -97,10 +102,10 @@ export default function FollowersScreen() {
     };
 
     const renderNoMoreData = () => {
-        if (followers.length > 0 && !hasMoreData && !isLoadingMore) {
+        if (friends.length > 0 && !hasMoreData && !isLoadingMore) {
             return (
                 <View style={styles.noMoreDataContainer}>
-                    <Text style={styles.noMoreDataText}>No more followers to load.</Text>
+                    <Text style={styles.noMoreDataText}>No more friends to load.</Text>
                 </View>
             );
         }
@@ -122,7 +127,7 @@ export default function FollowersScreen() {
             {loading && page === 1 ? (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color="#F7B418" />
-                    <Text style={styles.loadingText}>Loading followers...</Text>
+                    <Text style={styles.loadingText}>Loading friends...</Text>
                 </View>
             ) : (
                 <FlatList
@@ -133,12 +138,12 @@ export default function FollowersScreen() {
                     showsVerticalScrollIndicator={false}
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>No followers found.</Text>
+                            <Text style={styles.emptyText}>No friends found.</Text>
                         </View>
                     }
                     ListHeaderComponent={
                         <Text style={styles.followersCount}>
-                            {followers.length} {followers.length === 1 ? "Friend" : "Friends"}
+                            {friends.length} {friends.length === 1 ? "Friend" : "Friends"}
                         </Text>
                     }
                     ListFooterComponent={

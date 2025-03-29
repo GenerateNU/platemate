@@ -68,6 +68,30 @@ func (h *Handler) GetFollowers(c *fiber.Ctx) error {
 	return c.JSON(followers)
 }
 
+// GetFollowing returns a paginated list of who the user is following
+func (h *Handler) GetFollowing(c *fiber.Ctx) error {
+	var query GetFollowingQuery
+	userId := c.Params("id")
+
+	// Set defaults if not provided
+	if query.Page < 1 {
+		query.Page = 1
+	}
+	if query.Limit < 1 {
+		query.Limit = 20
+	}
+
+	followers, err := h.service.GetUserFollowing(userId, query.Page, query.Limit)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserId))
+		}
+		return err
+	}
+
+	return c.JSON(followers)
+}
+
 // GetFollowingReviewsForItem gets reviews for a menu item from users that the current user follows
 func (h *Handler) GetFollowingReviewsForItem(c *fiber.Ctx) error {
 
@@ -179,4 +203,49 @@ func (h *Handler) UnfollowUser(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
+}
+
+// GetDietaryPreferences retrieves the dietary preferences of a user
+func (h *Handler) GetDietaryPreferences(c *fiber.Ctx) error {
+	userId := c.Params("id")
+
+	preferences, err := h.service.GetDietaryPreferences(userId)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", userId))
+		}
+		return err
+	}
+
+	return c.JSON(preferences)
+}
+
+func (h *Handler) PostDietaryPreferences(c *fiber.Ctx) error {
+	userId := c.Params("id")
+	preference := c.Query("preference")
+
+	err := h.service.PostDietaryPreferences(userId, preference)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", "specified"))
+		}
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusCreated)
+}
+
+func (h *Handler) DeleteDietaryPreferences(c *fiber.Ctx) error {
+	userId := c.Params("id")
+	preference := c.Query("preference")
+
+	err := h.service.DeleteDietaryPreferences(userId, preference)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", "specified"))
+		}
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusCreated)
 }

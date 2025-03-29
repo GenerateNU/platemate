@@ -3,6 +3,7 @@ package users
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"github.com/GenerateNU/platemate/internal/handlers/review"
@@ -134,6 +135,86 @@ func (s *Service) GetUserFollowers(userId string, page, limit int) ([]UserRespon
 			FollowersCount: follower.FollowersCount,
 			FollowingCount: follower.FollowingCount,
 			Reviews:        reviews,
+			Preferences:    follower.Preferences,
+		}
+	}
+
+	return response, nil
+}
+
+func (s *Service) GetUserFollowing(userId string, page, limit int) ([]UserResponse, error) {
+	ctx := context.Background()
+	fmt.Println((userId))
+	userObjID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return nil, &badReq
+	}
+
+	// Find the user and get their followers
+	var user User
+	err = s.users.FindOne(ctx, bson.M{"_id": userObjID}).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	// Calculate total pages and adjust page number if out of bounds
+	totalFollowing := len(user.Following)
+	totalPages := (totalFollowing + limit - 1) / limit // Ceiling division
+
+	if totalPages == 0 {
+		return []UserResponse{}, nil
+	}
+
+	// Adjust page to be within bounds
+	if page > totalPages {
+		page = totalPages
+	}
+	if page < 1 {
+		page = 1
+	}
+
+	// Calculate pagination bounds
+	skip := (page - 1) * limit
+	end := skip + limit
+	if end > totalFollowing {
+		end = totalFollowing
+	}
+
+	// Get the slice of follower IDs for this page, could be an issue if the value is 0
+	pageFollowers := user.Following[skip:end]
+
+	// Fetch the actual user documents for these followers
+	cursor, err := s.users.Find(ctx, bson.M{
+		"_id": bson.M{"$in": pageFollowers},
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var following []User
+	if err = cursor.All(ctx, &following); err != nil {
+		return nil, err
+	}
+
+	// Convert to response format
+	response := make([]UserResponse, len(following))
+	for i, followingUser := range following {
+		reviews := make([]string, len(followingUser.Reviews))
+		for j, reviewID := range followingUser.Reviews {
+			reviews[j] = reviewID.Hex()
+		}
+
+		response[i] = UserResponse{
+			ID:             followingUser.ID.Hex(),
+			Name:           followingUser.Name,
+			Username:       followingUser.Username,
+			ProfilePicture: followingUser.ProfilePicture,
+			FollowersCount: followingUser.FollowersCount,
+			FollowingCount: followingUser.FollowingCount,
+			Reviews:        reviews,
+			Preferences:    followingUser.Preferences,
 		}
 	}
 
@@ -411,4 +492,66 @@ func (s *Service) GetFriendReviewsForItem(userObjID primitive.ObjectID, menuItem
 	}
 	return reviews, nil
 
+}
+
+func (s *Service) GetDietaryPreferences(userId string) ([]string, error) {
+	ctx := context.Background()
+	userObjID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return nil, &badReq
+	}
+
+	// Find the user and get their followers
+	var user User
+	err = s.users.FindOne(ctx, bson.M{"_id": userObjID}).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	dietaryRestrictions := user.Preferences
+
+	return dietaryRestrictions, nil
+}
+
+func (s *Service) PostDietaryPreferences(userId string, preference string) error {
+	ctx := context.Background()
+	userObjID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return &badReq
+	}
+
+	update := bson.M{
+		"$push": bson.M{"preferences": preference},
+	}
+
+	// Update the user's dietary preferences in the database
+	_, err = s.users.UpdateOne(ctx, bson.M{"_id": userObjID}, update)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) DeleteDietaryPreferences(userId string, preference string) error {
+	ctx := context.Background()
+	userObjID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return &badReq
+	}
+
+	delete := bson.M{
+		"$pull": bson.M{"preferences": preference},
+	}
+
+	// Update the user's dietary preferences in the database
+	_, err = s.users.UpdateOne(ctx, bson.M{"_id": userObjID}, delete)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

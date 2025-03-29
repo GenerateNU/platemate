@@ -8,7 +8,6 @@ import { Ionicons } from "@expo/vector-icons";
 import ProfileAvatar from "@/components/profile/ProfileAvatar";
 import ProfileIdentity from "@/components/profile/ProfileIdentity";
 import ProfileMetrics from "@/components/profile/ProfileMetrics";
-import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
 import EditFriendSheet from "@/components/profile/followers/FriendProfileOptions";
@@ -68,7 +67,7 @@ const ProfileScreen = () => {
                 <ProfileAvatar url={user.profile_picture || "https://shorturl.at/Dhcvo"} />
                 <ProfileIdentity name={"Ben Petrillo"} username={"benpetrillo26"} />
                 <ProfileMetrics numFriends={100} numReviews={100} averageRating={4.6} />
-                <FollowButton text={"Following"} />
+                <FollowButton text={"Friends"} />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
                         style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>

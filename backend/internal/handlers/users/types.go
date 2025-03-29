@@ -15,6 +15,7 @@ type User struct {
 	FollowersCount int                  `bson:"followersCount"`
 	ProfilePicture string               `bson:"profile_picture,omitempty"`
 	Name           string               `bson:"name,omitempty"`
+	Preferences    []string             `bson:"preferences,omitempty"`
 }
 
 type UserResponse struct {
@@ -26,6 +27,7 @@ type UserResponse struct {
 	FollowingCount int      `json:"followingCount"`
 	Reviews        []string `json:"reviews,omitempty"`
 	Name           string   `json:"name,omitempty"`
+	Preferences    []string `json:"preferences,omitempty"`
 }
 
 type FollowRequest struct {
@@ -47,7 +49,16 @@ type GetFollowersQuery struct {
 	UserId string `query:"userId" validate:"required"`
 }
 
+type GetFollowingQuery struct {
+	PaginationQuery
+	UserId string `query:"userId" validate:"required"`
+}
+
 type ReviewQuery struct {
 	UserId string `query:"userId" validate:"required"`
 	ItemId string `params:"id" validate:"required"`
+}
+
+type PostDietaryPreferencesQuery struct {
+	Preference string `json:"preference"`
 }

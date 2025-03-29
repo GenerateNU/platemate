@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ThemedText } from "@/components/themed/ThemedText";
-import { StarReview } from "@/components/StarReview";
+import { StarReview } from "@/components/ui/StarReview";
 import { Ionicons } from "@expo/vector-icons";
 // import { RestaurantTags } from "@/components/RestaurantTags";
 import { Entypo } from "@expo/vector-icons";
