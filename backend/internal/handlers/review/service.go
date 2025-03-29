@@ -2,6 +2,7 @@ package review
 
 import (
 	"context"
+
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"math"
@@ -320,6 +321,67 @@ func (s *Service) SearchUserReviews(userID, query string) ([]ReviewDocument, err
 	// Return an empty slice instead of nil if nothing found
 	if len(results) == 0 {
 		return []ReviewDocument{}, nil
+	}
+
+	return results, nil
+}
+
+func (s *Service) GetTopReviews(userID string) ([]TopReviewDocument, error) {
+	ctx := context.Background()
+	cursor, err := s.reviews.Aggregate(ctx, bson.A{
+		bson.D{{Key: "$match", Value: bson.D{{Key: "reviewer.id", Value: userID}}}},
+		bson.D{
+			{Key: "$lookup",
+				Value: bson.D{
+					{Key: "from", Value: "menuItems"},
+					{Key: "localField", Value: "menuItem"},
+					{Key: "foreignField", Value: "_id"},
+					{Key: "as", Value: "items"},
+				},
+			},
+		},
+		bson.D{
+			{Key: "$addFields",
+				Value: bson.D{
+					{Key: "averageRate",
+						Value: bson.D{
+							{Key: "$divide",
+								Value: bson.A{
+									bson.D{
+										{Key: "$sum",
+											Value: bson.A{
+												"$rating.overall",
+												"$rating.portion",
+												"$rating.taste",
+												"$rating.value",
+											},
+										},
+									},
+									4,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		bson.D{{Key: "$sort", Value: bson.D{{Key: "averageRate", Value: -1}}}},
+		bson.D{{Key: "$limit", Value: 10}},
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var results []TopReviewDocument
+	if err := cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+
+	// Return an empty slice instead of nil if nothing found
+	if len(results) == 0 {
+		return []TopReviewDocument{}, nil
 	}
 
 	return results, nil

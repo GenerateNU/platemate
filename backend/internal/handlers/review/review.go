@@ -261,3 +261,15 @@ func (h *Handler) SearchUserReviews(c *fiber.Ctx) error {
 
 	return c.JSON(results)
 }
+
+func (h *Handler) GetTopReviews(c *fiber.Ctx) error {
+	userID := c.Params("userId")
+
+	reviews, err := h.service.GetTopReviews(userID)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(reviews)
+
+}

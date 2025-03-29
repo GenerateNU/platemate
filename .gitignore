@@ -10,3 +10,6 @@
 node_modules
 
 package-lock.json
+
+ai/.env
+ai/__pycache__/

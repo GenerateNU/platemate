@@ -26,8 +26,6 @@ export default function RootLayout() {
     const router = useRouter();
 
     const [loaded] = useFonts({
-        DamionRegular: require("../assets/fonts/Damion-Regular.otf"),
-        Outfit: require("../assets/fonts/Outfit-Variable.otf"),
         SourceSans3: require("../assets/fonts/SourceSans3-Variable.ttf"),
     });
 
