@@ -1,7 +1,7 @@
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ScrollView, StyleSheet, View, Image, Pressable } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
-import { StarReview } from "@/components/StarReview";
+import { StarRating } from "@/components/ui/StarReview";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
@@ -128,7 +128,7 @@ export default function MenuItemView() {
                     <View style={styles.reviewStats}>
                         <View style={styles.ratingContainer}>
                             <ThemedText style={styles.ratingText}>4/5</ThemedText>
-                            <StarReview avgRating={4} numRatings={428} showAvgRating={false} />
+                            <StarRating avgRating={4} numRatings={428} showAvgRating={false} />
                         </View>
                     </View>
 
