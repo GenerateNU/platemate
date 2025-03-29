@@ -53,3 +53,7 @@ type ReviewQuery struct {
 	UserId string `query:"userId" validate:"required"`
 	ItemId string `params:"id" validate:"required"`
 }
+
+type PostDietaryPreferencesQuery struct {
+	Preference string `json:"preference"`
+}

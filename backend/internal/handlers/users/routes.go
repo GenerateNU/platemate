@@ -28,4 +28,6 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	// User settings
 	settings := apiV1.Group("/settings")
 	settings.Get("/:id/dietaryPreferences", handler.GetDietaryPreferences)
+	settings.Post("/:id/dietaryPreferences", handler.PostDietaryPreferences)
+	settings.Delete("/:id/dietaryPreferences", handler.DeleteDietaryPreferences)
 }

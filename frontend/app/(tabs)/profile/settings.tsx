@@ -10,79 +10,115 @@ import SettingsMenuItem from "@/components/profile/settings/SettingsMenuItem";
 import { TSettingsData } from "@/types/settingsData";
 import useAuthStore from "@/auth/store";
 import { Button } from "@/components/Button";
+import axios from 'axios';
 
 export default function SettingsScreen() {
     const insets = useSafeAreaInsets();
     const router = useRouter();
-    const { email } = useAuthStore();
+    const { email, userId } = useAuthStore();
 
     const { logout } = useAuthStore();
 
-    const dietaryOptions = [
-        "vegetarian",
-        "vegan",
-        "nutFree",
-        "shellfishAllergy",
-        "glutenFree",
-        "dairyFree",
-        "kosher",
-        "halal",
-        "pescatarian",
-        "keto",
-        "diabetic",
-        "soyFree",
-        "porkFree",
-        "beefFree",
-    ];
-
-    const [settings, setSettings] = useState<Record<string, boolean>>(
-        Object.fromEntries(dietaryOptions.map((option) => [option, false])),
-    );
-
-    // useEffect(() => {
-    //     const fetchPreferences = async () => {
-    //         try {
-    //             const userData = await fetchUserProfile(); // Fetch user profile using the context function
-
-    //             if (!userData) return; // Ensure userData exists before proceeding
-
-    //             const userRestrictions: string[] = userData.preferences || [];
-
-    //             // Convert restrictions array to object { vegetarian: true, glutenFree: true, keto: true, ... }
-    //             const updatedSettings = dietaryOptions.reduce((acc, option) => {
-    //                 acc[option] = userRestrictions.includes(option);
-    //                 return acc;
-    //             }, {} as Record<string, boolean>);
-
-    //             setSettings(updatedSettings);
-    //         } catch (error) {
-    //             console.error("Error fetching user preferences:", error);
-    //         }
-    //     };
-
-    //     fetchPreferences();
-    // }, [fetchUserProfile]);
-
-    const updateSetting = (key: string, value: boolean) => {
-        setSettings((prevSettings) => ({
-            ...prevSettings,
-            [`${key}`]: value,
-        }));
+    const dietaryOptions: Record<string, string> = {
+        "vegetarian": "Vegetarian",
+        "vegan": "Vegan",
+        "nutFree": "Nut-free",
+        "shellfishAllergy": "Shellfish Allergy",
+        "glutenFree": "Gluten-free",
+        "dairyFree": "Dairy-free",
+        "kosher": "Kosher",
+        "halal": "Halal",
+        "pescatarian": "Pescatarian",
+        "keto": "Keto",
+        "diabetic": "Diabetic",
+        "soyFree": "Soy-free",
+        "porkFree": "Pork-free",
+        "beefFree": "Beef-free",
     };
 
-    // const updateSetting = async (key: string, value: boolean) => {
-    //     try {
-    //         const updatedSettings = { ...settings, [key]: value };
-    //         setSettings(updatedSettings);
+    const [dietaryRestrictions, setDietaryRestrictions] = useState<string[]>([]);
 
-    //         // Send updated preferences to the server
-    //         await axios.put(`${process.env.API_BASE_URL}/api/v1/user/${userId}`, {
-    //             preferences: { restrictions: Object.keys(updatedSettings).filter((k) => updatedSettings[k]) },
-    //         });
-    //     } catch (error) {
-    //         console.error("Error saving setting:", error);
-    //     }
-    // };
+    const [settings, setSettings] = useState<Record<string, boolean>>(
+        Object.fromEntries(Object.values(dietaryOptions).map((option) => [option, false])),
+    );
+
+    useEffect(() => {
+        console.log("fetched restrictions!");
+        const fetchDietaryRestrictions = async () => {
+          try {
+            const response = await axios.get(
+              `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences`
+            );
+            setDietaryRestrictions(response.data); 
+          } 
+          catch (err) {
+            console.log('Failed to fetch dietary restrictions');
+            console.error(err); 
+          }
+        };
+    
+        fetchDietaryRestrictions();
+        console.log(dietaryRestrictions);
+      }, [userId]); 
+
+      useEffect(() => {
+        console.log("reloaded!");
+        console.log(dietaryRestrictions);
+        setSettings(
+            Object.fromEntries(
+            Object.keys(dietaryOptions).map((option) => [
+                option,
+                dietaryRestrictions.includes(dietaryOptions[option]), 
+            ])
+            )
+        );
+      }, [dietaryRestrictions])
+
+    const updateSetting = (key: string, value: boolean) => {
+        if (value == true) {
+            setDietaryRestrictions((prevRestrictions) => [
+                ...prevRestrictions,
+                dietaryOptions[key],
+            ]);
+            handleAddDietaryPreference(key);
+        } else {
+            setDietaryRestrictions((prevRestrictions) =>
+                prevRestrictions.filter((item) => item !== dietaryOptions[key])
+            );
+            handleRemoveDietaryPreference(key);
+        }
+    };
+
+    const handleAddDietaryPreference = async (preference:string) => {
+          try {
+            const response = await axios.post(
+              `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`
+            );
+            if (response.status === 201) {
+                console.log('Preference added successfully:', preference);
+            }
+          } 
+          catch (err) {
+            console.log('Failed to add dietary preference');
+            console.error(err); 
+          }
+    };
+
+
+    const handleRemoveDietaryPreference = async (preference:string) => {
+        try {
+          const response = await axios.delete(
+            `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`
+          );
+          if (response.status === 201) {
+              console.log('Preference deleted successfully:', preference);
+          }
+        } 
+        catch (err) {
+          console.log('Failed to delete dietary preference');
+          console.error(err); 
+        }
+  };
 
     const settingsData: TSettingsData = {
         credentials: [

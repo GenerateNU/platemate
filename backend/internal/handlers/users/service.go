@@ -432,3 +432,45 @@ func (s *Service) GetDietaryPreferences(userId string) ([]string, error) {
 
 	return dietaryRestrictions, nil
 }
+
+func (s *Service) PostDietaryPreferences(userId string, preference string) error {
+	ctx := context.Background()
+	userObjID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return &badReq
+	}
+
+	update := bson.M{
+        "$push": bson.M{"preferences": preference}, 
+    }
+
+    // Update the user's dietary preferences in the database
+    _, err = s.users.UpdateOne(ctx, bson.M{"_id": userObjID}, update)
+    if err != nil {
+        return err
+    }
+
+	return nil
+}
+
+func (s *Service) DeleteDietaryPreferences(userId string, preference string) error {
+	ctx := context.Background()
+	userObjID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return &badReq
+	}
+
+	delete := bson.M{
+        "$pull": bson.M{"preferences": preference}, 
+    }
+
+    // Update the user's dietary preferences in the database
+    _, err = s.users.UpdateOne(ctx, bson.M{"_id": userObjID}, delete)
+    if err != nil {
+        return err
+    }
+
+	return nil
+}

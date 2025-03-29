@@ -182,7 +182,7 @@ func (h *Handler) UnfollowUser(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
-// GetDietaryPreferences retrieves the dietary preferences of a user 
+// GetDietaryPreferences retrieves the dietary preferences of a user
 func (h *Handler) GetDietaryPreferences(c *fiber.Ctx) error {
 	userId := c.Params("id")
 
@@ -195,4 +195,34 @@ func (h *Handler) GetDietaryPreferences(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(preferences)
+}
+
+func (h *Handler) PostDietaryPreferences(c *fiber.Ctx) error {
+	userId := c.Params("id")
+	preference := c.Query("preference")
+
+	err := h.service.PostDietaryPreferences(userId, preference)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", "specified"))
+		}
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusCreated)
+}
+
+func (h *Handler) DeleteDietaryPreferences(c *fiber.Ctx) error {
+	userId := c.Params("id")
+	preference := c.Query("preference")
+
+	err := h.service.DeleteDietaryPreferences(userId, preference)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", "specified"))
+		}
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusCreated)
 }
