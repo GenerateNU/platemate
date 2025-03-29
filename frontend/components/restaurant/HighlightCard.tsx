@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     iconContainer: {
-        marginBottom: 8,
+        marginBottom: 4,
     },
     textContainer: {
         alignItems: "center",
@@ -41,13 +41,13 @@ const styles = StyleSheet.create({
         color: "#000000",
         textAlign: "center",
         marginBottom: 4,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     subtitle: {
         fontSize: 12,
         color: "#666666",
         textAlign: "center",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
 });
 

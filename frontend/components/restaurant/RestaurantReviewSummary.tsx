@@ -71,14 +71,14 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: "bold",
         color: "#222222",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     maxRatingText: {
         fontSize: 18,
         color: "#666666",
         fontWeight: "500",
         marginTop: 2,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     starsAndCountSection: {
         flex: 1,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#666666",
         fontWeight: "500",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     divider: {
         height: 1,
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
         color: "#222222",
         marginBottom: 12,
         lineHeight: 22,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     friendsContainer: {
         flexDirection: "row",
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: "#666666",
         marginLeft: 6,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
 });
 

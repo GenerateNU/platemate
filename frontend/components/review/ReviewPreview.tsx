@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         borderRadius: 20,
         fontSize: 12,
-        fontFamily: "Poppins",
+        fontFamily: "Source Sans 3",
         fontWeight: 500,
     },
     plateInfoContainer: {
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     },
     nameText: {
         color: "#000",
-        fontFamily: "Poppins",
+        fontFamily: "Source Sans 3",
         fontSize: 16,
         fontStyle: "normal",
     },
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         color: "#000",
         textOverflow: "ellipsis",
-        fontFamily: "Neue Haas Unica Pro",
+        fontFamily: "Source Sans 3",
         fontSize: 14,
         fontWeight: 400,
         lineHeight: 16,

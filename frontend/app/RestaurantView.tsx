@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     ratingContainer: {
-        paddingVertical: 4,
+        paddingVertical: 8,
     },
     tagsScrollViewContent: {
         flexDirection: "row",
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     },
     titleText: {
         fontWeight: "bold",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
         fontSize: 28,
         paddingTop: 6,
     },

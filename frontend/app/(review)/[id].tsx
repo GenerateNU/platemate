@@ -242,9 +242,10 @@ const styles = StyleSheet.create({
         marginRight: 12,
     },
     headerTitle: {
-        fontSize: 24,
+        fontSize: 16,
         fontWeight: "600",
         textAlign: "left",
+        fontFamily: "Source Sans 3",
     },
     userInfo: {
         flexDirection: "row",
@@ -277,10 +278,12 @@ const styles = StyleSheet.create({
     userName: {
         fontSize: 16,
         fontWeight: "600",
+        fontFamily: "Source Sans 3",
     },
     userHandle: {
         fontSize: 14,
         color: "#666",
+        fontFamily: "Source Sans 3",
     },
     ratingsGridContainer: {
         marginBottom: 24,
@@ -305,6 +308,7 @@ const styles = StyleSheet.create({
     ratingTitle: {
         fontSize: 16,
         fontWeight: "500",
+        fontFamily: "Source Sans 3",
     },
     tagsContainer: {
         marginBottom: 24,
@@ -313,6 +317,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 24,
         marginBottom: 24,
+        fontFamily: "Source Sans 3",
     },
     imageScroll: {
         marginBottom: 24,
@@ -358,6 +363,6 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         borderRadius: 20,
         fontSize: 12,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
 });

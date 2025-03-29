@@ -111,10 +111,8 @@ export default function ReviewDetail() {
                 <View style={styles.userInfo}>
                     <View style={styles.userInfoLeft}>
                         <Image source={{ uri: mockReview.user.avatarUrl }} style={styles.profilePicture} />
-                        <View>
-                            <ThemedText style={styles.userName}>{mockReview.user.name}</ThemedText>
-                            <ThemedText style={styles.userHandle}>@{mockReview.user.username}</ThemedText>
-                        </View>
+                        <ThemedText style={styles.userName}>{mockReview.user.name}</ThemedText>
+                        <ThemedText style={styles.userHandle}>@{mockReview.user.username}</ThemedText>
                     </View>
                 </View>
 
@@ -269,6 +267,8 @@ const styles = StyleSheet.create({
     userName: {
         fontSize: 16,
         fontWeight: "600",
+        lineHeight: 12,
+        fontFamily: "Source Sans 3",
     },
     userHandle: {
         fontSize: 14,
@@ -350,6 +350,6 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         borderRadius: 20,
         fontSize: 12,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
 });
