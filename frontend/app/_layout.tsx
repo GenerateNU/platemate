@@ -51,52 +51,12 @@ export default function RootLayout() {
                         </SafeAreaView>
                         <GestureHandlerRootView style={{ flex: 1 }}>
                             <BottomSheetModalProvider>
-                                <FilterProvider>
-                                    <Stack>
-                                        <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
-                                        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                                        <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
-                                        <Stack.Screen name="[...missing]" options={{ title: "Not Found" }} />
-                                        <Stack.Screen name="feed" options={{ headerShown: false }} />
-                                        <Stack.Screen
-                                            name="filter"
-                                            options={{
-                                                headerShown: true,
-                                                headerTransparent: true,
-                                                headerBackVisible: false,
-                                                contentStyle: { paddingTop: 0 },
-                                                statusBarTranslucent: true,
-                                                headerLeft: ({ canGoBack }) => {
-                                                    const navigation = useNavigation();
-                                                    return canGoBack ? (
-                                                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                                                            <BackChevron style={{ marginLeft: 4, marginRight: 8 }} />
-                                                        </TouchableOpacity>
-                                                    ) : null;
-                                                },
-                                                headerBackButtonDisplayMode: "minimal",
-                                                headerTitle: () => (
-                                                    <View style={{ flex: 1 }}>
-                                                        <Text
-                                                            style={{
-                                                                fontFamily: "Inter",
-                                                                fontWeight: "700",
-                                                                fontSize: 28,
-                                                                color: Colors.darkGrey,
-                                                            }}>
-                                                            Filters
-                                                        </Text>
-                                                    </View>
-                                                ),
-                                                headerStyle: {
-                                                    backgroundColor: Colors.white,
-                                                },
-                                                headerShadowVisible: false,
-                                                animation: "slide_from_right",
-                                            }}
-                                        />
-                                    </Stack>
-                                </FilterProvider>
+                                <Stack>
+                                    <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+                                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                                    <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
+                                    <Stack.Screen name="[...missing]" options={{ title: "Not Found" }} />
+                                </Stack>
                             </BottomSheetModalProvider>
                         </GestureHandlerRootView>
                     </ThemeProvider>

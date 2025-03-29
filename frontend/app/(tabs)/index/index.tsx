@@ -28,6 +28,10 @@ export default function Feed() {
         throw new Error("Filter component must be used within a FilterProvider");
     }
     const { handleSearch, searchText, setSearchText } = context;
+    const handleSearchAndNavigate = () => {
+        handleSearch();
+        router.push("/search");
+    };
 
     useEffect(() => {
         setLoading(true);
@@ -57,18 +61,18 @@ export default function Feed() {
     return (
         <ScrollView style={{ flex: 1, marginBottom: 84 }}>
             <ThemedView style={{ flex: 1, alignItems: "center", paddingHorizontal: 24, paddingVertical: 12, gap: 12 }}>
-            <ThemedView style={{ width: "100%" }}>
-                <SearchBox
-                    icon={<SearchIcon />}
-                    placeholder={"What are you hungry for?"}
-                    recent={true}
-                    name={"general"}
-                    onSubmit={handleSearch}
-                    value={searchText}
-                    onChangeText={(text) => setSearchText(text)}
-                    filter={true}
-                />
-            </ThemedView>
+                <ThemedView style={{ width: "100%" }}>
+                    <SearchBox
+                        icon={<SearchIcon />}
+                        placeholder={"What are you hungry for?"}
+                        recent={true}
+                        name={"general"}
+                        onSubmit={handleSearchAndNavigate}
+                        value={searchText}
+                        onChangeText={(text) => setSearchText(text)}
+                        filter={true}
+                    />
+                </ThemedView>
                 <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
                 <ThemedView style={{ flex: 1, width: "100%", gap: 16 }}>
                     {reviews.length > 0 ? (
@@ -109,11 +113,6 @@ export default function Feed() {
                             ))}
                         </ScrollView>
                     )}
-                </ThemedView>
-            </ThemedView>
-            <ThemedView>
-                <ThemedView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <Button title="Go to Filter" onPress={() => router.push("/filter")} />
                 </ThemedView>
             </ThemedView>
         </ScrollView>

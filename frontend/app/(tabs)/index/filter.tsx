@@ -1,13 +1,14 @@
-import { FilterGrid } from "../components/filter/FilterGrid";
+import { FilterGrid } from "@/components/filter/FilterGrid";
 import React, { useContext } from "react";
 import { StyleSheet } from "react-native";
-import { Button } from "../components/Button";
-import { SortBy } from "../components/filter/SortBy";
+import { Button } from "@/components/Button";
+import { SortBy } from "@/components/filter/SortBy";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ScrollView } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { useNavigation } from "expo-router";
 import { FilterContext } from "@/context/filter-context";
+import { useRouter } from "expo-router";
 
 export default function Filter() {
     const context = useContext(FilterContext);
@@ -25,11 +26,11 @@ export default function Filter() {
         handleSearch,
     } = context;
 
-    const navigate = useNavigation();
-
+    // const navigate = useNavigation();
+    const router = useRouter();
     const handleApplyFilters = () => {
         handleSearch();
-        navigate.goBack();
+        router.replace("/search"); // TODO: weird directionality of swipe
     };
 
     return (

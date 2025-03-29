@@ -64,4 +64,4 @@ export type TMenuItemSearchResult = {
     content: string;
     trending?: boolean;
     picture: string;
-}
+};

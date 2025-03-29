@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import axios from "axios";
-import useAuthStore from "@/auth/store";
 import { TSortOption, TFilterItem, TSortOptionKey, TFilterId, TMenuItemSearchResult } from "@/types/filter";
+import { TMenuItem } from "@/types/menu-item";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 export interface MenuItemQuery {
@@ -26,12 +26,13 @@ export interface FilterContextType {
     cycleSelectedSort: (title: string) => void;
     toggleCuisineTag: (id: TFilterId) => void;
     toggleSpecificationTag: (id: TFilterId) => void;
+    searchResults: TMenuItem[];
 }
 export const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
 export const FilterProvider = ({ children }: { children: ReactNode }) => {
     const [searchText, setSearchText] = useState("");
-    const [searchResults, setSearchResults] = useState<TMenuItemSearchResult[]>([]);
+    const [searchResults, setSearchResults] = useState<TMenuItem[]>([]);
     const [cuisineTags, setCuisineTags] = useState<TFilterItem[]>([
         { id: "Fast Food", selected: false },
         { id: "Pizza", selected: false },
@@ -140,21 +141,21 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
         try {
             console.log(`${API_BASE_URL}/api/v1/menu-items`);
             const response = await axios.get(`${API_BASE_URL}/api/v1/menu-items`, { params: queryParams });
-            console.log("Search results:", response.data); 
+            console.log("Search results:", response.data);
 
-            const transformedResults: TMenuItemSearchResult[] = response.data.map((item: any) => ({
+            const transformedResults: TMenuItem[] = response.data.map((item: any) => ({
                 id: item.id,
                 name: item.name,
-                restaurantName: item.restaurantid,
+                restaurantName: "Unknown", //item.restaurantid
                 tags: item.tags || [],
                 rating: item.avgRating?.overall ?? 0, // Use avgRating.overall or default to 0
                 content: item.description,
                 trending: false, // TBD!
-                picture: item.picture
+                picture: item.picture,
             }));
+
             setSearchResults(transformedResults);
             console.log("Transformed Results:", transformedResults);
-            
         } catch (error) {
             console.error("Error fetching search results:", error);
         }
@@ -181,6 +182,7 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
                 cycleSelectedSort,
                 toggleCuisineTag: (id: TFilterId) => toggleTag(id, setCuisineTags),
                 toggleSpecificationTag: (id: TFilterId) => toggleTag(id, setSpecificationTags),
+                searchResults,
             }}>
             {children}
         </FilterContext.Provider>
