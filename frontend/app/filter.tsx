@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button } from "../components/Button";
 import { SortBy } from "../components/filter/SortBy";
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedView } from "@/components/themed/ThemedView";
 import { ScrollView } from "react-native";
 import { TSortOption, TFilterItem, TFilterId } from "@/types/filter";
 import { Colors } from "@/constants/Colors";

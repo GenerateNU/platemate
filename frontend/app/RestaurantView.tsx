@@ -1,6 +1,6 @@
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedView } from "@/components/themed/ThemedView";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
+import { ThemedText } from "@/components/themed/ThemedText";
 import { RestaurantTags } from "@/components/RestaurantTags";
 import { StarReview } from "@/components/StarReview";
 import React from "react";
@@ -25,7 +25,7 @@ export default function RestaurantView() {
                 </ThemedView>
 
                 <ThemedView style={styles.ratingContainer}>
-                    <StarReview avgRating={1.9} numRatings={500} full={true} />
+                    <StarReview avgRating={1.9} numRatings={500} showAvgRating={false} />
                 </ThemedView>
 
                 <ThemedView style={styles.detailsContainer}>

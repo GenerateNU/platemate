@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Button } from "@/components/Button";
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedView } from "@/components/themed/ThemedView";
 
 const TagButton = ({ title }: { title: string }) => {
     return <Button title={title} onPress={() => {}} containerStyle={styles.tagButton} textStyle={styles.tagText} />;

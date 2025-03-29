@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { TextInput, TextInputProps, StyleSheet, View, Dimensions, TouchableOpacity } from "react-native";
-import { ThemedText } from "./ThemedText";
+import { ThemedText } from "./themed/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useRecentSearch } from "@/hooks/useRecentSearch";
 import FontAwesome5 from "@expo/vector-icons/build/FontAwesome5";

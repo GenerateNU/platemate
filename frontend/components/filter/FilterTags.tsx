@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Button } from "@/components/Button";
+// import { TFilterId, TFilterItem } from "@/types/filter";
 import { TFilterItem } from "@/types/filter";
 import { Colors } from "@/constants/Colors";
 

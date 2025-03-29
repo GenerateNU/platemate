@@ -1,6 +1,6 @@
 import { Dimensions, Image, Text, View, ScrollView } from "react-native";
 import React from "react";
-import { ThemedText } from "../ThemedText";
+import { ThemedText } from "../themed/ThemedText";
 import Entypo from "@expo/vector-icons/build/Entypo";
 import { TrendingIcon } from "@/components/icons/Icons";
 

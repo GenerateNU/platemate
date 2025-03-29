@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedView } from "@/components/themed/ThemedView";
 import React, { useState } from "react";
 import { SearchBox } from "@/components/SearchBox";
 import { SearchIcon } from "@/components/icons/Icons";

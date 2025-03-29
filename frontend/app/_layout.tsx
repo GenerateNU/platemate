@@ -7,7 +7,8 @@ import React, { useEffect } from "react";
 import "react-native-reanimated";
 import { BackChevron } from "@/components/icons/Icons";
 
-import { Text, View, Platform } from "react-native";
+// import { Text, View, Platform } from "react-native";
+import { Text, View } from "react-native";
 
 import { SafeAreaView, useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";

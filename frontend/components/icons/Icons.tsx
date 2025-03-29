@@ -107,3 +107,14 @@ export const SearchIcon = ({ width = 24, height = 24, color = "black", ...props 
         </Svg>
     );
 };
+
+export const ChevronLeft = ({ width = 24, height = 24, color = "black" }) => {
+    return (
+        <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
+            <Path
+                d="M17.835 3.87001L16.055 2.10001L6.16504 12L16.065 21.9L17.835 20.13L9.70504 12L17.835 3.87001Z"
+                fill={color}
+            />
+        </Svg>
+    );
+};

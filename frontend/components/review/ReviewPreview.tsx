@@ -1,7 +1,7 @@
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import UserInfoRowBase from "../UserInfo/UserInfoRowBase";
-import { ThemedText } from "../ThemedText";
+import { ThemedText } from "../themed/ThemedText";
 import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
 

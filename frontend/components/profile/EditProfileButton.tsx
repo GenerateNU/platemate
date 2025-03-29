@@ -1,6 +1,6 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
-import { ThemedText } from "@/components/ThemedText";
+import { ThemedText } from "@/components/themed/ThemedText";
 
 export const EditProfileButton: React.FC<{ text: string; onPress: () => void }> = ({ text, onPress }) => {
     return (
