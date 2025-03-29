@@ -1,13 +1,12 @@
-import React from "react";
-import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { ThemedView } from "@/components/themed/ThemedView";
+import ReviewDetail from "@/components/review/ReviewDetail";
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarRating } from "@/components/ui/StarReview";
-import { Ionicons } from "@expo/vector-icons";
-// import { RestaurantTags } from "@/components/RestaurantTags";
-import { Entypo } from "@expo/vector-icons";
+import React, { useEffect } from "react";
 
-// Mock doc structure
 type ReviewDocument = {
     _id: string;
     createdAt: string;
@@ -82,10 +81,19 @@ const mockReview: ReviewDocument = {
     },
 };
 
-export default function ReviewDetail() {
+export default function Route() {
+    const { id } = useLocalSearchParams<{
+        id: string;
+    }>();
+
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        navigation.setOptions({ headerShown: false });
+    }, [navigation]);
+
     const handleBack = () => {
-        // Navigation logic here
-        console.log("Go back");
+        navigation.goBack();
     };
 
     const handleUpvote = () => {

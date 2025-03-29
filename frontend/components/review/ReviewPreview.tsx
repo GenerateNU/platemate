@@ -4,7 +4,7 @@ import UserInfoRowBase from "../UserInfo/UserInfoRowBase";
 import { ThemedText } from "../themed/ThemedText";
 import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { ReviewComponentStarIcon } from "../icons/Icons";
 
 type Props = {
@@ -16,6 +16,8 @@ type Props = {
 };
 
 const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Props) => {
+    const navigation = useNavigation();
+
     return (
         <View
             style={{
@@ -34,7 +36,7 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
                 username={"benpetrillo26"}
                 right={<View />}
                 icon={"https://avatars.githubusercontent.com/u/66958528?v=4"}
-                onPress={() => router.push(`/friend`)}
+                onPress={() => router.push(`/(profile)/0s9df76vtbdsy9nf`)}
             />
             <View style={{ gap: 10 }}>
                 <View style={styles.plateInfoContainer}>

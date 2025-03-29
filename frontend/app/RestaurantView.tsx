@@ -1,5 +1,5 @@
 import { ThemedView } from "@/components/themed/ThemedView";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import React from "react";
 
@@ -14,11 +14,14 @@ import FeedTabs from "@/components/Feed/FeedTabs";
 import { filter } from "domutils";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
+import { useRouter } from "expo-router";
 
 export default function RestaurantView() {
     const restaurantTags = ["Fast Food", "Fried Chicken", "Chicken Sandwiches", "Order Online"];
     const [activeTab, setActiveTab] = React.useState(0);
     const [filterTab, setFilterTab] = React.useState(0);
+
+    const router = useRouter();
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -82,15 +85,17 @@ export default function RestaurantView() {
                                     setActiveTab={setActiveTab}
                                 />
                             </ThemedView>
-                            <ReviewPreview
-                                plateName={"Big Whopper"}
-                                restaurantName={"Burger King"}
-                                tags={["juicy", "artificial", "fake meat"]}
-                                rating={4}
-                                content={
-                                    "This is fake meat and is not good for you. Not sure why we are even serving it."
-                                }
-                            />
+                            <TouchableOpacity onPress={() => router.push("/(review)/827b36v4b234")}>
+                                <ReviewPreview
+                                    plateName={"Big Whopper"}
+                                    restaurantName={"Burger King"}
+                                    tags={["juicy", "artificial", "fake meat"]}
+                                    rating={4}
+                                    content={
+                                        "This is fake meat and is not good for you. Not sure why we are even serving it."
+                                    }
+                                />
+                            </TouchableOpacity>
                         </>
                     )}
 
