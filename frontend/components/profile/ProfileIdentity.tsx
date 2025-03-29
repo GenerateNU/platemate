@@ -22,11 +22,11 @@ const styles = StyleSheet.create({
         fontSize: 28,
         paddingTop: 24,
         fontWeight: "bold",
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
     },
     usernameText: {
         alignSelf: "center",
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
     },
 });
 

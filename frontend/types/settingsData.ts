@@ -1,4 +1,6 @@
 type SettingKey =
+    | "accountEmail"
+    | "accountPassword"
     | "vegetarian"
     | "vegan"
     | "nutFree"
@@ -11,6 +13,8 @@ type SettingKey =
     | "keto"
     | "diabetic"
     | "soyFree"
+    | "porkFree"
+    | "beefFree"
     | "cameraAccess"
     | "contactSync";
 
@@ -26,6 +30,7 @@ type MenuSettingItem = {
 };
 
 export type TSettingsData = {
+    credentials: ToggleSettingItem[];
     dietary: ToggleSettingItem[];
     privacy: ToggleSettingItem[];
     account: MenuSettingItem[];

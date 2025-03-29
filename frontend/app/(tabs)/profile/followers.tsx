@@ -112,7 +112,7 @@ export default function FollowersScreen() {
             <View style={styles.searchContainer}>
                 <TextInput
                     style={styles.searchInput}
-                    placeholder="Search followers"
+                    placeholder="Search friends"
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                     placeholderTextColor="#727272"
@@ -138,7 +138,7 @@ export default function FollowersScreen() {
                     }
                     ListHeaderComponent={
                         <Text style={styles.followersCount}>
-                            {followers.length} {followers.length === 1 ? "Follower" : "Followers"}
+                            {followers.length} {followers.length === 1 ? "Friend" : "Friends"}
                         </Text>
                     }
                     ListFooterComponent={
@@ -172,18 +172,25 @@ const styles = StyleSheet.create({
         backgroundColor: "#F5F5F5",
         borderRadius: 8,
         padding: 12,
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
         fontSize: 16,
     },
     listContainer: {
-        padding: 16,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: 3,
+        alignSelf: "stretch",
+        width: "100%",
     },
     followersCount: {
         fontSize: 16,
-        fontWeight: "600",
+        fontWeight: 700,
         marginBottom: 16,
         color: "#151619",
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
+        lineHeight: 20,
+        letterSpacing: -0.165,
     },
     emptyContainer: {
         alignItems: "center",

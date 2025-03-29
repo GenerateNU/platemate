@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "500",
         color: "#151619",
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
     },
     chevron: {
         fontSize: 20,
