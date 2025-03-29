@@ -43,13 +43,13 @@ const styles = StyleSheet.create({
     statNumber: {
         fontSize: 28,
         fontWeight: 500,
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
         paddingTop: 4,
     },
     statLabel: {
         fontSize: 16,
-        color: "#666",
-        fontFamily: "Outfit",
+        color: "#727272",
+        fontFamily: "Inter",
     },
 });
 
