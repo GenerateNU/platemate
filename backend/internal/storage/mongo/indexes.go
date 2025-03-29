@@ -18,6 +18,7 @@ type VectorIndex struct {
 	Collection string
 	Model      mongo.SearchIndexModel
 }
+
 // Defines the structs used for the index definition
 type vectorDefinitionField struct {
 	Type          string `bson:"type"`
@@ -34,7 +35,7 @@ var VectorIndexes = []VectorIndex{
 	{
 		Collection: "users",
 		// create a vector index on the taste_profile field
-		Model: 	mongo.SearchIndexModel{
+		Model: mongo.SearchIndexModel{
 			Definition: vectorDefinition{
 				Fields: []vectorDefinitionField{{
 					Type:          "vector",
@@ -55,8 +56,8 @@ var Indexes = []Index{
 	{
 		Collection: "users",
 		// create a vector index on the taste_profile field
-		Model:      mongo.IndexModel{
-			Keys: bson.M{"email": 1}, 
+		Model: mongo.IndexModel{
+			Keys:    bson.M{"email": 1},
 			Options: options.Index().SetUnique(true)},
 	},
 	{

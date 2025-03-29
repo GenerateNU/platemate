@@ -66,7 +66,7 @@ type AvgRatingDocument struct {
 type TopReview struct {
 	ReviewDocument
 	AverageRate float64 `bson:"averageRate" json:"averageRate"`
-	Items       []any  `bson:"items" json:"items"`
+	Items       []any   `bson:"items" json:"items"`
 }
 
 // Rating is a nested struct in ReviewDocument.

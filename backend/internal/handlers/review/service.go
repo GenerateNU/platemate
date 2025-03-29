@@ -325,64 +325,63 @@ func (s *Service) SearchUserReviews(userID, query string) ([]ReviewDocument, err
 	return results, nil
 }
 
-
 func (s *Service) GetTopReviews(userID string) ([]TopReviewDocument, error) {
 	ctx := context.Background()
 	cursor, err := s.reviews.Aggregate(ctx, bson.A{
-			bson.D{{"$match", bson.D{{"reviewer.id", userID}}}},
-			bson.D{
-					{"$lookup",
-							bson.D{
-									{"from", "menuItems"},
-									{"localField", "menuItem"},
-									{"foreignField", "_id"},
-									{"as", "items"},
-							},
-					},
+		bson.D{{"$match", bson.D{{"reviewer.id", userID}}}},
+		bson.D{
+			{"$lookup",
+				bson.D{
+					{"from", "menuItems"},
+					{"localField", "menuItem"},
+					{"foreignField", "_id"},
+					{"as", "items"},
+				},
 			},
-			bson.D{
-					{"$addFields",
-							bson.D{
-									{"averageRate",
-											bson.D{
-													{"$divide",
-															bson.A{
-																	bson.D{
-																			{"$sum",
-																					bson.A{
-																							"$rating.overall",
-																							"$rating.portion",
-																							"$rating.taste",
-																							"$rating.value",
-																					},
-																			},
-																	},
-																	4,
-															},
-													},
+		},
+		bson.D{
+			{"$addFields",
+				bson.D{
+					{"averageRate",
+						bson.D{
+							{"$divide",
+								bson.A{
+									bson.D{
+										{"$sum",
+											bson.A{
+												"$rating.overall",
+												"$rating.portion",
+												"$rating.taste",
+												"$rating.value",
 											},
+										},
 									},
+									4,
+								},
 							},
+						},
 					},
+				},
 			},
-			bson.D{{"$sort", bson.D{{"averageRate", -1}}}},
-			bson.D{{"$limit", 10}},
+		},
+		bson.D{{"$sort", bson.D{{"averageRate", -1}}}},
+		bson.D{{"$limit", 10}},
 	})
 
 	if err != nil {
-			return nil, err
-	} 
-		defer cursor.Close(ctx)
+		return nil, err
+	}
+	defer cursor.Close(ctx)
 
-		var results []TopReviewDocument
-		if err := cursor.All(ctx, &results); err != nil {
-				return nil, err
-		}
+	var results []TopReviewDocument
+	if err := cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
 
-		// Return an empty slice instead of nil if nothing found
-		if len(results) == 0 {
-				return []TopReviewDocument{}, nil
-		}
+	// Return an empty slice instead of nil if nothing found
+	if len(results) == 0 {
+		return []TopReviewDocument{}, nil
+	}
 
-		return results, nil
+	return results, nil
 }
