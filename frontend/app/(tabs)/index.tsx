@@ -82,7 +82,7 @@ export default function Feed() {
                                     content={item.description}
                                     tags={item.tags}
                                     picture={item.picture}
-                                    rating={item.avgRating.overall}
+                                    rating={4}
                                     restaurantName={item.restaurantId}
                                 />
                             ))}
