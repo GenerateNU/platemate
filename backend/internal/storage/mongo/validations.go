@@ -121,7 +121,7 @@ var (
 			"email",
 			"password",
 			"followingCount",
-			"followersCount",
+			"followerCount",
 			"profile_picture",
 			"count",
 			"reviews",
@@ -129,7 +129,7 @@ var (
 			"refresh_token",
 			"token_used",
 		},
-		"additionalProperties": false, // generally bad,
+		"additionalProperties": true, // generally bad,
 		"properties": bson.M{
 			"_id": bson.M{
 				"bsonType":    "objectId",
@@ -148,12 +148,12 @@ var (
 				"description": "must be a string and is required",
 			},
 			"followingCount": bson.M{
-				"bsonType":    "double",
-				"description": "must be an double and is required",
+				"bsonType":    "int",
+				"description": "must be an int and is required",
 			},
-			"followersCount": bson.M{
-				"bsonType":    "double",
-				"description": "must be an double and is required",
+			"followerCount": bson.M{
+				"bsonType":    "int",
+				"description": "must be an int and is required",
 			},
 			"profile_picture": bson.M{
 				"bsonType":    "string",
@@ -169,6 +169,24 @@ var (
 			"username": bson.M{
 				"bsonType":    "string",
 				"description": "must be a string and is required",
+			},
+			"followers": bson.M{
+				"bsonType": "array",
+				"items": bson.M{
+					"bsonType": "objectId",
+				},
+			},
+			"following": bson.M{
+				"bsonType": "array",
+				"items": bson.M{
+					"bsonType": "objectId",
+				},
+			},
+			"preferences": bson.M{
+				"bsonType": "array",
+				"items": bson.M{
+					"bsonType": "string",
+				},
 			},
 			"refresh_token": bson.M{
 				"bsonType":    "string",

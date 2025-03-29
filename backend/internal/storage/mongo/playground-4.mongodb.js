@@ -12,10 +12,9 @@ use(database);
 db.getCollection(collection).aggregate([
 	{
 		$addFields: {
-			reviews: [],
-			count: 0,
-			refresh_token: '',
-			token_used: false,
+			preferences: [],
+			following: [],
+			followers: [],
 		},
 	},
 	{
