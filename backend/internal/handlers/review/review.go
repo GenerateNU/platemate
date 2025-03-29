@@ -2,6 +2,8 @@ package review
 
 import (
 	"errors"
+	"math"
+	"strconv"
 	"time"
 
 	"github.com/GenerateNU/platemate/internal/xerr"
@@ -63,13 +65,44 @@ func (h *Handler) CreateReview(c *fiber.Ctx) error {
 
 // Get all reviews
 func (h *Handler) GetReviews(c *fiber.Ctx) error {
-	reviews, err := h.service.GetAllReviews()
 
+	page := 1
+	limit := 10
+
+	if c.Query("page") != "" {
+		pageParam, err := strconv.Atoi(c.Query("page"))
+		if err == nil && pageParam > 0 {
+			page = pageParam
+		}
+	}
+
+	if c.Query("limit") != "" {
+		limitParam, err := strconv.Atoi(c.Query("limit"))
+		if err == nil && limitParam > 0 {
+
+			if limitParam > 100 {
+				limitParam = 100
+			}
+			limit = limitParam
+		}
+	}
+
+	reviews, totalCount, err := h.service.GetReviews(page, limit)
 	if err != nil {
-		// Central error handler take 500
 		return err
 	}
-	return c.JSON(reviews)
+
+	response := fiber.Map{
+		"data": reviews,
+		"meta": fiber.Map{
+			"page":       page,
+			"limit":      limit,
+			"total":      totalCount,
+			"totalPages": int(math.Ceil(float64(totalCount) / float64(limit))),
+		},
+	}
+
+	return c.JSON(response)
 }
 
 // Get a single review

@@ -2,6 +2,7 @@ package review
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"math"
 
@@ -19,19 +20,34 @@ func NewService(collections map[string]*mongo.Collection) *Service {
 }
 
 // GetAllReviews fetches all review documents from MongoDB
-func (s *Service) GetAllReviews() ([]ReviewDocument, error) {
+func (s *Service) GetReviews(page int, limit int) ([]ReviewDocument, int64, error) {
 	ctx := context.Background()
-	cursor, err := s.reviews.Find(ctx, bson.M{})
+
+	skip := (page - 1) * limit
+
+	totalCount, err := s.reviews.CountDocuments(ctx, bson.M{})
 	if err != nil {
-		return nil, err
+		return nil, 0, err
+	}
+
+	findOptions := options.Find()
+	findOptions.SetLimit(int64(limit))
+	findOptions.SetSkip(int64(skip))
+
+	findOptions.SetSort(bson.M{"createdAt": -1})
+
+	cursor, err := s.reviews.Find(ctx, bson.M{}, findOptions)
+	if err != nil {
+		return nil, 0, err
 	}
 	defer cursor.Close(ctx)
 
 	var results []ReviewDocument
 	if err := cursor.All(ctx, &results); err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return results, nil
+
+	return results, totalCount, nil
 }
 
 // GetReviewByID returns a single review document by its ObjectID
@@ -42,7 +58,6 @@ func (s *Service) GetReviewByID(id primitive.ObjectID) (*ReviewDocument, error) 
 	var review ReviewDocument
 	err := s.reviews.FindOne(ctx, filter).Decode(&review)
 	if err == mongo.ErrNoDocuments {
-		// No matching review found
 		return nil, mongo.ErrNoDocuments
 	} else if err != nil {
 		// Different error occurred

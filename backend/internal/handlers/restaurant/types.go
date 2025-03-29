@@ -22,7 +22,7 @@ type RestaurantDocument struct {
 		Return  int `bson:"return" json:"return"`
 	} `bson:"ratingAvg" json:"ratingAvg"`
 
-	Style       string   `bson:"style"        json:"style"`   // could be an array
+	Style       []string `bson:"style"        json:"style"`   // could be an array
 	Picture     string   `bson:"picture"      json:"picture"` // could be an array
 	Description string   `bson:"description"  json:"description"`
 	Tags        []string `bson:"tags"         json:"tags"`

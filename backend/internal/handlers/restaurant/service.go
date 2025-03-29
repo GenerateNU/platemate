@@ -124,7 +124,7 @@ func (s *Service) UpdatePartialRestaurant(id primitive.ObjectID, updated Restaur
 	}
 
 	// Check non-zero for floats
-	if updated.Style != "" {
+	if updated.Style != nil {
 		updateFields["style"] = updated.Style
 	}
 	if updated.Picture != "" {
