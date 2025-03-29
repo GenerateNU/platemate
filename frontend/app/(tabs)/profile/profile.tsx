@@ -82,6 +82,31 @@ const ProfileScreen = () => {
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
                     />
+
+                    <ThemedView style={{ gap: 8, marginTop: 12 }}>
+                        <ReviewPreview
+                            plateName="Pad Thai"
+                            restaurantName="Pad Thai Kitchen"
+                            tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
+                            rating={4}
+                            content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                            authorId={""}
+                            authorUsername={"username"}
+                            authorName={"First Name"}
+                            authorAvatar={"https://placehold.co/600x400/png?text=P"}
+                        />
+                        <ReviewPreview
+                            plateName="Pad Thai"
+                            restaurantName="Pad Thai Kitchen"
+                            tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
+                            rating={4}
+                            content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                            authorId={""}
+                            authorUsername={"username"}
+                            authorName={"First Name"}
+                            authorAvatar={"https://placehold.co/600x400/png?text=P"}
+                        />
+                    </ThemedView>
                 </ThemedView>
             </ScrollView>
             <EditProfileSheet user={user} ref={editProfileRef} />

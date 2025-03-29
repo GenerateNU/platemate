@@ -51,10 +51,7 @@ export default function Feed() {
                 <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
                 <ThemedView style={{ flex: 1, width: "100%", gap: 16 }}>
                     {reviews.length > 0 ? (
-                        <ScrollView
-                            horizontal
-                            contentContainerStyle={{ gap: 16 }}
-                            showsHorizontalScrollIndicator={false}>
+                        <ScrollView contentContainerStyle={{ gap: 16 }} showsHorizontalScrollIndicator={false}>
                             {reviews.map((item: TReview, index: number) => (
                                 <TouchableOpacity key={index} onPress={() => router.push(`/(review)/${item._id}`)}>
                                     <ReviewPreview
