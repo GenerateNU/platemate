@@ -8,6 +8,7 @@ import { UsernameScreen } from "./UsernameScreen";
 import { DietaryRestrictionsScreen } from "./DietaryRestrictionsScreen";
 import { CuisinePreferencesScreen } from "./CuisinePreferencesScreen";
 import { CompletionScreen } from "./CompletionScreen";
+import useAuthStore from "@/auth/store";
 
 interface OnboardingData {
     name: string;
@@ -22,9 +23,11 @@ interface OnboardingFlowProps {
     onComplete: (data: OnboardingData) => void;
 }
 
-type Screen = "login" | "name" | "email" | "password" | "username" | "dietary" | "cuisine" | "complete";
+type Screen = "login" | "name" | "email" | "password" | "username" | "dietary" | "cuisine" | "complete" | "loading";
 
 export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
+    const { login, isAuthenticated } = useAuthStore();
+
     const [currentScreen, setCurrentScreen] = useState<Screen>("login");
     const [data, setData] = useState<OnboardingData>({
         name: "",
@@ -38,6 +41,14 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     const handleLogin = (email: string, password: string) => {
         // TODO: Implement actual login logic
         console.log("Login:", { email, password });
+        login(email, password)
+            .then((res) => {
+                console.log("Login successful:", res);
+                onComplete(data);
+            })
+            .catch((err) => {
+                console.error("Login failed:", err);
+            });
     };
 
     const handleNameSubmit = (name: string) => {
@@ -144,6 +155,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
+        backgroundColor: "white",
     },
     container: {
         flex: 1,

@@ -8,10 +8,13 @@ import ToggleSetting from "@/components/profile/settings/ToggleSetting";
 import SettingsSection from "@/components/profile/settings/SettingsSection";
 import SettingsMenuItem from "@/components/profile/settings/SettingsMenuItem";
 import { TSettingsData } from "@/types/settingsData";
+import useAuthStore from "@/auth/store";
 
 export default function SettingsScreen() {
     const insets = useSafeAreaInsets();
     const router = useRouter();
+
+    const { logout } = useAuthStore();
 
     const [settings, setSettings] = useState({
         vegetarian: false,
@@ -61,6 +64,14 @@ export default function SettingsScreen() {
                 label: "View Followers",
                 onPress: () => router.push("/(tabs)/profile/followers"),
                 showChevron: true,
+            },
+            {
+                label: "Logout",
+                onPress: () => {
+                    logout();
+                    router.replace("/(onboarding)");
+                },
+                showChevron: false,
             },
         ],
         additional: [

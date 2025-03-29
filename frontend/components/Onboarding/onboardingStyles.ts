@@ -5,7 +5,6 @@ export const sharedOnboardingStyles = StyleSheet.create({
         flex: 1,
         padding: 24,
         justifyContent: "center",
-        marginBottom: 32,
         gap: 16,
     },
     content: {

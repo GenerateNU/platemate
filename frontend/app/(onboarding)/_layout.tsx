@@ -6,8 +6,7 @@ export default function OnboardingLayout() {
         <Stack
             screenOptions={{
                 headerShown: false,
-                // Hide tab bar
-                tabBarStyle: { display: "none" },
+                contentStyle: { backgroundColor: "white" },
             }}
         />
     );
