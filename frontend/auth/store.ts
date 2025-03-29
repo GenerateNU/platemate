@@ -8,7 +8,14 @@ interface User {
     userId: string;
     email: string;
     name: string;
+    username: string;
     profilePictureURL?: string;
+    preferences?: string[];
+    taste_profile?: number[];
+    followingCount?: number;
+    followerCount?: number;
+    reviews?: any[];
+    count?: number;
 }
 
 interface AuthState {
@@ -20,7 +27,7 @@ interface AuthState {
     email: string | undefined;
     initializeAuth: () => Promise<void>;
     login: (email: string, password: string) => Promise<void>;
-    register: (email: string, password: string, name: string) => Promise<void>;
+    register: (email: string, password: string, name: string, username: string, preferences?: string[], restrictions?: string[]) => Promise<void>;
     refreshAccessToken: () => Promise<void>;
     logout: () => Promise<void>;
 }
@@ -93,19 +100,31 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
     },
 
     // Register function
-    register: async (email, password, name) => {
+    register: async (email, password, name, username, preferences = [], restrictions = []) => {
         try {
             const response = await axios.post(`${API_BASE_URL}/api/v1/auth/register`, {
                 email,
                 password,
                 name,
+                username,
+                preferences: preferences || [],
+                restrictions: restrictions || [],
+                followingCount: 0,
+                followerCount: 0,
+                profile_picture: "",
+                count: 0,
+                reviews: [],
+                refresh_token: "",
+                token_used: false,
+                following: [],
+                followers: [],
+                taste_profile: new Array(1536).fill(0) // Initialize with zeros
             });
 
             const accessToken = response.data.access_token;
             const refreshToken = response.data.refresh_token;
             const userId = response.data.user;
             const userEmail = email;
-            console.log(userEmail);
 
             if (accessToken && refreshToken) {
                 await AsyncStorage.setItem("accessToken", accessToken);

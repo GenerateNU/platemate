@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ScrollView } from "react-native";
 
 import { ThemedView } from "@/components/themed/ThemedView";
-import FeedTabs from "@/components/Feed/FeedTabs";
+import FeedTabs from "@/components/feed/FeedTabs";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 import { useRouter } from "expo-router";
