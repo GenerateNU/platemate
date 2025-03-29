@@ -24,15 +24,6 @@ definitions:
     - name
     - password
     type: object
-  auth.TokenResponse:
-    properties:
-      access_token:
-        type: string
-      refresh_token:
-        type: string
-      user:
-        type: string
-    type: object
 info:
   contact: {}
 paths:
@@ -54,7 +45,9 @@ paths:
         "200":
           description: Tokens in response headers
           schema:
-            $ref: '#/definitions/auth.TokenResponse'
+            additionalProperties:
+              type: string
+            type: object
         "400":
           description: Invalid request
           schema:
@@ -80,7 +73,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a user account and login
+      description: Logs in a user and returns JWT tokens
       parameters:
       - description: User credentials
         in: body

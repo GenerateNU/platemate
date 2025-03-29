@@ -43,7 +43,10 @@ const docTemplate = `{
                     "200": {
                         "description": "Tokens in response headers",
                         "schema": {
-                            "$ref": "#/definitions/auth.TokenResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "400": {
@@ -78,7 +81,7 @@ const docTemplate = `{
         },
         "/register": {
             "post": {
-                "description": "Create a user account and login",
+                "description": "Logs in a user and returns JWT tokens",
                 "consumes": [
                     "application/json"
                 ],
@@ -175,20 +178,6 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "minLength": 8
-                }
-            }
-        },
-        "auth.TokenResponse": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
-                },
-                "user": {
-                    "type": "string"
                 }
             }
         }

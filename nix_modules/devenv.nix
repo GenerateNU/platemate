@@ -41,6 +41,13 @@
               ${pkgs.golangci-lint}/bin/golangci-lint run ./...
             '';
           };
+          "backend-gen-docs" = {
+            description = "Generates backend documentation.";
+            exec = ''
+              cd "$DEVENV_ROOT"/backend
+              swag init -g cmd/server/main.go -o cmd/server/docs
+            '';
+          };
           "backend-run" = {
             description = "Runs the backend server in development mode.";
             exec = ''

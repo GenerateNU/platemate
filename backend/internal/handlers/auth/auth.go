@@ -24,7 +24,7 @@ import (
 // @Accept       json
 // @Produce      json
 // @Param        request  body  LoginRequest  true  "User credentials"
-// @Success      200      {object}  map[string]string  "Tokens in response headers"
+// @Success      200      {object}  TokenResponse  "Tokens in response headers"
 // @Failure      400      {object}  map[string]string  "Invalid request"
 // @Failure      401      {object}  map[string]string  "Unauthorized"
 // @Failure      500      {object}  map[string]string  "Internal server error"
@@ -63,6 +63,18 @@ func (h *Handler) Login(c *fiber.Ctx) error {
 	})
 }
 
+// Register allows a user to sign up for an account.
+// @Summary      Authenticate user
+// @Description  Create a user account and login
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request  body  RegisterRequest  true  "User credentials"
+// @Success      200      {object}  map[string]string  "Tokens in response headers"
+// @Failure      400      {object}  map[string]string  "Invalid request"
+// @Failure      401      {object}  map[string]string  "Unauthorized"
+// @Failure      500      {object}  map[string]string  "Internal server error"
+// @Router       /register [post]
 func (h *Handler) Register(c *fiber.Ctx) error {
 	var req RegisterRequest
 	if err := c.BodyParser(&req); err != nil {
