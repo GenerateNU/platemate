@@ -27,7 +27,14 @@ interface AuthState {
     email: string | undefined;
     initializeAuth: () => Promise<void>;
     login: (email: string, password: string) => Promise<void>;
-    register: (email: string, password: string, name: string, username: string, preferences?: string[], restrictions?: string[]) => Promise<void>;
+    register: (
+        email: string,
+        password: string,
+        name: string,
+        username: string,
+        preferences?: string[],
+        restrictions?: string[],
+    ) => Promise<void>;
     refreshAccessToken: () => Promise<void>;
     logout: () => Promise<void>;
 }
@@ -118,7 +125,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
                 token_used: false,
                 following: [],
                 followers: [],
-                taste_profile: new Array(1536).fill(0) // Initialize with zeros
+                taste_profile: new Array(1536).fill(0), // Initialize with zeros
             });
 
             const accessToken = response.data.access_token;
