@@ -27,3 +27,8 @@ type RestaurantDocument struct {
 	Description string   `bson:"description"  json:"description"`
 	Tags        []string `bson:"tags"         json:"tags"`
 }
+
+type FriendsFav struct {
+	IsFriendsFav    bool `json:"friends_fav"`
+	FriendsReviewed int  `json:"friends_reviewed"`
+}

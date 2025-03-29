@@ -2,7 +2,6 @@ package restaurant
 
 import (
 	"errors"
-
 	"github.com/GenerateNU/platemate/internal/xerr"
 	go_json "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
@@ -122,9 +121,7 @@ func (h *Handler) DeleteRestaurant(c *fiber.Ctx) error {
 func (h *Handler) AddMenuItem(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	objID, err := primitive.ObjectIDFromHex(idParam)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
-	}
+
 
 	menuItemIDParam := c.Query("menuItemID")
 	menuItemObjID, err := primitive.ObjectIDFromHex(menuItemIDParam)
@@ -141,4 +138,51 @@ func (h *Handler) AddMenuItem(c *fiber.Ctx) error {
 		return xerr.ErrorHandler(c, err)
 	}
 	return c.SendStatus(fiber.StatusOK)
+}
+// GetRestaurantFriendsFav by ID
+func (h *Handler) GetRestaurantFriendsFav(c *fiber.Ctx) error {
+	restaurantIdParam := c.Params("rid")
+	userIdParam := c.Params("uid")
+	userObjID, err := primitive.ObjectIDFromHex(userIdParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	restaurantObjID, err := primitive.ObjectIDFromHex(restaurantIdParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	friendsFav, err := h.service.GetRestaurantFriendsFav(userObjID, restaurantObjID)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).
+				JSON(xerr.NotFound("Restaurant", "id", restaurantIdParam))
+		}
+		return xerr.ErrorHandler(c, err)
+	}
+
+	return c.JSON(friendsFav)
+}
+
+// get SuperStars by restaurant ID
+func (h *Handler) GetSuperStars(c *fiber.Ctx) error {
+	restaurantIdParam := c.Params("rid")
+
+	restaurantObjID, err := primitive.ObjectIDFromHex(restaurantIdParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	superStars, err := h.service.GetSuperStars(restaurantObjID)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).
+				JSON(xerr.NotFound("Restaurant", "id", restaurantIdParam))
+		}
+		return xerr.ErrorHandler(c, err)
+	}
+
+	return c.JSON(superStars)
+>>>>>>> a95778e73e4300f9b697486ca5540ce551b0e6ce
 }

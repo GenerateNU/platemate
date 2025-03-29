@@ -1,5 +1,5 @@
 import { Image, StyleSheet } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedView } from "@/components/themed/ThemedView";
 import React from "react";
 
 type ProfileAvatarProps = {

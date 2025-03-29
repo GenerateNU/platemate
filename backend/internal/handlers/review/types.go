@@ -39,9 +39,9 @@ type Rating struct {
 
 // Reviewer is a nested struct in ReviewDocument.
 type Reviewer struct {
-	ID       string `bson:"id"       json:"id"`
-	PFP      string `bson:"pfp"      json:"pfp"`
-	Username string `bson:"username" json:"username"`
+	ID       primitive.ObjectID `bson:"_id"       json:"_id"`
+	PFP      string             `bson:"pfp"      json:"pfp"`
+	Username string             `bson:"username" json:"username"`
 }
 
 type Commenter struct {

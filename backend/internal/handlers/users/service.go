@@ -24,7 +24,7 @@ type Service struct {
 	menuItems *mongo.Collection
 }
 
-func newService(collections map[string]*mongo.Collection) *Service {
+func NewService(collections map[string]*mongo.Collection) *Service {
 	return &Service{
 		users:     collections["users"],
 		reviews:   collections["reviews"],
@@ -376,24 +376,13 @@ func (s *Service) GetFollowingReviewsForItem(userId string, menuItemId string) (
 
 // GetFriendReviewsForItem gets reviews for a specific menu item from friends (users that follow each other)
 // AKA users in the current user's following and follower list
-func (s *Service) GetFriendReviewsForItem(userId string, menuItemId string) ([]review.ReviewDocument, error) {
+func (s *Service) GetFriendReviewsForItem(userObjID primitive.ObjectID, menuItemObjID primitive.ObjectID) ([]review.ReviewDocument, error) {
 
 	ctx := context.Background()
-	userObjID, err := primitive.ObjectIDFromHex(userId)
-	if err != nil {
-		badReq := xerr.BadRequest(err)
-		return nil, &badReq
-	}
-
-	menuItemObjID, err := primitive.ObjectIDFromHex(menuItemId)
-	if err != nil {
-		badReq := xerr.BadRequest(err)
-		return nil, &badReq
-	}
 
 	// Get the menu item to check its reviews
 	var menuItem menu_items.MenuItemDocument
-	err = s.menuItems.FindOne(ctx, bson.M{"_id": menuItemObjID}).Decode(&menuItem)
+	err := s.menuItems.FindOne(ctx, bson.M{"_id": menuItemObjID}).Decode(&menuItem)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return []review.ReviewDocument{}, nil
@@ -423,7 +412,7 @@ func (s *Service) GetFriendReviewsForItem(userId string, menuItemId string) ([]r
 					"reviewer._id": bson.M{"$in": user.Following}, // Reviewer's ID must be in the Following list
 				},
 				{
-					"reviewer._id": bson.M{"$in": user.Followers}, // Reviewer's ID must also be in the Followers list
+					"reviewer._id": bson.M{"$in": user.Followers}, // Reviewer's ID must be in the Followers list
 				},
 			},
 		},
@@ -433,12 +422,10 @@ func (s *Service) GetFriendReviewsForItem(userId string, menuItemId string) ([]r
 		return nil, err
 	}
 	defer reviewsCursor.Close(ctx)
-
 	var reviews []review.ReviewDocument
 	if err = reviewsCursor.All(ctx, &reviews); err != nil {
 		return nil, err
 	}
-
 	return reviews, nil
 
 }

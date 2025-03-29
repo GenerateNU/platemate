@@ -1,43 +1,95 @@
 "use client";
 
-import { ScrollView, View, StyleSheet } from "react-native";
+import { ScrollView, View, StyleSheet, TextInput, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import ToggleSetting from "@/components/profile/settings/ToggleSetting";
 import SettingsSection from "@/components/profile/settings/SettingsSection";
 import SettingsMenuItem from "@/components/profile/settings/SettingsMenuItem";
 import { TSettingsData } from "@/types/settingsData";
+import useAuthStore from "@/auth/store";
+import { Button } from "@/components/Button";
 
 export default function SettingsScreen() {
     const insets = useSafeAreaInsets();
     const router = useRouter();
+    const { email } = useAuthStore();
 
-    const [settings, setSettings] = useState({
-        vegetarian: false,
-        vegan: false,
-        nutFree: false,
-        shellfishAllergy: false,
-        glutenFree: false,
-        dairyFree: false,
-        kosher: false,
-        halal: false,
-        pescatarian: false,
-        keto: false,
-        diabetic: false,
-        soyFree: false,
-        cameraAccess: false,
-        contactSync: false,
-    });
+    const { logout } = useAuthStore();
 
+    const dietaryOptions = [
+        "vegetarian",
+        "vegan",
+        "nutFree",
+        "shellfishAllergy",
+        "glutenFree",
+        "dairyFree",
+        "kosher",
+        "halal",
+        "pescatarian",
+        "keto",
+        "diabetic",
+        "soyFree",
+        "porkFree",
+        "beefFree",
+    ];
+
+    const [settings, setSettings] = useState<Record<string, boolean>>(
+        Object.fromEntries(dietaryOptions.map((option) => [option, false])),
+    );
+
+    // useEffect(() => {
+    //     const fetchPreferences = async () => {
+    //         try {
+    //             const userData = await fetchUserProfile(); // Fetch user profile using the context function
+
+    //             if (!userData) return; // Ensure userData exists before proceeding
+
+    //             const userRestrictions: string[] = userData.preferences || [];
+
+    //             // Convert restrictions array to object { vegetarian: true, glutenFree: true, keto: true, ... }
+    //             const updatedSettings = dietaryOptions.reduce((acc, option) => {
+    //                 acc[option] = userRestrictions.includes(option);
+    //                 return acc;
+    //             }, {} as Record<string, boolean>);
+
+    //             setSettings(updatedSettings);
+    //         } catch (error) {
+    //             console.error("Error fetching user preferences:", error);
+    //         }
+    //     };
+
+    //     fetchPreferences();
+    // }, [fetchUserProfile]);
+
+    // i dont think this updates it if you exit settings, should i save toggle states in AsyncStorage?
     const updateSetting = (key: string, value: boolean) => {
         setSettings((prevSettings) => ({
             ...prevSettings,
-            [key]: value,
+            [`${key}`]: value,
         }));
     };
 
+    // const updateSetting = async (key: string, value: boolean) => {
+    //     try {
+    //         const updatedSettings = { ...settings, [key]: value };
+    //         setSettings(updatedSettings);
+
+    //         // Send updated preferences to the server
+    //         await axios.put(`${process.env.API_BASE_URL}/api/v1/user/${userId}`, {
+    //             preferences: { restrictions: Object.keys(updatedSettings).filter((k) => updatedSettings[k]) },
+    //         });
+    //     } catch (error) {
+    //         console.error("Error saving setting:", error);
+    //     }
+    // };
+
     const settingsData: TSettingsData = {
+        credentials: [
+            { key: "accountEmail", label: "Email" },
+            { key: "accountPassword", label: "Password" },
+        ],
         dietary: [
             { key: "vegetarian", label: "Vegetarian" },
             { key: "vegan", label: "Vegan" },
@@ -51,6 +103,8 @@ export default function SettingsScreen() {
             { key: "keto", label: "Keto" },
             { key: "diabetic", label: "Diabetic" },
             { key: "soyFree", label: "Soy-free" },
+            { key: "porkFree", label: "Pork-free" },
+            { key: "beefFree", label: "Beef-free" },
         ],
         privacy: [
             { key: "cameraAccess", label: "Camera Access" },
@@ -58,9 +112,17 @@ export default function SettingsScreen() {
         ],
         account: [
             {
-                label: "View Followers",
+                label: "View Friends",
                 onPress: () => router.push("/(tabs)/profile/followers"),
                 showChevron: true,
+            },
+            {
+                label: "Logout",
+                onPress: () => {
+                    logout();
+                    router.replace("/(onboarding)");
+                },
+                showChevron: false,
             },
         ],
         additional: [
@@ -70,8 +132,31 @@ export default function SettingsScreen() {
     };
 
     return (
-        <ScrollView contentContainerStyle={[styles.container, { paddingTop: 32 }]} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={[styles.container, { paddingTop: 60 }]} showsVerticalScrollIndicator={false}>
             <View style={styles.content}>
+                <SettingsSection title="Account">
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.inputLabel}>Email</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={email}
+                            autoCapitalize="none"
+                            keyboardType="email-address"
+                            editable={false}
+                        />
+                    </View>
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.inputLabel}>Password</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Password"
+                            value={"**********"}
+                            secureTextEntry
+                            editable={false}
+                        />
+                    </View>
+                    <Text style={styles.resetPasswordText}> Reset Password </Text>
+                </SettingsSection>
                 <SettingsSection title="Dietary Restrictions">
                     {settingsData.dietary.map((item) => (
                         <ToggleSetting
@@ -111,7 +196,9 @@ export default function SettingsScreen() {
                     ))}
                 </SettingsSection>
 
-                <View style={{ height: insets.bottom + 20 }} />
+                <Button title="Log Out" containerStyle={styles.buttonContainer} textStyle={styles.buttonText} />
+
+                <View style={{ height: insets.bottom + 50 }} />
             </View>
         </ScrollView>
     );
@@ -123,6 +210,87 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
     content: {
+        fontFamily: "Inter",
         padding: 20,
+    },
+    buttonContainer: {
+        display: "flex",
+        paddingVertical: 4,
+        paddingHorizontal: 12,
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 4,
+        borderRadius: 25,
+        backgroundColor: "#285852",
+        alignSelf: "center",
+        width: 100,
+        height: 30,
+    },
+    buttonText: {
+        color: "#FFF",
+        textAlign: "center",
+        fontFamily: "Source Sans 3",
+        fontSize: 14,
+        fontStyle: "normal",
+        fontWeight: 500,
+        lineHeight: 18,
+    },
+    sectionContainer: {
+        gap: 28,
+    },
+    accountContainer: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        alignSelf: "stretch",
+    },
+    emailPasswordContainer: {
+        gap: 4,
+    },
+    inputContainer: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        backgroundColor: "#FFFFFF",
+        width: 382,
+    },
+    inputLabel: {
+        fontSize: 10,
+        fontFamily: "Inter",
+        fontStyle: "normal",
+        fontWeight: 400,
+        lineHeight: 28,
+    },
+    input: {
+        fontSize: 12,
+        height: 35,
+        borderColor: "#D9D9D9",
+        borderWidth: 1,
+        borderRadius: 11,
+        paddingHorizontal: 10,
+        backgroundColor: "white",
+        color: "#000000",
+        width: 350, // the email and password boxes were not aligning with the toggles
+        flexShrink: 0,
+        alignItems: "flex-start",
+    },
+    sectionTitle: {
+        fontSize: 20,
+        color: "#151619",
+        fontStyle: "normal",
+        fontWeight: 600,
+        lineHeight: 28,
+        fontFamily: "Inter",
+    },
+    resetPasswordText: {
+        color: "#285852",
+        textAlign: "right",
+        fontFamily: "Inter",
+        fontSize: 10,
+        fontStyle: "normal",
+        fontWeight: 400,
+        lineHeight: 28,
+        textDecorationLine: "underline",
+        textDecorationStyle: "solid",
     },
 });

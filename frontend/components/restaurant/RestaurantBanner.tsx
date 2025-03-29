@@ -1,6 +1,6 @@
 import { Image, StyleSheet } from "react-native";
 import React from "react";
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedView } from "@/components/themed/ThemedView";
 
 type BannerAndAvatarProps = {
     bannerURL: string;

@@ -1,6 +1,7 @@
 package xutils
 
 import "crypto/rand"
+import "go.mongodb.org/mongo-driver/bson/primitive"
 
 func GenerateOTP(length int) (string, error) {
 
@@ -20,4 +21,14 @@ func GenerateOTP(length int) (string, error) {
 	}
 
 	return string(otp), nil
+}
+
+// checks if an element is not in a slice
+func DoesNotContain(slice []primitive.ObjectID, item primitive.ObjectID) bool {
+	for _, element := range slice {
+		if element == item {
+			return false
+		}
+	}
+	return true
 }
