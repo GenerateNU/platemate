@@ -104,7 +104,7 @@ export default function Feed() {
                                 <MenuItemPreview
                                     key={index}
                                     plateName={item.name}
-                                    content={item.description}
+                                    content={item.content}
                                     tags={item.tags}
                                     picture={item.picture}
                                     rating={0}
