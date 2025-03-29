@@ -17,6 +17,7 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	user.Get("/:id", handler.GetUserById)
 
 	user.Get("/followers", handler.GetFollowers)
+	user.Get("/:id/following", handler.GetFollowing)
 	user.Post("/follow", handler.FollowUser)
 	user.Delete("/follow", handler.UnfollowUser)
 

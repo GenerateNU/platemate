@@ -36,7 +36,7 @@ export default function SettingsScreen() {
         "beefFree": "Beef-free",
     };
 
-    const [dietaryRestrictions, setDietaryRestrictions] = useState<string[]>([]);
+    const [dietaryPreferences, setDietaryPreferences] = useState<string[]>([]);
 
     const [settings, setSettings] = useState<Record<string, boolean>>(
         Object.fromEntries(Object.values(dietaryOptions).map((option) => [option, false])),
@@ -49,7 +49,7 @@ export default function SettingsScreen() {
             const response = await axios.get(
               `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences`
             );
-            setDietaryRestrictions(response.data); 
+            setDietaryPreferences(response.data); 
           } 
           catch (err) {
             console.log('Failed to fetch dietary restrictions');
@@ -58,31 +58,31 @@ export default function SettingsScreen() {
         };
     
         fetchDietaryRestrictions();
-        console.log(dietaryRestrictions);
+        console.log(dietaryPreferences);
       }, [userId]); 
 
       useEffect(() => {
         console.log("reloaded!");
-        console.log(dietaryRestrictions);
+        console.log(dietaryPreferences);
         setSettings(
             Object.fromEntries(
             Object.keys(dietaryOptions).map((option) => [
                 option,
-                dietaryRestrictions.includes(dietaryOptions[option]), 
+                dietaryPreferences.includes(dietaryOptions[option]), 
             ])
             )
         );
-      }, [dietaryRestrictions])
+      }, [dietaryPreferences])
 
     const updateSetting = (key: string, value: boolean) => {
         if (value == true) {
-            setDietaryRestrictions((prevRestrictions) => [
+            setDietaryPreferences((prevRestrictions) => [
                 ...prevRestrictions,
                 dietaryOptions[key],
             ]);
             handleAddDietaryPreference(key);
         } else {
-            setDietaryRestrictions((prevRestrictions) =>
+            setDietaryPreferences((prevRestrictions) =>
                 prevRestrictions.filter((item) => item !== dietaryOptions[key])
             );
             handleRemoveDietaryPreference(key);
@@ -148,7 +148,7 @@ export default function SettingsScreen() {
         account: [
             {
                 label: "View Friends",
-                onPress: () => router.push("/(tabs)/profile/followers"),
+                onPress: () => router.push("/(tabs)/profile/friends"),
                 showChevron: true,
             },
         ],

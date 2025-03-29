@@ -49,6 +49,11 @@ type GetFollowersQuery struct {
 	UserId string `query:"userId" validate:"required"`
 }
 
+type GetFollowingQuery struct {
+	PaginationQuery
+	UserId string `query:"userId" validate:"required"`
+}
+
 type ReviewQuery struct {
 	UserId string `query:"userId" validate:"required"`
 	ItemId string `params:"id" validate:"required"`

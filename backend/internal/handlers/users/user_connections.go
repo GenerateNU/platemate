@@ -2,7 +2,6 @@ package users
 
 import (
 	"errors"
-
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
@@ -59,6 +58,30 @@ func (h *Handler) GetFollowers(c *fiber.Ctx) error {
 	}
 
 	followers, err := h.service.GetUserFollowers(query.UserId, query.Page, query.Limit)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserId))
+		}
+		return err
+	}
+
+	return c.JSON(followers)
+}
+
+// GetFollowing returns a paginated list of who the user is following
+func (h *Handler) GetFollowing(c *fiber.Ctx) error {
+	var query GetFollowingQuery
+	userId := c.Params("id")
+
+	// Set defaults if not provided
+	if query.Page < 1 {
+		query.Page = 1
+	}
+	if query.Limit < 1 {
+		query.Limit = 20
+	}
+
+	followers, err := h.service.GetUserFollowing(userId, query.Page, query.Limit)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserId))
