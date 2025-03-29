@@ -1,11 +1,12 @@
 package auth
 
 import (
+	"strings"
+
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"strings"
 )
 
 /*
@@ -85,14 +86,40 @@ func (h *Handler) Register(c *fiber.Ctx) error {
 		return err
 	}
 
+	// Convert string array to ObjectID array for followers and following
+	var followingOIDs []primitive.ObjectID = make([]primitive.ObjectID, 0)
+	var followersOIDs []primitive.ObjectID = make([]primitive.ObjectID, 0)
+	var reviewsOIDs []primitive.ObjectID = make([]primitive.ObjectID, 0)
+
+	// Initialize empty arrays for preferences and restrictions if they're nil
+	if req.Preferences == nil {
+		req.Preferences = make([]string, 0)
+	}
+	if req.Restrictions == nil {
+		req.Restrictions = make([]string, 0)
+	}
+	if req.TasteProfile == nil {
+		req.TasteProfile = make([]float64, 1536)
+	}
+
 	user := User{
 		ID:                oidHex,
 		Name:              req.Name,
 		Email:             req.Email,
 		Password:          req.Password,
-		FollowingCount:    0,
-		FollowersCount:    0,
-		ProfilePictureURL: "",
+		Username:          req.Username,
+		FollowingCount:    req.FollowingCount,
+		FollowersCount:    req.FollowersCount,
+		ProfilePictureURL: req.ProfilePicture,
+		Count:             req.Count,
+		RefreshToken:      req.RefreshToken,
+		TokenUsed:         req.TokenUsed,
+		Preferences:       req.Preferences,
+		Restrictions:      req.Restrictions,
+		Following:         followingOIDs,
+		Followers:         followersOIDs,
+		Reviews:           reviewsOIDs,
+		TasteProfile:      req.TasteProfile,
 	}
 
 	if err = user.Validate(); err != nil {
