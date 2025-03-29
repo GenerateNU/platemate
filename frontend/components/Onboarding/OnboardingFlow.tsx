@@ -106,7 +106,6 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                 tasteProfile: data.tasteProfile.length === 0 ? new Array(1536).fill(0) : data.tasteProfile,
             };
 
-            onComplete(finalUserData);
         } catch (error: any) {
             Alert.alert("Login Failed", error.response?.data?.message || "An error occurred during login");
         } finally {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
 
 import { ThemedView } from "@/components/themed/ThemedView";
-import FeedTabs from "@/components/feed/FeedTabs";
+import FeedTabs from "@/components/Feed/FeedTabs";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 import { Button } from "@/components/Button";
