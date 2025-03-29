@@ -2,6 +2,7 @@ package review
 
 import (
 	"context"
+
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"math"
@@ -328,27 +329,27 @@ func (s *Service) SearchUserReviews(userID, query string) ([]ReviewDocument, err
 func (s *Service) GetTopReviews(userID string) ([]TopReviewDocument, error) {
 	ctx := context.Background()
 	cursor, err := s.reviews.Aggregate(ctx, bson.A{
-		bson.D{{"$match", bson.D{{"reviewer.id", userID}}}},
+		bson.D{{Key: "$match", Value: bson.D{{Key: "reviewer.id", Value: userID}}}},
 		bson.D{
-			{"$lookup",
-				bson.D{
-					{"from", "menuItems"},
-					{"localField", "menuItem"},
-					{"foreignField", "_id"},
-					{"as", "items"},
+			{Key: "$lookup",
+				Value: bson.D{
+					{Key: "from", Value: "menuItems"},
+					{Key: "localField", Value: "menuItem"},
+					{Key: "foreignField", Value: "_id"},
+					{Key: "as", Value: "items"},
 				},
 			},
 		},
 		bson.D{
-			{"$addFields",
-				bson.D{
-					{"averageRate",
-						bson.D{
-							{"$divide",
-								bson.A{
+			{Key: "$addFields",
+				Value: bson.D{
+					{Key: "averageRate",
+						Value: bson.D{
+							{Key: "$divide",
+								Value: bson.A{
 									bson.D{
-										{"$sum",
-											bson.A{
+										{Key: "$sum",
+											Value: bson.A{
 												"$rating.overall",
 												"$rating.portion",
 												"$rating.taste",
@@ -364,8 +365,8 @@ func (s *Service) GetTopReviews(userID string) ([]TopReviewDocument, error) {
 				},
 			},
 		},
-		bson.D{{"$sort", bson.D{{"averageRate", -1}}}},
-		bson.D{{"$limit", 10}},
+		bson.D{{Key: "$sort", Value: bson.D{{Key: "averageRate", Value: -1}}}},
+		bson.D{{Key: "$limit", Value: 10}},
 	})
 
 	if err != nil {
