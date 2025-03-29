@@ -119,7 +119,11 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
         const selectedSpecificationTags = specificationTags.filter((tag) => tag.selected).map((tag) => tag.id);
         const selectedSortOption = selectedSort.find((option) => option.direction !== "none");
         const sortOrder =
-            selectedSortOption?.direction === "up" ? "asc" : selectedSortOption?.direction === "down" ? "desc" : undefined;
+            selectedSortOption?.direction === "up"
+                ? "asc"
+                : selectedSortOption?.direction === "down"
+                  ? "desc"
+                  : undefined;
 
         const sortFieldMapping: Record<TSortOptionKey, string> = {
             "Taste Rating": "avgRating.taste",
@@ -143,7 +147,7 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
             const response = await getMenuItems({
                 name: queryParams.name,
                 tags: queryParams.tags,
-                page: queryParams.skip,  // Correctly map skip to page
+                page: queryParams.skip, // Correctly map skip to page
                 limit: queryParams.limit,
                 sortBy: queryParams.sortBy,
                 sortOrder: queryParams.sortOrder,

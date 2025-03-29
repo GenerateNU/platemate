@@ -19,10 +19,10 @@ export const getMenuItems = async ({
     const queryParams = new URLSearchParams({
         page: String(page),
         limit: String(limit),
-      });
-      // Conditionally append optional params if provided
+    });
+    // Conditionally append optional params if provided
     if (name) queryParams.append("name", name);
-    if (tags && tags.length > 0) queryParams.append("tags", tags.join(','));
+    if (tags && tags.length > 0) queryParams.append("tags", tags.join(","));
     if (sortBy) queryParams.append("sortBy", sortBy);
     if (sortOrder) queryParams.append("sortOrder", sortOrder);
 
@@ -32,4 +32,3 @@ export const getMenuItems = async ({
 export const getMenuItemById = async (id: string): Promise<TMenuItem> => {
     return await makeRequest(`/api/v1/menu-items/${id}`, "GET");
 };
-
