@@ -175,7 +175,7 @@ func ValidateQueryParams(queryParams MenuItemsQuery) error {
 		if !validSortFields[queryParams.SortBy] {
 			return fmt.Errorf("invalid sortBy field: %s", queryParams.SortBy)
 		}
-		// Sort order can be “asc” (default) or “desc”
+		// Sort order can be "asc" (default) or "desc"
 		if queryParams.SortOrder != "" &&
 			strings.ToLower(queryParams.SortOrder) != "asc" &&
 			strings.ToLower(queryParams.SortOrder) != "desc" {
@@ -216,6 +216,33 @@ func ValidateDietaryRestrictions(restrictions []string) ([]string, error) {
 	return validRestrictions, nil
 }
 
+// GetMenuItems retrieves a list of menu items with optional filters
+// @Summary      Get menu items
+// @Description  Retrieves a list of menu items with optional filtering, sorting, and pagination
+// @Tags         menu-items
+// @Accept       json
+// @Produce      json
+// @Param        minRatingPortion     query   number   false  "Minimum portion rating filter"
+// @Param        maxRatingPortion     query   number   false  "Maximum portion rating filter"
+// @Param        minRatingTaste       query   number   false  "Minimum taste rating filter"
+// @Param        maxRatingTaste       query   number   false  "Maximum taste rating filter"
+// @Param        minRatingValue       query   number   false  "Minimum value rating filter"
+// @Param        maxRatingValue       query   number   false  "Maximum value rating filter"
+// @Param        minRatingOverall     query   number   false  "Minimum overall rating filter"
+// @Param        maxRatingOverall     query   number   false  "Maximum overall rating filter"
+// @Param        tags                 query   []string false  "Filter by tags (comma-separated)"
+// @Param        filter               query   []string false  "Filter by dietary restrictions (comma-separated)"
+// @Param        limit                query   int      false  "Number of items to return" default(20)
+// @Param        skip                 query   int      false  "Number of items to skip" default(0)
+// @Param        sortBy               query   string   false  "Field to sort by" Enums(name, avgRating.overall, avgRating.portion, avgRating.taste, avgRating.value) default(name)
+// @Param        sortOrder            query   string   false  "Sort order" Enums(asc, desc) default(asc)
+// @Param        name                 query   string   false  "Filter by name (text search)"
+// @Param        longitude            query   number   false  "Longitude for location-based search"
+// @Param        latitude             query   number   false  "Latitude for location-based search"
+// @Success      200                  {array}  MenuItemResponse
+// @Failure      400                  {object} map[string]string "Invalid request parameters"
+// @Failure      500                  {object} map[string]string "Internal server error"
+// @Router       /api/v1/menu-items [get]
 func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 	// Parse query parameters
 	var queryParams MenuItemsQuery
@@ -258,9 +285,19 @@ func (h *Handler) GetMenuItems(c *fiber.Ctx) error {
 
 	}
 	return c.Status(fiber.StatusOK).JSON(menuItems)
-
 }
 
+// GetRandomMenuItems retrieves a random selection of menu items
+// @Summary      Get random menu items
+// @Description  Returns a random selection of menu items from the database
+// @Tags         menu-items
+// @Accept       json
+// @Produce      json
+// @Param        limit    query     int  false  "Number of random items to return" default(20)
+// @Success      200      {array}   MenuItemResponse
+// @Failure      400      {object}  map[string]string  "Invalid request parameters"
+// @Failure      500      {object}  map[string]string  "Internal server error"
+// @Router       /api/v1/menu-items/random [get]
 func (h *Handler) GetRandomMenuItems(c *fiber.Ctx) error {
 	limitInput := c.Query("limit", "20")
 	limit, err := strconv.Atoi(limitInput)
@@ -277,6 +314,18 @@ func (h *Handler) GetRandomMenuItems(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(items)
 }
 
+// GetMenuItemById retrieves a menu item by its ID
+// @Summary      Get menu item by ID
+// @Description  Returns a specific menu item identified by its ID
+// @Tags         menu-items
+// @Accept       json
+// @Produce      json
+// @Param        id       path      string  true  "Menu Item ID"
+// @Success      200      {object}  MenuItemResponse
+// @Failure      400      {object}  map[string]string  "Invalid ID format"
+// @Failure      404      {object}  map[string]string  "Menu item not found"
+// @Failure      500      {object}  map[string]string  "Internal server error"
+// @Router       /api/v1/menu-items/{id} [get]
 func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 	id := c.Params("id")
 	objID, errID := primitive.ObjectIDFromHex(id)
@@ -294,6 +343,18 @@ func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(menuItem)
 }
 
+// GetMenuItemByRestaurant retrieves menu items for a specific restaurant
+// @Summary      Get menu items by restaurant ID
+// @Description  Returns all menu items associated with a specific restaurant
+// @Tags         menu-items
+// @Accept       json
+// @Produce      json
+// @Param        id       path      string  true  "Restaurant ID"
+// @Success      200      {array}   MenuItemResponse
+// @Failure      400      {object}  map[string]string  "Invalid ID format"
+// @Failure      404      {object}  map[string]string  "Restaurant not found"
+// @Failure      500      {object}  map[string]string  "Internal server error"
+// @Router       /api/v1/restaurant/{id}/menu-items [get]
 func (h *Handler) GetMenuItemByRestaurant(c *fiber.Ctx) error {
 	id := c.Params("id")
 	objID, err := primitive.ObjectIDFromHex(id)
@@ -311,6 +372,18 @@ func (h *Handler) GetMenuItemByRestaurant(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(menuItem)
 }
 
+// GetSimilarMenuItems retrieves menu items similar to a specified item
+// @Summary      Get similar menu items
+// @Description  Returns menu items that are similar to the specified menu item
+// @Tags         menu-items
+// @Accept       json
+// @Produce      json
+// @Param        id       path      string  true  "Reference Menu Item ID"
+// @Success      200      {array}   MenuItemResponse
+// @Failure      400      {object}  map[string]string  "Invalid ID format"
+// @Failure      404      {object}  map[string]string  "Menu item not found"
+// @Failure      500      {object}  map[string]string  "Internal server error"
+// @Router       /api/v1/menu-items/{id}/similar [get]
 func (h *Handler) GetSimilarMenuItems(c *fiber.Ctx) error {
 	id := c.Params("id")
 	objID, err := primitive.ObjectIDFromHex(id)
@@ -330,6 +403,17 @@ func (h *Handler) GetSimilarMenuItems(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(similarItems)
 }
 
+// CreateMenuItem creates a new menu item
+// @Summary      Create menu item
+// @Description  Creates a new menu item with the provided details
+// @Tags         menu-items
+// @Accept       json
+// @Produce      json
+// @Param        menuItem  body      MenuItemRequest  true  "Menu Item details"
+// @Success      200       {object}  MenuItemResponse
+// @Failure      400       {object}  map[string]string  "Invalid request data"
+// @Failure      500       {object}  map[string]string  "Internal server error"
+// @Router       /api/v1/menu-items [post]
 func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 	var menuItem MenuItemRequest
 	if err := c.BodyParser(&menuItem); err != nil {
@@ -350,7 +434,19 @@ func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(createdMenuItem)
 }
 
-/* Updates the menu item with the corresponding ID. Full updates. */
+// UpdateMenuItem updates an existing menu item
+// @Summary      Update menu item
+// @Description  Updates an existing menu item with new details
+// @Tags         menu-items
+// @Accept       json
+// @Produce      json
+// @Param        id        path      string           true  "Menu Item ID"
+// @Param        menuItem  body      MenuItemRequest  true  "Updated Menu Item details"
+// @Success      200       {object}  MenuItemResponse
+// @Failure      400       {object}  map[string]string  "Invalid request data or ID format"
+// @Failure      404       {object}  map[string]string  "Menu item not found"
+// @Failure      500       {object}  map[string]string  "Internal server error"
+// @Router       /api/v1/menu-items/{id} [put]
 func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
 	var menuItem MenuItemRequest
 	id := c.Params("id")
@@ -381,6 +477,18 @@ func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(updatedMenuItem)
 }
 
+// DeleteMenuItem deletes a menu item
+// @Summary      Delete menu item
+// @Description  Deletes an existing menu item by its ID
+// @Tags         menu-items
+// @Accept       json
+// @Produce      json
+// @Param        id        path      string  true  "Menu Item ID"
+// @Success      200       {object}  MenuItemResponse  "Deleted menu item"
+// @Failure      400       {object}  map[string]string  "Invalid ID format"
+// @Failure      404       {object}  map[string]string  "Menu item not found"
+// @Failure      500       {object}  map[string]string  "Internal server error"
+// @Router       /api/v1/menu-items/{id} [delete]
 func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -400,6 +508,19 @@ func (h *Handler) DeleteMenuItem(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(menuItemDeleted)
 }
 
+// GetMenuItemReviews retrieves all reviews for a specific menu item
+// @Summary      Get menu item reviews
+// @Description  Returns all reviews associated with a specific menu item, with optional filtering by user
+// @Tags         menu-items
+// @Accept       json
+// @Produce      json
+// @Param        id        path      string  true   "Menu Item ID"
+// @Param        userID    query     string  false  "Filter reviews by specific user ID"
+// @Param        sortBy    query     string  false  "Field to sort by" Enums(timestamp, portion, taste, value, overall) default(timestamp)
+// @Success      200       {array}   review.ReviewDocument
+// @Failure      400       {object}  map[string]string  "Invalid parameters"
+// @Failure      500       {object}  map[string]string  "Internal server error"
+// @Router       /api/v1/menu-items/{id}/reviews [get]
 func (h *Handler) GetMenuItemReviews(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var query MenuItemReviewQuery
@@ -437,6 +558,17 @@ func (h *Handler) GetMenuItemReviews(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(reviews)
 }
 
+// GetMenuItemReviewPictures retrieves all review pictures for a menu item
+// @Summary      Get menu item review pictures
+// @Description  Returns all picture URLs from reviews of a specific menu item
+// @Tags         menu-items
+// @Accept       json
+// @Produce      json
+// @Param        id        path      string  true  "Menu Item ID"
+// @Success      200       {array}   string  "Array of picture URLs"
+// @Failure      400       {object}  map[string]string  "Invalid ID format"
+// @Failure      500       {object}  map[string]string  "Internal server error"
+// @Router       /api/v1/menu-items/{id}/review-pictures [get]
 func (h *Handler) GetMenuItemReviewPictures(c *fiber.Ctx) error {
 	id := c.Params("id")
 	objID, errID := primitive.ObjectIDFromHex(id)
@@ -451,6 +583,18 @@ func (h *Handler) GetMenuItemReviewPictures(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(pictures)
 }
 
+// GetPopularWithFriends retrieves menu items popular among a user's friends
+// @Summary      Get menu items popular with friends
+// @Description  Returns menu items that are popular among the user's friends, based on reviews and ratings
+// @Tags         menu-items
+// @Accept       json
+// @Produce      json
+// @Param        userId    query     string  true   "User ID"
+// @Param        limit     query     int     false  "Number of items to return" default(20)
+// @Success      200       {array}   MenuItemResponse
+// @Failure      400       {object}  map[string]string  "Invalid parameters"
+// @Failure      500       {object}  map[string]string  "Internal server error"
+// @Router       /api/v1/menu-items/popular-with-friends [get]
 func (h *Handler) GetPopularWithFriends(c *fiber.Ctx) error {
 	var query PopularWithFriendsQuery
 
