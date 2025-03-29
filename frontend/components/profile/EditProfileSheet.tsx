@@ -1,7 +1,7 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
-import { ThemedText } from "@/components/ThemedText";
+import { ThemedText } from "@/components/themed/ThemedText";
 import { Dimensions, Image, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Portal } from "@gorhom/portal";
@@ -83,7 +83,7 @@ const EditProfileSheet = forwardRef<EditProfileSheetRef, { user: User }>(({ user
                     <ThemedText
                         style={{
                             alignSelf: "flex-start",
-                            fontFamily: "Outfit",
+                            fontFamily: "Inter",
                             fontSize: 24,
                             fontWeight: 600,
                             paddingVertical: 4,
@@ -120,7 +120,7 @@ const EditProfileSheet = forwardRef<EditProfileSheetRef, { user: User }>(({ user
                             <TouchableOpacity
                                 style={styles.locationInput}
                                 onPress={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}>
-                                <ThemedText style={{ fontFamily: "Outfit" }}>{selectedLocation}</ThemedText>
+                                <ThemedText style={{ fontFamily: "Inter" }}>{selectedLocation}</ThemedText>
                                 <Ionicons
                                     name={isLocationDropdownOpen ? "chevron-up" : "chevron-down"}
                                     size={20}
@@ -173,6 +173,8 @@ const EditProfileSheet = forwardRef<EditProfileSheetRef, { user: User }>(({ user
         </Portal>
     );
 });
+
+EditProfileSheet.displayName = "EditProfileSheet";
 
 const styles = StyleSheet.create({
     bottomSheetBackground: {
@@ -315,7 +317,7 @@ const styles = StyleSheet.create({
     inputLabel: {
         fontSize: 14,
         marginBottom: 8,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     textInput: {
         width: "100%",
@@ -325,7 +327,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         paddingHorizontal: 16,
         fontSize: 16,
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
     },
     locationInput: {
         width: "100%",
@@ -338,7 +340,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
     },
     buttonContainer: {
         flexDirection: "row",
@@ -359,7 +361,7 @@ const styles = StyleSheet.create({
     cancelButtonText: {
         fontSize: 16,
         fontWeight: "500",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
     saveButton: {
         flex: 1,
@@ -373,7 +375,7 @@ const styles = StyleSheet.create({
     saveButtonText: {
         fontSize: 16,
         fontWeight: "500",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
         color: "#000",
     },
     dropdownContainer: {
@@ -410,11 +412,11 @@ const styles = StyleSheet.create({
     },
     dropdownText: {
         fontSize: 16,
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
     },
     dropdownTextSelected: {
         fontWeight: "500",
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
     },
 });
 

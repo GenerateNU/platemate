@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import React from "react";
-import { ThemedText } from "@/components/ThemedText";
+import { ThemedText } from "@/components/themed/ThemedText";
 
 type ProfileIdentityProps = {
     name: string;
@@ -22,11 +22,11 @@ const styles = StyleSheet.create({
         fontSize: 28,
         paddingTop: 24,
         fontWeight: "bold",
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
     },
     usernameText: {
         alignSelf: "center",
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
     },
 });
 

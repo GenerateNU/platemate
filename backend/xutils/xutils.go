@@ -2,6 +2,7 @@ package xutils
 
 import "crypto/rand"
 import "go.mongodb.org/mongo-driver/bson/primitive"
+import "go.mongodb.org/mongo-driver/bson/primitive"
 
 
 func GenerateOTP(length int) (string, error) {

@@ -1,8 +1,8 @@
 import { ScrollView, View } from "react-native";
 import React, { useState } from "react";
 import MenuItemPreview from "../Cards/MenuItemPreview";
-import ReviewPreview from "../Cards/ReviewPreview";
-import { ThemedText } from "../ThemedText";
+import ReviewPreview from "../review/ReviewPreview";
+import { ThemedText } from "../themed/ThemedText";
 
 type Props = {
     activeTab: number;

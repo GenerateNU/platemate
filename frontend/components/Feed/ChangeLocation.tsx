@@ -1,6 +1,7 @@
-import { Dimensions, Image, Text, View, ScrollView } from "react-native";
+// import { Dimensions, Image, Text, View, ScrollView } from "react-native";
+import { Dimensions, View } from "react-native";
 import React from "react";
-import { ThemedText } from "../ThemedText";
+import { ThemedText } from "../themed/ThemedText";
 import Entypo from "@expo/vector-icons/build/Entypo";
 
 const ChangeLocation = () => {
