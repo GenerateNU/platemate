@@ -98,169 +98,26 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
         }
     };
 
-    // const handleNext = async () => {
-    //     if (step < 4) {
-    //         setStep((prev) => prev + 1);
-    //     } else {
-    //         // console.log("Submit review!");
-    //         try {
-    //             setIsSubmitting(true);
-
-    //             if (!user) {
-    //                 console.error("User data is missing");
-    //                 Alert.alert("Error", "User information is missing. Please log in again.");
-    //                 return;
-    //             }
-
-    //             const reviewData = {
-    //                 rating: {
-    //                     taste: tasteRating,
-    //                     portion: portionRating,
-    //                     value: valueRating,
-    //                     overall: overallRating,
-    //                     return: returnRating,
-    //                 },
-    //                 content: `Overall: ${overallText} Taste: ${tasteRatingText} Portion: ${portionRatingText} Value: ${valueRatingText} Return: ${returnRating}`,
-    //                 reviewer: {
-    //                     _id: user.id,
-    //                     pfp: user.profile_picture || "",
-    //                     username: user.username,
-    //                 },
-    //                 menuItem: menuItemName,
-    //                 restaurantId: restaurantId,
-    //             };
-
-    //             await createReview(reviewData);
-    //             Alert.alert("Success", "Your review has been submitted!");
-    //             onClose();
-    //         } catch (error) {
-    //             console.error("Error submitting review:", error);
-    //             Alert.alert("Error", "Failed to submit your review. Please try again.");
-    //         } finally {
-    //             setIsSubmitting(false);
-    //         }
-    //     }
-    // };
-
-
-    // const handleNext = async () => {
-    //     if (step < 4) {
-    //         setStep((prev) => prev + 1);
-    //     } else {
-    //         try {
-    //             setIsSubmitting(true);
-
-    //             // if (!isAuthenticated || !user) {
-    //             //     Alert.alert("Error", "You must be logged in to submit a review");
-    //             //     setIsSubmitting(false);
-    //             //     return;
-    //             // }
-
-    //             // if (!restaurantId || !menuItemName) {
-    //             //     Alert.alert("Error", "Missing restaurant or menu item information");
-    //             //     setIsSubmitting(false);
-    //             //     return;
-    //             // }
-
-    //             // Validate that restaurantId is a valid MongoDB ObjectID (24 hex characters)
-    //             const isValidObjectId = (id: string) => /^[0-9a-fA-F]{24}$/.test(id);
-
-    //             // if (!isValidObjectId(restaurantId)) {
-    //             //     console.error("Invalid restaurantId format:", restaurantId);
-    //             //     Alert.alert("Error", "Invalid restaurant ID format");
-    //             //     setIsSubmitting(false);
-    //             //     return;
-    //             // }
-
-    //             // Make sure user is a valid ObjectID
-    //             if (!user || !isValidObjectId(user)) {
-    //                 console.error("Invalid user ID format:", user);
-    //                 Alert.alert("Error", "Invalid user ID format");
-    //                 setIsSubmitting(false);
-    //                 return;
-    //             }
-
-    //             // Collect all the selected tags
-    //             const selectedTasteTags = tasteTags.filter((tag) => tag.selected).map((tag) => tag.text);
-    //             const selectedPortionTags = portionTags.filter((tag) => tag.selected).map((tag) => tag.text);
-    //             const selectedValueTags = valueTags.filter((tag) => tag.selected).map((tag) => tag.text);
-
-    //             // Combine tags for content enhancement
-    //             let tagDescription = "";
-    //             if (selectedTasteTags.length > 0) {
-    //                 tagDescription += `Taste: ${selectedTasteTags.join(", ")}. `;
-    //             }
-    //             if (selectedPortionTags.length > 0) {
-    //                 tagDescription += `Portion: ${selectedPortionTags.join(", ")}. `;
-    //             }
-    //             if (selectedValueTags.length > 0) {
-    //                 tagDescription += `Value: ${selectedValueTags.join(", ")}. `;
-    //             }
-
-    //             // Combine user text with tags
-    //             const finalContent = overallText + (tagDescription ? "\n\n" + tagDescription : "");
-
-    //             // Create review payload
-    //             const reviewData = {
-    //                 rating: {
-    //                     portion: portionRating,
-    //                     taste: tasteRating,
-    //                     value: valueRating,
-    //                     overall: overallRating,
-    //                     return: overallRating >= 3, // Simple logic: would return if rated 3+
-    //                 },
-    //                 content: finalContent,
-    //                 reviewer: {
-    //                     _id: user,
-    //                     pfp: "",
-    //                     username: "",
-    //                 },
-    //                 menuItem: menuItemName,
-    //                 restaurantId: restaurantId,
-    //             };
-
-    //             console.log("Submitting review:", JSON.stringify(reviewData));
-
-    //             await createReview(reviewData);
-    //             Alert.alert("Success", "Your review has been submitted!");
-    //             onClose(); // Close the review screen
-    //         } catch (error) {
-    //             const err = error as any;
-    //             console.error("Error submitting review:", err);
-    //             // Log more details about the error
-    //             if (err.response) {
-    //                 console.error("Response data:", err.response.data);
-    //                 console.error("Response status:", err.response.status);
-    //                 Alert.alert("Error", `Failed to submit review: ${JSON.stringify(err.response.data)}`);
-    //             } else {
-    //                 Alert.alert("Error", "Failed to submit review. Please try again.");
-    //             }
-    //         } finally {
-    //             setIsSubmitting(false);
-    //         }
-    //     }
-    // };
-
     const handleNext = async () => {
         if (step < 4) {
             setStep((prev) => prev + 1);
         } else {
             try {
                 setIsSubmitting(true);
-    
+
                 // For testing: Use hardcoded valid MongoDB ObjectIDs
                 // These are examples - they follow the MongoDB ObjectID format (24 hex chars)
-                const validUserId = "64f5a95cc7330b78d33265f0";
+                const validUserId = "67e300c043b432515e2dd8bb";
                 const validRestaurantId = "64f5a95cc7330b78d33265f1";
-                
+
                 // Generate a fresh ObjectID if needed (for testing only)
                 // const testObjectId = generateValidObjectId();
-                
+
                 // Collect all the selected tags
                 const selectedTasteTags = tasteTags.filter((tag) => tag.selected).map((tag) => tag.text);
                 const selectedPortionTags = portionTags.filter((tag) => tag.selected).map((tag) => tag.text);
                 const selectedValueTags = valueTags.filter((tag) => tag.selected).map((tag) => tag.text);
-    
+
                 // Combine tags for content enhancement
                 let tagDescription = "";
                 if (selectedTasteTags.length > 0) {
@@ -272,11 +129,11 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                 if (selectedValueTags.length > 0) {
                     tagDescription += `Value: ${selectedValueTags.join(", ")}. `;
                 }
-    
+
                 // Combine user text with tags
                 const finalContent = overallText + (tagDescription ? "\n\n" + tagDescription : "");
-    
-                // Create review payload with valid ObjectIds
+
+                // Create review payload with valid ObjectIds - matching backend API structure
                 const reviewData = {
                     rating: {
                         portion: portionRating,
@@ -285,18 +142,19 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                         overall: overallRating,
                         return: overallRating >= 3,
                     },
+                    picture: dishImageUrl || "",
                     content: finalContent,
                     reviewer: {
                         _id: validUserId, // Use the valid ObjectID here
-                        pfp: "",
-                        username: "TestUser",
+                        pfp: "https://i.pinimg.com/736x/b1/6d/2e/b16d2e5e6a0db39e60ac17d0f1865ef8.jpg",
+                        username: "",
                     },
-                    menuItem: menuItemName || "Test Menu Item",
+                    menuItem: "64f5a95cc7330b78d33265f2", // Use a valid ObjectID for menu item
                     restaurantId: validRestaurantId, // Use the valid ObjectID here
                 };
-    
+
                 console.log("Submitting review:", JSON.stringify(reviewData));
-    
+
                 await createReview(reviewData);
                 Alert.alert("Success", "Your review has been submitted!");
                 onClose();
