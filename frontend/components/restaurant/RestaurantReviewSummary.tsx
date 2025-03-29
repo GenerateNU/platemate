@@ -3,12 +3,12 @@ import { View, Text, StyleSheet } from "react-native";
 import { StarIcon } from "@/components/icons/Icons";
 
 const ReviewSummary = ({
-                           rating = 4,
-                           maxRating = 5,
-                           reviewCount = 300,
-                           friendsReviewCount = 3,
-                           highlight = "Best Pad Thai in Boston. I'm serious.",
-                       }) => {
+    rating = 4,
+    maxRating = 5,
+    reviewCount = 300,
+    friendsReviewCount = 3,
+    highlight = "Best Pad Thai in Boston. I'm serious.",
+}) => {
     return (
         <View style={styles.container}>
             <View style={styles.ratingSection}>

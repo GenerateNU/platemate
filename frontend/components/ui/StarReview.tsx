@@ -55,9 +55,9 @@ export function Stars({ avgRating, full = true }: StarProps) {
     if (full) {
         for (let i = 0; i < maxStars; i++) {
             if (i < Math.floor(avgRating)) {
-                stars.push(<StarIcon key={i} width={16} height={16} filled={true}/>);
+                stars.push(<StarIcon key={i} width={16} height={16} filled={true} />);
             } else {
-                stars.push(<StarIcon key={i} width={16} height={16} filled={true}/>);
+                stars.push(<StarIcon key={i} width={16} height={16} filled={true} />);
             }
         }
     } else {
@@ -82,7 +82,12 @@ export function InteractiveStars({
                 const StarIcon = isFilled ? ShadedStar : UnshadedStar;
                 return (
                     <TouchableOpacity key={i} onPress={() => onChange(i + 1)}>
-                        <StarIcon width={starSize} height={starSize} fill={isFilled ? activeColor : inactiveColor} filled={isFilled} />
+                        <StarIcon
+                            width={starSize}
+                            height={starSize}
+                            fill={isFilled ? activeColor : inactiveColor}
+                            filled={isFilled}
+                        />
                     </TouchableOpacity>
                 );
             })}

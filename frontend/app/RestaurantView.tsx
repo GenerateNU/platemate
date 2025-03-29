@@ -73,18 +73,39 @@ export default function RestaurantView() {
                 <FeedTabs tabs={["Reviews", "Menu"]} activeTab={filterTab} setActiveTab={setFilterTab} />
 
                 <ThemedView>
-                    { filterTab == 0 && (
+                    {filterTab == 0 && (
                         <>
                             <ThemedView style={{ paddingVertical: 12 }}>
-                                <FeedTabs tabs={["Friends", "Top Reviews", "My Reviews"]} activeTab={activeTab} setActiveTab={setActiveTab} />
+                                <FeedTabs
+                                    tabs={["Friends", "Top Reviews", "My Reviews"]}
+                                    activeTab={activeTab}
+                                    setActiveTab={setActiveTab}
+                                />
                             </ThemedView>
-                            <ReviewPreview plateName={"Big Whopper"} restaurantName={"Burger King"} tags={["juicy", "artificial", "fake meat"]} rating={4} content={"This is fake meat and is not good for you. Not sure why we are even serving it."} />
+                            <ReviewPreview
+                                plateName={"Big Whopper"}
+                                restaurantName={"Burger King"}
+                                tags={["juicy", "artificial", "fake meat"]}
+                                rating={4}
+                                content={
+                                    "This is fake meat and is not good for you. Not sure why we are even serving it."
+                                }
+                            />
                         </>
                     )}
 
-                    { filterTab == 1 && (
+                    {filterTab == 1 && (
                         <>
-                            <MenuItemPreview plateName={"Whopper"} restaurantName={"Burger King"} tags={["juicy", "fake meat", "unhealthy"]} rating={4.2} content={"a juicy burger that is not meant to be consumed"} picture={"https://media-cdn.grubhub.com/image/upload/d_search:browse-images:default.jpg/w_150,q_auto:low,fl_lossy,dpr_2.0,c_fill,f_auto,h_150/yzbd3ocqb3s8o2jkd2jn"} />
+                            <MenuItemPreview
+                                plateName={"Whopper"}
+                                restaurantName={"Burger King"}
+                                tags={["juicy", "fake meat", "unhealthy"]}
+                                rating={4.2}
+                                content={"a juicy burger that is not meant to be consumed"}
+                                picture={
+                                    "https://media-cdn.grubhub.com/image/upload/d_search:browse-images:default.jpg/w_150,q_auto:low,fl_lossy,dpr_2.0,c_fill,f_auto,h_150/yzbd3ocqb3s8o2jkd2jn"
+                                }
+                            />
                         </>
                     )}
                 </ThemedView>
