@@ -61,8 +61,12 @@ export default function Feed() {
                                         plateName={item.menuItem}
                                         restaurantName={item.restaurantId}
                                         rating={item.rating.overall}
-                                        tags={[]}
+                                        tags={["Warm", "Tender", "Sweet"]}
                                         content={item.content}
+                                        authorName={item.reviewer.id}
+                                        authorUsername={item.reviewer.username}
+                                        authorAvatar={item.reviewer.pfp}
+                                        authorId={item.reviewer.id}
                                     />
                                 </TouchableOpacity>
                             ))}
@@ -76,15 +80,16 @@ export default function Feed() {
                     {menuItems.length > 0 && (
                         <ScrollView contentContainerStyle={{ gap: 16 }} showsVerticalScrollIndicator={false}>
                             {menuItems.map((item: TMenuItem, index: number) => (
-                                <MenuItemPreview
-                                    key={index}
-                                    plateName={item.name}
-                                    content={item.description}
-                                    tags={item.tags}
-                                    picture={item.picture}
-                                    rating={item.avgRating.overall}
-                                    restaurantName={item.restaurantId}
-                                />
+                                <TouchableOpacity key={index} onPress={() => router.push(`/(menuItem)/${item.id}`)}>
+                                    <MenuItemPreview
+                                        plateName={item.name}
+                                        content={item.description}
+                                        tags={item.tags}
+                                        picture={item.picture}
+                                        rating={3}
+                                        restaurantName={item.restaurantId || "Restaurant Name"}
+                                    />
+                                </TouchableOpacity>
                             ))}
                         </ScrollView>
                     )}

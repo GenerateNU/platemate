@@ -1,8 +1,8 @@
 import { ThemedView } from "@/components/themed/ThemedView";
-import { ScrollView, StyleSheet, View, Image, Pressable } from "react-native";
+import { ScrollView, StyleSheet, View, Image, Pressable, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarRating } from "@/components/ui/StarReview";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
 // import ReviewDetail from "@/components/review/ReviewDetail";
@@ -12,8 +12,11 @@ import { StatCard } from "@/components/Cards/StatCard";
 import { ReviewButton } from "@/components/review/ReviewButton";
 import HighlightCard from "@/components/restaurant/HighlightCard";
 import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
+import { router, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { getMenuItemById, getMenuItems } from "@/api/menu-items";
+import { TMenuItem } from "@/types/menu-item";
 
-export default function MenuItemView() {
+export default function Route() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
     const dishTags = [
         {
@@ -33,6 +36,20 @@ export default function MenuItemView() {
         },
     ];
 
+    const { id } = useLocalSearchParams<{ id: string }>();
+
+    const navigation = useNavigation();
+    const [menuItem, setMenuItem] = useState<TMenuItem | null>(null);
+
+    const router = useRouter();
+
+    useEffect(() => {
+        navigation.setOptions({ headerShown: false });
+        getMenuItemById(id).then((data) => {
+            setMenuItem(data);
+        });
+    }, [navigation]);
+
     return (
         <>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -43,7 +60,7 @@ export default function MenuItemView() {
                     {/* Header Section */}
                     <ThemedView style={styles.headerContainer}>
                         <View style={styles.titleRow}>
-                            <ThemedText style={styles.titleText}>Pad Thai</ThemedText>
+                            <ThemedText style={styles.titleText}>{menuItem?.name}</ThemedText>
                             <View style={styles.titleIcons}>
                                 <Pressable style={styles.iconButton}>
                                     <Ionicons name="share-outline" size={24} color="#666" />
@@ -55,7 +72,12 @@ export default function MenuItemView() {
                         </View>
                         <View style={styles.restaurantContainer}>
                             <Ionicons name="restaurant-outline" size={20} color="#666" />
-                            <ThemedText style={styles.restaurantText}>Pad Thai Kitchen</ThemedText>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    router.push("/(restaurant)/s");
+                                }}>
+                                <ThemedText style={styles.restaurantText}>Restaurant Name</ThemedText>
+                            </TouchableOpacity>
                         </View>
                     </ThemedView>
 
@@ -75,9 +97,7 @@ export default function MenuItemView() {
 
                     {/* Description Section */}
                     <ThemedView style={styles.descriptionContainer}>
-                        <ThemedText style={styles.descriptionText}>
-                            flavorful Thai stir-fried noodle dish with a perfect sweet-savory balance.
-                        </ThemedText>
+                        <ThemedText style={styles.descriptionText}>{menuItem?.description}</ThemedText>
                         <View style={styles.allergyRow}>
                             <View style={styles.allergyItemsContainer}>
                                 <ThemedText style={styles.allergyText}>
@@ -117,7 +137,7 @@ export default function MenuItemView() {
                     <View style={styles.reviewStats}>
                         <View style={styles.ratingContainer}>
                             <ThemedText style={styles.ratingText}>4/5</ThemedText>
-                            <StarRating avgRating={4} numRatings={428} showAvgRating={false} />
+                            <StarRating avgRating={4.2} numRatings={428} showAvgRating={false} />
                         </View>
                     </View>
 
@@ -143,9 +163,9 @@ export default function MenuItemView() {
                         tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
                         rating={4}
                         content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
-                        authorName={"First Last"}
                         authorId={""}
                         authorUsername={"username"}
+                        authorName={"First Name"}
                         authorAvatar={"https://placehold.co/600x400/png?text=P"}
                     />
                 </ThemedView>
@@ -188,13 +208,13 @@ const styles = StyleSheet.create({
         padding: 4,
     },
     headerContainer: {
-        gap: 8,
+        gap: 0,
     },
     titleText: {
         fontWeight: "600",
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
         fontSize: 28,
-        paddingTop: 6,
+        paddingTop: 16,
     },
     restaurantContainer: {
         flexDirection: "row",
@@ -211,11 +231,12 @@ const styles = StyleSheet.create({
     },
     descriptionContainer: {
         gap: 8,
-        marginBottom: 24,
+        marginBottom: 20,
     },
     descriptionText: {
         fontSize: 16,
         lineHeight: 16,
+        paddingTop: 4,
     },
     allergyLabel: {
         fontSize: 14,

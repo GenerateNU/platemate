@@ -13,9 +13,23 @@ type Props = {
     tags: string[];
     rating: number;
     content: string;
+    authorName: string;
+    authorUsername: string;
+    authorAvatar: string;
+    authorId: string;
 };
 
-const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Props) => {
+const ReviewPreview = ({
+    plateName,
+    restaurantName,
+    tags,
+    rating,
+    content,
+    authorName,
+    authorUsername,
+    authorAvatar,
+    authorId,
+}: Props) => {
     const navigation = useNavigation();
 
     return (
@@ -28,15 +42,15 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
                 gap: 10,
                 borderRadius: 12,
                 paddingTop: 24,
-                width: Dimensions.get("window").width * 0.75,
-                height: Dimensions.get("window").height * 0.35,
+                width: "100%",
+                height: Dimensions.get("window").height * 0.36,
             }}>
             <UserInfoRowBase
-                name={"Ben Petrillo"}
-                username={"benpetrillo26"}
+                name={"First Last"}
+                username={authorUsername}
                 right={<View />}
-                icon={"https://avatars.githubusercontent.com/u/66958528?v=4"}
-                onPress={() => router.push(`/(profile)/0s9df76vtbdsy9nf`)}
+                icon={authorAvatar}
+                onPress={() => router.push(`/(profile)/${authorId}`)}
             />
             <View style={{ gap: 10 }}>
                 <View style={styles.plateInfoContainer}>

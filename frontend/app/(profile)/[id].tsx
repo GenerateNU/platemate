@@ -68,12 +68,6 @@ const ProfileScreen = () => {
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
                     />
-                    <ReviewPreview
-                        plateName="Ceasar Salad"
-                        restaurantName="Luigi's"
-                        tags={["Vegan", "Green", "Healthy", "Low Cal"]}
-                        rating={4.5}
-                        content={"It was pretty good."}></ReviewPreview>
                 </ThemedView>
             </ScrollView>
         </ScrollView>
