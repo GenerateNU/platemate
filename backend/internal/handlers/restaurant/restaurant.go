@@ -123,6 +123,10 @@ func (h *Handler) AddMenuItem(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	objID, err := primitive.ObjectIDFromHex(idParam)
 
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
 	menuItemIDParam := c.Query("menuItemID")
 	menuItemObjID, err := primitive.ObjectIDFromHex(menuItemIDParam)
 	if err != nil {

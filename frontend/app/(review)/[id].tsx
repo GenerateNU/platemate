@@ -1,13 +1,14 @@
-import React from "react";
-import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { ThemedView } from "@/components/themed/ThemedView";
+import ReviewDetail from "@/components/review/ReviewDetail";
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarRating } from "@/components/ui/StarReview";
-import { Ionicons } from "@expo/vector-icons";
-// import { RestaurantTags } from "@/components/RestaurantTags";
-import { Entypo } from "@expo/vector-icons";
+import React, { useEffect } from "react";
+import { TReview } from "@/types/review";
+import { getReviewById } from "@/api/reviews";
 
-// Mock doc structure
 type ReviewDocument = {
     _id: string;
     createdAt: string;
@@ -82,10 +83,23 @@ const mockReview: ReviewDocument = {
     },
 };
 
-export default function ReviewDetail() {
+export default function Route() {
+    const { id } = useLocalSearchParams<{
+        id: string;
+    }>();
+    const [review, setReview] = React.useState<TReview | null>(null);
+
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        getReviewById(id).then((res) => {
+            setReview(res);
+        });
+        navigation.setOptions({ headerShown: false });
+    }, [navigation]);
+
     const handleBack = () => {
-        // Navigation logic here
-        console.log("Go back");
+        navigation.goBack();
     };
 
     const handleUpvote = () => {
@@ -110,9 +124,11 @@ export default function ReviewDetail() {
                 {/* User Info */}
                 <View style={styles.userInfo}>
                     <View style={styles.userInfoLeft}>
-                        <Image source={{ uri: mockReview.user.avatarUrl }} style={styles.profilePicture} />
-                        <ThemedText style={styles.userName}>{mockReview.user.name}</ThemedText>
-                        <ThemedText style={styles.userHandle}>@{mockReview.user.username}</ThemedText>
+                        <Image source={{ uri: review?.reviewer.pfp }} style={styles.profilePicture} />
+                        <View>
+                            <ThemedText style={styles.userName}>{review?.reviewer.id}</ThemedText>
+                            <ThemedText style={styles.userHandle}>@{review?.reviewer.username}</ThemedText>
+                        </View>
                     </View>
                 </View>
 
@@ -123,7 +139,7 @@ export default function ReviewDetail() {
                             <View style={styles.ratingBox}>
                                 <ThemedText style={styles.ratingTitle}>Overall</ThemedText>
                                 <StarRating
-                                    avgRating={mockReview.ratings.overall}
+                                    avgRating={review?.rating.overall}
                                     numRatings={-1}
                                     showAvgRating={false}
                                     showNumRatings={false}
@@ -132,7 +148,7 @@ export default function ReviewDetail() {
                             <View style={styles.ratingBox}>
                                 <ThemedText style={styles.ratingTitle}>Value</ThemedText>
                                 <StarRating
-                                    avgRating={mockReview.ratings.value}
+                                    avgRating={review?.rating.value}
                                     numRatings={-1}
                                     showAvgRating={false}
                                     showNumRatings={false}
@@ -177,7 +193,7 @@ export default function ReviewDetail() {
                 </View>
 
                 {/* Content */}
-                <ThemedText style={styles.reviewContent}>{mockReview.content}</ThemedText>
+                <ThemedText style={styles.reviewContent}>{review?.content}</ThemedText>
 
                 {/* Images */}
                 <ScrollView
@@ -232,9 +248,10 @@ const styles = StyleSheet.create({
         marginRight: 12,
     },
     headerTitle: {
-        fontSize: 24,
+        fontSize: 16,
         fontWeight: "600",
         textAlign: "left",
+        fontFamily: "Source Sans 3",
     },
     userInfo: {
         flexDirection: "row",
@@ -267,12 +284,12 @@ const styles = StyleSheet.create({
     userName: {
         fontSize: 16,
         fontWeight: "600",
-        lineHeight: 12,
         fontFamily: "Source Sans 3",
     },
     userHandle: {
         fontSize: 14,
         color: "#666",
+        fontFamily: "Source Sans 3",
     },
     ratingsGridContainer: {
         marginBottom: 24,
@@ -297,6 +314,7 @@ const styles = StyleSheet.create({
     ratingTitle: {
         fontSize: 16,
         fontWeight: "500",
+        fontFamily: "Source Sans 3",
     },
     tagsContainer: {
         marginBottom: 24,
@@ -305,6 +323,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 24,
         marginBottom: 24,
+        fontFamily: "Source Sans 3",
     },
     imageScroll: {
         marginBottom: 24,

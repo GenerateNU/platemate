@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
         gap: 7,
     },
     text: {
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
         fontWeight: "500",
         fontSize: 16,
         lineHeight: 18,
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         gap: 3,
+        marginTop: -4,
     },
     starRow: {
         flexDirection: "row",

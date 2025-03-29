@@ -265,6 +265,10 @@ func (h *Handler) GetRandomMenuItems(c *fiber.Ctx) error {
 	limitInput := c.Query("limit", "20")
 	limit, err := strconv.Atoi(limitInput)
 
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
 	items, err := h.service.GetRandomMenuItems(limit)
 	if err != nil {
 		return err
