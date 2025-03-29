@@ -2,6 +2,7 @@ package restaurant
 
 import (
 	"errors"
+
 	"github.com/GenerateNU/platemate/internal/xerr"
 	go_json "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
@@ -122,7 +123,6 @@ func (h *Handler) AddMenuItem(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	objID, err := primitive.ObjectIDFromHex(idParam)
 
-
 	menuItemIDParam := c.Query("menuItemID")
 	menuItemObjID, err := primitive.ObjectIDFromHex(menuItemIDParam)
 	if err != nil {
@@ -139,6 +139,7 @@ func (h *Handler) AddMenuItem(c *fiber.Ctx) error {
 	}
 	return c.SendStatus(fiber.StatusOK)
 }
+
 // GetRestaurantFriendsFav by ID
 func (h *Handler) GetRestaurantFriendsFav(c *fiber.Ctx) error {
 	restaurantIdParam := c.Params("rid")
@@ -184,5 +185,4 @@ func (h *Handler) GetSuperStars(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(superStars)
->>>>>>> a95778e73e4300f9b697486ca5540ce551b0e6ce
 }
