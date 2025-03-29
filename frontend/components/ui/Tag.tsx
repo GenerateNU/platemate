@@ -16,8 +16,8 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         borderRadius: 20,
         fontSize: 12,
-        fontFamily: "Outfit",
-        fontWeight: "bold",
+        fontFamily: "Source Sans 3",
+        fontWeight: "semibold",
         marginRight: 0,
     },
 });

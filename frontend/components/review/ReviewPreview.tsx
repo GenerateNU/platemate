@@ -4,7 +4,7 @@ import UserInfoRowBase from "../UserInfo/UserInfoRowBase";
 import { ThemedText } from "../themed/ThemedText";
 import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { ReviewComponentStarIcon } from "../icons/Icons";
 
 type Props = {
@@ -13,9 +13,25 @@ type Props = {
     tags: string[];
     rating: number;
     content: string;
+    authorName: string;
+    authorUsername: string;
+    authorAvatar: string;
+    authorId: string;
 };
 
-const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Props) => {
+const ReviewPreview = ({
+    plateName,
+    restaurantName,
+    tags,
+    rating,
+    content,
+    authorName,
+    authorUsername,
+    authorAvatar,
+    authorId,
+}: Props) => {
+    const navigation = useNavigation();
+
     return (
         <View
             style={{
@@ -26,15 +42,15 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content }: Pro
                 gap: 10,
                 borderRadius: 12,
                 paddingTop: 24,
-                // width: Dimensions.get("window").width * 0.75,
-                height: Dimensions.get("window").height * 0.35,
+                width: "100%",
+                height: Dimensions.get("window").height * 0.36,
             }}>
             <UserInfoRowBase
-                name={"Ben Petrillo"}
-                username={"benpetrillo26"}
+                name={"First Last"}
+                username={authorUsername}
                 right={<View />}
-                icon={"https://avatars.githubusercontent.com/u/66958528?v=4"}
-                onPress={() => router.push(`/friend`)}
+                icon={authorAvatar}
+                onPress={() => router.push(`/(profile)/${authorId}`)}
             />
             <View style={{ gap: 10 }}>
                 <View style={styles.plateInfoContainer}>
@@ -99,7 +115,7 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         borderRadius: 20,
         fontSize: 12,
-        fontFamily: "Poppins",
+        fontFamily: "Source Sans 3",
         fontWeight: 500,
     },
     plateInfoContainer: {
@@ -121,7 +137,7 @@ const styles = StyleSheet.create({
     },
     nameText: {
         color: "#000",
-        fontFamily: "Poppins",
+        fontFamily: "Source Sans 3",
         fontSize: 16,
         fontStyle: "normal",
     },
@@ -137,7 +153,7 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         color: "#000",
         textOverflow: "ellipsis",
-        fontFamily: "Neue Haas Unica Pro",
+        fontFamily: "Source Sans 3",
         fontSize: 14,
         fontWeight: 400,
         lineHeight: 16,

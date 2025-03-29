@@ -13,25 +13,6 @@ import { ReviewButton } from "@/components/review/ReviewButton";
 import HighlightCard from "@/components/restaurant/HighlightCard";
 import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
 
-// Temporary icons - you may want to create proper icons
-const FriendsIcon = () => (
-    <View style={styles.statsIcon}>
-        <ThemedText>👥</ThemedText>
-    </View>
-);
-
-const StarsIcon = () => (
-    <View style={styles.statsIcon}>
-        <ThemedText>⭐</ThemedText>
-    </View>
-);
-
-const SatisfactionIcon = () => (
-    <View style={styles.statsIcon}>
-        <ThemedText>😊</ThemedText>
-    </View>
-);
-
 export default function MenuItemView() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
     const dishTags = [
@@ -162,6 +143,10 @@ export default function MenuItemView() {
                         tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
                         rating={4}
                         content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                        authorName={"First Last"}
+                        authorId={""}
+                        authorUsername={"username"}
+                        authorAvatar={"https://placehold.co/600x400/png?text=P"}
                     />
                 </ThemedView>
             </ScrollView>
