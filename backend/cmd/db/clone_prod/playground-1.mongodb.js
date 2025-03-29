@@ -2,14 +2,18 @@
 // MongoDB Playground
 // Use Ctrl+Space inside a snippet or a string literal to trigger completions.
 
-const database = 'Production';
-const collection = 'menu-items';
+const database = 'Featurethon';
+const collection = 'NEW_COLLECTION_NAME';
 
 // The current database to use.
 use(database);
 
 // Create a new collection.
-db.getCollection(collection).deleteMany({});
+db.createCollection('menuItems');
+db.createCollection('restaurants');
+db.createCollection('reviews');
+db.createCollection('users');
+db.createCollection('passwordResets');
 
 // The prototype form to create a collection:
 /* db.createCollection( <name>,
