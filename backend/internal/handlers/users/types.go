@@ -15,7 +15,7 @@ type User struct {
 	FollowersCount int                  `bson:"followersCount"`
 	ProfilePicture string               `bson:"profile_picture,omitempty"`
 	Name           string               `bson:"name,omitempty"`
-	Preferences    []string     `bson:"preferences,omitempty"`
+	Preferences    []string             `bson:"preferences,omitempty"`
 }
 
 type UserResponse struct {

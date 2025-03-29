@@ -28,7 +28,9 @@ export default function FriendsScreen() {
         }
 
         try {
-            const response = await fetch(`https://externally-exotic-orca.ngrok-free.app/api/v1/user/${userId}/following`);
+            const response = await fetch(
+                `https://externally-exotic-orca.ngrok-free.app/api/v1/user/${userId}/following`,
+            );
             const data = await response.json();
 
             if (data && data.length > 0) {
@@ -41,7 +43,7 @@ export default function FriendsScreen() {
 
                 setFriends(formattedUsers);
 
-                // dont think this stuff is needed anymore but left it in case 
+                // dont think this stuff is needed anymore but left it in case
                 // if (isRefresh) {
                 //     setFollowers(formattedUsers);
                 //     setPage(2);

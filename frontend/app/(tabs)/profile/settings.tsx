@@ -10,7 +10,7 @@ import SettingsMenuItem from "@/components/profile/settings/SettingsMenuItem";
 import { TSettingsData } from "@/types/settingsData";
 import useAuthStore from "@/auth/store";
 import { Button } from "@/components/Button";
-import axios from 'axios';
+import axios from "axios";
 
 export default function SettingsScreen() {
     const insets = useSafeAreaInsets();
@@ -23,20 +23,20 @@ export default function SettingsScreen() {
     const { logout } = useAuthStore();
 
     const dietaryOptions: Record<string, string> = {
-        "vegetarian": "Vegetarian",
-        "vegan": "Vegan",
-        "nutFree": "Nut-free",
-        "shellfishAllergy": "Shellfish Allergy",
-        "glutenFree": "Gluten-free",
-        "dairyFree": "Dairy-free",
-        "kosher": "Kosher",
-        "halal": "Halal",
-        "pescatarian": "Pescatarian",
-        "keto": "Keto",
-        "diabetic": "Diabetic",
-        "soyFree": "Soy-free",
-        "porkFree": "Pork-free",
-        "beefFree": "Beef-free",
+        vegetarian: "Vegetarian",
+        vegan: "Vegan",
+        nutFree: "Nut-free",
+        shellfishAllergy: "Shellfish Allergy",
+        glutenFree: "Gluten-free",
+        dairyFree: "Dairy-free",
+        kosher: "Kosher",
+        halal: "Halal",
+        pescatarian: "Pescatarian",
+        keto: "Keto",
+        diabetic: "Diabetic",
+        soyFree: "Soy-free",
+        porkFree: "Pork-free",
+        beefFree: "Beef-free",
     };
 
     const [dietaryPreferences, setDietaryPreferences] = useState<string[]>([]);
@@ -48,80 +48,73 @@ export default function SettingsScreen() {
     useEffect(() => {
         console.log("fetched restrictions!");
         const fetchDietaryRestrictions = async () => {
-          try {
-            const response = await axios.get(
-              `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences`
-            );
-            setDietaryPreferences(response.data); 
-          } 
-          catch (err) {
-            console.log('Failed to fetch dietary restrictions');
-            console.error(err); 
-          }
+            try {
+                const response = await axios.get(
+                    `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences`,
+                );
+                setDietaryPreferences(response.data);
+            } catch (err) {
+                console.log("Failed to fetch dietary restrictions");
+                console.error(err);
+            }
         };
-    
+
         fetchDietaryRestrictions();
         console.log(dietaryPreferences);
-      }, [userId]); 
+    }, [userId]);
 
-      useEffect(() => {
+    useEffect(() => {
         console.log("reloaded!");
         console.log(dietaryPreferences);
         setSettings(
             Object.fromEntries(
-            Object.keys(dietaryOptions).map((option) => [
-                option,
-                dietaryPreferences.includes(dietaryOptions[option]), 
-            ])
-            )
+                Object.keys(dietaryOptions).map((option) => [
+                    option,
+                    dietaryPreferences.includes(dietaryOptions[option]),
+                ]),
+            ),
         );
-      }, [dietaryPreferences])
+    }, [dietaryPreferences]);
 
     const updateSetting = (key: string, value: boolean) => {
         if (value == true) {
-            setDietaryPreferences((prevRestrictions) => [
-                ...prevRestrictions,
-                dietaryOptions[key],
-            ]);
+            setDietaryPreferences((prevRestrictions) => [...prevRestrictions, dietaryOptions[key]]);
             handleAddDietaryPreference(key);
         } else {
             setDietaryPreferences((prevRestrictions) =>
-                prevRestrictions.filter((item) => item !== dietaryOptions[key])
+                prevRestrictions.filter((item) => item !== dietaryOptions[key]),
             );
             handleRemoveDietaryPreference(key);
         }
     };
 
-    const handleAddDietaryPreference = async (preference:string) => {
-          try {
+    const handleAddDietaryPreference = async (preference: string) => {
+        try {
             const response = await axios.post(
-              `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`
+                `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
             );
             if (response.status === 201) {
-                console.log('Preference added successfully:', preference);
+                console.log("Preference added successfully:", preference);
             }
-          } 
-          catch (err) {
-            console.log('Failed to add dietary preference');
-            console.error(err); 
-          }
+        } catch (err) {
+            console.log("Failed to add dietary preference");
+            console.error(err);
+        }
     };
 
-
-    const handleRemoveDietaryPreference = async (preference:string) => {
+    const handleRemoveDietaryPreference = async (preference: string) => {
         try {
-          const response = await axios.delete(
-            `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`
-          );
-          if (response.status === 201) {
-              console.log('Preference deleted successfully:', preference);
-          }
-        } 
-        catch (err) {
-          console.log('Failed to delete dietary preference');
-          console.error(err); 
+            const response = await axios.delete(
+                `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
+            );
+            if (response.status === 201) {
+                console.log("Preference deleted successfully:", preference);
+            }
+        } catch (err) {
+            console.log("Failed to delete dietary preference");
+            console.error(err);
         }
-  };
+    };
 
     const settingsData: TSettingsData = {
         credentials: [
@@ -165,7 +158,7 @@ export default function SettingsScreen() {
     const handleLogOut = () => {
         logout();
         router.replace("/(onboarding)");
-    }
+    };
 
     return (
         <ScrollView contentContainerStyle={[styles.container, { paddingTop: 60 }]} showsVerticalScrollIndicator={false}>
@@ -232,7 +225,12 @@ export default function SettingsScreen() {
                     ))}
                 </SettingsSection>
 
-                <Button title="Log Out" containerStyle={styles.buttonContainer} textStyle={styles.buttonText} onPress={handleLogOut} />
+                <Button
+                    title="Log Out"
+                    containerStyle={styles.buttonContainer}
+                    textStyle={styles.buttonText}
+                    onPress={handleLogOut}
+                />
 
                 <View style={{ height: insets.bottom + 50 }} />
             </View>
