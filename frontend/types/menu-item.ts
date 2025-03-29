@@ -9,7 +9,7 @@ export type TMenuItem = {
         return: number;
     };
     reviews: string[];
-    description: string;
+    content: string;
     location: {
         0: number;
         1: number;
