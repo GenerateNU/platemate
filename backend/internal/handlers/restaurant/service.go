@@ -67,6 +67,23 @@ func (s *Service) GetRestaurantByID(id primitive.ObjectID) (*RestaurantDocument,
 	return &doc, nil
 }
 
+// GET all Restaurants
+
+func (s *Service) GetAllRestaurants() ([]RestaurantDocument, error) {
+	ctx := context.Background()
+	cursor, err := s.restaurants.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var results []RestaurantDocument
+	if err := cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
 // UpdateRestaurant updates an existing document by ID
 func (s *Service) UpdateRestaurant(id primitive.ObjectID, updateDoc RestaurantDocument) error {
 	ctx := context.Background()
@@ -90,6 +107,15 @@ func (s *Service) UpdateRestaurant(id primitive.ObjectID, updateDoc RestaurantDo
 
 	update := bson.M{"$set": updateFields}
 
+	_, err := s.restaurants.UpdateOne(ctx, filter, update)
+	return err
+}
+
+// Add Menu Item to a Restaurant
+func (s *Service) AddMenuItem(id primitive.ObjectID, menuItem primitive.ObjectID) error {
+	ctx := context.Background()
+	filter := bson.M{"_id": id}
+	update := bson.M{"$addToSet": bson.M{"menuItems": menuItem}}
 	_, err := s.restaurants.UpdateOne(ctx, filter, update)
 	return err
 }
