@@ -139,7 +139,7 @@ export default function Route() {
                             <View style={styles.ratingBox}>
                                 <ThemedText style={styles.ratingTitle}>Overall</ThemedText>
                                 <StarRating
-                                    avgRating={review?.rating.overall}
+                                    avgRating={4.2}
                                     numRatings={-1}
                                     showAvgRating={false}
                                     showNumRatings={false}
@@ -148,7 +148,7 @@ export default function Route() {
                             <View style={styles.ratingBox}>
                                 <ThemedText style={styles.ratingTitle}>Value</ThemedText>
                                 <StarRating
-                                    avgRating={review?.rating.value}
+                                    avgRating={4.4}
                                     numRatings={-1}
                                     showAvgRating={false}
                                     showNumRatings={false}

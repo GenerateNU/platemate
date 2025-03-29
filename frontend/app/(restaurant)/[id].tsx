@@ -13,44 +13,42 @@ import HighlightCard from "@/components/restaurant/HighlightCard";
 import FeedTabs from "@/components/Feed/FeedTabs";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { getRestaurant } from "@/api/restaurant";
 import { TRestaurant } from "@/types/restaurant";
 
-export default function RestaurantView() {
+export default function Route() {
     const restaurantTags = ["Fast Food", "Fried Chicken", "Chicken Sandwiches", "Order Online"];
     const [activeTab, setActiveTab] = React.useState(0);
     const [filterTab, setFilterTab] = React.useState(0);
 
     const router = useRouter();
 
-    const id = "67e22ab00387c709ab3f77f4";
+    const { id } = useLocalSearchParams<{
+        id: string;
+    }>();
+
     const [restaurant, setRestaurant] = React.useState<TRestaurant | null>(null);
+    const navigation = useNavigation();
 
     useEffect(() => {
         getRestaurant(id).then((res) => {
             setRestaurant(res);
         });
-    }, []);
+        navigation.setOptions({ headerShown: false });
+    }, [navigation]);
 
-    const formattedAddress =
-        restaurant?.address.street +
-        ", " +
-        restaurant?.address.city +
-        ", " +
-        restaurant?.address.state +
-        " " +
-        restaurant?.address.zipcode;
+    const formattedAddress = "123 Roadname St, City, State 02114";
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <BannerAndAvatar
                 bannerURL={"https://shorturl.at/zZdqT"}
-                avatarURL={restaurant?.picture || "https://shorturl.at/Yn9SH"}
+                avatarURL={restaurant?.picture || "https://placehold.co/600x400/png?text=P"}
             />
             <ThemedView style={styles.container}>
                 <ThemedView style={styles.headerContainer}>
-                    <ThemedText style={styles.titleText}>{restaurant?.name}</ThemedText>
+                    <ThemedText style={styles.titleText}>{restaurant?.name || "Restaurant Name"}</ThemedText>
                     <View style={styles.iconContainer}>
                         <PhoneIcon />
                         <WebsiteIcon />
@@ -119,8 +117,8 @@ export default function RestaurantView() {
                                     content={
                                         "This is fake meat and is not good for you. Not sure why we are even serving it."
                                     }
-                                    authorAvatar={"https://placehold.co/600x400/png?text=P"}
                                     authorName={"First Last"}
+                                    authorAvatar={"https://placehold.co/600x400/png?text=P"}
                                     authorUsername={"username"}
                                     authorId={""}
                                 />

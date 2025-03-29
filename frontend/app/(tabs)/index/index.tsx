@@ -76,18 +76,19 @@ export default function Feed() {
                 <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
                 <ThemedView style={{ flex: 1, width: "100%", gap: 16 }}>
                     {reviews.length > 0 ? (
-                        <ScrollView
-                            horizontal
-                            contentContainerStyle={{ gap: 16 }}
-                            showsHorizontalScrollIndicator={false}>
+                        <ScrollView contentContainerStyle={{ gap: 16 }} showsHorizontalScrollIndicator={false}>
                             {reviews.map((item: TReview, index: number) => (
                                 <TouchableOpacity key={index} onPress={() => router.push(`/(review)/${item._id}`)}>
                                     <ReviewPreview
                                         plateName={item.menuItem}
                                         restaurantName={item.restaurantId}
                                         rating={item.rating.overall}
-                                        tags={[]}
+                                        tags={["Warm", "Tender", "Sweet"]}
                                         content={item.content}
+                                        authorName={item.reviewer.id}
+                                        authorUsername={item.reviewer.username}
+                                        authorAvatar={item.reviewer.pfp}
+                                        authorId={item.reviewer.id}
                                     />
                                 </TouchableOpacity>
                             ))}
@@ -101,15 +102,16 @@ export default function Feed() {
                     {menuItems.length > 0 && (
                         <ScrollView contentContainerStyle={{ gap: 16 }} showsVerticalScrollIndicator={false}>
                             {menuItems.map((item: TMenuItem, index: number) => (
-                                <MenuItemPreview
-                                    key={index}
-                                    plateName={item.name}
-                                    content={item.description}
-                                    tags={item.tags}
-                                    picture={item.picture}
-                                    rating={0}
-                                    restaurantName={item.restaurantId}
-                                />
+                                <TouchableOpacity key={index} onPress={() => router.push(`/(menuItem)/${item.id}`)}>
+                                    <MenuItemPreview
+                                        plateName={item.name}
+                                        content={item.description}
+                                        tags={item.tags}
+                                        picture={item.picture}
+                                        rating={3}
+                                        restaurantName={item.restaurantId || "Restaurant Name"}
+                                    />
+                                </TouchableOpacity>
                             ))}
                         </ScrollView>
                     )}

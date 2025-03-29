@@ -35,6 +35,14 @@ func main() {
 		}
 	}
 
+	for _, index := range mongo.VectorIndexes {
+		if err := db.ApplyVectorIndex(ctx, index.Collection, index.Model); err != nil {
+			fatal(ctx, "Failed to apply index to collection "+index.Collection, err)
+		} else {
+			slog.LogAttrs(ctx, slog.LevelInfo, "Vector Index applied to", slog.String("collection", index.Collection), slog.String("Environment", db.DB.Name()))
+		}
+	}
+
 }
 
 func fatal(ctx context.Context, msg string, err error) {

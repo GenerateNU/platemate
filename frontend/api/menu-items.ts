@@ -29,3 +29,7 @@ export const getMenuItems = async ({
     return await makeRequest(`/api/v1/menu-items?${queryParams.toString()}`, "GET");
 };
 
+export const getMenuItemById = async (id: string): Promise<TMenuItem> => {
+    return await makeRequest(`/api/v1/menu-items/${id}`, "GET");
+};
+
