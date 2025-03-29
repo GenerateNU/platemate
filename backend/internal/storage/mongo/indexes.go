@@ -14,17 +14,66 @@ type Index struct {
 	Model      mongo.IndexModel
 }
 
+type VectorIndex struct {
+	Collection string
+	Model      mongo.SearchIndexModel
+}
+// Defines the structs used for the index definition
+type vectorDefinitionField struct {
+	Type          string `bson:"type"`
+	Path          string `bson:"path"`
+	NumDimensions int    `bson:"numDimensions"`
+	Similarity    string `bson:"similarity"`
+	Quantization  string `bson:"quantization"`
+}
+type vectorDefinition struct {
+	Fields []vectorDefinitionField `bson:"fields"`
+}
+
+var VectorIndexes = []VectorIndex{
+	{
+		Collection: "users",
+		// create a vector index on the taste_profile field
+		Model: 	mongo.SearchIndexModel{
+			Definition: vectorDefinition{
+				Fields: []vectorDefinitionField{{
+					Type:          "vector",
+					Path:          "taste_profile",
+					NumDimensions: 1536,
+					Similarity:    "dotProduct",
+					Quantization:  "scalar"}},
+			},
+			Options: options.SearchIndexes().SetName("taste_profile").SetType("vectorSearch"),
+		},
+	},
+}
+
 /*
 Indexes to be applied to the database.
 */
 var Indexes = []Index{
 	{
 		Collection: "users",
-		Model:      mongo.IndexModel{Keys: bson.M{"email": 1}, Options: options.Index().SetUnique(true)},
+		// create a vector index on the taste_profile field
+		Model:      mongo.IndexModel{
+			Keys: bson.M{"email": 1}, 
+			Options: options.Index().SetUnique(true)},
 	},
 	{
 		Collection: "passwordResets",
 		Model:      mongo.IndexModel{Keys: bson.M{"expiresAt": 1}, Options: options.Index().SetExpireAfterSeconds(0)},
+	},
+	{
+		Collection: "menuItems",
+		Model: mongo.IndexModel{
+			Keys: bson.D{
+				{Key: "name", Value: "text"},
+				{Key: "description", Value: "text"},
+				{Key: "tags", Value: "text"},
+				{Key: "dietaryRestrictions", Value: "text"},
+			},
+			Options: options.Index().SetName("menu_item_text_index"),
+		},
 	},
 	{
 		Collection: "restaurants",
