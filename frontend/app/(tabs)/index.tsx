@@ -7,6 +7,7 @@ import ReviewPreview from "@/components/review/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 import { useRouter } from "expo-router";
 import { Button } from "@/components/Button";
+import FeedScreen from "@/app/feed";
 export default function Feed() {
     const [activeTab, setActiveTab] = React.useState(0);
 
@@ -105,27 +106,28 @@ export default function Feed() {
     ]);
 
     return (
-        <ScrollView style={{ flex: 1, marginBottom: 84 }}>
-            <ThemedView style={{ flex: 1, alignItems: "center", paddingHorizontal: 24, paddingVertical: 12, gap: 12 }}>
-                <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
-                <ThemedView style={{ flex: 1, width: "100%", gap: 16 }}>
-                    <ScrollView horizontal contentContainerStyle={{ gap: 16 }} showsHorizontalScrollIndicator={false}>
-                        {friends.map((item: any, index: number) => {
-                            return <ReviewPreview key={index} {...item} />;
-                        })}
-                    </ScrollView>
-                    <ScrollView contentContainerStyle={{ gap: 16 }} showsVerticalScrollIndicator={false}>
-                        {recommended.map((item: any, index: number) => {
-                            return <MenuItemPreview key={index} {...item} />;
-                        })}
-                    </ScrollView>
-                </ThemedView>
-            </ThemedView>
-            <ThemedView>
-                <ThemedView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <Button title="Go to Filter" onPress={() => router.push("/filter")} />
-                </ThemedView>
-            </ThemedView>
-        </ScrollView>
+        <FeedScreen></FeedScreen>
+        // <ScrollView style={{ flex: 1, marginBottom: 84 }}>
+        //     <ThemedView style={{ flex: 1, alignItems: "center", paddingHorizontal: 24, paddingVertical: 12, gap: 12 }}>
+        //         <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
+        //         <ThemedView style={{ flex: 1, width: "100%", gap: 16 }}>
+        //             <ScrollView horizontal contentContainerStyle={{ gap: 16 }} showsHorizontalScrollIndicator={false}>
+        //                 {friends.map((item: any, index: number) => {
+        //                     return <ReviewPreview key={index} {...item} />;
+        //                 })}
+        //             </ScrollView>
+        //             <ScrollView contentContainerStyle={{ gap: 16 }} showsVerticalScrollIndicator={false}>
+        //                 {recommended.map((item: any, index: number) => {
+        //                     return <MenuItemPreview key={index} {...item} />;
+        //                 })}
+        //             </ScrollView>
+        //         </ThemedView>
+        //     </ThemedView>
+        //     <ThemedView>
+        //         <ThemedView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        //             <Button title="Go to Filter" onPress={() => router.push("/filter")} />
+        //         </ThemedView>
+        //     </ThemedView>
+        // </ScrollView>
     );
 }

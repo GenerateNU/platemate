@@ -89,8 +89,12 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, f
                                 key={index}
                                 style={styles.recent}
                                 onPress={() => {
+                                    console.log("Before updating state:", value); // Log before updating
                                     inputRef.current?.blur();
                                     onChangeText(term);
+                                    console.log("After updating state:", value); // Log before updating
+
+                                    onSubmit();
                                     appendSearch(term);
                                 }}>
                                 <FontAwesome5 name="redo" size={12} color="gray" />
