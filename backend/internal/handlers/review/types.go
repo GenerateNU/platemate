@@ -84,4 +84,5 @@ Database layer of the application
 type Service struct {
 	reviews     *mongo.Collection
 	restaurants *mongo.Collection
+	menuItems   *mongo.Collection
 }

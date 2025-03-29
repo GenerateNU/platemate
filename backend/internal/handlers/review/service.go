@@ -5,6 +5,7 @@ import (
 
 	"math"
 
+	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,6 +16,7 @@ func NewService(collections map[string]*mongo.Collection) *Service {
 	return &Service{
 		reviews:     collections["reviews"],
 		restaurants: collections["restaurants"],
+		menuItems:   collections["menuItems"],
 	}
 }
 
@@ -196,6 +198,103 @@ func (s *Service) GetComments(reviewID primitive.ObjectID) ([]CommentDocument, e
 	}
 
 	return comments, err
+}
+
+// updateMenuItemReviews appends the review document id to the corresponding menu item
+func (s *Service) updateMenuItemReviews(reviewDoc ReviewDocument) error {
+	ctx := context.Background()
+
+	menuId, errID := primitive.ObjectIDFromHex(reviewDoc.MenuItem) // Menu Item is a string, convert to ObjectID
+	if errID != nil {
+		return errID
+	}
+
+	filter := bson.M{"_id": menuId}
+
+	var menuItem menu_items.MenuItemDocument
+	err := s.menuItems.FindOne(ctx, filter).Decode(&menuItem)
+	if err != nil {
+		return err
+	}
+
+	// Update the menu item with the new review ID
+	update := bson.M{
+		"$push": bson.M{
+			"reviews": reviewDoc.ID,
+		},
+	}
+	_, err = s.menuItems.UpdateOne(ctx, bson.M{"_id": menuId}, update)
+	return err
+
+}
+
+// updateMenuItemAverageRatings recalculates and updates the average rating for the menu item
+func (s *Service) updateMenuItemAverageRatings(reviewDoc ReviewDocument) error {
+	ctx := context.Background()
+
+	menuId, errID := primitive.ObjectIDFromHex(reviewDoc.MenuItem) // Menu Item is a string, convert to ObjectID
+	if errID != nil {
+		return errID
+	}
+
+	filter := bson.M{"_id": menuId}
+
+	var menuItem menu_items.MenuItemDocument
+	err := s.menuItems.FindOne(ctx, filter).Decode(&menuItem)
+	if err != nil {
+		return err
+	}
+
+	// Retrieve all reviews for this menu item
+	var reviews []ReviewDocument
+	cursor, err := s.reviews.Find(ctx, bson.M{"menuItem": reviewDoc.MenuItem})
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+
+	if err = cursor.All(ctx, &reviews); err != nil {
+		return err
+	}
+
+	// Compute new averages
+	var totalPortion, totalTaste, totalValue, totalOverall float64
+	var totalReturn int
+	reviewCount := len(reviews)
+
+	for _, rev := range reviews {
+		totalPortion += float64(rev.Rating.Portion)
+		totalTaste += float64(rev.Rating.Taste)
+		totalValue += float64(rev.Rating.Value)
+		totalOverall += float64(rev.Rating.Overall)
+		if rev.Rating.Return {
+			totalReturn++
+		}
+
+	}
+
+	newPortion := totalPortion / float64(reviewCount)
+	newTaste := totalTaste / float64(reviewCount)
+	newValue := totalValue / float64(reviewCount)
+	newOverall := totalOverall / float64(reviewCount)
+	returnThreshold := float64(totalReturn)/float64(reviewCount) >= 0.5
+
+	update := bson.M{
+		"$set": bson.M{
+			"avgRating": bson.M{
+				"portion": newPortion,
+				"taste":   newTaste,
+				"value":   newValue,
+				"overall": newOverall,
+				"return":  returnThreshold,
+			},
+		},
+	}
+
+	// Update the menu item document with the new average
+	_, err = s.menuItems.UpdateOne(ctx, bson.M{"_id": menuId}, update)
+	return err
+
 }
 
 // updateRestaurantAverageRating recalculates and updates the average rating for the restaurant
