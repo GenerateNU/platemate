@@ -3,18 +3,29 @@ package restaurant
 import (
 	"context"
 
+	"github.com/GenerateNU/platemate/internal/handlers/menu_items"
+	"github.com/GenerateNU/platemate/internal/handlers/review"
+	"github.com/GenerateNU/platemate/internal/handlers/user_connections"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/GenerateNU/platemate/xutils"
 )
 
+
 type Service struct {
-	restaurants *mongo.Collection
+	restaurants            *mongo.Collection
+	userConnectionsService *user_connections.Service
+	menuItemsService       *menu_items.Service
+	reviewService          *review.Service
 }
 
-func newService(collections map[string]*mongo.Collection) *Service {
+func newService(collections map[string]*mongo.Collection, userConnectionsService *user_connections.Service, menuItemsService *menu_items.Service, reviewService *review.Service) *Service {
 	return &Service{
-		restaurants: collections["restaurants"],
+		restaurants:            collections["restaurants"],
+		userConnectionsService: userConnectionsService,
+		menuItemsService:       menuItemsService,
+		reviewService:          reviewService,
 	}
 }
 
@@ -156,4 +167,79 @@ func (s *Service) DeleteRestaurant(id primitive.ObjectID) error {
 		return mongo.ErrNoDocuments
 	}
 	return nil
+}
+
+// GetRestaurantFriendsFav
+// average of all your friends reviews for all menu items at restaurant --> if above 4 its a friend fav
+// if its a friend fav -- display all of the friends that have been to the restaurant
+func (s *Service) GetRestaurantFriendsFav(uid primitive.ObjectID, rid primitive.ObjectID) (*FriendsFav, error) {
+	ctx := context.Background()
+
+	var restaurant RestaurantDocument
+	var friends []primitive.ObjectID
+	var totalRating int
+	var numOfRatings int
+	var avgRating float64
+	var friendsFav *FriendsFav
+	// restaurant is stored in doc
+	err := s.restaurants.FindOne(ctx, bson.M{"_id": rid}).Decode(&restaurant)
+	if err == mongo.ErrNoDocuments {
+		// No matching restaurant found
+		return nil, mongo.ErrNoDocuments
+	} else if err != nil {
+		// Different error occurred
+		return nil, err
+	}
+	for _, menuItemId := range restaurant.MenuItems {
+		friendReviews, err := s.userConnectionsService.GetFriendReviewsForItem(uid, menuItemId)
+		if err != nil {
+			return nil, err
+		}
+		for _, friendReview := range friendReviews {
+			// storing the friends of the user that reviewed menuItems at the restaurant
+			friend := friendReview.Reviewer.ID
+			// ensure that all the friends added to the list are unique
+			if xutils.DoesNotContain(friends, friend) {
+				friends = append(friends, friend)
+			}
+			totalRating += friendReview.Rating.Overall
+			numOfRatings += 1
+		}
+	}
+	avgRating = float64(totalRating) / float64(numOfRatings)
+	// the restaurant is a friends fav
+	friendsFav = &FriendsFav{
+		IsFriendsFav:    avgRating >= 4,
+		FriendsReviewed: len(friends),
+	}
+
+	return friendsFav, nil
+}
+
+func (s *Service) GetSuperStars(rid primitive.ObjectID) (int, error) {
+	ctx := context.Background()
+
+	var restaurant RestaurantDocument
+	var superStars int
+
+	err := s.restaurants.FindOne(ctx, bson.M{"_id": rid}).Decode(&restaurant)
+	if err != nil {
+		// error occurred
+		return 0, err
+	}
+	for _, menuItemId := range restaurant.MenuItems {
+		menuItem, _ := s.menuItemsService.GetMenuItemById(menuItemId)
+		reviews := menuItem.Reviews
+		for _, reviewId := range reviews {
+			reviewIdObj, _ := primitive.ObjectIDFromHex(reviewId)
+			review, _ := s.reviewService.GetReviewByID(reviewIdObj)
+			// checks if the overall rating is 5
+			rating := review.Rating.Overall
+			if rating == 5 {
+				superStars += 1
+			}
+		}
+	}
+
+	return superStars, nil
 }
