@@ -1,13 +1,12 @@
-import React from "react";
-import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { ThemedView } from "@/components/themed/ThemedView";
+import ReviewDetail from "@/components/review/ReviewDetail";
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarRating } from "@/components/ui/StarReview";
-import { Ionicons } from "@expo/vector-icons";
-// import { RestaurantTags } from "@/components/RestaurantTags";
-import { Entypo } from "@expo/vector-icons";
+import React, { useEffect } from "react";
 
-// Mock doc structure
 type ReviewDocument = {
     _id: string;
     createdAt: string;
@@ -82,10 +81,19 @@ const mockReview: ReviewDocument = {
     },
 };
 
-export default function ReviewDetail() {
+export default function Route() {
+    const { id } = useLocalSearchParams<{
+        id: string;
+    }>();
+
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        navigation.setOptions({ headerShown: false });
+    }, [navigation]);
+
     const handleBack = () => {
-        // Navigation logic here
-        console.log("Go back");
+        navigation.goBack();
     };
 
     const handleUpvote = () => {
@@ -111,8 +119,10 @@ export default function ReviewDetail() {
                 <View style={styles.userInfo}>
                     <View style={styles.userInfoLeft}>
                         <Image source={{ uri: mockReview.user.avatarUrl }} style={styles.profilePicture} />
-                        <ThemedText style={styles.userName}>{mockReview.user.name}</ThemedText>
-                        <ThemedText style={styles.userHandle}>@{mockReview.user.username}</ThemedText>
+                        <View>
+                            <ThemedText style={styles.userName}>{mockReview.user.name}</ThemedText>
+                            <ThemedText style={styles.userHandle}>@{mockReview.user.username}</ThemedText>
+                        </View>
                     </View>
                 </View>
 
@@ -232,9 +242,10 @@ const styles = StyleSheet.create({
         marginRight: 12,
     },
     headerTitle: {
-        fontSize: 24,
+        fontSize: 16,
         fontWeight: "600",
         textAlign: "left",
+        fontFamily: "Source Sans 3",
     },
     userInfo: {
         flexDirection: "row",
@@ -267,12 +278,12 @@ const styles = StyleSheet.create({
     userName: {
         fontSize: 16,
         fontWeight: "600",
-        lineHeight: 12,
         fontFamily: "Source Sans 3",
     },
     userHandle: {
         fontSize: 14,
         color: "#666",
+        fontFamily: "Source Sans 3",
     },
     ratingsGridContainer: {
         marginBottom: 24,
@@ -297,6 +308,7 @@ const styles = StyleSheet.create({
     ratingTitle: {
         fontSize: 16,
         fontWeight: "500",
+        fontFamily: "Source Sans 3",
     },
     tagsContainer: {
         marginBottom: 24,
@@ -305,6 +317,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 24,
         marginBottom: 24,
+        fontFamily: "Source Sans 3",
     },
     imageScroll: {
         marginBottom: 24,

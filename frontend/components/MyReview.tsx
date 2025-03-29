@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, SafeAreaVie
 import { IconSymbol } from "../components/ui/IconSymbol";
 import { ProgressBar } from "./ProgressBar";
 import { EmojiTagsGrid } from "./EmojiTagsGrid";
-import { InteractiveStars } from "./StarReview";
+import { InteractiveStars } from "./ui/StarReview";
 
 export function MyReview() {
     const [step, setStep] = useState(1);

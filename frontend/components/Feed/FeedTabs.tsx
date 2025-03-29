@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     },
     tabText: {
         fontSize: 16,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
         textAlign: "center",
     },
 });

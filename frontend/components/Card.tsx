@@ -32,7 +32,7 @@ export function Card({ imageSource, imageStyle, contentContainerStyle, onPress, 
 
 // Example usage:
 
-// In parent (index.tsx here):
+// In parent ([id].tsx here):
 // import { Card } from "@/components/Card";
 
 // <ThemedView style={{ marginTop: 20 }}>

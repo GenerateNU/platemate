@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import ShadedStar from "@/assets/icons/shaded_star_rate.svg";
 import UnshadedStar from "@/assets/icons/unshaded_star_rate.svg";
 import { StyleSheet } from "react-native";
+import { StarIcon } from "@/components/icons/Icons";
 
 export interface StarReviewProps {
     avgRating: number;
@@ -26,7 +27,7 @@ interface StarProps {
     full?: boolean;
 }
 
-export function StarReview({
+export function StarRating({
     avgRating,
     numRatings,
     full = true,
@@ -49,18 +50,18 @@ export function StarReview({
 }
 
 export function Stars({ avgRating, full = true }: StarProps) {
-    const stars = [];
+    const stars: React.JSX.Element[] = [];
     const maxStars = full ? 5 : 1;
     if (full) {
         for (let i = 0; i < maxStars; i++) {
             if (i < Math.floor(avgRating)) {
-                stars.push(<ShadedStar key={i} width={16} height={16} />);
+                stars.push(<StarIcon key={i} width={16} height={16} filled={true} />);
             } else {
-                stars.push(<UnshadedStar key={i} width={16} height={16} />);
+                stars.push(<StarIcon key={i} width={16} height={16} filled={true} />);
             }
         }
     } else {
-        stars.push(<UnshadedStar key={0} width={16} height={16} />);
+        stars.push(<StarIcon key={0} width={16} height={16} filled={false} />);
     }
 
     return <View style={styles.starsContainer}>{stars}</View>;
@@ -81,7 +82,12 @@ export function InteractiveStars({
                 const StarIcon = isFilled ? ShadedStar : UnshadedStar;
                 return (
                     <TouchableOpacity key={i} onPress={() => onChange(i + 1)}>
-                        <StarIcon width={starSize} height={starSize} fill={isFilled ? activeColor : inactiveColor} />
+                        <StarIcon
+                            width={starSize}
+                            height={starSize}
+                            fill={isFilled ? activeColor : inactiveColor}
+                            filled={isFilled}
+                        />
                     </TouchableOpacity>
                 );
             })}
@@ -97,7 +103,7 @@ const styles = StyleSheet.create({
         gap: 7,
     },
     text: {
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
         fontWeight: "500",
         fontSize: 16,
         lineHeight: 18,
@@ -109,7 +115,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        gap: 5,
+        gap: 3,
+        marginTop: -4,
     },
     starRow: {
         flexDirection: "row",

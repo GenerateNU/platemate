@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { StyleSheet } from "react-native";
-import { StarReview } from "@/components/StarReview";
-import { StarReviewProps } from "@/components/StarReview";
+import { StarReview } from "@/components/ui/StarReview";
+import { StarReviewProps } from "@/components/ui/StarReview";
 import { Image } from "react-native";
 
 interface MenuItemProp {
