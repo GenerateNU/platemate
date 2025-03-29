@@ -3,9 +3,6 @@ import { ScrollView } from "react-native";
 
 import { ThemedView } from "@/components/ThemedView";
 import FeedTabs from "@/components/Feed/FeedTabs";
-import { RestaurantDetailItem } from "@/components/restaurant/RestaurantDetailItem";
-
-import { StarReview } from "@/components/StarReview";
 import ReviewPreview from "@/components/Cards/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 import { useRouter } from "expo-router";
@@ -109,7 +106,7 @@ export default function Feed() {
 
     return (
         <ScrollView style={{ flex: 1, marginBottom: 84 }}>
-            <ThemedView style={{ flex: 1, alignItems: "center", padding: 24, gap: 12 }}>
+            <ThemedView style={{ flex: 1, alignItems: "center", paddingHorizontal: 24, paddingVertical: 12, gap: 12 }}>
                 <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
                 <ThemedView style={{ flex: 1, width: "100%", gap: 16 }}>
                     <ScrollView horizontal contentContainerStyle={{ gap: 16 }} showsHorizontalScrollIndicator={false}>

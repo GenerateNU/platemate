@@ -4,7 +4,7 @@
         "slug": "platemate",
         "version": "0.0.1",
         "orientation": "portrait",
-        "icon": "./assets/images/icon.png",
+        "icon": "./assets/icon.png",
         "scheme": "myapp",
         "userInterfaceStyle": "automatic",
         "newArchEnabled": true,
@@ -17,7 +17,7 @@
         },
         "android": {
             "adaptiveIcon": {
-                "foregroundImage": "./assets/images/icon.png",
+                "foregroundImage": "./assets/splash-icon.png",
                 "backgroundColor": "#ffffff"
             },
             "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
@@ -25,17 +25,20 @@
         "web": {
             "bundler": "metro",
             "output": "static",
-            "favicon": "./assets/images/favicon.png"
+            "favicon": "./assets/splash-icon.png"
         },
         "plugins": [
             "expo-router",
             [
                 "expo-splash-screen",
                 {
-                    "image": "./assets/images/splash-icon.png",
-                    "imageWidth": 200,
-                    "resizeMode": "contain",
-                    "backgroundColor": "#ffffff"
+                    "backgroundColor": "#232323",
+                    "image": "./assets/splash-icon.png",
+                    "dark": {
+                        "image": "./assets/splash-icon.png",
+                        "backgroundColor": "#000000"
+                    },
+                    "imageWidth": 200
                 }
             ],
             "expo-secure-store"

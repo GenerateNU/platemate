@@ -16,7 +16,7 @@ interface AuthState {
     refreshToken: string | null;
     userId: string | null;
     isAuthenticated: boolean;
-    loading: boolean;
+    isLoading: boolean;
     initializeAuth: () => Promise<void>;
     login: (email: string, password: string) => Promise<void>;
     register: (email: string, password: string, name: string) => Promise<void>;
@@ -29,7 +29,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
     refreshToken: null,
     userId: null,
     isAuthenticated: false,
-    loading: true,
+    isLoading: true,
 
     initializeAuth: async () => {
         try {
@@ -51,7 +51,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
         } catch (error) {
             console.error("Error initializing auth:", error);
         } finally {
-            set({ loading: false });
+            set({ isLoading: false });
         }
     },
 
