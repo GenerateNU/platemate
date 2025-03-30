@@ -32,6 +32,28 @@ type vectorDefinition struct {
 }
 
 var VectorIndexes = []VectorIndex{
+		{
+		Collection: "menuItems",
+		// create a vector index on the taste_profile field
+		Model: mongo.SearchIndexModel{
+    Definition: bson.D{
+        {"fields", bson.A{
+            bson.D{
+                {"type", "vector"},
+                {"path", "taste_profile"},
+                {"numDimensions", 1536},
+                {"similarity", "dotProduct"},
+                {"quantization", "scalar"},
+            },
+            bson.D{
+                {"type", "filter"},
+                {"path", "restaurantid"},
+            },
+        }},
+    },
+    Options: options.SearchIndexes().SetName("taste_profile_item").SetType("vectorSearch"),
+},
+	},
 	{
 		Collection: "users",
 		// create a vector index on the taste_profile field
@@ -47,6 +69,7 @@ var VectorIndexes = []VectorIndex{
 			Options: options.SearchIndexes().SetName("taste_profile").SetType("vectorSearch"),
 		},
 	},
+
 }
 
 /*

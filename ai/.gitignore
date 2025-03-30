@@ -1,3 +1,4 @@
 # Ignore the .env file
 .env
 __pycache__/
+/nix/.venv/

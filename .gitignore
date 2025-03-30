@@ -13,3 +13,4 @@ package-lock.json
 
 ai/.env
 ai/__pycache__/
+ai/nix/.venv/

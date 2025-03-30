@@ -1,5 +1,3 @@
-__package__ = "reccomendation"
-
 # from sentence_transformers import SentenceTransformer
 from openai import OpenAI
 
@@ -37,14 +35,15 @@ def get_embedding(text, model="text-embedding-3-small"):
     return client.embeddings.create(input = [text], model=model).data[0].embedding
 
 # Given a text and a secret, this function will tell us how similar the text is to the secret
-def vectorQuery(text, collection):
+def vectorQuery(text, index, collection, filter={}):
     # define pipeline
     pipeline = [
     {
         '$vectorSearch': {
-        'index': 'taste_profile', 
+        'index': index, 
         'path': 'taste_profile', 
         'queryVector': text,
+        'filter': filter,
         'numCandidates': 5, 
         'limit': 5
         } 
@@ -68,13 +67,40 @@ class MyJSONEncoder(json.JSONEncoder):
         if isinstance(o, ObjectId):
             return str(o) # this will return the ID as a string
         return json.JSONEncoder.default(self, o)
+
+def reccomend_menu_item(user_id):
+   input_user = ObjectId(user_id)
+   user = g_db.users.find_one({"_id": input_user})
+   taste_profile = user["taste_profile"]
+   print(taste_profile)
+   top = vectorQuery(taste_profile,"taste_profile_item", g_db.menuItems)
+
+   thing = list(top)
+   encoder = MyJSONEncoder()
+   return [json.loads(encoder.encode(ret)) for ret in thing]
+
+def reccomend_item_at_restaurant(user_id, restaurant_id):
+   input_user = ObjectId(user_id)
+   input_rest = ObjectId(restaurant_id)
+
+   user = g_db.users.find_one({"_id": input_user})
+   taste_profile = user["taste_profile"]
+   print(taste_profile)
+   top = vectorQuery(taste_profile,"taste_profile_item", g_db.menuItems, {
+       'restaurantid': {"$eq": restaurant_id}
+   })
+
+   thing = list(top)
+   encoder = MyJSONEncoder()
+   return [json.loads(encoder.encode(ret)) for ret in thing]
+
 def reccomend(user_id):
    print(user_id)
    input_user = ObjectId(user_id)
    user = g_db.users.find_one({"_id": input_user})
    taste_profile = user["taste_profile"]
    print(taste_profile)
-   top = vectorQuery(taste_profile, g_db.users)
+   top = vectorQuery(taste_profile,"taste_profile", g_db.users)
 
    top = list(top)
    reccomendations = []
@@ -132,8 +158,18 @@ async def root():
 async def get_random_artist(request: Request):
     print("hi")
 
+
+@app.get("/reccomendation/menu_item", response_description="Given a query, return the artists that match the query", status_code=status.HTTP_200_OK)
+async def rec_menu_item(user_id, request: Request):
+    print(user_id)
+    return reccomend_menu_item(user_id)
+@app.get("/reccomendation/restaurant", response_description="Given a query, return the artists that match the query", status_code=status.HTTP_200_OK)
+async def rec_restaurant(user_id, restaurant_id, request: Request):
+    print(user_id)
+    print(restaurant_id)
+    return reccomend_item_at_restaurant(user_id, restaurant_id)
 @app.get("/reccomendation", response_description="Given a query, return the artists that match the query", status_code=status.HTTP_200_OK)
-async def query_artists(user_id, request: Request):
+async def rec_feed(user_id, request: Request):
     print(user_id)
     return reccomend(user_id)
     # return listi(vectorQuery(term, secret, request.app.artists_collection))
