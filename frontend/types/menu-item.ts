@@ -1,4 +1,5 @@
 export type TMenuItem = {
+    id: string;
     name: string;
     picture: string;
     avgRating: {

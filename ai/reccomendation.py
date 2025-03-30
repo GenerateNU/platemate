@@ -158,7 +158,6 @@ async def root():
 async def get_random_artist(request: Request):
     print("hi")
 
-
 @app.get("/reccomendation/menu_item", response_description="Given a query, return the artists that match the query", status_code=status.HTTP_200_OK)
 async def rec_menu_item(user_id, request: Request):
     print(user_id)

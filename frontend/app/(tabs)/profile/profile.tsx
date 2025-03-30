@@ -65,10 +65,16 @@ const ProfileScreen = () => {
                 <EditProfileButton text={"Edit profile"} onPress={() => router.navigate("/profile/settings")} />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
-                        style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
+                        style={{
+                            fontSize: 24,
+                            fontWeight: "bold",
+                            fontFamily: "Source Sans 3",
+                            marginBottom: 12,
+                            lineHeight: 28,
+                        }}>
                         {user.name.split(" ")[0]}'s Food Journal
                     </ThemedText>
-                    {/* Made a search box with a filter/sort component as its own component */}
+
                     <SearchBoxFilter
                         placeholder="Search my reviews"
                         recent={true}
@@ -76,12 +82,31 @@ const ProfileScreen = () => {
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
                     />
-                    <ReviewPreview
-                        plateName="Ceasar Salad"
-                        restaurantName="Luigi's"
-                        tags={["Vegan", "Green", "Healthy", "Low Cal"]}
-                        rating={4.5}
-                        content={"It was pretty good."}></ReviewPreview>
+
+                    <ThemedView style={{ gap: 8, marginTop: 12 }}>
+                        <ReviewPreview
+                            plateName="Pad Thai"
+                            restaurantName="Pad Thai Kitchen"
+                            tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
+                            rating={4}
+                            content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                            authorId={""}
+                            authorUsername={"username"}
+                            authorName={"First Name"}
+                            authorAvatar={"https://placehold.co/600x400/png?text=P"}
+                        />
+                        <ReviewPreview
+                            plateName="Pad Thai"
+                            restaurantName="Pad Thai Kitchen"
+                            tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
+                            rating={4}
+                            content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                            authorId={""}
+                            authorUsername={"username"}
+                            authorName={"First Name"}
+                            authorAvatar={"https://placehold.co/600x400/png?text=P"}
+                        />
+                    </ThemedView>
                 </ThemedView>
             </ScrollView>
             <EditProfileSheet user={user} ref={editProfileRef} />
