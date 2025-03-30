@@ -85,27 +85,6 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
         setIsLoading(true);
         try {
             await login(email, password);
-
-            // Create the complete user data with all required fields
-            const finalUserData = {
-                ...data,
-                // Ensure these are properly set
-                restrictions: data.dietaryRestrictions,
-                preferences: data.cuisinePreferences,
-                // Ensure default values for required fields
-                followingCount: 0,
-                followersCount: 0,
-                count: 0,
-                reviews: [],
-                following: [],
-                followers: [],
-                profilePicture: data.profilePicture || "",
-                refreshToken: "",
-                tokenUsed: false,
-                // Initialize taste profile if not already set
-                tasteProfile: data.tasteProfile.length === 0 ? new Array(1536).fill(0) : data.tasteProfile,
-            };
-
         } catch (error: any) {
             Alert.alert("Login Failed", error.response?.data?.message || "An error occurred during login");
         } finally {

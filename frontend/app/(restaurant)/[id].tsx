@@ -36,7 +36,7 @@ export default function Route() {
             setRestaurant(res);
         });
         navigation.setOptions({ headerShown: false });
-    }, [navigation]);
+    }, [navigation, id]);
 
     const formattedAddress = "123 Roadname St, City, State 02114";
 
@@ -99,7 +99,7 @@ export default function Route() {
                 <FeedTabs tabs={["Reviews", "Menu"]} activeTab={filterTab} setActiveTab={setFilterTab} />
 
                 <ThemedView>
-                    {filterTab == 0 && (
+                    {filterTab === 0 && (
                         <>
                             <ThemedView style={{ paddingVertical: 12 }}>
                                 <FeedTabs
@@ -126,7 +126,7 @@ export default function Route() {
                         </>
                     )}
 
-                    {filterTab == 1 && (
+                    {filterTab === 1 && (
                         <>
                             <MenuItemPreview
                                 plateName={"Whopper"}

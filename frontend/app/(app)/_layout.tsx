@@ -1,12 +1,12 @@
 import { Text } from "react-native";
-import { Redirect, Slot, Stack } from "expo-router";
+import { Redirect, Slot } from "expo-router";
 import useAuthStore from "@/auth/store";
 
 export default function AppLayout() {
-    const { isAuthenticated, isLoading } = useAuthStore();
+    const { isAuthenticated, loading } = useAuthStore();
 
     // You can keep the splash screen open, or render a loading screen like we do here.
-    if (isLoading) {
+    if (loading) {
         return <Text>Loading...</Text>;
     }
 

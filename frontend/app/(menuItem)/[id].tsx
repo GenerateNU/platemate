@@ -5,15 +5,12 @@ import { StarRating } from "@/components/ui/StarReview";
 import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
-// import ReviewDetail from "@/components/review/ReviewDetail";
 import { ThemedTag } from "@/components/themed/ThemedTag";
-// import { RestaurantTags } from "@/components/RestaurantTags";
-import { StatCard } from "@/components/Cards/StatCard";
 import { ReviewButton } from "@/components/review/ReviewButton";
 import HighlightCard from "@/components/restaurant/HighlightCard";
 import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
-import { router, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { getMenuItemById, getMenuItems } from "@/api/menu-items";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { getMenuItemById } from "@/api/menu-items";
 import { TMenuItem } from "@/types/menu-item";
 
 export default function Route() {
@@ -48,7 +45,7 @@ export default function Route() {
         getMenuItemById(id).then((data) => {
             setMenuItem(data);
         });
-    }, [navigation]);
+    }, [navigation, id]);
 
     return (
         <>
