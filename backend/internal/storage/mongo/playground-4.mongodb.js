@@ -3,24 +3,13 @@
 // Use Ctrl+Space inside a snippet or a string literal to trigger completions.
 
 const database = 'Featurethon';
-const collection = 'users';
+const collection = 'menuItems';
 
 // The current database to use.
 use(database);
 
 // Create a new collection.
-db.getCollection(collection).aggregate([
-	{
-		$addFields: {
-			preferences: [],
-			following: [],
-			followers: [],
-		},
-	},
-	{
-		$out: 'users',
-	},
-]);
+db.getCollection(collection).dropIndex('taste_profile_item');
 
 // The prototype form to create a collection:
 /* db.createCollection( <name>,
