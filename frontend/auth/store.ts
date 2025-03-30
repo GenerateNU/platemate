@@ -4,20 +4,6 @@ import axios from "axios";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 
-interface User {
-    userId: string;
-    email: string;
-    name: string;
-    username: string;
-    profilePictureURL?: string;
-    preferences?: string[];
-    taste_profile?: number[];
-    followingCount?: number;
-    followerCount?: number;
-    reviews?: any[];
-    count?: number;
-}
-
 interface AuthState {
     accessToken: string | null;
     refreshToken: string | null;
