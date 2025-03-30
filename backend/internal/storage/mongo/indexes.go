@@ -37,19 +37,19 @@ var VectorIndexes = []VectorIndex{
 		// create a vector index on the taste_profile field
 		Model: mongo.SearchIndexModel{
 			Definition: bson.D{
-			{Key: "fields", Value: bson.A{
+				{Key: "fields", Value: bson.A{
 					bson.D{
-							{Key: "type", Value: "vector"},
-							{Key: "path", Value: "taste_profile"},
-							{Key: "numDimensions", Value: 1536},
-							{Key: "similarity", Value: "dotProduct"},
-							{Key: "quantization", Value: "scalar"},
+						{Key: "type", Value: "vector"},
+						{Key: "path", Value: "taste_profile"},
+						{Key: "numDimensions", Value: 1536},
+						{Key: "similarity", Value: "dotProduct"},
+						{Key: "quantization", Value: "scalar"},
 					},
 					bson.D{
-							{Key: "type", Value: "filter"},
-							{Key: "path", Value: "restaurantid"},
+						{Key: "type", Value: "filter"},
+						{Key: "path", Value: "restaurantid"},
 					},
-			}},
+				}},
 			},
 			Options: options.SearchIndexes().SetName("taste_profile_item").SetType("vectorSearch"),
 		},
