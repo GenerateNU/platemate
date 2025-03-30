@@ -87,7 +87,7 @@ def reccomend_item_at_restaurant(user_id, restaurant_id):
    taste_profile = user["taste_profile"]
    print(taste_profile)
    top = vectorQuery(taste_profile,"taste_profile_item", g_db.menuItems, {
-       'restaurantid': {"$eq": restaurant_id}
+       'restaurantid': {"$eq": input_rest}
    })
 
    thing = list(top)
