@@ -28,4 +28,6 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	review.Post("/:id/comments", handler.CreateComment)
 	review.Get("/user/:userId", handler.GetReviewsByUser)
 	review.Get("/user/:userId/search", handler.SearchUserReviews)
+
+	review.Get("/user/:userId/top", handler.GetTopReviews)
 }

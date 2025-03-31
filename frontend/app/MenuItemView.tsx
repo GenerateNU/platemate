@@ -1,7 +1,7 @@
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ScrollView, StyleSheet, View, Image, Pressable } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
-import { StarReview } from "@/components/StarReview";
+import { StarRating } from "@/components/ui/StarReview";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
@@ -10,25 +10,8 @@ import { ThemedTag } from "@/components/themed/ThemedTag";
 // import { RestaurantTags } from "@/components/RestaurantTags";
 import { StatCard } from "@/components/Cards/StatCard";
 import { ReviewButton } from "@/components/review/ReviewButton";
-
-// Temporary icons - you may want to create proper icons
-const FriendsIcon = () => (
-    <View style={styles.statsIcon}>
-        <ThemedText>👥</ThemedText>
-    </View>
-);
-
-const StarsIcon = () => (
-    <View style={styles.statsIcon}>
-        <ThemedText>⭐</ThemedText>
-    </View>
-);
-
-const SatisfactionIcon = () => (
-    <View style={styles.statsIcon}>
-        <ThemedText>😊</ThemedText>
-    </View>
-);
+import HighlightCard from "@/components/restaurant/HighlightCard";
+import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
 
 export default function MenuItemView() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
@@ -96,11 +79,13 @@ export default function MenuItemView() {
                             flavorful Thai stir-fried noodle dish with a perfect sweet-savory balance.
                         </ThemedText>
                         <View style={styles.allergyRow}>
-                            <ThemedText style={styles.allergyText}>
-                                Rice noodles, eggs, tofu/shrimp, peanuts, tamarind.
-                            </ThemedText>
-                            <Pressable>
-                                <ThemedText style={styles.viewAllText}>see allergy</ThemedText>
+                            <View style={styles.allergyItemsContainer}>
+                                <ThemedText style={styles.allergyText}>
+                                    Rice noodles, eggs, tofu/shrimp, peanuts, tamarind
+                                </ThemedText>
+                            </View>
+                            <Pressable style={styles.allergyButton}>
+                                <ThemedText style={styles.viewAllText}>see allergens</ThemedText>
                             </Pressable>
                         </View>
                     </ThemedView>
@@ -113,9 +98,13 @@ export default function MenuItemView() {
                         </Pressable>
                     </View>
                     <View style={styles.statsContainer}>
-                        <StatCard icon={<FriendsIcon />} title="Friends' Fav" subtitle="100+ Friends' refers" />
-                        <StatCard icon={<StarsIcon />} title="Super Stars" subtitle="200+ Five Stars" />
-                        <StatCard icon={<SatisfactionIcon />} title="Satisfaction" subtitle="70% revisited" />
+                        <HighlightCard
+                            title={"Friend's Fave"}
+                            subtitle={"100+ friend referrals"}
+                            icon={<PersonWavingIcon />}
+                        />
+                        <HighlightCard title={"Super Stars"} subtitle={"200+ 5-star reviews"} icon={<ThumbsUpIcon />} />
+                        <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} />
                     </View>
 
                     {/* Reviews Section */}
@@ -128,7 +117,7 @@ export default function MenuItemView() {
                     <View style={styles.reviewStats}>
                         <View style={styles.ratingContainer}>
                             <ThemedText style={styles.ratingText}>4/5</ThemedText>
-                            <StarReview avgRating={4} numRatings={428} showAvgRating={false} />
+                            <StarRating avgRating={4} numRatings={428} showAvgRating={false} />
                         </View>
                     </View>
 
@@ -154,6 +143,10 @@ export default function MenuItemView() {
                         tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
                         rating={4}
                         content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                        authorName={"First Last"}
+                        authorId={""}
+                        authorUsername={"username"}
+                        authorAvatar={"https://placehold.co/600x400/png?text=P"}
                     />
                 </ThemedView>
             </ScrollView>
@@ -224,15 +217,34 @@ const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 16,
     },
+    allergyLabel: {
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#444",
+        lineHeight: 18,
+    },
     allergyText: {
         fontSize: 14,
         color: "#666",
-        lineHeight: 14,
+        lineHeight: 18,
+        flexShrink: 1,
     },
     allergyRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        marginTop: 4,
+    },
+    allergyItemsContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        flexShrink: 1,
+        flexWrap: "wrap",
+        maxWidth: "75%",
+    },
+    allergyButton: {
+        paddingVertical: 4,
+        paddingHorizontal: 8,
     },
     sectionHeader: {
         flexDirection: "row",
@@ -247,6 +259,7 @@ const styles = StyleSheet.create({
     viewAllText: {
         color: "#007AFF",
         textDecorationLine: "underline",
+        fontSize: 14,
     },
     statsContainer: {
         flexDirection: "row",

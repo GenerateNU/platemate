@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/themed/ThemedText";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Text, StyleSheet, TouchableOpacity, View } from "react-native";
 
 type Props = {
     tabs: string[];
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     },
     tabText: {
         fontSize: 16,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
         textAlign: "center",
     },
 });

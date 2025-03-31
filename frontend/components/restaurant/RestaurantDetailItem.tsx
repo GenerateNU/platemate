@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 14,
-        color: "#285852",
-        fontFamily: "Outfit",
+        color: "black",
+        fontFamily: "Source Sans 3",
         fontWeight: 500,
     },
 });
