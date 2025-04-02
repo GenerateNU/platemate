@@ -1,5 +1,3 @@
-// import { ScrollView } from "react-native";
-
 import React, { useState } from "react";
 import RestaurantView from "@/app/RestaurantView";
 import MenuItemView from "../MenuItemView";

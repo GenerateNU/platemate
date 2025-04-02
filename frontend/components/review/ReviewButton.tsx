@@ -4,11 +4,14 @@ import { Ionicons } from "@expo/vector-icons";
 
 export interface ReviewButtonProps {
     onPress?: () => void;
+    restaurantId: string;
+    menuItemName: string;
+    dishImageUrl?: string;
 }
 
-export function ReviewButton({ onPress }: ReviewButtonProps) {
+export function ReviewButton({ onPress, restaurantId, menuItemName, dishImageUrl }: ReviewButtonProps) {
     return (
-        <TouchableOpacity style={styles.container} onPress={onPress}>
+        <TouchableOpacity style={styles.container} onPress={() => onPress?.()}>
             <Ionicons name="add" size={32} color="white" />
         </TouchableOpacity>
     );

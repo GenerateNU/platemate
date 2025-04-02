@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "./ReviewPreview";
 import { ReviewButton } from "@/components/review/ReviewButton";
+import { ReviewFlow } from "@/components/review/ReviewFlow";
 
 export default function AllReviews() {
     const [selectedMainFilter, setSelectedMainFilter] = React.useState("My Reviews");
     const [selectedSubFilter, setSelectedSubFilter] = React.useState("Portion");
+    const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
 
     const handleBack = () => {
         // Navigation logic here
@@ -73,10 +75,24 @@ export default function AllReviews() {
                         tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
                         rating={4}
                         content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                        authorName="John Doe"
+                        authorUsername="johndoe"
+                        authorAvatar="https://placehold.co/600x400/png?text=JD"
+                        authorId="123"
                     />
                 </ThemedView>
             </ScrollView>
-            <ReviewButton onPress={() => console.log("Open review flow")} />
+            <ReviewButton
+                restaurantId="pad-thai-kitchen"
+                menuItemName="Pad Thai"
+                onPress={() => setIsReviewModalVisible(true)}
+            />
+            <ReviewFlow
+                isVisible={isReviewModalVisible}
+                onClose={() => setIsReviewModalVisible(false)}
+                restaurantId="pad-thai-kitchen"
+                menuItemName="Pad Thai"
+            />
         </>
     );
 }

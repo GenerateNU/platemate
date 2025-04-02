@@ -14,7 +14,11 @@ package-lock.json
 ai/.env
 <<<<<<< HEAD
 ai/__pycache__/
+=======
+<<<<<<< HEAD
+ai/__pycache__/
 ai/nix/.venv/
 =======
 ai/__pycache__/
 >>>>>>> ea4c8d7360d30d2521027fc197c5b0ca0eb33a45
+>>>>>>> main
