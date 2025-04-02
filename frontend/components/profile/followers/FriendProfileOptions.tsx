@@ -1,12 +1,10 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
-import { Dimensions, Image, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Portal } from "@gorhom/portal";
 import { User } from "@/context/user-context";
 import { Button } from "@/components/Button";
-
-const { width } = Dimensions.get("window");
 
 export interface FriendProfileOptionsRef {
     open: () => void;
@@ -100,6 +98,8 @@ const EditFriendSheet = forwardRef<FriendProfileOptionsRef, { user: User }>(({ u
         </Portal>
     );
 });
+
+EditFriendSheet.displayName = "EditFriendSheet";
 
 const styles = StyleSheet.create({
     bottomSheetBackground: {

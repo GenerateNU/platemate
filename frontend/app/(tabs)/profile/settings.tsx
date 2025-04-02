@@ -2,7 +2,7 @@
 
 import { ScrollView, View, StyleSheet, TextInput, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "expo-router";
 import ToggleSetting from "@/components/profile/settings/ToggleSetting";
 import SettingsSection from "@/components/profile/settings/SettingsSection";

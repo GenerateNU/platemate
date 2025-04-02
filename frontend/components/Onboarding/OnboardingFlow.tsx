@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, SafeAreaView } from "react-native";
+import { View, StyleSheet, SafeAreaView, Alert } from "react-native";
 import { LoginScreen } from "./LoginScreen";
 import { NameScreen } from "./NameScreen";
 import { EmailScreen } from "./EmailScreen";
@@ -8,6 +8,7 @@ import { UsernameScreen } from "./UsernameScreen";
 import { DietaryRestrictionsScreen } from "./DietaryRestrictionsScreen";
 import { CuisinePreferencesScreen } from "./CuisinePreferencesScreen";
 import { CompletionScreen } from "./CompletionScreen";
+import { LoadingScreen } from "./LoadingScreen";
 import useAuthStore from "@/auth/store";
 
 interface OnboardingData {
@@ -17,16 +18,46 @@ interface OnboardingData {
     username: string;
     dietaryRestrictions: string[];
     cuisinePreferences: string[];
+    restrictions: string[];
+    preferences: string[];
+    profilePicture: string;
+    followers: string[];
+    following: string[];
+    followersCount: number;
+    followingCount: number;
+    reviews: string[];
+    count: number;
+    refreshToken: string;
+    tokenUsed: boolean;
+    tasteProfile: number[];
 }
 
 interface OnboardingFlowProps {
-    onComplete: (data: OnboardingData) => void;
+    onComplete: (data: {
+        name: string;
+        email: string;
+        password: string;
+        username: string;
+        restrictions: string[];
+        preferences: string[];
+        profilePicture: string;
+        followers: string[];
+        following: string[];
+        followersCount: number;
+        followingCount: number;
+        reviews: string[];
+        count: number;
+        refreshToken: string;
+        tokenUsed: boolean;
+        tasteProfile: number[];
+    }) => void;
 }
 
 type Screen = "login" | "name" | "email" | "password" | "username" | "dietary" | "cuisine" | "complete" | "loading";
 
 export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
-    const { login, isAuthenticated } = useAuthStore();
+    const { login } = useAuthStore();
+    const [isLoading, setIsLoading] = useState(false);
 
     const [currentScreen, setCurrentScreen] = useState<Screen>("login");
     const [data, setData] = useState<OnboardingData>({
@@ -36,19 +67,29 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
         username: "",
         dietaryRestrictions: [],
         cuisinePreferences: [],
+        restrictions: [],
+        preferences: [],
+        profilePicture: "",
+        followers: [],
+        following: [],
+        followersCount: 0,
+        followingCount: 0,
+        reviews: [],
+        count: 0,
+        refreshToken: "",
+        tokenUsed: false,
+        tasteProfile: [],
     });
 
-    const handleLogin = (email: string, password: string) => {
-        // TODO: Implement actual login logic
-        console.log("Login:", { email, password });
-        login(email, password)
-            .then((res) => {
-                console.log("Login successful:", res);
-                onComplete(data);
-            })
-            .catch((err) => {
-                console.error("Login failed:", err);
-            });
+    const handleLogin = async (email: string, password: string) => {
+        setIsLoading(true);
+        try {
+            await login(email, password);
+        } catch (error: any) {
+            Alert.alert("Login Failed", error.response?.data?.message || "An error occurred during login");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleNameSubmit = (name: string) => {
@@ -72,18 +113,52 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     };
 
     const handleDietarySubmit = (restrictions: string[]) => {
-        setData((prev) => ({ ...prev, dietaryRestrictions: restrictions }));
+        setData((prev) => ({
+            ...prev,
+            dietaryRestrictions: restrictions,
+            restrictions: restrictions,
+        }));
         setCurrentScreen("cuisine");
     };
 
     const handleCuisineSubmit = (preferences: string[]) => {
-        setData((prev) => ({ ...prev, cuisinePreferences: preferences }));
+        setData((prev) => ({
+            ...prev,
+            cuisinePreferences: preferences,
+            preferences: preferences,
+        }));
         setCurrentScreen("complete");
     };
 
     const handleComplete = () => {
-        console.log("Onboarding completed with data:", data);
-        onComplete(data);
+        // Validate required fields before completing
+        if (!data.name || !data.email || !data.password || !data.username) {
+            Alert.alert("Error", "Please fill in all required fields");
+            return;
+        }
+
+        // Create the complete user data with all required fields
+        const finalUserData = {
+            ...data,
+            // Ensure these are properly set
+            restrictions: data.dietaryRestrictions,
+            preferences: data.cuisinePreferences,
+            // Ensure default values for required fields
+            followingCount: 0,
+            followersCount: 0,
+            count: 0,
+            reviews: [],
+            following: [],
+            followers: [],
+            profilePicture: data.profilePicture || "",
+            refreshToken: "",
+            tokenUsed: false,
+            // Initialize taste profile if not already set
+            tasteProfile: data.tasteProfile.length === 0 ? new Array(1536).fill(0) : data.tasteProfile,
+        };
+
+        // Send the complete data
+        onComplete(finalUserData);
     };
 
     const handleNavigateToOnboarding = () => {
@@ -117,6 +192,10 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     };
 
     const renderScreen = () => {
+        if (isLoading) {
+            return <LoadingScreen />;
+        }
+
         switch (currentScreen) {
             case "login":
                 return <LoginScreen onLogin={handleLogin} onNavigateToOnboarding={handleNavigateToOnboarding} />;

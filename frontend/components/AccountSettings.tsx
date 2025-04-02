@@ -64,8 +64,8 @@ const AccountSettings = ({
     const [ketoValue, setKetoValue] = useState(keto || false);
     const [diabeticValue, setDiabeticValue] = useState(diabetic || false);
     const [soyFreeValue, setSoyFreeValue] = useState(soyFree || false);
-    const [porkFreeValue, setPortFreeValue] = useState(porkFree || false);
-    const [beefFreeValue, setBeefFreeValue] = useState(beefFree || false);
+    // const [porkFreeValue, setPortFreeValue] = useState(porkFree || false);
+    // const [beefFreeValue, setBeefFreeValue] = useState(beefFree || false);
     const [cameraAccessValue, setCameraAccessValue] = useState(cameraAccess || false);
     const [contactSyncValue, setContactSyncValue] = useState(contactSync || false);
 

@@ -27,7 +27,7 @@ const ProfileScreen = () => {
             console.log("User data not available, fetching...");
             fetchUserProfile().then(() => {});
         }
-    }, [user, isLoading]);
+    }, [user, isLoading, fetchUserProfile]);
 
     if (isLoading) {
         return (
