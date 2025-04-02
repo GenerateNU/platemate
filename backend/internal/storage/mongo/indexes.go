@@ -14,6 +14,63 @@ type Index struct {
 	Model      mongo.IndexModel
 }
 
+type VectorIndex struct {
+	Collection string
+	Model      mongo.SearchIndexModel
+}
+
+// Defines the structs used for the index definition
+type vectorDefinitionField struct {
+	Type          string `bson:"type"`
+	Path          string `bson:"path"`
+	NumDimensions int    `bson:"numDimensions"`
+	Similarity    string `bson:"similarity"`
+	Quantization  string `bson:"quantization"`
+}
+type vectorDefinition struct {
+	Fields []vectorDefinitionField `bson:"fields"`
+}
+
+var VectorIndexes = []VectorIndex{
+	{
+		Collection: "menuItems",
+		// create a vector index on the taste_profile field
+		Model: mongo.SearchIndexModel{
+			Definition: bson.D{
+				{Key: "fields", Value: bson.A{
+					bson.D{
+						{Key: "type", Value: "vector"},
+						{Key: "path", Value: "taste_profile"},
+						{Key: "numDimensions", Value: 1536},
+						{Key: "similarity", Value: "dotProduct"},
+						{Key: "quantization", Value: "scalar"},
+					},
+					bson.D{
+						{Key: "type", Value: "filter"},
+						{Key: "path", Value: "restaurantid"},
+					},
+				}},
+			},
+			Options: options.SearchIndexes().SetName("taste_profile_item").SetType("vectorSearch"),
+		},
+	},
+	{
+		Collection: "users",
+		// create a vector index on the taste_profile field
+		Model: mongo.SearchIndexModel{
+			Definition: vectorDefinition{
+				Fields: []vectorDefinitionField{{
+					Type:          "vector",
+					Path:          "taste_profile",
+					NumDimensions: 1536,
+					Similarity:    "dotProduct",
+					Quantization:  "scalar"}},
+			},
+			Options: options.SearchIndexes().SetName("taste_profile").SetType("vectorSearch"),
+		},
+	},
+}
+
 /*
 Indexes to be applied to the database.
 */
