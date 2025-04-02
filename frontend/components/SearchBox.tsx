@@ -4,6 +4,8 @@ import { ThemedText } from "./themed/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useRecentSearch } from "@/hooks/useRecentSearch";
 import FontAwesome5 from "@expo/vector-icons/build/FontAwesome5";
+import { FilterIcon } from "@/components/icons/Icons";
+import { useRouter } from "expo-router";
 
 export interface SearchBoxProps extends TextInputProps {
     value: string;
@@ -12,14 +14,16 @@ export interface SearchBoxProps extends TextInputProps {
     onSubmit: () => void;
     onChangeText: (text: string) => void;
     icon?: React.ReactNode;
+    filter?: boolean; // should we include filters
 }
 
-export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, ...rest }: SearchBoxProps) {
+export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, filter, ...rest }: SearchBoxProps) {
     const { getRecents, appendSearch } = useRecentSearch(name);
     const [inputHeight, setInputHeight] = useState(0);
     const textColor = useThemeColor({ light: "#000", dark: "#fff" }, "text");
     const inputRef = useRef<TextInput>(null);
     const [recentItems, setRecentItems] = useState<string[]>([]);
+    const router = useRouter();
 
     async function fetchRecents() {
         if (recent) setRecentItems(await getRecents());
@@ -50,6 +54,12 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
         onSubmit();
     };
 
+    const navigateToFilterTab = () => {
+        if (filter) {
+            router.push(`/filter`); // TODO: make it take in anythign Navigate to the specified filter tab
+        }
+    };
+
     return (
         <View>
             <View style={styles.container}>
@@ -65,6 +75,11 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
                     style={{ ...styles.input, color: textColor }}
                 />
                 {icon && icon}
+                {filter && (
+                    <TouchableOpacity style={styles.icon} onPress={navigateToFilterTab}>
+                        <FilterIcon />
+                    </TouchableOpacity>
+                )}
             </View>
             {recent && (
                 <View style={{ ...styles.recentsContainer, top: inputHeight }}>
@@ -74,8 +89,11 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, .
                                 key={index}
                                 style={styles.recent}
                                 onPress={() => {
+                                    console.log("Before updating state:", value); // Log before updating
                                     inputRef.current?.blur();
                                     onChangeText(term);
+                                    console.log("After updating state:", value); // Log before updating
+
                                     onSubmit();
                                     appendSearch(term);
                                 }}>

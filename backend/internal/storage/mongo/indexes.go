@@ -14,41 +14,6 @@ type Index struct {
 	Model      mongo.IndexModel
 }
 
-type VectorIndex struct {
-	Collection string
-	Model      mongo.SearchIndexModel
-}
-
-// Defines the structs used for the index definition
-type vectorDefinitionField struct {
-	Type          string `bson:"type"`
-	Path          string `bson:"path"`
-	NumDimensions int    `bson:"numDimensions"`
-	Similarity    string `bson:"similarity"`
-	Quantization  string `bson:"quantization"`
-}
-type vectorDefinition struct {
-	Fields []vectorDefinitionField `bson:"fields"`
-}
-
-var VectorIndexes = []VectorIndex{
-	{
-		Collection: "users",
-		// create a vector index on the taste_profile field
-		Model: mongo.SearchIndexModel{
-			Definition: vectorDefinition{
-				Fields: []vectorDefinitionField{{
-					Type:          "vector",
-					Path:          "taste_profile",
-					NumDimensions: 1536,
-					Similarity:    "dotProduct",
-					Quantization:  "scalar"}},
-			},
-			Options: options.SearchIndexes().SetName("taste_profile").SetType("vectorSearch"),
-		},
-	},
-}
-
 /*
 Indexes to be applied to the database.
 */

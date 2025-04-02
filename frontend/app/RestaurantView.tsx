@@ -10,7 +10,7 @@ import Tag from "@/components/ui/Tag";
 import { StarRating } from "@/components/ui/StarReview";
 import RestaurantReviewSummary from "@/components/restaurant/RestaurantReviewSummary";
 import HighlightCard from "@/components/restaurant/HighlightCard";
-import FeedTabs from "@/components/feed/FeedTabs";
+import FeedTabs from "@/components/Feed/FeedTabs";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 import { useRouter } from "expo-router";
@@ -101,7 +101,7 @@ export default function RestaurantView() {
                 <FeedTabs tabs={["Reviews", "Menu"]} activeTab={filterTab} setActiveTab={setFilterTab} />
 
                 <ThemedView>
-                    {filterTab === 0 && (
+                    {filterTab == 0 && (
                         <>
                             <ThemedView style={{ paddingVertical: 12 }}>
                                 <FeedTabs
@@ -128,7 +128,7 @@ export default function RestaurantView() {
                         </>
                     )}
 
-                    {filterTab === 1 && (
+                    {filterTab == 1 && (
                         <>
                             <MenuItemPreview
                                 plateName={"Whopper"}

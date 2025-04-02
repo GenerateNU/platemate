@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { ThemedView } from "@/components/themed/ThemedView";
+import ReviewDetail from "@/components/review/ReviewDetail";
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/themed/ThemedText";
@@ -95,10 +96,18 @@ export default function Route() {
             setReview(res);
         });
         navigation.setOptions({ headerShown: false });
-    }, [navigation, id]);
+    }, [navigation]);
 
     const handleBack = () => {
         navigation.goBack();
+    };
+
+    const handleUpvote = () => {
+        console.log("Upvote");
+    };
+
+    const handleDownvote = () => {
+        console.log("Downvote");
     };
 
     return (

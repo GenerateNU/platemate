@@ -1,13 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import { useUser } from "@/context/user-context";
 import { ThemedView } from "@/components/themed/ThemedView";
-import { Dimensions, ScrollView, StatusBar, StyleSheet } from "react-native";
+import { ActivityIndicator, Dimensions, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 import ProfileAvatar from "@/components/profile/ProfileAvatar";
 import ProfileIdentity from "@/components/profile/ProfileIdentity";
 import ProfileMetrics from "@/components/profile/ProfileMetrics";
 import { EditProfileButton } from "@/components/profile/EditProfileButton";
-import { useNavigation } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import EditProfileSheet from "@/components/profile/EditProfileSheet";
+import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
 
 const { width } = Dimensions.get("window");
@@ -22,7 +26,7 @@ const user = {
 };
 
 const ProfileScreen = () => {
-    // const { id } = useLocalSearchParams<{ id: string }>();
+    const { id } = useLocalSearchParams<{ id: string }>();
 
     const navigation = useNavigation();
 
