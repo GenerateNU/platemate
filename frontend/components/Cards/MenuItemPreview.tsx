@@ -39,7 +39,7 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
                             type="default"
                             style={{
                                 width: "100%",
-                                fontFamily: "Outfit",
+                                fontFamily: "Source Sans 3",
                             }}>
                             {content}
                         </ThemedText>
@@ -58,7 +58,7 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
                                     paddingVertical: 4,
                                     borderRadius: 20,
                                     fontSize: 14,
-                                    fontFamily: "Outfit",
+                                    fontFamily: "Source Sans 3",
                                 }}>
                                 {tag}
                             </Text>
@@ -70,7 +70,7 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
                     </View>
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                         <Entypo name="location-pin" size={24} color="black" />
-                        <ThemedText type="default" style={{ fontFamily: "Outfit" }}>
+                        <ThemedText type="default" style={{ fontFamily: "Source Sans 3" }}>
                             {restaurantName}
                         </ThemedText>
                     </View>

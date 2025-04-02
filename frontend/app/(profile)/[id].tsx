@@ -8,43 +8,33 @@ import { Ionicons } from "@expo/vector-icons";
 import ProfileAvatar from "@/components/profile/ProfileAvatar";
 import ProfileIdentity from "@/components/profile/ProfileIdentity";
 import ProfileMetrics from "@/components/profile/ProfileMetrics";
+import { EditProfileButton } from "@/components/profile/EditProfileButton";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
-import EditFriendSheet from "@/components/profile/followers/FriendProfileOptions";
-import { FollowButton } from "@/components/profile/followers/FollowButton";
 
 const { width } = Dimensions.get("window");
 
-const ProfileScreen = () => {
-    const { user, isLoading, error, fetchUserProfile } = useUser();
-    const [searchText, setSearchText] = React.useState("");
+const user = {
+    username: "lrollo02",
+    name: "Danny Rollo",
+    reviews: 12,
+    friends: 19,
+    averageRating: 4.2,
+    profilePicture: "https://randomuser.me/api/portraits/men/44.jpg",
+};
 
-    const editFriend = useRef<{ open: () => void; close: () => void }>(null);
+const ProfileScreen = () => {
+    const { id } = useLocalSearchParams<{ id: string }>();
+
+    const navigation = useNavigation();
 
     useEffect(() => {
-        if (!user && !isLoading) {
-            console.log("User data not available, fetching...");
-            fetchUserProfile().then(() => {});
-        }
-    }, [user, isLoading]);
+        navigation.setOptions({ headerShown: false });
+    }, [navigation]);
 
-    if (isLoading) {
-        return (
-            <ThemedView style={styles.centerContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
-                <ThemedText style={{ marginTop: 10 }}>Loading profile...</ThemedText>
-            </ThemedView>
-        );
-    }
-
-    if (!user || error) {
-        return (
-            <ThemedView style={styles.centerContainer}>
-                <ThemedText>An error occurred.</ThemedText>
-            </ThemedView>
-        );
-    }
+    const [searchText, setSearchText] = React.useState("");
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -55,51 +45,44 @@ const ProfileScreen = () => {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
             />
-            <TouchableOpacity
-                style={styles.ellipseButton}
-                onPress={() => {
-                    console.log("Button Pressed!");
-                    console.log("editFriend Ref:", editFriend.current);
-                    editFriend.current?.open();
-                }}>
-                <Ionicons name="ellipsis-horizontal" size={30} color="#333" />
-            </TouchableOpacity>
             <ScrollView style={styles.container}>
-                <ProfileAvatar url={user.profile_picture || "https://shorturl.at/Dhcvo"} />
-                <ProfileIdentity name={"Ben Petrillo"} username={"benpetrillo26"} />
+                <ProfileAvatar url={user.profilePicture || "https://shorturl.at/Dhcvo"} />
+                <ProfileIdentity name={user.name} username={user.username} />
                 <ProfileMetrics numFriends={100} numReviews={100} averageRating={4.6} />
-                <FollowButton text={"Following"} />
+                <EditProfileButton
+                    text={"Edit profile"}
+                    onPress={function (): void {
+                        throw new Error("Function not implemented.");
+                    }}
+                />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
                         style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
-                        Ben's Food Journal
+                        {user.name.split(" ")[0]}'s Food Journal
                     </ThemedText>
+                    {/* Made a search box with a filter/sort component as its own component */}
                     <SearchBoxFilter
-                        style={styles.searchBoxContainer}
-                        placeholder="Search Ben's reviews"
+                        placeholder="Search my reviews"
                         recent={true}
                         onSubmit={() => console.log("submit")}
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
                     />
-                    <ReviewPreview
-                        plateName="Ceasar Salad"
-                        restaurantName="Luigi's"
-                        tags={["Vegan", "Green", "Healthy", "Low Cal"]}
-                        rating={4.5}
-                        content={"It was pretty good."}></ReviewPreview>
                 </ThemedView>
             </ScrollView>
-            <EditFriendSheet user={user} ref={editFriend} />
         </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
-    ellipseButton: {
+    hamburgerButton: {
         position: "absolute",
-        right: 10,
-        zIndex: 100, // Had to put this to make it clickable
+        top: 10,
+        right: 20,
+        zIndex: 10,
+        borderRadius: 20,
+        padding: 8,
+        elevation: 5,
     },
     container: {
         flex: 1,
@@ -124,16 +107,6 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: width / 2.5,
         borderBottomRightRadius: width / 2.5,
         zIndex: 0,
-    },
-    searchContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        width: "100%",
-        paddingHorizontal: 12,
-        gap: 12,
-    },
-    searchBoxContainer: {
-        flex: 1,
     },
 });
 

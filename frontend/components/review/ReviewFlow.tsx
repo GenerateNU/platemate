@@ -1,22 +1,43 @@
 import React from "react";
 // import { StyleSheet, View, ScrollView, Dimensions } from "react-native";
-import { StyleSheet, ScrollView, Dimensions } from "react-native";
+import { StyleSheet, ScrollView, Dimensions, Modal } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { MyReview } from "@/components/MyReview";
 
-const ReviewFlow = () => {
+interface ReviewFlowProps {
+    isVisible: boolean;
+    onClose: () => void;
+    restaurantId: string;
+    menuItemName: string;
+    dishImageUrl?: string;
+}
+
+export function ReviewFlow({ isVisible, onClose, restaurantId, menuItemName, dishImageUrl }: ReviewFlowProps) {
     return (
-        <ThemedView style={styles.container}>
-            <ThemedText type="title" style={styles.title}>
-                Review Flow
-            </ThemedText>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <MyReview />
-            </ScrollView>
-        </ThemedView>
+        <Modal visible={isVisible} animationType="slide" presentationStyle="fullScreen" onRequestClose={onClose}>
+            <MyReview
+                restaurantId={restaurantId}
+                menuItemName={menuItemName}
+                dishImageUrl={dishImageUrl}
+                onClose={onClose}
+            />
+        </Modal>
     );
-};
+}
+
+// const ReviewFlow = () => {
+//     return (
+//         <ThemedView style={styles.container}>
+//             <ThemedText type="title" style={styles.title}>
+//                 Review Flow
+//             </ThemedText>
+//             <ScrollView contentContainerStyle={styles.scrollContainer}>
+//                 <MyReview />
+//             </ScrollView>
+//         </ThemedView>
+//     );
+// };
 
 export default ReviewFlow;
 

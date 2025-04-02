@@ -54,3 +54,14 @@ export type TFilterItem = {
     id: TFilterId;
     selected: boolean;
 };
+
+export type TMenuItemSearchResult = {
+    id: string;
+    name: string;
+    restaurantName: string;
+    tags: string[];
+    rating: number;
+    content: string;
+    trending?: boolean;
+    picture: string;
+};

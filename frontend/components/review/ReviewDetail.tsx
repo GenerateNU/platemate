@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ThemedText } from "@/components/themed/ThemedText";
-import { StarReview } from "@/components/StarReview";
+import { StarRating } from "@/components/ui/StarReview";
 import { Ionicons } from "@expo/vector-icons";
 // import { RestaurantTags } from "@/components/RestaurantTags";
 import { Entypo } from "@expo/vector-icons";
@@ -88,14 +88,6 @@ export default function ReviewDetail() {
         console.log("Go back");
     };
 
-    const handleUpvote = () => {
-        console.log("Upvote");
-    };
-
-    const handleDownvote = () => {
-        console.log("Downvote");
-    };
-
     return (
         <ScrollView style={styles.container}>
             <ThemedView style={styles.content}>
@@ -111,13 +103,8 @@ export default function ReviewDetail() {
                 <View style={styles.userInfo}>
                     <View style={styles.userInfoLeft}>
                         <Image source={{ uri: mockReview.user.avatarUrl }} style={styles.profilePicture} />
-                        <View>
-                            <ThemedText style={styles.userName}>{mockReview.user.name}</ThemedText>
-                            <ThemedText style={styles.userHandle}>@{mockReview.user.username}</ThemedText>
-                        </View>
-                    </View>
-                    <View style={styles.avatarContainer}>
-                        <ThemedText style={styles.avatarText}>{mockReview.user.name.charAt(0)}</ThemedText>
+                        <ThemedText style={styles.userName}>{mockReview.user.name}</ThemedText>
+                        <ThemedText style={styles.userHandle}>@{mockReview.user.username}</ThemedText>
                     </View>
                 </View>
 
@@ -127,7 +114,7 @@ export default function ReviewDetail() {
                         <View style={styles.ratingColumn}>
                             <View style={styles.ratingBox}>
                                 <ThemedText style={styles.ratingTitle}>Overall</ThemedText>
-                                <StarReview
+                                <StarRating
                                     avgRating={mockReview.ratings.overall}
                                     numRatings={-1}
                                     showAvgRating={false}
@@ -136,7 +123,7 @@ export default function ReviewDetail() {
                             </View>
                             <View style={styles.ratingBox}>
                                 <ThemedText style={styles.ratingTitle}>Value</ThemedText>
-                                <StarReview
+                                <StarRating
                                     avgRating={mockReview.ratings.value}
                                     numRatings={-1}
                                     showAvgRating={false}
@@ -147,7 +134,7 @@ export default function ReviewDetail() {
                         <View style={[styles.ratingColumn, styles.ratingColumnRight]}>
                             <View style={styles.ratingBox}>
                                 <ThemedText style={styles.ratingTitle}>Taste</ThemedText>
-                                <StarReview
+                                <StarRating
                                     avgRating={mockReview.ratings.taste}
                                     numRatings={-1}
                                     showAvgRating={false}
@@ -156,7 +143,7 @@ export default function ReviewDetail() {
                             </View>
                             <View style={styles.ratingBox}>
                                 <ThemedText style={styles.ratingTitle}>Portion</ThemedText>
-                                <StarReview
+                                <StarRating
                                     avgRating={mockReview.ratings.portion}
                                     numRatings={-1}
                                     showAvgRating={false}
@@ -272,13 +259,14 @@ const styles = StyleSheet.create({
     userName: {
         fontSize: 16,
         fontWeight: "600",
+        lineHeight: 12,
+        fontFamily: "Source Sans 3",
     },
     userHandle: {
         fontSize: 14,
         color: "#666",
     },
     ratingsGridContainer: {
-        alignItems: "center",
         marginBottom: 24,
         width: "100%",
     },
@@ -354,6 +342,6 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         borderRadius: 20,
         fontSize: 12,
-        fontFamily: "Outfit",
+        fontFamily: "Source Sans 3",
     },
 });
