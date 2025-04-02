@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { TextInput, StyleSheet, View, Dimensions, TouchableOpacity } from "react-native";
 import { ThemedText } from "./themed/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -14,10 +14,10 @@ export function SearchBoxFilter({ value, onChangeText, onSubmit, icon, recent, n
     const inputRef = useRef<TextInput>(null);
     const [recentItems, setRecentItems] = useState<string[]>([]);
 
-    async function fetchRecents() {
-        if (recent) setRecentItems(await getRecents());
-        else setRecentItems([]);
-    }
+    const fetchRecents = useCallback(async () => {
+        const recents = getRecents();
+        setRecentItems(recents);
+    }, [getRecents]);
 
     async function clearRecents() {
         setRecentItems([]);
@@ -33,7 +33,7 @@ export function SearchBoxFilter({ value, onChangeText, onSubmit, icon, recent, n
 
     useEffect(() => {
         fetchRecents();
-    }, [recent]);
+    }, [recent, fetchRecents]);
 
     const onSubmitEditing = () => {
         if (recent)
