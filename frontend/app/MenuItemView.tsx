@@ -1,17 +1,21 @@
 import { ThemedView } from "@/components/themed/ThemedView";
-import { ScrollView, StyleSheet, View, Image, Pressable } from "react-native";
+import { ScrollView, StyleSheet, View, Image, Pressable, StatusBar } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarRating } from "@/components/ui/StarReview";
-import React from "react";
+import React, { useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { ThemedTag } from "@/components/themed/ThemedTag";
 import { ReviewButton } from "@/components/review/ReviewButton";
 import HighlightCard from "@/components/restaurant/HighlightCard";
 import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect } from "expo-router";
+import { useIsFocused } from "@react-navigation/core";
 
 export default function MenuItemView() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
+    const insets = useSafeAreaInsets();
     const dishTags = [
         {
             title: "Gluten-free",
@@ -29,6 +33,20 @@ export default function MenuItemView() {
             textColor: "#2E7D32",
         },
     ];
+
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        if (isFocused) {
+            // Hide status bar when screen is focused
+            StatusBar.setHidden(true);
+        }
+
+        return () => {
+            // Show status bar when screen is unfocused
+            StatusBar.setHidden(false);
+        };
+    }, [isFocused]);
 
     return (
         <>
@@ -179,7 +197,7 @@ const styles = StyleSheet.create({
     },
     titleIcons: {
         flexDirection: "row",
-        gap: 16,
+        gap: 8,
     },
     iconButton: {
         padding: 4,

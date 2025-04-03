@@ -5,36 +5,16 @@ import { StarRating } from "@/components/ui/StarReview";
 import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
-// import ReviewDetail from "@/components/review/ReviewDetail";
 import { ThemedTag } from "@/components/themed/ThemedTag";
-// import { RestaurantTags } from "@/components/RestaurantTags";
-import { StatCard } from "@/components/Cards/StatCard";
 import { ReviewButton } from "@/components/review/ReviewButton";
 import HighlightCard from "@/components/restaurant/HighlightCard";
 import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
-import { router, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { getMenuItemById, getMenuItems } from "@/api/menu-items";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { getMenuItemById } from "@/api/menu-items";
 import { TMenuItem } from "@/types/menu-item";
 
 export default function Route() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
-    const dishTags = [
-        {
-            title: "Gluten-free",
-            backgroundColor: "#FFF3E0",
-            textColor: "#EF6C00",
-        },
-        {
-            title: "Spicy",
-            backgroundColor: "#FFEBEE",
-            textColor: "#C62828",
-        },
-        {
-            title: "Healthy",
-            backgroundColor: "#E8F5E9",
-            textColor: "#2E7D32",
-        },
-    ];
 
     const { id } = useLocalSearchParams<{ id: string }>();
 
@@ -54,7 +34,7 @@ export default function Route() {
         <>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <ThemedView style={styles.bannerContainer}>
-                    <Image source={{ uri: "https://shorturl.at/zZdqT" }} style={styles.bannerImage} />
+                    <Image source={{ uri: menuItem?.picture }} style={styles.bannerImage} />
                 </ThemedView>
                 <ThemedView style={styles.container}>
                     {/* Header Section */}
@@ -84,13 +64,8 @@ export default function Route() {
                     {/* Tags Section */}
                     <ThemedView style={styles.tagsContainer}>
                         <View style={styles.tagRow}>
-                            {dishTags.map((tag, index) => (
-                                <ThemedTag
-                                    key={index}
-                                    title={tag.title}
-                                    backgroundColor={tag.backgroundColor}
-                                    textColor={tag.textColor}
-                                />
+                            {menuItem?.tags.map((tag, index) => (
+                                <ThemedTag key={index} title={tag} backgroundColor={"#E8F5E9"} textColor={"#2E7D32"} />
                             ))}
                         </View>
                     </ThemedView>

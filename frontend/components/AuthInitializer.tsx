@@ -12,7 +12,7 @@ export const AuthInitializer = ({ children }: { children: React.ReactNode }) => 
         // Initialize auth when the app starts
         console.log("Initializing authentication...");
         initializeAuth();
-    }); // Empty dependency array ensures this runs only once
+    }, []); // Empty dependency array ensures this runs only once
 
     return <>{children}</>;
 };

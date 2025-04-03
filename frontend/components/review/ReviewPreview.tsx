@@ -4,7 +4,7 @@ import UserInfoRowBase from "../UserInfo/UserInfoRowBase";
 import { ThemedText } from "../themed/ThemedText";
 import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
-import { router, useNavigation } from "expo-router";
+import { router } from "expo-router";
 import { ReviewComponentStarIcon } from "../icons/Icons";
 
 type Props = {
@@ -30,8 +30,6 @@ const ReviewPreview = ({
     authorAvatar,
     authorId,
 }: Props) => {
-    const navigation = useNavigation();
-
     return (
         <View
             style={{

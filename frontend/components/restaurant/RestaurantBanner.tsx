@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     },
     bannerImage: {
         width: "100%",
-        height: 124,
+        height: 164,
     },
     avatarContainer: {
         position: "absolute",

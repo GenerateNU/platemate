@@ -144,8 +144,8 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             restrictions: data.dietaryRestrictions,
             preferences: data.cuisinePreferences,
             // Ensure default values for required fields
-            followingCount: 0,
-            followersCount: 0,
+            followingCount: parseFloat(0),
+            followersCount: parseFloat(0),
             count: 0,
             reviews: [],
             following: [],

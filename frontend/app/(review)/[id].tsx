@@ -8,6 +8,7 @@ import { StarRating } from "@/components/ui/StarReview";
 import React, { useEffect } from "react";
 import { TReview } from "@/types/review";
 import { getReviewById } from "@/api/reviews";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ReviewDocument = {
     _id: string;
@@ -110,8 +111,10 @@ export default function Route() {
         console.log("Downvote");
     };
 
+    const insets = useSafeAreaInsets();
+
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom + 24 }]}>
             <ThemedView style={styles.content}>
                 {/* Header */}
                 <View style={styles.header}>
