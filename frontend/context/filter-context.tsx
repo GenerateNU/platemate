@@ -1,10 +1,8 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
-import axios from "axios";
-import { TSortOption, TFilterItem, TSortOptionKey, TFilterId, TMenuItemSearchResult } from "@/types/filter";
+import { createContext, useState, type ReactNode } from "react";
+import { TSortOption, TFilterItem, TSortOptionKey, TFilterId } from "@/types/filter";
 import { TMenuItem } from "@/types/menu-item";
 import { getMenuItems } from "@/api/menu-items";
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 export interface MenuItemQuery {
     Name: string;
     Tags: string[];

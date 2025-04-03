@@ -13,12 +13,14 @@ import { router } from "expo-router";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = () => {
     const { user, isLoading, error, fetchUserProfile } = useUser();
     const [searchText, setSearchText] = React.useState("");
+    const insets = useSafeAreaInsets();
 
     const editProfileRef = useRef<{ open: () => void; close: () => void }>(null);
 
@@ -47,7 +49,7 @@ const ProfileScreen = () => {
     }
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
+        <ScrollView style={{ flex: 1, backgroundColor: "#fff", paddingTop: insets.top }}>
             <StatusBar barStyle="dark-content" />
             <LinearGradient
                 colors={["white", "#FFFCE4"]}
@@ -58,7 +60,7 @@ const ProfileScreen = () => {
             <TouchableOpacity style={styles.hamburgerButton} onPress={() => editProfileRef.current?.open()}>
                 <Ionicons name="menu" size={28} color="#333" />
             </TouchableOpacity>
-            <ScrollView style={styles.container}>
+            <ThemedView style={styles.container}>
                 <ProfileAvatar url={user.profile_picture || "https://shorturl.at/Dhcvo"} />
                 <ProfileIdentity name={user.name} username={user.username} />
                 <ProfileMetrics numFriends={100} numReviews={100} averageRating={4.6} />
@@ -108,7 +110,7 @@ const ProfileScreen = () => {
                         />
                     </ThemedView>
                 </ThemedView>
-            </ScrollView>
+            </ThemedView>
             <EditProfileSheet user={user} ref={editProfileRef} />
         </ScrollView>
     );
