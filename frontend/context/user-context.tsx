@@ -12,7 +12,7 @@ export interface User {
     username: string;
     followersCount: number;
     followingCount: number;
-    // preferences: string[];
+    preferences: string[];
 }
 
 interface UserContextType {

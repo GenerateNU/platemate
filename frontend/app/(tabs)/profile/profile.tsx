@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useUser } from "@/context/user-context";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ActivityIndicator, Dimensions, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
@@ -13,12 +13,14 @@ import { router } from "expo-router";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
+import type { Review } from '@/types/review';
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = () => {
     const { user, isLoading, error, fetchUserProfile } = useUser();
     const [searchText, setSearchText] = React.useState("");
+    const [userReviews, setUserReviews] = useState<Review[]>([]);
 
     const editProfileRef = useRef<{ open: () => void; close: () => void }>(null);
 
@@ -27,6 +29,20 @@ const ProfileScreen = () => {
             console.log("User data not available, fetching...");
             fetchUserProfile().then(() => {});
         }
+        const fetchReviews = async () => {
+        if (!user?.id) return ;
+    
+        try {
+            const reviewsRes = await fetch(
+            `https://externally-exotic-orca.ngrok-free.app/api/v1/review/user/${user.id}`);
+            const reviewData = await reviewsRes.json();
+            console.log(reviewData);
+            setUserReviews(reviewData);
+        } catch (err) {
+            console.error("Failed to fetch user by ID", err);
+        }
+        };
+        fetchReviews();
     }, [user, isLoading]);
 
     if (isLoading) {
@@ -76,12 +92,16 @@ const ProfileScreen = () => {
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
                     />
-                    <ReviewPreview
-                        plateName="Ceasar Salad"
-                        restaurantName="Luigi's"
-                        tags={["Vegan", "Green", "Healthy", "Low Cal"]}
-                        rating={4.5}
-                        content={"It was pretty good."}></ReviewPreview>
+                    {userReviews.map((review) => (
+                        <ReviewPreview
+                        plateName={review.plateName}
+                        restaurantName={review.restaurantName}
+                        tags={review.tags || []}
+                        rating={review.rating.overall}
+                        content={review.content}
+                        user={user}>
+                        </ReviewPreview>
+                    ))}
                 </ThemedView>
             </ScrollView>
             <EditProfileSheet user={user} ref={editProfileRef} />

@@ -1,8 +1,10 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { FollowButton } from "./FollowButton";
+import { router } from "expo-router";
 
 type Follower = {
+    id: string;
     name: string;
     username: string;
     avatar: string;
@@ -13,12 +15,12 @@ type FollowerItemProps = {
 };
 
 const FollowerItem = ({ follower }: FollowerItemProps) => {
+    console.log(follower.id);
     return (
-        <TouchableOpacity style={styles.followerItem}>
+        <TouchableOpacity style={styles.followerItem} onPress={() => router.push(`/friend/${follower.id}`)}>
             <Image
                 source={{ uri: follower.avatar }}
                 style={styles.avatar}
-                defaultSource={{ uri: "/api/placeholder/50/50" }}
             />
             <View style={styles.namesContainer}>
                 <Text style={styles.followerUsername}>{follower.username}</Text>

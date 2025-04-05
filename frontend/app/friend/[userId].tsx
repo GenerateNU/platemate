@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useUser } from "@/context/user-context";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ActivityIndicator, Dimensions, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
@@ -12,21 +12,68 @@ import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
 import EditFriendSheet from "@/components/profile/followers/FriendProfileOptions";
 import { FollowButton } from "@/components/profile/followers/FollowButton";
+import { useLocalSearchParams } from 'expo-router';
+import type { User } from '@/context/user-context';
+import type { Review } from '@/types/review';
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = () => {
-    const { user, isLoading, error, fetchUserProfile } = useUser();
-    const [searchText, setSearchText] = React.useState("");
-
+    console.log("hi");
+    const {userId} = useLocalSearchParams();
+    console.log(userId);
+    const [searchText, setSearchText] = useState("");
     const editFriend = useRef<{ open: () => void; close: () => void }>(null);
-
+  
+    const [user, setUser] = useState<User>({
+        id: "",
+        email: "",
+        name: "",
+        profile_picture: "",
+        username: "",
+        followersCount: 0,
+        followingCount: 0,
+        preferences: []
+      }); //initialziing the user to an empty user
+    const [userReviews, setUserReviews] = useState<Review[]>([]);
+    const [isLoading, setLoading] = useState(true);
+  
     useEffect(() => {
-        if (!user && !isLoading) {
-            console.log("User data not available, fetching...");
-            fetchUserProfile().then(() => {});
+      const fetchUserAndReviews = async () => {
+        if (!userId) return ;
+  
+        setLoading(true);
+        try {
+          const userRes = await fetch(
+                `https://externally-exotic-orca.ngrok-free.app/api/v1/user/${userId}`);
+          const userData = await userRes.json();
+          console.log(userData);
+          const newUser: User = {
+            id: userData.id,
+            email: userData.email,
+            name: userData.name,
+            profile_picture: userData.profile_picture,
+            username: userData.username,
+            followersCount: userData.followersCount,
+            followingCount: userData.followingCount,
+            preferences: userData.preferences,
+          };
+          setUser(newUser);
+
+          const reviewsRes = await fetch(
+            `https://externally-exotic-orca.ngrok-free.app/api/v1/review/user/${userId}`);
+          const reviewData = await reviewsRes.json();
+          console.log(reviewData);
+          setUserReviews(reviewData);
+        } catch (err) {
+          console.error("Failed to fetch user by ID", err);
+        } finally {
+          setLoading(false);
         }
-    }, [user, isLoading]);
+      };
+  
+      fetchUserAndReviews();
+    }, [userId]);
 
     if (isLoading) {
         return (
@@ -36,14 +83,14 @@ const ProfileScreen = () => {
             </ThemedView>
         );
     }
-
-    if (!user || error) {
-        return (
-            <ThemedView style={styles.centerContainer}>
-                <ThemedText>An error occurred.</ThemedText>
-            </ThemedView>
-        );
-    }
+    // for now!!!
+    // if (!user || error) {
+    //     return (
+    //         <ThemedView style={styles.centerContainer}>
+    //             <ThemedText>An error occurred.</ThemedText>
+    //         </ThemedView>
+    //     );
+    // }
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -58,35 +105,39 @@ const ProfileScreen = () => {
                 style={styles.ellipseButton}
                 onPress={() => {
                     console.log("Button Pressed!");
-                    console.log("editFriend Ref:", editFriend.current);
-                    editFriend.current?.open();
                 }}>
                 <Ionicons name="ellipsis-horizontal" size={30} color="#333" />
             </TouchableOpacity>
             <ScrollView style={styles.container}>
-                <ProfileAvatar url={user.profile_picture || "https://shorturl.at/Dhcvo"} />
-                <ProfileIdentity name={"Ben Petrillo"} username={"benpetrillo26"} />
-                <ProfileMetrics numFriends={100} numReviews={100} averageRating={4.6} />
+                {/* inserted a default profile picture because profile_picture is string | undefined */}
+                <ProfileAvatar url={user.profile_picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} /> 
+                <ProfileIdentity name={user.name} username={user.username} />
+                <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
                 <FollowButton text={"Friends"} />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
                         style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
-                        Ben's Food Journal
+                        {user.name}'s Food Journal
                     </ThemedText>
                     <SearchBoxFilter
                         style={styles.searchBoxContainer}
-                        placeholder="Search Ben's reviews"
+                        placeholder={`Search ${user.name}'s Reviews`} 
                         recent={true}
                         onSubmit={() => console.log("submit")}
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
                     />
-                    <ReviewPreview
-                        plateName="Ceasar Salad"
-                        restaurantName="Luigi's"
-                        tags={["Vegan", "Green", "Healthy", "Low Cal"]}
-                        rating={4.5}
-                        content={"It was pretty good."}></ReviewPreview>
+                    {userReviews.map((review) => (
+                        <ReviewPreview
+                        key={review.id}
+                        plateName={review.plateName}
+                        restaurantName={review.restaurantName}
+                        tags={review.tags || []}
+                        rating={review.rating.overall}
+                        content={review.content}
+                        user={user}>
+                        </ReviewPreview>
+                    ))}
                 </ThemedView>
             </ScrollView>
             <EditFriendSheet user={user} ref={editFriend} />
