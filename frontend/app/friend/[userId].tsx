@@ -8,42 +8,13 @@ import { Ionicons } from "@expo/vector-icons";
 import ProfileAvatar from "@/components/profile/ProfileAvatar";
 import ProfileIdentity from "@/components/profile/ProfileIdentity";
 import ProfileMetrics from "@/components/profile/ProfileMetrics";
-<<<<<<<< HEAD:frontend/app/(profile)/[id].tsx
-import { EditProfileButton } from "@/components/profile/EditProfileButton";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import EditProfileSheet from "@/components/profile/EditProfileSheet";
-import ReviewPreview from "@/components/review/ReviewPreview";
-import { SearchBoxFilter } from "@/components/SearchBoxFilter";
-
-const { width } = Dimensions.get("window");
-
-const user = {
-    username: "lrollo02",
-    name: "Danny Rollo",
-    reviews: 12,
-    friends: 19,
-    averageRating: 4.2,
-    profilePicture: "https://randomuser.me/api/portraits/men/44.jpg",
-};
-
-const ProfileScreen = () => {
-    const { id } = useLocalSearchParams<{ id: string }>();
-
-    const navigation = useNavigation();
-
-    useEffect(() => {
-        navigation.setOptions({ headerShown: false });
-    }, [navigation]);
-
-    const [searchText, setSearchText] = React.useState("");
-========
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
 import EditFriendSheet from "@/components/profile/followers/FriendProfileOptions";
 import { FollowButton } from "@/components/profile/followers/FollowButton";
 import { useLocalSearchParams } from 'expo-router';
 import type { User } from '@/context/user-context';
-import type { Review } from '@/types/review';
+import type { TReview } from '@/types/review';
 
 const { width } = Dimensions.get("window");
 
@@ -64,7 +35,7 @@ const ProfileScreen = () => {
         followingCount: 0,
         preferences: []
       }); //initialziing the user to an empty user
-    const [userReviews, setUserReviews] = useState<Review[]>([]);
+    const [userReviews, setUserReviews] = useState<TReview[]>([]);
     const [isLoading, setLoading] = useState(true);
   
     useEffect(() => {
@@ -120,7 +91,6 @@ const ProfileScreen = () => {
     //         </ThemedView>
     //     );
     // }
->>>>>>>> featurethon-user-profile:frontend/app/friend/[userId].tsx
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -131,24 +101,7 @@ const ProfileScreen = () => {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
             />
-<<<<<<<< HEAD:frontend/app/(profile)/[id].tsx
-            <ScrollView style={styles.container}>
-                <ProfileAvatar url={user.profilePicture || "https://shorturl.at/Dhcvo"} />
-                <ProfileIdentity name={user.name} username={user.username} />
-                <ProfileMetrics numFriends={100} numReviews={100} averageRating={4.6} />
-                <EditProfileButton
-                    text={"Edit profile"}
-                    onPress={function (): void {
-                        throw new Error("Function not implemented.");
-                    }}
-                />
-                <ThemedView style={styles.reviewsContainer}>
-                    <ThemedText
-                        style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
-                        {user.name.split(" ")[0]}'s Food Journal
-========
             <TouchableOpacity
-                style={styles.ellipseButton}
                 onPress={() => {
                     console.log("Button Pressed!");
                 }}>
@@ -164,35 +117,31 @@ const ProfileScreen = () => {
                     <ThemedText
                         style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
                         {user.name}'s Food Journal
->>>>>>>> featurethon-user-profile:frontend/app/friend/[userId].tsx
                     </ThemedText>
                     {/* Made a search box with a filter/sort component as its own component */}
                     <SearchBoxFilter
-<<<<<<<< HEAD:frontend/app/(profile)/[id].tsx
-                        placeholder="Search my reviews"
-========
-                        style={styles.searchBoxContainer}
                         placeholder={`Search ${user.name}'s Reviews`} 
->>>>>>>> featurethon-user-profile:frontend/app/friend/[userId].tsx
                         recent={true}
                         onSubmit={() => console.log("submit")}
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
                     />
-<<<<<<<< HEAD:frontend/app/(profile)/[id].tsx
-========
                     {userReviews.map((review) => (
                         <ReviewPreview
-                        key={review.id}
-                        plateName={review.plateName}
-                        restaurantName={review.restaurantName}
-                        tags={review.tags || []}
+                        key={review._id}
+                        plateName={review.menuItem}
+                        // we dont have a restaurant name or tags in the defined review type right now
+                        restaurantName={review.restaurantId}
+                        tags={[]}
                         rating={review.rating.overall}
                         content={review.content}
-                        user={user}>
+                        authorName={user.name}
+                        authorUsername={user.username}
+                        authorAvatar={user.profile_picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"}
+                        authorId={user.id}
+                        >
                         </ReviewPreview>
                     ))}
->>>>>>>> featurethon-user-profile:frontend/app/friend/[userId].tsx
                 </ThemedView>
             </ScrollView>
         </ScrollView>

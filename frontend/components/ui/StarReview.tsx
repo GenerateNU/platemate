@@ -79,7 +79,7 @@ export function InteractiveStars({
         <View style={styles.starRow}>
             {Array.from({ length: maxStars }).map((_, i) => {
                 const isFilled = i < rating;
-                const StarIcon = isFilled ? ShadedStar : UnshadedStar;
+                const StarShaded = isFilled ? ShadedStar : UnshadedStar;
                 return (
                     <TouchableOpacity key={i} onPress={() => onChange(i + 1)}>
                         <StarIcon

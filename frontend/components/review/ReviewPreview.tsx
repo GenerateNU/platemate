@@ -6,7 +6,6 @@ import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
 import { router, useNavigation } from "expo-router";
 import { ReviewComponentStarIcon } from "../icons/Icons";
-import type { User } from '@/context/user-context';
 
 type ReviewProps = {
     plateName: string;
@@ -14,14 +13,13 @@ type ReviewProps = {
     tags: string[];
     rating: number;
     content: string;
-    user: User;
     authorName: string;
     authorUsername: string;
     authorAvatar: string;
     authorId: string;
 };
 
-const ReviewPreview = ({ plateName, restaurantName, tags, rating, content, authorName, authorUsername, authorAvatar, authorId, user }: ReviewProps) => {
+const ReviewPreview = ({ plateName, restaurantName, tags, rating, content, authorName, authorUsername, authorAvatar, authorId }: ReviewProps) => {
     return (
         <View
             style={{
@@ -36,12 +34,12 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content, autho
                 height: Dimensions.get("window").height * 0.36,
             }}>
             <UserInfoRowBase
-                name={user?.name || "Ben Petrillo"}
-                username={user?.username || "benpetrillo26"}
+                name={authorName || "Ben Petrillo"}
+                username={authorUsername || "benpetrillo26"}
                 right={<View />}
                 // default profile picture 
-                icon={user?.profile_picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} 
-                onPress={() => router.push(`/friend/${user?.id || "67e300bc43b432515e2dd8ba"}`)}
+                icon={authorAvatar} 
+                onPress={() => router.push(`/friend/${authorId}`)}
             />
             <View style={{ gap: 10 }}>
                 <View style={styles.plateInfoContainer}>
