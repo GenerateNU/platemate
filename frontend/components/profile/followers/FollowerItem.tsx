@@ -18,10 +18,7 @@ const FollowerItem = ({ follower }: FollowerItemProps) => {
     console.log(follower.id);
     return (
         <TouchableOpacity style={styles.followerItem} onPress={() => router.push(`/friend/${follower.id}`)}>
-            <Image
-                source={{ uri: follower.avatar }}
-                style={styles.avatar}
-            />
+            <Image source={{ uri: follower.avatar }} style={styles.avatar} />
             <View style={styles.namesContainer}>
                 <Text style={styles.followerUsername}>{follower.username}</Text>
                 <Text style={styles.followerName}>{follower.name}</Text>

@@ -12,19 +12,19 @@ import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
 import EditFriendSheet from "@/components/profile/followers/FriendProfileOptions";
 import { FollowButton } from "@/components/profile/followers/FollowButton";
-import { useLocalSearchParams } from 'expo-router';
-import type { User } from '@/context/user-context';
-import type { TReview } from '@/types/review';
+import { useLocalSearchParams } from "expo-router";
+import type { User } from "@/context/user-context";
+import type { TReview } from "@/types/review";
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = () => {
     console.log("hi");
-    const {userId} = useLocalSearchParams();
+    const { userId } = useLocalSearchParams();
     console.log(userId);
     const [searchText, setSearchText] = useState("");
     const editFriend = useRef<{ open: () => void; close: () => void }>(null);
-  
+
     const [user, setUser] = useState<User>({
         id: "",
         email: "",
@@ -33,46 +33,46 @@ const ProfileScreen = () => {
         username: "",
         followersCount: 0,
         followingCount: 0,
-        preferences: []
-      }); //initialziing the user to an empty user
+        preferences: [],
+    }); //initialziing the user to an empty user
     const [userReviews, setUserReviews] = useState<TReview[]>([]);
     const [isLoading, setLoading] = useState(true);
-  
-    useEffect(() => {
-      const fetchUserAndReviews = async () => {
-        if (!userId) return ;
-  
-        setLoading(true);
-        try {
-          const userRes = await fetch(
-                `https://externally-exotic-orca.ngrok-free.app/api/v1/user/${userId}`);
-          const userData = await userRes.json();
-          console.log(userData);
-          const newUser: User = {
-            id: userData.id,
-            email: userData.email,
-            name: userData.name,
-            profile_picture: userData.profile_picture,
-            username: userData.username,
-            followersCount: userData.followersCount,
-            followingCount: userData.followingCount,
-            preferences: userData.preferences,
-          };
-          setUser(newUser);
 
-          const reviewsRes = await fetch(
-            `https://externally-exotic-orca.ngrok-free.app/api/v1/review/user/${userId}`);
-          const reviewData = await reviewsRes.json();
-          console.log(reviewData);
-          setUserReviews(reviewData);
-        } catch (err) {
-          console.error("Failed to fetch user by ID", err);
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      fetchUserAndReviews();
+    useEffect(() => {
+        const fetchUserAndReviews = async () => {
+            if (!userId) return;
+
+            setLoading(true);
+            try {
+                const userRes = await fetch(`https://externally-exotic-orca.ngrok-free.app/api/v1/user/${userId}`);
+                const userData = await userRes.json();
+                console.log(userData);
+                const newUser: User = {
+                    id: userData.id,
+                    email: userData.email,
+                    name: userData.name,
+                    profile_picture: userData.profile_picture,
+                    username: userData.username,
+                    followersCount: userData.followersCount,
+                    followingCount: userData.followingCount,
+                    preferences: userData.preferences,
+                };
+                setUser(newUser);
+
+                const reviewsRes = await fetch(
+                    `https://externally-exotic-orca.ngrok-free.app/api/v1/review/user/${userId}`,
+                );
+                const reviewData = await reviewsRes.json();
+                console.log(reviewData);
+                setUserReviews(reviewData);
+            } catch (err) {
+                console.error("Failed to fetch user by ID", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserAndReviews();
     }, [userId]);
 
     if (isLoading) {
@@ -109,7 +109,12 @@ const ProfileScreen = () => {
             </TouchableOpacity>
             <ScrollView style={styles.container}>
                 {/* inserted a default profile picture because profile_picture is string | undefined */}
-                <ProfileAvatar url={user.profile_picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} /> 
+                <ProfileAvatar
+                    url={
+                        user.profile_picture ||
+                        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                    }
+                />
                 <ProfileIdentity name={user.name} username={user.username} />
                 <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
                 <FollowButton text={"Friends"} />
@@ -120,7 +125,7 @@ const ProfileScreen = () => {
                     </ThemedText>
                     {/* Made a search box with a filter/sort component as its own component */}
                     <SearchBoxFilter
-                        placeholder={`Search ${user.name}'s Reviews`} 
+                        placeholder={`Search ${user.name}'s Reviews`}
                         recent={true}
                         onSubmit={() => console.log("submit")}
                         value={searchText}
@@ -128,17 +133,19 @@ const ProfileScreen = () => {
                     />
                     {userReviews.map((review) => (
                         <ReviewPreview
-                        key={review._id}
-                        plateName={review.menuItem}
-                        restaurantName={review.restaurantId}
-                        tags={[]}
-                        rating={review.rating.overall}
-                        content={review.content}
-                        authorName={user.name}
-                        authorUsername={user.username}
-                        authorAvatar={user.profile_picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"}
-                        authorId={user.id}>
-                        </ReviewPreview>
+                            key={review._id}
+                            plateName={review.menuItem}
+                            restaurantName={review.restaurantId}
+                            tags={[]}
+                            rating={review.rating.overall}
+                            content={review.content}
+                            authorName={user.name}
+                            authorUsername={user.username}
+                            authorAvatar={
+                                user.profile_picture ||
+                                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                            }
+                            authorId={user.id}></ReviewPreview>
                     ))}
                 </ThemedView>
             </ScrollView>

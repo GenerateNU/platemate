@@ -13,7 +13,7 @@ import { router } from "expo-router";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
-import type { Review } from '@/types/review';
+import type { Review } from "@/types/review";
 
 const { width } = Dimensions.get("window");
 
@@ -30,17 +30,18 @@ const ProfileScreen = () => {
             fetchUserProfile().then(() => {});
         }
         const fetchReviews = async () => {
-        if (!user?.id) return ;
-    
-        try {
-            const reviewsRes = await fetch(
-            `https://externally-exotic-orca.ngrok-free.app/api/v1/review/user/${user.id}`);
-            const reviewData = await reviewsRes.json();
-            console.log(reviewData);
-            setUserReviews(reviewData);
-        } catch (err) {
-            console.error("Failed to fetch user by ID", err);
-        }
+            if (!user?.id) return;
+
+            try {
+                const reviewsRes = await fetch(
+                    `https://externally-exotic-orca.ngrok-free.app/api/v1/review/user/${user.id}`,
+                );
+                const reviewData = await reviewsRes.json();
+                console.log(reviewData);
+                setUserReviews(reviewData);
+            } catch (err) {
+                console.error("Failed to fetch user by ID", err);
+            }
         };
         fetchReviews();
     }, [user, isLoading]);
@@ -100,13 +101,12 @@ const ProfileScreen = () => {
                     />
                     {userReviews.map((review) => (
                         <ReviewPreview
-                        plateName={review.plateName}
-                        restaurantName={review.restaurantName}
-                        tags={review.tags || []}
-                        rating={review.rating.overall}
-                        content={review.content}
-                        user={user}>
-                        </ReviewPreview>
+                            plateName={review.plateName}
+                            restaurantName={review.restaurantName}
+                            tags={review.tags || []}
+                            rating={review.rating.overall}
+                            content={review.content}
+                            user={user}></ReviewPreview>
                     ))}
                 </ThemedView>
             </ScrollView>
