@@ -34,12 +34,10 @@ const ProfileScreen = () => {
             if (!user?.id) return;
 
             try {
-                const reviewData = await makeRequest(
-                                    `/api/v1/review/user/${user.id}`,
-                                    "GET");
-                                if (!reviewData) {
-                                    throw new Error(reviewData.message || "an unknown error occurred");
-                                }
+                const reviewData = await makeRequest(`/api/v1/review/user/${user.id}`, "GET");
+                if (!reviewData) {
+                    throw new Error(reviewData.message || "Failed to retrieve user reviews");
+                }
                 setUserReviews(reviewData);
             } catch (err) {
                 console.error("Failed to fetch user by ID", err);
@@ -112,8 +110,7 @@ const ProfileScreen = () => {
                             authorId={user.id}
                             authorName={user.name}
                             authorUsername={user.username}
-                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}>
-                            </ReviewPreview>
+                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}></ReviewPreview>
                     ))}
                 </ThemedView>
             </ScrollView>

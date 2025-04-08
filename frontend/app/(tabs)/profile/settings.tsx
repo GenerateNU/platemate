@@ -49,14 +49,12 @@ export default function SettingsScreen() {
     useEffect(() => {
         console.log("fetched preferences!");
         const fetchDietaryPreferences = async () => {
-            const preferencesData = await makeRequest(
-                `/api/v1/settings/${userId}/dietaryPreferences`,
-                "GET");
+            const preferencesData = await makeRequest(`/api/v1/settings/${userId}/dietaryPreferences`, "GET");
             if (!preferencesData) {
                 throw new Error(preferencesData.message || "failed to fetch dietary preferences");
             }
             setDietaryPreferences(preferencesData);
-        }
+        };
 
         fetchDietaryPreferences();
         console.log(dietaryPreferences);
@@ -89,14 +87,20 @@ export default function SettingsScreen() {
 
     const handleAddDietaryPreference = async (preference: string) => {
         await makeRequest(
-                `/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
-                "POST", null, "Failed to add dietary preference");
+            `/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
+            "POST",
+            null,
+            "Failed to add dietary preference",
+        );
     };
 
     const handleRemoveDietaryPreference = async (preference: string) => {
         await makeRequest(
             `/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
-            "DELETE", null, "Failed to remove dietary preference");
+            "DELETE",
+            null,
+            "Failed to remove dietary preference",
+        );
     };
 
     const settingsData: TSettingsData = {

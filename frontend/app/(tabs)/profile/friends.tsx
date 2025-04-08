@@ -8,7 +8,6 @@ import { TFriend } from "@/types/follower";
 import useAuthStore from "@/auth/store";
 import { makeRequest } from "@/api/base";
 
-
 export default function FriendsScreen() {
     const insets = useSafeAreaInsets();
     const [searchQuery, setSearchQuery] = useState("");
@@ -30,12 +29,10 @@ export default function FriendsScreen() {
         }
 
         try {
-            const data = await makeRequest(
-                    `/api/v1/user/${userId}/following`,
-                    "GET");
-                if (!data) {
-                    throw new Error(data.message || "an unknown error occurred");
-                }
+            const data = await makeRequest(`/api/v1/user/${userId}/following`, "GET");
+            if (!data) {
+                throw new Error(data.message || "Failed to retrieve the user's friends");
+            }
 
             if (data && data.length > 0) {
                 const formattedUsers = data.map((user) => ({

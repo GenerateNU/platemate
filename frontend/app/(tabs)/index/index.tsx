@@ -78,7 +78,7 @@ export default function Feed() {
                     {reviews.length > 0 ? (
                         <ScrollView contentContainerStyle={{ gap: 16 }} showsHorizontalScrollIndicator={false}>
                             {reviews.map((item: TReview, index: number) => {
-                                console.log(item); 
+                                console.log(item);
                                 return (
                                     <TouchableOpacity key={index} onPress={() => router.push(`/(review)/${item._id}`)}>
                                         <ReviewPreview

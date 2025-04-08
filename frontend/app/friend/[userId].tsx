@@ -44,9 +44,7 @@ const ProfileScreen = () => {
 
             setLoading(true);
             try {
-                const userData = await makeRequest(
-                    `/api/v1/user/${userId}`,
-                    "GET");
+                const userData = await makeRequest(`/api/v1/user/${userId}`, "GET");
                 if (!userData) {
                     throw new Error(userData.message || "failed to retrieve ther user");
                 }
@@ -62,9 +60,7 @@ const ProfileScreen = () => {
                 };
                 setUser(newUser);
 
-                const reviewData = await makeRequest(
-                    `/api/v1/review/user/${userId}`,
-                    "GET");
+                const reviewData = await makeRequest(`/api/v1/review/user/${userId}`, "GET");
                 if (!reviewData) {
                     throw new Error(reviewData.message || "failed to retrieve user reviews");
                 }
@@ -114,11 +110,7 @@ const ProfileScreen = () => {
             </TouchableOpacity>
             <ScrollView style={styles.container}>
                 {/* inserted a default profile picture because profile_picture is string | undefined */}
-                <ProfileAvatar
-                    url={
-                        user.profile_picture || DEFAULT_PROFILE_PIC
-                    }
-                />
+                <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
                 <ProfileIdentity name={user.name} username={user.username} />
                 <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
                 <FollowButton text={"Friends"} />
@@ -146,9 +138,7 @@ const ProfileScreen = () => {
                             content={review.content}
                             authorName={user.name}
                             authorUsername={user.username}
-                            authorAvatar={
-                                user.profile_picture || DEFAULT_PROFILE_PIC
-                            }
+                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
                             authorId={user.id}></ReviewPreview>
                     ))}
                 </ThemedView>
