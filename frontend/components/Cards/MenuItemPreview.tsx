@@ -40,6 +40,7 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
                             style={{
                                 width: "100%",
                                 fontFamily: "Source Sans 3",
+                                lineHeight: 20,
                             }}>
                             {content}
                         </ThemedText>
