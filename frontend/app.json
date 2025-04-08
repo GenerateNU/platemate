@@ -12,8 +12,22 @@
         "ios": {
             "supportsTablet": true,
             "infoPlist": {
-                "NSLocationWhenInUseUsageDescription": "We use your location to look up nearby restaurants and addresses."
-            }
+                "NSLocationWhenInUseUsageDescription": "We use your location to look up nearby restaurants and addresses.",
+                "ITSAppUsesNonExemptEncryption": false,
+                "NSAppTransportSecurity": {
+                    "NSAllowsArbitraryLoads": true,
+                    "NSExceptionDomains": {
+                        "157.230.81.185": {
+                            "NSTemporaryExceptionAllowsInsecureHTTPLoads": true
+                        }
+                    }
+                }
+            },
+            "entitlements": {
+                "aps-environment": "development"
+            },
+            "bundleIdentifier": "com.suntex.platemate",
+            "buildNumber": "4"
         },
         "android": {
             "adaptiveIcon": {
@@ -45,6 +59,14 @@
         ],
         "experiments": {
             "typedRoutes": true
+        },
+        "extra": {
+            "router": {
+                "origin": false
+            },
+            "eas": {
+                "projectId": "125bd5e0-3988-418a-8386-c4b42944c2f6"
+            }
         }
     }
 }
