@@ -112,7 +112,7 @@ export default function RestaurantView() {
                                     setActiveTab={setActiveTab}
                                 />
                             </ThemedView>
-                            <TouchableOpacity onPress={() => router.push("/(review)/827b36v4b234")}>
+                            <TouchableOpacity onPress={() => router.push(`/(review)/${"827b36v4b234"}` as any)}>
                                 <ReviewPreview
                                     plateName={"Big Whopper"}
                                     restaurantName={"Burger King"}
