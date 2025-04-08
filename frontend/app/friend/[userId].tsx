@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { DEFAULT_PROFILE_PIC, useUser } from "@/context/user-context";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ActivityIndicator, Dimensions, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
@@ -8,43 +7,74 @@ import { Ionicons } from "@expo/vector-icons";
 import ProfileAvatar from "@/components/profile/ProfileAvatar";
 import ProfileIdentity from "@/components/profile/ProfileIdentity";
 import ProfileMetrics from "@/components/profile/ProfileMetrics";
-import { EditProfileButton } from "@/components/profile/EditProfileButton";
-import { router } from "expo-router";
-import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
+import { FollowButton } from "@/components/profile/followers/FollowButton";
+import { useLocalSearchParams } from "expo-router";
+import type { User } from "@/context/user-context";
+import { DEFAULT_PROFILE_PIC } from "@/context/user-context";
 import type { TReview } from "@/types/review";
 import { makeRequest } from "@/api/base";
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = () => {
-    const { user, isLoading, error, fetchUserProfile } = useUser();
-    const [searchText, setSearchText] = React.useState("");
-    const [userReviews, setUserReviews] = useState<TReview[]>([]);
+    console.log("hi");
+    const { userId } = useLocalSearchParams();
+    console.log(userId);
+    const [searchText, setSearchText] = useState("");
+    const editFriend = useRef<{ open: () => void; close: () => void }>(null);
 
-    const editProfileRef = useRef<{ open: () => void; close: () => void }>(null);
+    const [user, setUser] = useState<User>({
+        id: "",
+        email: "",
+        name: "",
+        profile_picture: "",
+        username: "",
+        followersCount: 0,
+        followingCount: 0,
+        preferences: [],
+    }); //initialziing the user to an empty user
+    const [userReviews, setUserReviews] = useState<TReview[]>([]);
+    const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!user && !isLoading) {
-            console.log("User data not available, fetching...");
-            fetchUserProfile().then(() => {});
-        }
-        const fetchReviews = async () => {
-            if (!user?.id) return;
+        const fetchUserAndReviews = async () => {
+            if (!userId) return;
 
+            setLoading(true);
             try {
-                const reviewData = await makeRequest(`/api/v1/review/user/${user.id}`, "GET");
-                if (!reviewData) {
-                    throw new Error(reviewData.message || "Failed to retrieve user reviews");
+                const userData = await makeRequest(`/api/v1/user/${userId}`, "GET");
+                if (!userData) {
+                    throw new Error(userData.message || "failed to retrieve ther user");
                 }
+                const newUser: User = {
+                    id: userData.id,
+                    email: userData.email,
+                    name: userData.name,
+                    profile_picture: userData.profile_picture,
+                    username: userData.username,
+                    followersCount: userData.followersCount,
+                    followingCount: userData.followingCount,
+                    preferences: userData.preferences,
+                };
+                setUser(newUser);
+
+                const reviewData = await makeRequest(`/api/v1/review/user/${userId}`, "GET");
+                if (!reviewData) {
+                    throw new Error(reviewData.message || "failed to retrieve user reviews");
+                }
+                console.log(reviewData);
                 setUserReviews(reviewData);
             } catch (err) {
                 console.error("Failed to fetch user by ID", err);
+            } finally {
+                setLoading(false);
             }
         };
-        fetchReviews();
-    }, [user, isLoading]);
+
+        fetchUserAndReviews();
+    }, [userId]);
 
     if (isLoading) {
         return (
@@ -54,14 +84,14 @@ const ProfileScreen = () => {
             </ThemedView>
         );
     }
-
-    if (!user || error) {
-        return (
-            <ThemedView style={styles.centerContainer}>
-                <ThemedText>An error occurred.</ThemedText>
-            </ThemedView>
-        );
-    }
+    // for now!!!
+    // if (!user || error) {
+    //     return (
+    //         <ThemedView style={styles.centerContainer}>
+    //             <ThemedText>An error occurred.</ThemedText>
+    //         </ThemedView>
+    //     );
+    // }
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -72,30 +102,27 @@ const ProfileScreen = () => {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
             />
-            <TouchableOpacity style={styles.hamburgerButton} onPress={() => editProfileRef.current?.open()}>
-                <Ionicons name="menu" size={28} color="#333" />
+            <TouchableOpacity
+                onPress={() => {
+                    console.log("Button Pressed!");
+                }}>
+                <Ionicons name="ellipsis-horizontal" size={30} color="#333" />
             </TouchableOpacity>
             <ScrollView style={styles.container}>
+                {/* inserted a default profile picture because profile_picture is string | undefined */}
                 <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
                 <ProfileIdentity name={user.name} username={user.username} />
                 <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
-                <EditProfileButton text={"Edit profile"} onPress={() => router.navigate("/profile/settings")} />
+                <FollowButton text={"Friends"} />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
-                        style={{
-                            fontSize: 24,
-                            fontWeight: "bold",
-                            fontFamily: "Source Sans 3",
-                            marginBottom: 12,
-                            lineHeight: 28,
-                        }}>
-                        {user.name.split(" ")[0]}'s Food Journal
+                        style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
+                        {user.name}'s Food Journal
                     </ThemedText>
-
+                    {/* Made a search box with a filter/sort component as its own component */}
                     <SearchBoxFilter
-                        placeholder="Search my reviews"
-                        name={user.username}
-                        recent={false}
+                        placeholder={`Search ${user.name}'s Reviews`}
+                        recent={true}
                         onSubmit={() => console.log("submit")}
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
@@ -104,18 +131,18 @@ const ProfileScreen = () => {
                         <ReviewPreview
                             key={review._id}
                             plateName={review.menuItem}
+                            // we dont have a restaurant name or tags in the defined review type right now
                             restaurantName={review.restaurantId}
                             tags={[]}
                             rating={review.rating.overall}
                             content={review.content}
-                            authorId={user.id}
                             authorName={user.name}
                             authorUsername={user.username}
-                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}></ReviewPreview>
+                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
+                            authorId={user.id}></ReviewPreview>
                     ))}
                 </ThemedView>
             </ScrollView>
-            <EditProfileSheet user={user} ref={editProfileRef} />
         </ScrollView>
     );
 };

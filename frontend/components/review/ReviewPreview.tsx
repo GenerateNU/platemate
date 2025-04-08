@@ -7,7 +7,7 @@ import Entypo from "@expo/vector-icons/build/Entypo";
 import { router, useNavigation } from "expo-router";
 import { ReviewComponentStarIcon } from "../icons/Icons";
 
-type Props = {
+type ReviewProps = {
     plateName: string;
     restaurantName: string;
     tags: string[];
@@ -29,9 +29,7 @@ const ReviewPreview = ({
     authorUsername,
     authorAvatar,
     authorId,
-}: Props) => {
-    const navigation = useNavigation();
-
+}: ReviewProps) => {
     return (
         <View
             style={{
@@ -47,10 +45,11 @@ const ReviewPreview = ({
             }}>
             <UserInfoRowBase
                 name={authorUsername}
-                username={authorUsername}
+                username={authorUsername || "benjamin petrillamin"}
                 right={<View />}
+                // default profile picture
                 icon={authorAvatar}
-                onPress={() => router.push(`/(profile)/${authorId}`)}
+                onPress={() => router.push(`/friend/${authorId}`)}
             />
             <View style={{ gap: 10 }}>
                 <View style={styles.plateInfoContainer}>
