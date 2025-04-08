@@ -3,6 +3,8 @@ import axios from "axios";
 import useAuthStore from "@/auth/store";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
+export const DEFAULT_PROFILE_PIC =
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 
 export interface User {
     id: string;

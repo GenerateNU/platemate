@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FollowerItem from "@/components/profile/followers/FollowerItem";
 import { TFriend } from "@/types/follower";
 import useAuthStore from "@/auth/store";
+import { makeRequest } from "@/api/base";
 
 export default function FriendsScreen() {
     const insets = useSafeAreaInsets();
@@ -28,10 +29,10 @@ export default function FriendsScreen() {
         }
 
         try {
-            const response = await fetch(
-                `https://externally-exotic-orca.ngrok-free.app/api/v1/user/${userId}/following`,
-            );
-            const data = await response.json();
+            const data = await makeRequest(`/api/v1/user/${userId}/following`, "GET");
+            if (!data) {
+                throw new Error(data.message || "Failed to retrieve the user's friends");
+            }
 
             if (data && data.length > 0) {
                 const formattedUsers = data.map((user) => ({
@@ -42,22 +43,6 @@ export default function FriendsScreen() {
                 }));
 
                 setFriends(formattedUsers);
-
-                // dont think this stuff is needed anymore but left it in case
-                // if (isRefresh) {
-                //     setFollowers(formattedUsers);
-                //     setPage(2);
-                // } else if (pageNum === 1) {
-                //     setFollowers(formattedUsers);
-                //     setPage(2);
-                // } else {
-                //     setFollowers((prevFollowers) => [...prevFollowers, ...formattedUsers]);
-                //     setPage(pageNum + 1);
-                // }
-
-                // setHasMoreData(pageNum < 15);
-            } else {
-                // setHasMoreData(false);
             }
         } catch (error) {
             console.error("Error fetching users:", error);

@@ -19,7 +19,17 @@ type ReviewProps = {
     authorId: string;
 };
 
-const ReviewPreview = ({ plateName, restaurantName, tags, rating, content, authorName, authorUsername, authorAvatar, authorId }: ReviewProps) => {
+const ReviewPreview = ({
+    plateName,
+    restaurantName,
+    tags,
+    rating,
+    content,
+    authorName,
+    authorUsername,
+    authorAvatar,
+    authorId,
+}: ReviewProps) => {
     return (
         <View
             style={{
@@ -34,11 +44,11 @@ const ReviewPreview = ({ plateName, restaurantName, tags, rating, content, autho
                 height: Dimensions.get("window").height * 0.36,
             }}>
             <UserInfoRowBase
-                name={authorName || "Ben Petrillo"}
+                name={authorName}
                 username={authorUsername || "benpetrillo26"}
                 right={<View />}
-                // default profile picture 
-                icon={authorAvatar} 
+                // default profile picture
+                icon={authorAvatar}
                 onPress={() => router.push(`/friend/${authorId}`)}
             />
             <View style={{ gap: 10 }}>

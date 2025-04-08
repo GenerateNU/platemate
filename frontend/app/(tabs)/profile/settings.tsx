@@ -11,6 +11,7 @@ import { TSettingsData } from "@/types/settingsData";
 import useAuthStore from "@/auth/store";
 import { Button } from "@/components/Button";
 import axios from "axios";
+import { makeRequest } from "@/api/base";
 
 export default function SettingsScreen() {
     const insets = useSafeAreaInsets();
@@ -18,7 +19,7 @@ export default function SettingsScreen() {
     const { email, userId } = useAuthStore();
 
     // const userIdStr = JSON.stringify(userId);
-    console.log(userId);
+    console.log(userId, email);
 
     const { logout } = useAuthStore();
 
@@ -46,20 +47,16 @@ export default function SettingsScreen() {
     );
 
     useEffect(() => {
-        console.log("fetched restrictions!");
-        const fetchDietaryRestrictions = async () => {
-            try {
-                const response = await axios.get(
-                    `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences`,
-                );
-                setDietaryPreferences(response.data);
-            } catch (err) {
-                console.log("Failed to fetch dietary restrictions");
-                console.error(err);
+        console.log("fetched preferences!");
+        const fetchDietaryPreferences = async () => {
+            const preferencesData = await makeRequest(`/api/v1/settings/${userId}/dietaryPreferences`, "GET");
+            if (!preferencesData) {
+                throw new Error(preferencesData.message || "failed to fetch dietary preferences");
             }
+            setDietaryPreferences(preferencesData);
         };
 
-        fetchDietaryRestrictions();
+        fetchDietaryPreferences();
         console.log(dietaryPreferences);
     }, [userId]);
 
@@ -89,31 +86,21 @@ export default function SettingsScreen() {
     };
 
     const handleAddDietaryPreference = async (preference: string) => {
-        try {
-            const response = await axios.post(
-                `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
-            );
-            if (response.status === 201) {
-                console.log("Preference added successfully:", preference);
-            }
-        } catch (err) {
-            console.log("Failed to add dietary preference");
-            console.error(err);
-        }
+        await makeRequest(
+            `/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
+            "POST",
+            null,
+            "Failed to add dietary preference",
+        );
     };
 
     const handleRemoveDietaryPreference = async (preference: string) => {
-        try {
-            const response = await axios.delete(
-                `https://externally-exotic-orca.ngrok-free.app/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
-            );
-            if (response.status === 201) {
-                console.log("Preference deleted successfully:", preference);
-            }
-        } catch (err) {
-            console.log("Failed to delete dietary preference");
-            console.error(err);
-        }
+        await makeRequest(
+            `/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
+            "DELETE",
+            null,
+            "Failed to remove dietary preference",
+        );
     };
 
     const settingsData: TSettingsData = {

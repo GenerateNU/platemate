@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useUser } from "@/context/user-context";
+import { DEFAULT_PROFILE_PIC, useUser } from "@/context/user-context";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ActivityIndicator, Dimensions, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
@@ -13,14 +13,15 @@ import { router } from "expo-router";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
-import type { Review } from '@/types/review';
+import type { TReview } from "@/types/review";
+import { makeRequest } from "@/api/base";
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = () => {
     const { user, isLoading, error, fetchUserProfile } = useUser();
     const [searchText, setSearchText] = React.useState("");
-    const [userReviews, setUserReviews] = useState<Review[]>([]);
+    const [userReviews, setUserReviews] = useState<TReview[]>([]);
 
     const editProfileRef = useRef<{ open: () => void; close: () => void }>(null);
 
@@ -30,17 +31,17 @@ const ProfileScreen = () => {
             fetchUserProfile().then(() => {});
         }
         const fetchReviews = async () => {
-        if (!user?.id) return ;
-    
-        try {
-            const reviewsRes = await fetch(
-            `https://externally-exotic-orca.ngrok-free.app/api/v1/review/user/${user.id}`);
-            const reviewData = await reviewsRes.json();
-            console.log(reviewData);
-            setUserReviews(reviewData);
-        } catch (err) {
-            console.error("Failed to fetch user by ID", err);
-        }
+            if (!user?.id) return;
+
+            try {
+                const reviewData = await makeRequest(`/api/v1/review/user/${user.id}`, "GET");
+                if (!reviewData) {
+                    throw new Error(reviewData.message || "Failed to retrieve user reviews");
+                }
+                setUserReviews(reviewData);
+            } catch (err) {
+                console.error("Failed to fetch user by ID", err);
+            }
         };
         fetchReviews();
     }, [user, isLoading]);
@@ -75,9 +76,9 @@ const ProfileScreen = () => {
                 <Ionicons name="menu" size={28} color="#333" />
             </TouchableOpacity>
             <ScrollView style={styles.container}>
-                <ProfileAvatar url={user.profile_picture || "https://shorturl.at/Dhcvo"} />
+                <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
                 <ProfileIdentity name={user.name} username={user.username} />
-                <ProfileMetrics numFriends={100} numReviews={100} averageRating={4.6} />
+                <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
                 <EditProfileButton text={"Edit profile"} onPress={() => router.navigate("/profile/settings")} />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
@@ -100,13 +101,16 @@ const ProfileScreen = () => {
                     />
                     {userReviews.map((review) => (
                         <ReviewPreview
-                        plateName={review.plateName}
-                        restaurantName={review.restaurantName}
-                        tags={review.tags || []}
-                        rating={review.rating.overall}
-                        content={review.content}
-                        user={user}>
-                        </ReviewPreview>
+                            key={review._id}
+                            plateName={review.menuItem}
+                            restaurantName={review.restaurantId}
+                            tags={[]}
+                            rating={review.rating.overall}
+                            content={review.content}
+                            authorId={user.id}
+                            authorName={user.name}
+                            authorUsername={user.username}
+                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}></ReviewPreview>
                     ))}
                 </ThemedView>
             </ScrollView>
