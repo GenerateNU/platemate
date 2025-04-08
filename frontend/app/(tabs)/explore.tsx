@@ -18,8 +18,6 @@ export default function ExploreScreen() {
     const [showRestaurantView, setShowRestaurantView] = useState(false);
 
     return (
-        <ChangeLocation />
-        /*
         <>
             {showMenuItemView && <MenuItemView />}
             {showReviewDetail && <ReviewDetail />}
@@ -61,6 +59,5 @@ export default function ExploreScreen() {
 
             </ThemedView>
         </>
-        */
     );
 }
