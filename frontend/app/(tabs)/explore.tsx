@@ -8,6 +8,7 @@ import ReviewDetail from "@/components/review/ReviewDetail";
 import { ThemedView } from "@/components/themed/ThemedView";
 import AllReviews from "@/components/review/AllReviews";
 import { MyReview } from "@/components/MyReview";
+import ChangeLocation from "@/components/Feed/ChangeLocation";
 
 export default function ExploreScreen() {
     const [showMenuItemView, setShowMenuItemView] = useState(false);
@@ -17,6 +18,8 @@ export default function ExploreScreen() {
     const [showRestaurantView, setShowRestaurantView] = useState(false);
 
     return (
+        <ChangeLocation />
+        /*
         <>
             {showMenuItemView && <MenuItemView />}
             {showReviewDetail && <ReviewDetail />}
@@ -55,7 +58,9 @@ export default function ExploreScreen() {
                         setShowRestaurantView(true);
                     }}
                 />
+
             </ThemedView>
         </>
+        */
     );
 }
