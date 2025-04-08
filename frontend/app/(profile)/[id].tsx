@@ -14,6 +14,7 @@ import EditFriendSheet from "@/components/profile/followers/FriendProfileOptions
 import { FollowButton } from "@/components/profile/followers/FollowButton";
 import { useLocalSearchParams } from "expo-router";
 import type { User } from "@/context/user-context";
+import { DEFAULT_PROFILE_PIC } from "@/context/user-context";
 import type { TReview } from "@/types/review";
 
 const { width } = Dimensions.get("window");
@@ -112,7 +113,7 @@ const ProfileScreen = () => {
                 <ProfileAvatar
                     url={
                         user.profile_picture ||
-                        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                        DEFAULT_PROFILE_PIC
                     }
                 />
                 <ProfileIdentity name={user.name} username={user.username} />
@@ -143,7 +144,7 @@ const ProfileScreen = () => {
                             authorUsername={user.username}
                             authorAvatar={
                                 user.profile_picture ||
-                                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                                DEFAULT_PROFILE_PIC
                             }
                             authorId={user.id}></ReviewPreview>
                     ))}

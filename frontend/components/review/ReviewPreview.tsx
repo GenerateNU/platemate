@@ -44,7 +44,7 @@ const ReviewPreview = ({
                 height: Dimensions.get("window").height * 0.36,
             }}>
             <UserInfoRowBase
-                name={authorName || "Ben Petrillo"}
+                name={authorName}
                 username={authorUsername || "benpetrillo26"}
                 right={<View />}
                 // default profile picture

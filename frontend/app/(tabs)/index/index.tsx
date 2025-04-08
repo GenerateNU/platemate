@@ -77,21 +77,24 @@ export default function Feed() {
                 <ThemedView style={{ flex: 1, width: "100%", gap: 16 }}>
                     {reviews.length > 0 ? (
                         <ScrollView contentContainerStyle={{ gap: 16 }} showsHorizontalScrollIndicator={false}>
-                            {reviews.map((item: TReview, index: number) => (
-                                <TouchableOpacity key={index} onPress={() => router.push(`/(review)/${item._id}`)}>
-                                    <ReviewPreview
-                                        plateName={item.menuItem}
-                                        restaurantName={item.restaurantId}
-                                        rating={item.rating.overall}
-                                        tags={["Warm", "Tender", "Sweet"]}
-                                        content={item.content}
-                                        authorName={item.reviewer.id}
-                                        authorUsername={item.reviewer.username}
-                                        authorAvatar={item.reviewer.pfp}
-                                        authorId={item.reviewer.id}
-                                    />
-                                </TouchableOpacity>
-                            ))}
+                            {reviews.map((item: TReview, index: number) => {
+                                console.log(item); 
+                                return (
+                                    <TouchableOpacity key={index} onPress={() => router.push(`/(review)/${item._id}`)}>
+                                        <ReviewPreview
+                                            plateName={item.menuItem}
+                                            restaurantName={item.restaurantId}
+                                            rating={item.rating.overall}
+                                            tags={["Warm", "Tender", "Sweet"]}
+                                            content={item.content}
+                                            authorName={item.reviewer.id}
+                                            authorUsername={item.reviewer.username}
+                                            authorAvatar={item.reviewer.pfp}
+                                            authorId={item.reviewer.id}
+                                        />
+                                    </TouchableOpacity>
+                                );
+                            })}
                         </ScrollView>
                     ) : (
                         <ThemedView style={{ paddingVertical: 20, alignItems: "center" }}>

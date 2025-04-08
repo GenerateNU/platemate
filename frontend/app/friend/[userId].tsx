@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useUser } from "@/context/user-context";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ActivityIndicator, Dimensions, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
@@ -10,11 +9,12 @@ import ProfileIdentity from "@/components/profile/ProfileIdentity";
 import ProfileMetrics from "@/components/profile/ProfileMetrics";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
-import EditFriendSheet from "@/components/profile/followers/FriendProfileOptions";
 import { FollowButton } from "@/components/profile/followers/FollowButton";
 import { useLocalSearchParams } from "expo-router";
 import type { User } from "@/context/user-context";
+import { DEFAULT_PROFILE_PIC } from "@/context/user-context";
 import type { TReview } from "@/types/review";
+import { makeRequest } from "@/api/base";
 
 const { width } = Dimensions.get("window");
 
@@ -44,9 +44,12 @@ const ProfileScreen = () => {
 
             setLoading(true);
             try {
-                const userRes = await fetch(`https://externally-exotic-orca.ngrok-free.app/api/v1/user/${userId}`);
-                const userData = await userRes.json();
-                console.log(userData);
+                const userData = await makeRequest(
+                    `/api/v1/user/${userId}`,
+                    "GET");
+                if (!userData) {
+                    throw new Error(userData.message || "failed to retrieve ther user");
+                }
                 const newUser: User = {
                     id: userData.id,
                     email: userData.email,
@@ -59,10 +62,12 @@ const ProfileScreen = () => {
                 };
                 setUser(newUser);
 
-                const reviewsRes = await fetch(
-                    `https://externally-exotic-orca.ngrok-free.app/api/v1/review/user/${userId}`,
-                );
-                const reviewData = await reviewsRes.json();
+                const reviewData = await makeRequest(
+                    `/api/v1/review/user/${userId}`,
+                    "GET");
+                if (!reviewData) {
+                    throw new Error(reviewData.message || "failed to retrieve user reviews");
+                }
                 console.log(reviewData);
                 setUserReviews(reviewData);
             } catch (err) {
@@ -111,8 +116,7 @@ const ProfileScreen = () => {
                 {/* inserted a default profile picture because profile_picture is string | undefined */}
                 <ProfileAvatar
                     url={
-                        user.profile_picture ||
-                        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                        user.profile_picture || DEFAULT_PROFILE_PIC
                     }
                 />
                 <ProfileIdentity name={user.name} username={user.username} />
@@ -143,8 +147,7 @@ const ProfileScreen = () => {
                             authorName={user.name}
                             authorUsername={user.username}
                             authorAvatar={
-                                user.profile_picture ||
-                                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                                user.profile_picture || DEFAULT_PROFILE_PIC
                             }
                             authorId={user.id}></ReviewPreview>
                     ))}
