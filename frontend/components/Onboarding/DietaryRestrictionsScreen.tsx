@@ -18,11 +18,18 @@ interface DietaryRestriction {
 const DIETARY_RESTRICTIONS: DietaryRestriction[] = [
     { id: "vegetarian", name: "Vegetarian", description: "No meat, fish, or poultry" },
     { id: "vegan", name: "Vegan", description: "No animal products" },
-    { id: "nut-free", name: "Nut-Free", description: "No nuts or nut products" },
-    { id: "gluten-free", name: "Gluten-Free", description: "No wheat, barley, or rye" },
-    { id: "dairy-free", name: "Dairy-Free", description: "No milk or dairy products" },
-    { id: "halal", name: "Halal", description: "Halal dietary guidelines" },
+    { id: "nutFree", name: "Nut-Free", description: "No nuts or nut products" },
+    { id: "shellfishAllergy", name: "Shellfish-Free", description: "No shellfish or shellfish products" },
+    { id: "glutenFree", name: "Gluten-Free", description: "No wheat, barley, or rye" },
+    { id: "dairyFree", name: "Dairy-Free", description: "No milk or dairy products" },
     { id: "kosher", name: "Kosher", description: "Kosher dietary guidelines" },
+    { id: "halal", name: "Halal", description: "Halal dietary guidelines" },
+    { id: "pescatarian", name: "Pescatarian", description: "Fish but no other meat" },
+    { id: "keto", name: "Keto", description: "Low-carb, high-fat diet" },
+    { id: "diabetic", name: "Diabetic", description: "Suitable for diabetics" },
+    { id: "soyFree", name: "Soy-Free", description: "No soy or soy products" },
+    { id: "porkFree", name: "Pork-Free", description: "No pork or pork products" },
+    { id: "beefFree", name: "Beef-Free", description: "No beef or beef products" },
 ];
 
 interface DietaryRestrictionsScreenProps {

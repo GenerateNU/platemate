@@ -88,14 +88,6 @@ export default function ReviewDetail() {
         console.log("Go back");
     };
 
-    const handleUpvote = () => {
-        console.log("Upvote");
-    };
-
-    const handleDownvote = () => {
-        console.log("Downvote");
-    };
-
     return (
         <ScrollView style={styles.container}>
             <ThemedView style={styles.content}>

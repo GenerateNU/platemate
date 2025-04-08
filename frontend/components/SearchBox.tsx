@@ -43,10 +43,8 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, f
     }, [inputRef]);
 
     useEffect(() => {
-        if (recent) {
-            fetchRecents();
-        }
-    }, [recent]);
+        fetchRecents();
+    }, [recent, fetchRecents]);
 
     const onSubmitEditing = () => {
         if (recent)
