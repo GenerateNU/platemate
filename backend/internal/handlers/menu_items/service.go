@@ -15,7 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func newService(collections map[string]*mongo.Collection) *Service {
+func NewService(collections map[string]*mongo.Collection) *Service {
 	if collections["menuItems"] == nil {
 		slog.Info("menuItems collection is nil!")
 	}
@@ -28,11 +28,11 @@ const MAX_SIMILAR_ITEMS = 5
 
 func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument, error) {
 	avgRatingDoc := AvgRatingDocument{
-		Portion: menuItemRequest.AvgRating.Portion,
-		Taste:   menuItemRequest.AvgRating.Taste,
-		Value:   menuItemRequest.AvgRating.Value,
-		Overall: menuItemRequest.AvgRating.Overall,
-		Return:  menuItemRequest.AvgRating.Return,
+		Portion: 0,
+		Taste:   0,
+		Value:   0,
+		Overall: 0,
+		Return:  0,
 	}
 
 	var reviewsObjectID []primitive.ObjectID
@@ -46,11 +46,14 @@ func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument, er
 		reviewsObjectID = append(reviewsObjectID, objectID)
 	}
 
+	// create a new ObjectID for the menu item
 	menuItemDoc := MenuItemDocument{
+		ID:                  primitive.NewObjectID(),
 		Name:                menuItemRequest.Name,
 		Picture:             menuItemRequest.Picture,
 		AvgRating:           avgRatingDoc,
 		Reviews:             reviewsObjectID,
+		RestaurantID:        menuItemRequest.RestaurantID,
 		Description:         menuItemRequest.Description,
 		Location:            menuItemRequest.Location,
 		Tags:                menuItemRequest.Tags,
@@ -78,27 +81,21 @@ func ApplyRatingFilter(filter bson.M, field string, min *float64, max *float64) 
 }
 
 func ToMenuItemResponse(menuItem MenuItemDocument) MenuItemResponse {
-	var reviews []string
-	for _, review := range menuItem.Reviews {
-		reviews = append(reviews, review.Hex())
+	var reviews = make([]string, len(menuItem.Reviews))
+	for i, review := range menuItem.Reviews {
+		reviews[i] = review.Hex()
 	}
 	return MenuItemResponse{
 		ID: menuItem.ID.Hex(),
 		MenuItemRequest: MenuItemRequest{
-			Name:    menuItem.Name,
-			Picture: menuItem.Picture,
-			AvgRating: AvgRatingRequest{
-				Portion: menuItem.AvgRating.Portion,
-				Taste:   menuItem.AvgRating.Taste,
-				Value:   menuItem.AvgRating.Value,
-				Overall: menuItem.AvgRating.Overall,
-				Return:  menuItem.AvgRating.Return,
-			},
+			Name:                menuItem.Name,
+			Picture:             menuItem.Picture,
 			Reviews:             reviews,
 			Description:         menuItem.Description,
 			Location:            menuItem.Location,
 			Tags:                menuItem.Tags,
 			DietaryRestrictions: menuItem.DietaryRestrictions,
+			RestaurantID:        menuItem.RestaurantID,
 		},
 	}
 }
@@ -122,11 +119,28 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 		}
 	}
 
-	// Build find options
-	opts := options.Find()
-	opts.SetSkip(int64(menuItemsQuery.Skip)) // Skip the first `Skip` items
+	if menuItemsQuery.Name != "" {
+		filter["$text"] = bson.M{
+			"$search": menuItemsQuery.Name,
+		}
+	}
+
+	if menuItemsQuery.Longitude != nil && menuItemsQuery.Latitude != nil { // return menu items in order of closest location
+		filter["location"] = bson.M{
+			"$near": bson.M{
+				"$geometry": bson.M{
+					"type":        "Point",
+					"coordinates": []float64{*menuItemsQuery.Longitude, *menuItemsQuery.Latitude},
+				},
+				"$maxDistance": 6437.38, // Optional: 4 mile search radius
+			},
+		}
+	}
+
+	options := options.Find()
+	options.SetSkip(int64(menuItemsQuery.Skip)) // Skip the first `Skip` items
 	if menuItemsQuery.Limit != nil {
-		opts.SetLimit(int64(*menuItemsQuery.Limit)) // Limit the number of results to `Limit`
+		options.SetLimit(int64(*menuItemsQuery.Limit)) // Limit the number of results to `Limit`
 	}
 
 	// Sorting
@@ -138,11 +152,11 @@ func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemRespons
 		// This respects the sortBy and sortOrder passed via query parameters,
 		// so we rely on menuItemsQuery.SortBy being a valid, known field
 		// e.g. sort by "avgRating.overall" or "name"
-		opts.SetSort(bson.D{{Key: menuItemsQuery.SortBy, Value: sortOrder}})
+		options.SetSort(bson.D{{Key: menuItemsQuery.SortBy, Value: sortOrder}})
 	}
 
 	// Query the database
-	cursor, err := s.menuItems.Find(context.Background(), filter, opts)
+	cursor, err := s.menuItems.Find(context.Background(), filter, options)
 	if err != nil {
 		return nil, err
 	}
@@ -213,6 +227,53 @@ func (s *Service) GetMenuItemById(idObj primitive.ObjectID) (MenuItemResponse, e
 	}
 	menuItem := ToMenuItemResponse(menuItemDoc)
 	return menuItem, nil
+
+}
+
+func (s *Service) GetRandomMenuItems(limit int) ([]MenuItemResponse, error) {
+	ctx := context.Background()
+
+	cursor, err := s.menuItems.Aggregate(ctx, mongo.Pipeline{
+		bson.D{{
+			Key: "$sample",
+			Value: bson.M{
+				"size": limit,
+			},
+		}},
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var menuItems []MenuItemDocument
+	if err := cursor.All(ctx, &menuItems); err != nil {
+		return nil, err
+	}
+
+	menuItemsResponse := make([]MenuItemResponse, len(menuItems))
+	for i, menuItem := range menuItems {
+		menuItemsResponse[i] = ToMenuItemResponse(menuItem)
+	}
+
+	return menuItemsResponse, nil
+}
+
+func (s *Service) GetMenuItemByRestaurant(idObj primitive.ObjectID) ([]MenuItemDocument, error) {
+	var menuItemDocs []MenuItemDocument
+
+	cursor, err := s.menuItems.Find(context.Background(), bson.M{"restaurantid": idObj})
+	if err != nil {
+		slog.Error("Error finding document", "error", err)
+		return []MenuItemDocument{}, err
+	}
+	defer cursor.Close(context.Background())
+
+	if err := cursor.All(context.Background(), &menuItemDocs); err != nil {
+		slog.Error("Error finding document", "error", err)
+		return []MenuItemDocument{}, err
+	}
+	return menuItemDocs, nil
 
 }
 
@@ -293,7 +354,7 @@ func (s *Service) GetSimilarMenuItems(itemID primitive.ObjectID) ([]MenuItemResp
 	return similarItems, nil
 }
 
-func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID, userID *primitive.ObjectID) ([]review.ReviewDocument, error) {
+func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID, userID *primitive.ObjectID, sortParam string) ([]review.ReviewDocument, error) {
 	var menuItemDoc MenuItemDocument
 	ctx := context.Background()
 	err := s.menuItems.FindOne(ctx, bson.M{"_id": idObj}).Decode(&menuItemDoc)
@@ -315,8 +376,13 @@ func (s *Service) GetMenuItemReviews(idObj primitive.ObjectID, userID *primitive
 
 	}
 
-	// Query reviews that match menu item and user, if provided
-	reviewsCursor, err := s.reviews.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}))
+	// Query reviews that match menu item and user and sorts if provided
+
+	// edits the sorting paramater to properly query
+	if sortParam != "timestamp" {
+		sortParam = "rating." + sortParam
+	}
+	reviewsCursor, err := s.reviews.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: sortParam, Value: -1}}))
 	if err != nil {
 		slog.Error("Error finding reviews", "error", err)
 		return nil, err

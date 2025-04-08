@@ -20,10 +20,10 @@ const styles = StyleSheet.create({
         marginBottom: 24,
     },
     sectionTitle: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: "600",
         marginBottom: 16,
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
         color: "#151619",
     },
     sectionContent: {

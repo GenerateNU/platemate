@@ -6,7 +6,7 @@ import (
 )
 
 func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
-	service := newService(collections)
+	service := NewService(collections)
 	handler := Handler{service}
 
 	// Group under API Version 1
@@ -24,4 +24,6 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	item := apiV1.Group("/item")
 	item.Get("/:id/followReviews", handler.GetFollowingReviewsForItem)
 	item.Get("/:id/friendReviews", handler.GetFriendReviewsForItem)
+
+	app.Get("/api/v1/user", handler.GetUsers) // FOR TESTING PURPOSES ONLY
 }

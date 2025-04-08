@@ -5,10 +5,7 @@ import { Platform, View } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 
-import HomeNavIcon from "@/assets/nav/home.svg";
-import MapNavIcon from "@/assets/nav/map.svg";
-import ProfileNavIcon from "@/assets/nav/profile.svg";
-import SearchNavIcon from "@/assets/nav/search.svg";
+import { HomeNavIcon, SearchNavIcon, MapNavIcon, ProfileNavIcon } from "@/components/icons/NavIcons";
 
 type TabIconProps = {
     IconComponent: FunctionComponent<any>;
@@ -58,6 +55,7 @@ export default function TabLayout() {
                     },
                     default: {},
                 }),
+
                 tabBarIcon: ({ color, focused }) => (
                     <View style={{ alignItems: "center" }}>
                         {focused && (

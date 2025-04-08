@@ -24,8 +24,49 @@ type ReviewDocument struct {
 	Reviewer     Reviewer           `bson:"reviewer" json:"reviewer"`
 	Timestamp    time.Time          `bson:"timestamp" json:"timestamp"`
 	Comments     []CommentDocument  `bson:"comments" json:"comments"`
-	MenuItem     string             `bson:"menuItem" json:"menuItem"`
+	MenuItem     primitive.ObjectID `bson:"menuItem" json:"menuItem"`
 	RestaurantID primitive.ObjectID `bson:"restaurantId" json:"restaurantId"`
+}
+
+type TopReviewDocument struct {
+	ID           primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	Rating       Rating             `bson:"rating" json:"rating"`
+	Picture      string             `bson:"picture" json:"picture"`
+	Content      string             `bson:"content" json:"content"`
+	Reviewer     Reviewer           `bson:"reviewer" json:"reviewer"`
+	Timestamp    time.Time          `bson:"timestamp" json:"timestamp"`
+	Comments     []CommentDocument  `bson:"comments" json:"comments"`
+	MenuItem     primitive.ObjectID `bson:"menuItem" json:"menuItem"`
+	RestaurantID primitive.ObjectID `bson:"restaurantId" json:"restaurantId"`
+	AverageRate  float64            `bson:"averageRate" json:"averageRate"`
+	Items        []MenuItemDocument `bson:"items" json:"items"`
+}
+
+type MenuItemDocument struct {
+	ID                  primitive.ObjectID   `bson:"_id,omitempty"`
+	Name                string               `bson:"name"`
+	Picture             string               `bson:"picture"`
+	AvgRating           AvgRatingDocument    `bson:"avgRating,omitempty"`
+	Reviews             []primitive.ObjectID `bson:"reviews"`
+	Description         string               `bson:"description"`
+	Location            []float64            `bson:"location"`
+	Tags                []string             `bson:"tags"`
+	DietaryRestrictions []string             `bson:"dietaryRestrictions"`
+	RestaurantID        primitive.ObjectID   `bson:"restaurantid"`
+}
+
+type AvgRatingDocument struct {
+	Portion float64 `bson:"portion"`
+	Taste   float64 `bson:"taste"`
+	Value   float64 `bson:"value"`
+	Overall float64 `bson:"overall"`
+	Return  float64 `bson:"return"` // @TODO: figure out if boolean or number
+}
+
+type TopReview struct {
+	ReviewDocument
+	AverageRate float64 `bson:"averageRate" json:"averageRate"`
+	Items       []any   `bson:"items" json:"items"`
 }
 
 // Rating is a nested struct in ReviewDocument.
@@ -39,9 +80,9 @@ type Rating struct {
 
 // Reviewer is a nested struct in ReviewDocument.
 type Reviewer struct {
-	ID       string `bson:"id"       json:"id"`
-	PFP      string `bson:"pfp"      json:"pfp"`
-	Username string `bson:"username" json:"username"`
+	ID       primitive.ObjectID `bson:"_id"       json:"_id"`
+	PFP      string             `bson:"pfp"      json:"pfp"`
+	Username string             `bson:"username" json:"username"`
 }
 
 type Commenter struct {
@@ -84,4 +125,5 @@ Database layer of the application
 type Service struct {
 	reviews     *mongo.Collection
 	restaurants *mongo.Collection
+	menuItems   *mongo.Collection
 }

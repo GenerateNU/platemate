@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { useUser } from "@/context/user-context";
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedView } from "@/components/themed/ThemedView";
 import { ActivityIndicator, Dimensions, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
+import { ThemedText } from "@/components/themed/ThemedText";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import ProfileAvatar from "@/components/profile/ProfileAvatar";
@@ -11,11 +11,14 @@ import ProfileMetrics from "@/components/profile/ProfileMetrics";
 import { EditProfileButton } from "@/components/profile/EditProfileButton";
 import { router } from "expo-router";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
+import ReviewPreview from "@/components/review/ReviewPreview";
+import { SearchBoxFilter } from "@/components/SearchBoxFilter";
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = () => {
     const { user, isLoading, error, fetchUserProfile } = useUser();
+    const [searchText, setSearchText] = React.useState("");
 
     const editProfileRef = useRef<{ open: () => void; close: () => void }>(null);
 
@@ -24,7 +27,7 @@ const ProfileScreen = () => {
             console.log("User data not available, fetching...");
             fetchUserProfile().then(() => {});
         }
-    }, [user, isLoading]);
+    }, [user, isLoading, fetchUserProfile]);
 
     if (isLoading) {
         return (
@@ -61,9 +64,49 @@ const ProfileScreen = () => {
                 <ProfileMetrics numFriends={100} numReviews={100} averageRating={4.6} />
                 <EditProfileButton text={"Edit profile"} onPress={() => router.navigate("/profile/settings")} />
                 <ThemedView style={styles.reviewsContainer}>
-                    <ThemedText style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Outfit" }}>
-                        My Reviews
+                    <ThemedText
+                        style={{
+                            fontSize: 24,
+                            fontWeight: "bold",
+                            fontFamily: "Source Sans 3",
+                            marginBottom: 12,
+                            lineHeight: 28,
+                        }}>
+                        {user.name.split(" ")[0]}'s Food Journal
                     </ThemedText>
+
+                    <SearchBoxFilter
+                        placeholder="Search my reviews"
+                        recent={true}
+                        onSubmit={() => console.log("submit")}
+                        value={searchText}
+                        onChangeText={(text) => setSearchText(text)}
+                    />
+
+                    <ThemedView style={{ gap: 8, marginTop: 12 }}>
+                        <ReviewPreview
+                            plateName="Pad Thai"
+                            restaurantName="Pad Thai Kitchen"
+                            tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
+                            rating={4}
+                            content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                            authorId={""}
+                            authorUsername={"username"}
+                            authorName={"First Name"}
+                            authorAvatar={"https://placehold.co/600x400/png?text=P"}
+                        />
+                        <ReviewPreview
+                            plateName="Pad Thai"
+                            restaurantName="Pad Thai Kitchen"
+                            tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
+                            rating={4}
+                            content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                            authorId={""}
+                            authorUsername={"username"}
+                            authorName={"First Name"}
+                            authorAvatar={"https://placehold.co/600x400/png?text=P"}
+                        />
+                    </ThemedView>
                 </ThemedView>
             </ScrollView>
             <EditProfileSheet user={user} ref={editProfileRef} />

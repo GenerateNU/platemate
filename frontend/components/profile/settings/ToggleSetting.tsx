@@ -38,13 +38,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "500",
         color: "#151619",
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
     },
     settingDescription: {
         fontSize: 13,
         color: "#727272",
         marginTop: 2,
-        fontFamily: "Outfit",
+        fontFamily: "Inter",
     },
 });
 
