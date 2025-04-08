@@ -15,7 +15,7 @@ export function SearchBoxFilter({ value, onChangeText, onSubmit, icon, recent, n
     const [recentItems, setRecentItems] = useState<string[]>([]);
 
     const fetchRecents = useCallback(async () => {
-        const recents = getRecents();
+        const recents = await getRecents();
         setRecentItems(recents);
     }, [getRecents]);
 
