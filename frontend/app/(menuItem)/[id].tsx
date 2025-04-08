@@ -8,10 +8,12 @@ import ReviewPreview from "@/components/review/ReviewPreview";
 import { ThemedTag } from "@/components/themed/ThemedTag";
 import { ReviewButton } from "@/components/review/ReviewButton";
 import HighlightCard from "@/components/restaurant/HighlightCard";
-import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
+import { PersonWavingIcon, RestaurantIcon, ThumbsUpIcon } from "@/components/icons/Icons";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { getMenuItemById } from "@/api/menu-items";
 import { TMenuItem } from "@/types/menu-item";
+import ReviewFlow from "@/components/review/ReviewFlow";
+import AddReviewButton from "@/components/AddReviewButton";
 
 export default function Route() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
@@ -20,6 +22,8 @@ export default function Route() {
 
     const navigation = useNavigation();
     const [menuItem, setMenuItem] = useState<TMenuItem | null>(null);
+
+    const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
 
     const router = useRouter();
 
@@ -37,7 +41,6 @@ export default function Route() {
                     <Image source={{ uri: menuItem?.picture }} style={styles.bannerImage} />
                 </ThemedView>
                 <ThemedView style={styles.container}>
-                    {/* Header Section */}
                     <ThemedView style={styles.headerContainer}>
                         <View style={styles.titleRow}>
                             <ThemedText style={styles.titleText}>{menuItem?.name}</ThemedText>
@@ -51,7 +54,7 @@ export default function Route() {
                             </View>
                         </View>
                         <View style={styles.restaurantContainer}>
-                            <Ionicons name="restaurant-outline" size={20} color="#666" />
+                            <RestaurantIcon color={"#666"} width={20} height={20} />
                             <TouchableOpacity
                                 onPress={() => {
                                     router.push("/(restaurant)/s");
@@ -61,7 +64,6 @@ export default function Route() {
                         </View>
                     </ThemedView>
 
-                    {/* Tags Section */}
                     <ThemedView style={styles.tagsContainer}>
                         <View style={styles.tagRow}>
                             {menuItem?.tags.map((tag, index) => (
@@ -70,13 +72,12 @@ export default function Route() {
                         </View>
                     </ThemedView>
 
-                    {/* Description Section */}
                     <ThemedView style={styles.descriptionContainer}>
                         <ThemedText style={styles.descriptionText}>{menuItem?.description}</ThemedText>
                         <View style={styles.allergyRow}>
                             <View style={styles.allergyItemsContainer}>
-                                <ThemedText style={styles.allergyText}>
-                                    Rice noodles, eggs, tofu/shrimp, peanuts, tamarind
+                                <ThemedText style={styles.allergyText} numberOfLines={1}>
+                                    {menuItem?.dietaryRestrictions.join(", ") || "No known allergens."}
                                 </ThemedText>
                             </View>
                             <Pressable style={styles.allergyButton}>
@@ -85,16 +86,22 @@ export default function Route() {
                         </View>
                     </ThemedView>
 
-                    {/* Stats Cards Section */}
+                    <ThemedView style={styles.sectionHeader}>
+                        <AddReviewButton onPress={() => setIsReviewModalVisible(true)} />
+                        <ReviewFlow
+                            isVisible={isReviewModalVisible}
+                            onClose={() => setIsReviewModalVisible(false)}
+                            restaurantId="pad-thai-kitche"
+                            menuItemName="Pad Thai"
+                        />
+                    </ThemedView>
+
                     <View style={styles.sectionHeader}>
                         <ThemedText style={styles.sectionTitle}>Overall Ratings</ThemedText>
-                        <Pressable>
-                            <ThemedText style={styles.viewAllText}>view all</ThemedText>
-                        </Pressable>
                     </View>
                     <View style={styles.statsContainer}>
                         <HighlightCard
-                            title={"Friend's Fave"}
+                            title={"Friend's Fav"}
                             subtitle={"100+ friend referrals"}
                             icon={<PersonWavingIcon />}
                         />
@@ -102,10 +109,9 @@ export default function Route() {
                         <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} />
                     </View>
 
-                    {/* Reviews Section */}
                     <View style={styles.sectionHeader}>
                         <ThemedText style={styles.sectionTitle}>Reviews</ThemedText>
-                        <Pressable>
+                        <Pressable onPress={() => router.push(`/(menuItem)/allReviews/${id}`)}>
                             <ThemedText style={styles.viewAllText}>view all</ThemedText>
                         </Pressable>
                     </View>
@@ -116,7 +122,6 @@ export default function Route() {
                         </View>
                     </View>
 
-                    {/* Review Filters */}
                     <View style={styles.filterContainer}>
                         {["My Reviews", "Friends", "All"].map((filter) => (
                             <Pressable
@@ -131,7 +136,6 @@ export default function Route() {
                         ))}
                     </View>
 
-                    {/* Sample Review Preview */}
                     <ReviewPreview
                         plateName="Pad Thai"
                         restaurantName="Pad Thai Kitchen"
@@ -145,7 +149,6 @@ export default function Route() {
                     />
                 </ThemedView>
             </ScrollView>
-            <ReviewButton onPress={() => console.log("Open review flow")} />
         </>
     );
 }
@@ -177,7 +180,7 @@ const styles = StyleSheet.create({
     },
     titleIcons: {
         flexDirection: "row",
-        gap: 16,
+        gap: 8,
     },
     iconButton: {
         padding: 4,
@@ -206,7 +209,7 @@ const styles = StyleSheet.create({
     },
     descriptionContainer: {
         gap: 8,
-        marginBottom: 20,
+        marginBottom: 12,
     },
     descriptionText: {
         fontSize: 16,
@@ -229,7 +232,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginTop: 4,
     },
     allergyItemsContainer: {
         flexDirection: "row",
@@ -239,7 +241,7 @@ const styles = StyleSheet.create({
         maxWidth: "75%",
     },
     allergyButton: {
-        paddingVertical: 4,
+        paddingVertical: 0,
         paddingHorizontal: 8,
     },
     sectionHeader: {

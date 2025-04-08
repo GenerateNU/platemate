@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import { FlatList, ActivityIndicator, TouchableOpacity, RefreshControl, View } from "react-native";
 
 import { ThemedView } from "@/components/themed/ThemedView";
@@ -13,69 +13,63 @@ import { useRouter } from "expo-router";
 import { SearchBox } from "@/components/SearchBox";
 import { SearchIcon } from "@/components/icons/Icons";
 import { FilterContext } from "@/context/filter-context";
-import { useContext } from "react";
-import { SearchBoxFilter } from "@/components/SearchBoxFilter";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+// Define a type for our feed items
+type FeedItem = {
+    id: string;
+    type: "review" | "menuItem";
+    data: TReview | TMenuItem;
+};
+
 export default function Feed() {
-    const [activeTab, setActiveTab] = React.useState(0);
+    const [activeTab, setActiveTab] = useState(0);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    const [menuItems, setMenuItems] = useState<TMenuItem[]>([]);
-    const [reviews, setReviews] = useState<TReview[]>([]);
-    const [data, setData] = useState<Array<TReview | TMenuItem>>([]);
+    const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
 
     const insets = useSafeAreaInsets();
-
     const router = useRouter();
+
     const context = useContext(FilterContext);
     if (!context) {
         throw new Error("Filter component must be used within a FilterProvider");
     }
     const { handleSearch, searchText, setSearchText } = context;
-    const handleSearchAndNavigate = () => {
+
+    const handleSearchAndNavigate = useCallback(() => {
         handleSearch();
         router.push("/search");
-    };
+    }, [handleSearch, router]);
 
     const fetchData = useCallback(async () => {
         try {
             const [reviewsData, menuItemsData] = await Promise.all([
-                getReviews(1, 1),
-                getMenuItems({ page: 1, limit: 1 }),
+                getReviews(1, 10),
+                getMenuItems({ page: 1, limit: 10 }),
             ]);
 
             const fetchedReviews = reviewsData.data as TReview[];
             const fetchedMenuItems = menuItemsData as TMenuItem[];
 
-            setReviews(fetchedReviews);
-            setMenuItems(fetchedMenuItems);
+            // Create a new array of FeedItems
+            const newFeedItems: FeedItem[] = [
+                ...fetchedReviews.map((review) => ({
+                    id: review._id || `review-${Math.random().toString(36).substr(2, 9)}`,
+                    type: "review" as const,
+                    data: review,
+                })),
+                ...fetchedMenuItems.map((menuItem) => ({
+                    id: menuItem.id || `menuItem-${Math.random().toString(36).substr(2, 9)}`,
+                    type: "menuItem" as const,
+                    data: menuItem,
+                })),
+            ];
 
-            // Combine and prepare data for FlatList
-            const combinedData = [];
-
-            // Add reviews with type indicator
-            fetchedReviews.forEach((review) => {
-                combinedData.push({
-                    ...review,
-                    itemType: "review",
-                });
-            });
-
-            // Add menu items with type indicator
-            fetchedMenuItems.forEach((item) => {
-                combinedData.push({
-                    ...item,
-                    itemType: "menuItem",
-                });
-            });
-
-            setData(combinedData);
+            setFeedItems(newFeedItems);
         } catch (error) {
             console.error("Error fetching data:", error);
-            setReviews([]);
-            setMenuItems([]);
-            setData([]);
+            setFeedItems([]);
         } finally {
             setLoading(false);
             setRefreshing(false);
@@ -93,33 +87,35 @@ export default function Feed() {
     }, [fetchData]);
 
     const renderItem = useCallback(
-        ({ item }) => {
-            if (item.itemType === "review") {
+        ({ item }: { item: FeedItem }) => {
+            if (item.type === "review") {
+                const review = item.data as TReview;
                 return (
-                    <TouchableOpacity onPress={() => router.push(`/(review)/${item._id}`)}>
+                    <TouchableOpacity onPress={() => router.push(`/(review)/${review._id}`)}>
                         <ReviewPreview
-                            plateName={item.menuItem}
-                            restaurantName={item.restaurantId}
-                            rating={item.rating.overall}
+                            plateName={review.menuItem || "Unknown Item"}
+                            restaurantName={review.restaurantId || "Unknown Restaurant"}
+                            rating={review.rating?.overall || 0}
                             tags={["Warm", "Tender", "Sweet"]}
-                            content={item.content}
-                            authorName={item.reviewer.id}
-                            authorUsername={item.reviewer.username}
-                            authorAvatar={item.reviewer.pfp}
-                            authorId={item.reviewer.id}
+                            content={review.content || ""}
+                            authorName={review.reviewer?.id || "Anonymous"}
+                            authorUsername={review.reviewer?.username || "user"}
+                            authorAvatar={review.reviewer?.pfp || "https://placehold.co/100x100"}
+                            authorId={review.reviewer?.id || "unknown"}
                         />
                     </TouchableOpacity>
                 );
-            } else if (item.itemType === "menuItem") {
+            } else if (item.type === "menuItem") {
+                const menuItem = item.data as TMenuItem;
                 return (
-                    <TouchableOpacity onPress={() => router.push(`/(menuItem)/${item.id}`)}>
+                    <TouchableOpacity onPress={() => router.push(`/(menuItem)/${menuItem.id}`)}>
                         <MenuItemPreview
-                            plateName={item.name}
-                            content={item.description}
-                            tags={item.tags}
-                            picture={item.picture}
-                            rating={3}
-                            restaurantName={item.restaurantId || "Restaurant Name"}
+                            plateName={menuItem.name || "Unknown Item"}
+                            content={menuItem.description || ""}
+                            tags={menuItem.tags || []}
+                            picture={menuItem.picture || "https://placehold.co/300x200"}
+                            rating={0}
+                            restaurantName={menuItem.restaurantId || "Restaurant Name"}
                         />
                     </TouchableOpacity>
                 );
@@ -135,12 +131,10 @@ export default function Feed() {
                 <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
             </ThemedView>
         ),
-        [activeTab, handleSearchAndNavigate, searchText, setSearchText],
+        [activeTab],
     );
 
-    const keyExtractor = useCallback((item) => {
-        return item.itemType === "review" ? `review-${item._id}` : `menuItem-${item.id}`;
-    }, []);
+    const keyExtractor = useCallback((item: FeedItem) => item.id, []);
 
     if (loading) {
         return (
@@ -159,7 +153,7 @@ export default function Feed() {
                         placeholder="What are you hungry for?"
                         recent={true}
                         name="general"
-                        onSubmit={handleSearch}
+                        onSubmit={handleSearchAndNavigate}
                         value={searchText}
                         onChangeText={setSearchText}
                         filter={true}
@@ -167,7 +161,7 @@ export default function Feed() {
                 </ThemedView>
             </ThemedView>
             <FlatList
-                data={data}
+                data={feedItems}
                 renderItem={renderItem}
                 keyExtractor={keyExtractor}
                 ListHeaderComponent={ListHeaderComponent}

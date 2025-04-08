@@ -12,7 +12,7 @@ interface ReviewFlowProps {
 
 export function ReviewFlow({ isVisible, onClose, restaurantId, menuItemName, dishImageUrl }: ReviewFlowProps) {
     return (
-        <Modal visible={isVisible} animationType="slide" presentationStyle="fullScreen" onRequestClose={onClose}>
+        <Modal visible={isVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
             <MyReview
                 restaurantId={restaurantId}
                 menuItemName={menuItemName}
