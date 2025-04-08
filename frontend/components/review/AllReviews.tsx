@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "./ReviewPreview";
 import { ReviewButton } from "@/components/review/ReviewButton";
+import { ReviewFlow } from "@/components/review/ReviewFlow";
 
 export default function AllReviews() {
     const [selectedMainFilter, setSelectedMainFilter] = React.useState("My Reviews");
     const [selectedSubFilter, setSelectedSubFilter] = React.useState("Portion");
+    const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
 
     const handleBack = () => {
         // Navigation logic here
@@ -76,7 +78,17 @@ export default function AllReviews() {
                     /> */}
                 </ThemedView>
             </ScrollView>
-            <ReviewButton onPress={() => console.log("Open review flow")} />
+            <ReviewButton
+                restaurantId="pad-thai-kitchen"
+                menuItemName="Pad Thai"
+                onPress={() => setIsReviewModalVisible(true)}
+            />
+            <ReviewFlow
+                isVisible={isReviewModalVisible}
+                onClose={() => setIsReviewModalVisible(false)}
+                restaurantId="pad-thai-kitchen"
+                menuItemName="Pad Thai"
+            />
         </>
     );
 }
