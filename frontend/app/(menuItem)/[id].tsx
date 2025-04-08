@@ -76,7 +76,9 @@ export default function Route() {
                                 onPress={() => {
                                     router.push("/(restaurant)/s");
                                 }}>
-                                <ThemedText style={styles.restaurantText}>Restaurant Name</ThemedText>
+                                <ThemedText style={styles.restaurantText}>
+                                    {menuItem?.restaurantName || "Restaurant Name"}
+                                </ThemedText>
                             </TouchableOpacity>
                         </View>
                     </ThemedView>

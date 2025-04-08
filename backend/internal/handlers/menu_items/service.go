@@ -96,6 +96,7 @@ func ToMenuItemResponse(menuItem MenuItemDocument) MenuItemResponse {
 			Tags:                menuItem.Tags,
 			DietaryRestrictions: menuItem.DietaryRestrictions,
 			RestaurantID:        menuItem.RestaurantID,
+			RestuarantName: 			menuItem.RestaurantName,
 		},
 	}
 }

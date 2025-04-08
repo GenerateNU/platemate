@@ -103,15 +103,16 @@ const ProfileScreen = () => {
                     {userReviews.map((review) => (
                         <ReviewPreview
                             key={review._id}
-                            plateName={review.menuItem}
-                            restaurantName={review.restaurantId}
+                            plateName={review.menuItemName}
+                            restaurantName={review.restaurantName}
                             tags={[]}
                             rating={review.rating.overall}
                             content={review.content}
                             authorId={user.id}
                             authorName={user.name}
                             authorUsername={user.username}
-                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}></ReviewPreview>
+                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
+                        />
                     ))}
                 </ThemedView>
             </ScrollView>
