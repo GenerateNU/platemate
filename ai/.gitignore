@@ -2,7 +2,11 @@
 .env
 <<<<<<< HEAD
 __pycache__/
+=======
+<<<<<<< HEAD
+__pycache__/
 /nix/.venv/
 =======
 __pycache__/
 >>>>>>> ea4c8d7360d30d2521027fc197c5b0ca0eb33a45
+>>>>>>> main
