@@ -203,7 +203,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
     checkEmailExists: async (email) => {
         try {
             const response = await axios.get(`${API_BASE_URL}/api/v1/auth/check-email`, {
-                params: { email }
+                params: { email },
             });
             return response.data.exists;
         } catch (error: any) {
@@ -217,7 +217,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
     checkUsernameExists: async (username) => {
         try {
             const response = await axios.get(`${API_BASE_URL}/api/v1/auth/check-username`, {
-                params: { username }
+                params: { username },
             });
             return response.data.exists;
         } catch (error: any) {
