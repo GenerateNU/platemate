@@ -67,13 +67,13 @@ export default function AllReviews() {
                     </View>
 
                     {/* Sample Review Preview */}
-                    <ReviewPreview
+                    {/* <ReviewPreview
                         plateName="Pad Thai"
                         restaurantName="Pad Thai Kitchen"
                         tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
                         rating={4}
                         content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
-                    />
+                    /> */}
                 </ThemedView>
             </ScrollView>
             <ReviewButton onPress={() => console.log("Open review flow")} />
