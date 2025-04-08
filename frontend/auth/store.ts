@@ -21,6 +21,8 @@ interface AuthState {
         preferences?: string[],
         restrictions?: string[],
     ) => Promise<void>;
+    checkEmailExists: (email: string) => Promise<boolean>;
+    checkUsernameExists: (username: string) => Promise<boolean>;
     refreshAccessToken: () => Promise<void>;
     logout: () => Promise<void>;
 }
@@ -194,6 +196,34 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
             });
         } catch (error) {
             console.error("Logout error:", error);
+        }
+    },
+
+    // Check if email exists
+    checkEmailExists: async (email) => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/api/v1/auth/check-email`, {
+                params: { email }
+            });
+            return response.data.exists;
+        } catch (error: any) {
+            console.error("Email check error:", error.response?.data || error.message);
+            // If there's an error with the API call, assume it doesn't exist
+            return false;
+        }
+    },
+
+    // Check if username exists
+    checkUsernameExists: async (username) => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/api/v1/auth/check-username`, {
+                params: { username }
+            });
+            return response.data.exists;
+        } catch (error: any) {
+            console.error("Username check error:", error.response?.data || error.message);
+            // If there's an error with the API call, assume it doesn't exist
+            return false;
         }
     },
 }));
