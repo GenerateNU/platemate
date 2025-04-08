@@ -22,6 +22,7 @@ type MenuItemRequest struct {
 	Tags                []string           `json:"tags"`
 	DietaryRestrictions []string           `json:"dietaryRestrictions"`
 	RestaurantID        primitive.ObjectID `json:"restaurantID"`
+	RestuarantName string 	`bson:"restaurantName" json:"restaurantName"`
 }
 
 type MenuItemResponse struct {

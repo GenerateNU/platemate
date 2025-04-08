@@ -80,8 +80,8 @@ export default function Feed() {
                             {reviews.map((item: TReview, index: number) => (
                                 <TouchableOpacity key={index} onPress={() => router.push(`/(review)/${item._id}`)}>
                                     <ReviewPreview
-                                        plateName={item.menuItem}
-                                        restaurantName={item.restaurantId}
+                                        plateName={item.menuItemName}
+                                        restaurantName={item.restaurantName}
                                         rating={item.rating.overall}
                                         tags={["Warm", "Tender", "Sweet"]}
                                         content={item.content}

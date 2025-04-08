@@ -46,7 +46,7 @@ const ReviewPreview = ({
                 height: Dimensions.get("window").height * 0.36,
             }}>
             <UserInfoRowBase
-                name={authorName}
+                name={authorUsername}
                 username={authorUsername}
                 right={<View />}
                 icon={authorAvatar}

@@ -77,7 +77,8 @@ const ProfileScreen = () => {
 
                     <SearchBoxFilter
                         placeholder="Search my reviews"
-                        recent={true}
+                        name={user.username}
+                        recent={false}
                         onSubmit={() => console.log("submit")}
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}

@@ -63,7 +63,8 @@ const ProfileScreen = () => {
                     {/* Made a search box with a filter/sort component as its own component */}
                     <SearchBoxFilter
                         placeholder="Search my reviews"
-                        recent={true}
+                        recent={false}
+                        name={user.username}
                         onSubmit={() => console.log("submit")}
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
