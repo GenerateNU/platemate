@@ -1,66 +1,86 @@
 name: backend
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
-    paths:
-      - "backend/**"
+    push:
+        branches:
+            - main
+    pull_request:
+        types: [opened, synchronize, reopened, ready_for_review]
+        paths:
+            - 'backend/**'
 
 jobs:
-  format:
-    name: Format Code
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 1.23
-      - name: Format Code
-        run: |
-          cd backend
-          be_format_output=$(go fmt ./...)
-          if [[ -n "$be_format_output" ]]; then
-          echo "$be_format_output"
-          echo "::error::formatting issues found"
-          exit 1
-          fi
-  lint:
-    name: Lint Code
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 1.23
-      - name: Lint Code
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-          working-directory: ./backend/
-          args: --timeout=5m
-  test:
-    name: Test Code
-    runs-on: ubuntu-latest
-    env:
-      A_USER: test
-      A_PASSWORD: platemate-test-pw
-      A_CLUSTER: Development
-      A_ENVIRONMENT: Test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 1.23
-      - name: Create .env File
-        working-directory: ./backend/
-        run: |
-          touch .env
-          echo ATLAS_USER=$A_USER >> .env
-          echo ATLAS_PASS=$A_PASS >> .env
-          echo ATLAS_CLUSTER=$A_CLUSTER >> .env
-          echo ATLAS_ENVIRONMENT=$A_ENVIRONMENT >> .env
-      - name: Test Code
-        run: cd backend && go test ./...
+    format:
+        name: Format Code
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-go@v5
+              with:
+                  go-version: 1.23
+            - name: Format Code
+              run: |
+                  cd backend
+                  be_format_output=$(go fmt ./...)
+                  if [[ -n "$be_format_output" ]]; then
+                  echo "$be_format_output"
+                  echo "::error::formatting issues found"
+                  exit 1
+                  fi
+    lint:
+        name: Lint Code
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-go@v5
+              with:
+                  go-version: 1.23
+            - name: Lint Code
+              uses: golangci/golangci-lint-action@v6
+              with:
+                  version: latest
+                  working-directory: ./backend/
+                  args: --timeout=5m
+    build:
+        name: Build Docker Image
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-go@v5
+              with:
+                  go-version: 1.23
+            - name: Create .env File
+              working-directory: ./backend/
+              run: |
+                  touch .env
+                  echo ATLAS_USER=$A_USER >> .env
+                  echo ATLAS_PASS=$A_PASS >> .env
+                  echo ATLAS_CLUSTER=$A_CLUSTER >> .env
+                  echo ATLAS_ENVIRONMENT=$A_ENVIRONMENT >> .env
+            - run: |
+                  docker build --platform linux/amd64 -t abhikaboy/platemate-backend:latest .
+                  docker tag platemate-backend abhikaboy/platemate-backend:latest
+                  docker push abhikaboy/platemate-backend:latest
+    test:
+        name: Test Code
+        runs-on: ubuntu-latest
+        env:
+            A_USER: test
+            A_PASSWORD: platemate-test-pw
+            A_CLUSTER: Development
+            A_ENVIRONMENT: Test
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-go@v5
+              with:
+                  go-version: 1.23
+            - name: Create .env File
+              working-directory: ./backend/
+              run: |
+                  touch .env
+                  echo ATLAS_USER=$A_USER >> .env
+                  echo ATLAS_PASS=$A_PASS >> .env
+                  echo ATLAS_CLUSTER=$A_CLUSTER >> .env
+                  echo ATLAS_ENVIRONMENT=$A_ENVIRONMENT >> .env
+            - name: Test Code
+              run: cd backend && go test ./...
