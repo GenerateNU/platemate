@@ -103,3 +103,11 @@ type MenuItemMetrics struct {
 	PopularTags         []string `json:"popular_tags"`
 	DietaryRestrictions []string `json:"dietary_restrictions"`
 }
+
+// RestaurantMenuItemsMetrics represents metrics for all menu items at a restaurant
+type RestaurantMenuItemsMetrics struct {
+	RestaurantID    string            `json:"restaurant_id"`
+	TotalItems      int               `json:"total_items"`
+	TotalReviews    int               `json:"total_reviews"`
+	MenuItemMetrics []MenuItemMetrics `json:"menu_item_metrics"`
+}

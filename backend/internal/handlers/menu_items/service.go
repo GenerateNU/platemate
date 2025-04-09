@@ -585,30 +585,47 @@ func (s *Service) GetPopularWithFriends(userID primitive.ObjectID, limit int) ([
 	return final, nil
 }
 
-// GetMenuItemMetrics retrieves analytics for a specific menu item
-func (s *Service) GetMenuItemMetrics(menuItemID primitive.ObjectID) (*MenuItemMetrics, error) {
-	ctx := context.Background()
+// GetRestaurantMenuItemsMetrics retrieves metrics for all menu items at a restaurant
+func (s *Service) GetRestaurantMenuItemsMetrics(restaurantID primitive.ObjectID) (*RestaurantMenuItemsMetrics, error) {
+	// ctx := context.Background()
 
-	var menuItemDoc MenuItemDocument
-	err := s.menuItems.FindOne(ctx, bson.M{"_id": menuItemID}).Decode(&menuItemDoc)
+	// Get all menu items for this restaurant using our existing function
+	menuItems, err := s.GetMenuItemByRestaurant(restaurantID)
 	if err != nil {
-		slog.Error("Error finding menu item for metrics", "error", err)
+		slog.Error("Error finding menu items for restaurant metrics", "error", err)
 		return nil, err
 	}
 
-	// Create metrics from the document
-	metrics := &MenuItemMetrics{
-		ID:                  menuItemDoc.ID.Hex(),
-		Name:                menuItemDoc.Name,
-		OverallRating:       menuItemDoc.AvgRating.Overall,
-		TasteRating:         menuItemDoc.AvgRating.Taste,
-		PortionRating:       menuItemDoc.AvgRating.Portion,
-		ValueRating:         menuItemDoc.AvgRating.Value,
-		ReturnRate:          menuItemDoc.AvgRating.Return,
-		ReviewCount:         len(menuItemDoc.Reviews),
-		PopularTags:         menuItemDoc.Tags,
-		DietaryRestrictions: menuItemDoc.DietaryRestrictions,
+	// Initialize the response
+	restaurantMetrics := &RestaurantMenuItemsMetrics{
+		RestaurantID:    restaurantID.Hex(),
+		TotalItems:      len(menuItems),
+		TotalReviews:    0,
+		MenuItemMetrics: make([]MenuItemMetrics, 0, len(menuItems)),
 	}
 
-	return metrics, nil
+	// Process each menu item
+	for _, menuItem := range menuItems {
+		// Create metrics from the document
+		metrics := MenuItemMetrics{
+			ID:                  menuItem.ID.Hex(),
+			Name:                menuItem.Name,
+			OverallRating:       menuItem.AvgRating.Overall,
+			TasteRating:         menuItem.AvgRating.Taste,
+			PortionRating:       menuItem.AvgRating.Portion,
+			ValueRating:         menuItem.AvgRating.Value,
+			ReturnRate:          menuItem.AvgRating.Return,
+			ReviewCount:         len(menuItem.Reviews),
+			PopularTags:         menuItem.Tags,
+			DietaryRestrictions: menuItem.DietaryRestrictions,
+		}
+
+		// Add to total review count
+		restaurantMetrics.TotalReviews += len(menuItem.Reviews)
+
+		// Add to metrics list
+		restaurantMetrics.MenuItemMetrics = append(restaurantMetrics.MenuItemMetrics, metrics)
+	}
+
+	return restaurantMetrics, nil
 }
