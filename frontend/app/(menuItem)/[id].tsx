@@ -14,6 +14,7 @@ import { getMenuItemById } from "@/api/menu-items";
 import { TMenuItem } from "@/types/menu-item";
 import ReviewFlow from "@/components/review/ReviewFlow";
 import AddReviewButton from "@/components/AddReviewButton";
+import { Skeleton } from "moti/skeleton";
 
 export default function Route() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
@@ -24,6 +25,7 @@ export default function Route() {
     const [menuItem, setMenuItem] = useState<TMenuItem | null>(null);
 
     const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const router = useRouter();
 
@@ -31,125 +33,134 @@ export default function Route() {
         navigation.setOptions({ headerShown: false });
         getMenuItemById(id).then((data) => {
             setMenuItem(data);
+            setLoading(false);
         });
     }, [navigation]);
 
     return (
         <>
             <ScrollView showsVerticalScrollIndicator={false}>
-                <ThemedView style={styles.bannerContainer}>
-                    <Image source={{ uri: menuItem?.picture }} style={styles.bannerImage} />
-                </ThemedView>
+                <Skeleton show={loading} colorMode={"light"}>
+                    <ThemedView style={styles.bannerContainer}>
+                        <Image source={{ uri: menuItem?.picture }} style={styles.bannerImage} />
+                    </ThemedView>
+                </Skeleton>
                 <ThemedView style={styles.container}>
-                    <ThemedView style={styles.headerContainer}>
-                        <View style={styles.titleRow}>
-                            <ThemedText style={styles.titleText}>{menuItem?.name}</ThemedText>
-                            <View style={styles.titleIcons}>
-                                <Pressable style={styles.iconButton}>
-                                    <Ionicons name="share-outline" size={24} color="#666" />
-                                </Pressable>
-                                <Pressable style={styles.iconButton}>
-                                    <Ionicons name="heart-outline" size={24} color="#666" />
+                    <Skeleton show={loading} colorMode={"light"}>
+                        <ThemedView style={styles.headerContainer}>
+                            <View style={styles.titleRow}>
+                                <ThemedText style={styles.titleText}>{menuItem?.name}</ThemedText>
+                            </View>
+                            <View style={styles.restaurantContainer}>
+                                <RestaurantIcon color={"#666"} width={20} height={20} />
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        router.push("/(restaurant)/s");
+                                    }}>
+                                    <ThemedText style={styles.restaurantText}>
+                                        {menuItem?.restaurantName || "Restaurant Name"}
+                                    </ThemedText>
+                                </TouchableOpacity>
+                            </View>
+                        </ThemedView>
+                    </Skeleton>
+
+                    <Skeleton show={loading} colorMode={"light"}>
+                        <ThemedView style={styles.tagsContainer}>
+                            <View style={styles.tagRow}>
+                                {menuItem?.tags.map((tag, index) => (
+                                    <ThemedTag key={index} title={tag} backgroundColor={"#E8F5E9"}
+                                               textColor={"#2E7D32"} />
+                                ))}
+                            </View>
+                        </ThemedView>
+                    </Skeleton>
+
+                    <Skeleton show={loading} colorMode={"light"}>
+                        <ThemedView style={styles.descriptionContainer}>
+                            <ThemedText style={styles.descriptionText}>{menuItem?.description}</ThemedText>
+                            <View style={styles.allergyRow}>
+                                <View style={styles.allergyItemsContainer}>
+                                    <ThemedText style={styles.allergyText} numberOfLines={1}>
+                                        {menuItem?.dietaryRestrictions.join(", ") || "No known allergens."}
+                                    </ThemedText>
+                                </View>
+                                <Pressable style={styles.allergyButton}>
+                                    <ThemedText style={styles.viewAllText}>see allergens</ThemedText>
                                 </Pressable>
                             </View>
-                        </View>
-                        <View style={styles.restaurantContainer}>
-                            <RestaurantIcon color={"#666"} width={20} height={20} />
-                            <TouchableOpacity
-                                onPress={() => {
-                                    router.push("/(restaurant)/s");
-                                }}>
-                                <ThemedText style={styles.restaurantText}>
-                                    {menuItem?.restaurantName || "Restaurant Name"}
-                                </ThemedText>
-                            </TouchableOpacity>
-                        </View>
-                    </ThemedView>
+                        </ThemedView>
+                    </Skeleton>
 
-                    <ThemedView style={styles.tagsContainer}>
-                        <View style={styles.tagRow}>
-                            {menuItem?.tags.map((tag, index) => (
-                                <ThemedTag key={index} title={tag} backgroundColor={"#E8F5E9"} textColor={"#2E7D32"} />
-                            ))}
-                        </View>
-                    </ThemedView>
+                    <Skeleton show={loading} colorMode={"light"}>
+                        <ThemedView style={styles.sectionHeader}>
+                            <AddReviewButton onPress={() => setIsReviewModalVisible(true)} />
+                            <ReviewFlow
+                                isVisible={isReviewModalVisible}
+                                onClose={() => setIsReviewModalVisible(false)}
+                                restaurantId={menuItem?.restaurantId || ""}
+                                menuItemName={menuItem?.name || ""}
+                                dishImageUrl={menuItem?.picture || ""}
+                            />
+                        </ThemedView>
+                    </Skeleton>
 
-                    <ThemedView style={styles.descriptionContainer}>
-                        <ThemedText style={styles.descriptionText}>{menuItem?.description}</ThemedText>
-                        <View style={styles.allergyRow}>
-                            <View style={styles.allergyItemsContainer}>
-                                <ThemedText style={styles.allergyText} numberOfLines={1}>
-                                    {menuItem?.dietaryRestrictions.join(", ") || "No known allergens."}
-                                </ThemedText>
+                    <Skeleton show={loading} colorMode={"light"}>
+                        <ThemedView>
+                            <View style={styles.sectionHeader}>
+                                <ThemedText style={styles.sectionTitle}>Overall Ratings</ThemedText>
                             </View>
-                            <Pressable style={styles.allergyButton}>
-                                <ThemedText style={styles.viewAllText}>see allergens</ThemedText>
-                            </Pressable>
-                        </View>
-                    </ThemedView>
+                            <View style={styles.statsContainer}>
+                                <HighlightCard
+                                    title={"Friend's Fav"}
+                                    subtitle={"100+ friend referrals"}
+                                    icon={<PersonWavingIcon />}
+                                />
+                                <HighlightCard title={"Super Stars"} subtitle={"200+ 5-star reviews"}
+                                               icon={<ThumbsUpIcon />} />
+                                <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} />
+                            </View>
 
-                    <ThemedView style={styles.sectionHeader}>
-                        <AddReviewButton onPress={() => setIsReviewModalVisible(true)} />
-                        <ReviewFlow
-                            isVisible={isReviewModalVisible}
-                            onClose={() => setIsReviewModalVisible(false)}
-                            restaurantId={menuItem?.restaurantId || ""}
-                            menuItemName={menuItem?.name || ""}
-                            dishImageUrl={menuItem?.picture || ""}
-                        />
-                    </ThemedView>
+                            <View style={styles.sectionHeader}>
+                                <ThemedText style={styles.sectionTitle}>Reviews</ThemedText>
+                                <Pressable onPress={() => router.push(`/(menuItem)/allReviews/${id}`)}>
+                                    <ThemedText style={styles.viewAllText}>view all</ThemedText>
+                                </Pressable>
+                            </View>
+                            <View style={styles.reviewStats}>
+                                <View style={styles.ratingContainer}>
+                                    <ThemedText style={styles.ratingText}>4/5</ThemedText>
+                                    <StarRating avgRating={4.2} numRatings={428} showAvgRating={false} />
+                                </View>
+                            </View>
 
-                    <View style={styles.sectionHeader}>
-                        <ThemedText style={styles.sectionTitle}>Overall Ratings</ThemedText>
-                    </View>
-                    <View style={styles.statsContainer}>
-                        <HighlightCard
-                            title={"Friend's Fav"}
-                            subtitle={"100+ friend referrals"}
-                            icon={<PersonWavingIcon />}
-                        />
-                        <HighlightCard title={"Super Stars"} subtitle={"200+ 5-star reviews"} icon={<ThumbsUpIcon />} />
-                        <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} />
-                    </View>
+                            <View style={styles.filterContainer}>
+                                {["My Reviews", "Friends", "All"].map((filter) => (
+                                    <Pressable
+                                        key={filter}
+                                        style={[styles.filterButton, selectedFilter === filter && styles.filterButtonActive]}
+                                        onPress={() => setSelectedFilter(filter)}>
+                                        <ThemedText
+                                            style={[styles.filterText, selectedFilter === filter && styles.filterTextActive]}>
+                                            {filter}
+                                        </ThemedText>
+                                    </Pressable>
+                                ))}
+                            </View>
 
-                    <View style={styles.sectionHeader}>
-                        <ThemedText style={styles.sectionTitle}>Reviews</ThemedText>
-                        <Pressable onPress={() => router.push(`/(menuItem)/allReviews/${id}`)}>
-                            <ThemedText style={styles.viewAllText}>view all</ThemedText>
-                        </Pressable>
-                    </View>
-                    <View style={styles.reviewStats}>
-                        <View style={styles.ratingContainer}>
-                            <ThemedText style={styles.ratingText}>4/5</ThemedText>
-                            <StarRating avgRating={4.2} numRatings={428} showAvgRating={false} />
-                        </View>
-                    </View>
-
-                    <View style={styles.filterContainer}>
-                        {["My Reviews", "Friends", "All"].map((filter) => (
-                            <Pressable
-                                key={filter}
-                                style={[styles.filterButton, selectedFilter === filter && styles.filterButtonActive]}
-                                onPress={() => setSelectedFilter(filter)}>
-                                <ThemedText
-                                    style={[styles.filterText, selectedFilter === filter && styles.filterTextActive]}>
-                                    {filter}
-                                </ThemedText>
-                            </Pressable>
-                        ))}
-                    </View>
-
-                    <ReviewPreview
-                        plateName="Pad Thai"
-                        restaurantName="Pad Thai Kitchen"
-                        tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
-                        rating={4}
-                        content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
-                        authorId={""}
-                        authorUsername={"username"}
-                        authorName={"First Name"}
-                        authorAvatar={"https://placehold.co/600x400/png?text=P"}
-                    />
+                            <ReviewPreview
+                                plateName="Pad Thai"
+                                restaurantName="Pad Thai Kitchen"
+                                tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
+                                rating={4}
+                                content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                                authorId={""}
+                                authorUsername={"username"}
+                                authorName={"First Name"}
+                                authorAvatar={"https://placehold.co/600x400/png?text=P"}
+                            />
+                        </ThemedView>
+                    </Skeleton>
                 </ThemedView>
             </ScrollView>
         </>

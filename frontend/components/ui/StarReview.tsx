@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        gap: 3,
+        gap: 0,
         marginTop: -4,
     },
     starRow: {

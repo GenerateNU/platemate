@@ -1,10 +1,9 @@
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { ThemedView } from "@/components/themed/ThemedView";
-import ReviewDetail from "@/components/review/ReviewDetail";
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/themed/ThemedText";
-import { StarRating, Stars } from "@/components/ui/StarReview";
+import { StarRating } from "@/components/ui/StarReview";
 import React, { useEffect, useState } from "react";
 import { TReview } from "@/types/review";
 import { getReviewById } from "@/api/reviews";
@@ -14,80 +13,7 @@ import { TMenuItem } from "@/types/menu-item";
 import { getRestaurant } from "@/api/restaurant";
 import { TRestaurant } from "@/types/restaurant";
 import { Skeleton } from "moti/skeleton";
-
-type ReviewDocument = {
-    _id: string;
-    createdAt: string;
-    updatedAt: string;
-    user: {
-        _id: string;
-        name: string;
-        username: string;
-        avatarUrl: string;
-    };
-    dish: {
-        _id: string;
-        name: string;
-        restaurant: {
-            _id: string;
-            name: string;
-        };
-    };
-    ratings: {
-        overall: number;
-        taste: number;
-        value: number;
-        portion: number;
-    };
-    tags: string[];
-    content: string;
-    images: string[];
-    metrics: {
-        likes: number;
-        comments: number;
-        shares: number;
-    };
-};
-
-// Mock data
-const mockReview: ReviewDocument = {
-    _id: "review123",
-    createdAt: "2024-03-20T10:30:00Z",
-    updatedAt: "2024-03-20T10:30:00Z",
-    user: {
-        _id: "user123",
-        name: "Anna Liu",
-        username: "Annaliuc",
-        avatarUrl: "https://avatars.githubusercontent.com/u/66958528?v=4",
-    },
-    dish: {
-        _id: "dish123",
-        name: "Buddha Bowl",
-        restaurant: {
-            _id: "rest123",
-            name: "Green Garden",
-        },
-    },
-    ratings: {
-        overall: 4,
-        taste: 4,
-        value: 4,
-        portion: 4,
-    },
-    tags: ["Vegan", "Healthy", "Green", "Low-Cal"],
-    content:
-        "The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing.",
-    images: [
-        "https://avatars.githubusercontent.com/u/66958528?v=4",
-        "https://avatars.githubusercontent.com/u/66958528?v=4",
-        "https://avatars.githubusercontent.com/u/66958528?v=4",
-    ],
-    metrics: {
-        likes: 123,
-        comments: 45,
-        shares: 12,
-    },
-};
+import { ThemedTag } from "@/components/themed/ThemedTag";
 
 export default function Route() {
     const { id } = useLocalSearchParams<{
@@ -103,16 +29,13 @@ export default function Route() {
     const insets = useSafeAreaInsets();
 
     useEffect(() => {
-        // Set navigation options early
         navigation.setOptions({ headerShown: false });
 
-        // Define an async function to handle the data fetching
         const fetchData = async () => {
             try {
                 setLoading(true);
                 setError(null);
 
-                // Step 1: Fetch the review data
                 if (!id) {
                     throw new Error("Review ID is required");
                 }
@@ -120,36 +43,21 @@ export default function Route() {
                 const reviewData = await getReviewById(id);
                 setReview(reviewData);
 
-                // Step 2: Fetch the menu item if available
                 if (reviewData?.menuItem) {
                     try {
                         const menuItemData = await getMenuItemById(reviewData.menuItem);
                         setMenuItem(menuItemData);
 
-                        // Step 3: Fetch the restaurant if available from the menu item
                         if (menuItemData?.restaurantId) {
                             try {
                                 const restaurantData = await getRestaurant(menuItemData.restaurantId);
                                 setRestaurant(restaurantData);
                             } catch (restError) {
                                 console.error("Error fetching restaurant:", restError);
-                                // Don't set error state here to allow partial data display
                             }
                         }
                     } catch (menuError) {
                         console.error("Error fetching menu item:", menuError);
-                        // Don't set error state here to allow partial data display
-                    }
-                }
-
-                // Step 3 (alternative): If restaurant ID is available directly from review
-                if (reviewData?.restaurantId && !menuItem?.restaurantId) {
-                    try {
-                        const restaurantData = await getRestaurant(reviewData.restaurantId);
-                        setRestaurant(restaurantData);
-                    } catch (restError) {
-                        console.error("Error fetching restaurant from review:", restError);
-                        // Don't set error state here to allow partial data display
                     }
                 }
 
@@ -176,18 +84,6 @@ export default function Route() {
         console.log("Downvote");
     };
 
-    // Content to display if still loading
-    // if (loading) {
-    //     return (
-    //         <ThemedView style={[styles.container, { paddingTop: insets.top, justifyContent: 'center', alignItems: 'center' }]}>
-    //             <Skeleton show={true} colorMode={"light"}>
-    //                 <ThemedText>Loading review...</ThemedText>
-    //             </Skeleton>
-    //         </ThemedView>
-    //     );
-    // }
-
-    // Content to display if there was an error
     if (error) {
         return (
             <ThemedView style={[styles.container, { paddingTop: insets.top, justifyContent: 'center', alignItems: 'center' }]}>
@@ -199,22 +95,17 @@ export default function Route() {
         );
     }
 
-    // Get display names for menu item and restaurant
-    const dishName = menuItem?.name || review?.menuItem || "Unknown Dish";
-    const restaurantName = restaurant?.name || menuItem?.restaurantId || review?.restaurantId || "Unknown Restaurant";
-
     return (
         <ScrollView style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom + 24 }]}>
             <ThemedView style={styles.content}>
-                {/* Header */}
+
                 <View style={styles.header}>
                     <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                         <Ionicons name="chevron-back" size={24} color="black" />
                     </TouchableOpacity>
-                    <ThemedText style={styles.headerTitle}>Review for this dish</ThemedText>
+                    <ThemedText style={styles.headerTitle}>Review for {review?.menuItemName}</ThemedText>
                 </View>
 
-                {/* User Info */}
                 <View style={styles.userInfo}>
                         <Skeleton.Group show={loading}>
                             <View style={styles.userInfoLeft}>
@@ -234,7 +125,21 @@ export default function Route() {
                         </Skeleton.Group>
                 </View>
 
-                {/* Ratings Grid */}
+                <ThemedView style={{ marginBottom: 4, marginTop: 4 }}>
+                    <Skeleton show={loading} colorMode={"light"}>
+                        <View style={styles.tagsContainer}>
+                            <ScrollView
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={styles.scrollableTags}>
+                                {["warm", "sweet", "tender", "fresh"].map((tag, index) => (
+                                    <ThemedTag key={index} title={tag} backgroundColor={"#E8F5E9"} textColor={"#2E7D32"} />
+                                ))}
+                            </ScrollView>
+                        </View>
+                    </Skeleton>
+                </ThemedView>
+
                 <View style={styles.ratingsGridContainer}>
                     <View style={styles.ratingsGrid}>
                         <View style={styles.ratingColumn}>
@@ -246,7 +151,6 @@ export default function Route() {
                                         numRatings={-1}
                                         showAvgRating={false}
                                         showNumRatings={false}
-                                        starDim={20}
                                     />
                                     <ThemedText style={styles.ratingDescription}>
                                         This is the most supreme quality I've ever tasted.
@@ -261,7 +165,6 @@ export default function Route() {
                                         numRatings={-1}
                                         showAvgRating={false}
                                         showNumRatings={false}
-                                        starDim={20}
                                     />
                                     <ThemedText style={styles.ratingDescription}>
                                         Decent, decent. Not too bad.
@@ -278,7 +181,6 @@ export default function Route() {
                                         numRatings={-1}
                                         showAvgRating={false}
                                         showNumRatings={false}
-                                        starDim={20}
                                     />
                                     <ThemedText style={styles.ratingDescription}>
                                         It was pretty good. I would recommend it overall.
@@ -293,7 +195,6 @@ export default function Route() {
                                         numRatings={-1}
                                         showAvgRating={false}
                                         showNumRatings={false}
-                                        starDim={20}
                                         full
                                     />
                                     <ThemedText style={styles.ratingDescription}>
@@ -305,23 +206,6 @@ export default function Route() {
                     </View>
                 </View>
 
-                {/* Tags */}
-                {review?.tags && review.tags.length > 0 && (
-                    <View style={styles.tagsContainer}>
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={styles.scrollableTags}>
-                            {review.tags.map((tag, index) => (
-                                <ThemedText key={index} style={styles.tag}>
-                                    {tag}
-                                </ThemedText>
-                            ))}
-                        </ScrollView>
-                    </View>
-                )}
-
-                {/* Content */}
                 <Skeleton show={loading} colorMode={"light"}>
                     <ThemedView style={{ marginVertical: 4 }}>
                         <ThemedText type={"subtitle"} style={{ lineHeight: 32, fontSize: 16 }}>Additional notes</ThemedText>
@@ -329,36 +213,39 @@ export default function Route() {
                     </ThemedView>
                 </Skeleton>
 
-                {/* Images */}
-                {review?.images && review.images.length > 0 && (
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        style={styles.imageScroll}
-                        contentContainerStyle={styles.imageContainer}>
-                        {review.images.map((image, index) => (
-                            <Image key={index} source={{ uri: image }} style={styles.reviewImage} />
-                        ))}
-                    </ScrollView>
-                )}
+                {/*/!* Images *!/*/}
+                {/*{review?.images && review.images.length > 0 && (*/}
+                {/*    <ScrollView*/}
+                {/*        horizontal*/}
+                {/*        showsHorizontalScrollIndicator={false}*/}
+                {/*        style={styles.imageScroll}*/}
+                {/*        contentContainerStyle={styles.imageContainer}>*/}
+                {/*        {review.images.map((image, index) => (*/}
+                {/*            <Image key={index} source={{ uri: image }} style={styles.reviewImage} />*/}
+                {/*        ))}*/}
+                {/*    </ScrollView>*/}
+                {/*)}*/}
 
-                {/* Action Bar */}
-                <View style={styles.actionBar}>
-                    <View style={styles.voteContainer}>
-                        <TouchableOpacity onPress={handleUpvote}>
-                            <Entypo name="arrow-bold-up" size={32} color="black" />
-                        </TouchableOpacity>
-                        <ThemedText style={styles.voteCount}>{review?.metrics?.likes || 0}</ThemedText>
-                        <TouchableOpacity onPress={handleDownvote}>
-                            <Entypo name="arrow-bold-down" size={32} color="black" />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.actionButtons}>
-                        <TouchableOpacity style={styles.actionButton}>
-                            <Entypo name="dots-three-vertical" size={20} color="black" />
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <ThemedView style={{ marginVertical: 8 }}>
+                    <Skeleton show={loading} colorMode={"light"}>
+                        <View style={styles.actionBar}>
+                            <View style={styles.voteContainer}>
+                                <TouchableOpacity onPress={handleUpvote}>
+                                    <Entypo name="arrow-bold-up" size={32} color="black" />
+                                </TouchableOpacity>
+                                <ThemedText style={styles.voteCount}>{review?.metrics?.likes || 0}</ThemedText>
+                                <TouchableOpacity onPress={handleDownvote}>
+                                    <Entypo name="arrow-bold-down" size={32} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.actionButtons}>
+                                <TouchableOpacity style={styles.actionButton}>
+                                    <Entypo name="dots-three-vertical" size={20} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Skeleton>
+                </ThemedView>
             </ThemedView>
         </ScrollView>
     );
@@ -442,6 +329,7 @@ const styles = StyleSheet.create({
     },
     ratingsGridContainer: {
         marginBottom: 12,
+        marginTop: 8,
         width: "100%",
     },
     ratingsGrid: {
@@ -467,7 +355,7 @@ const styles = StyleSheet.create({
         fontFamily: "Nunito",
     },
     tagsContainer: {
-        marginBottom: 24,
+        marginBottom: 4,
     },
     reviewContent: {
         fontSize: 16,
@@ -516,7 +404,6 @@ const styles = StyleSheet.create({
     },
     scrollableTags: {
         flexDirection: "row",
-        gap: 8,
     },
     ratingDescription: {
         fontFamily: "Nunito",

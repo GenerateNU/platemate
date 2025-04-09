@@ -123,14 +123,14 @@ const ReviewPreview = ({
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                 <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
-                    {/* <TouchableOpacity>
+                    <TouchableOpacity>
                         <Entypo name="arrow-up" size={24} color="gray" />
                     </TouchableOpacity>
-                    <ThemedText type="default">123</ThemedText>
+                    <ThemedText type="default">0</ThemedText>
                     <TouchableOpacity>
                         <Entypo name="arrow-down" size={24} color="gray" />
                     </TouchableOpacity>
-                    <ThemedText type="default">0</ThemedText> */}
+                    <ThemedText type="default">0</ThemedText>
                 </View>
                 <View>
                     <TouchableOpacity>
