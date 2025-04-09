@@ -38,7 +38,7 @@ export default function Route() {
         navigation.setOptions({ headerShown: false });
     }, [navigation]);
 
-    const formattedAddress = "123 Roadname St, City, State 02114";
+    const formattedAddress = restaurant?.address.street + ", " + restaurant?.address.city + ", " + restaurant?.address.state + " " + restaurant?.address.zip;
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -48,15 +48,11 @@ export default function Route() {
             />
             <ThemedView style={styles.container}>
                 <ThemedView style={styles.headerContainer}>
-                    <ThemedText style={styles.titleText}>{restaurant?.name || "Restaurant Name"}</ThemedText>
-                    <View style={styles.iconContainer}>
-                        <PhoneIcon />
-                        <WebsiteIcon />
-                    </View>
+                    <ThemedText style={styles.titleText} numberOfLines={1}>{restaurant?.name || "Restaurant Name"}</ThemedText>
                 </ThemedView>
 
                 <ThemedView style={styles.ratingContainer}>
-                    <StarRating avgRating={1.9} numRatings={500} full={true} />
+                    <StarRating avgRating={restaurant?.ratingAvg.overall || 3} numRatings={500} full={true} starSize={20} />
                 </ThemedView>
 
                 <ThemedView style={styles.detailsContainer}>
@@ -64,7 +60,6 @@ export default function Route() {
                         text={formattedAddress || "360 Huntington Ave, Boston, MA 02115"}
                         icon={"marker"}
                     />
-                    <RestaurantDetailItem text={"Open | Closes 8 PM"} icon={"clock"} />
                 </ThemedView>
 
                 <ScrollView
@@ -88,7 +83,7 @@ export default function Route() {
 
                 <View style={styles.highlightsContainer}>
                     <HighlightCard
-                        title={"Friend's Fave"}
+                        title={"Friend's Fav"}
                         subtitle={"100+ friend referrals"}
                         icon={<PersonWavingIcon />}
                     />
@@ -169,6 +164,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         paddingTop: 8,
         paddingBottom: 12,
+        gap: 4,
     },
     tagWrapper: {
         marginRight: 4,
@@ -178,7 +174,7 @@ const styles = StyleSheet.create({
     },
     titleText: {
         fontWeight: "bold",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 28,
         paddingTop: 6,
     },

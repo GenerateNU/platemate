@@ -45,8 +45,8 @@ export default function Feed() {
     const fetchData = useCallback(async () => {
         try {
             const [reviewsData, menuItemsData] = await Promise.all([
-                getReviews(1, 10),
-                getMenuItems({ page: 1, limit: 10 }),
+                getReviews(2, 10),
+                getMenuItems({ page: 2, limit: 10 }),
             ]);
 
             const fetchedReviews = reviewsData.data as TReview[];

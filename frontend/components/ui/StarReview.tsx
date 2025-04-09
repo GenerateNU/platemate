@@ -11,7 +11,8 @@ export interface StarReviewProps {
     full?: boolean; // If true, show 5 stars, else show 1
     showAvgRating?: boolean; // Controls display of the average rating number
     showNumRatings?: boolean; // Controls display of the number of ratings
-    showNumRatingsText?: boolean; // Controls display of "reviews" text
+    showNumRatingsText?: boolean; // Controls display of "reviews"
+    starSize?: number; // Size of the stars
 }
 
 export interface InteractiveStarsProps {
@@ -25,6 +26,7 @@ export interface InteractiveStarsProps {
 interface StarProps {
     avgRating: number;
     full?: boolean;
+    starSize?: number;
 }
 
 export function StarRating({
@@ -34,11 +36,12 @@ export function StarRating({
     showAvgRating = true,
     showNumRatings = true,
     showNumRatingsText = true,
+    starSize = 32,
 }: StarReviewProps) {
     return (
         <View style={styles.container}>
             {avgRating > 0 && showAvgRating && <Text style={styles.text}>{avgRating.toFixed(1)}</Text>}
-            {avgRating > 0 && <Stars avgRating={avgRating} full={full} />}
+            {avgRating > 0 && <Stars avgRating={avgRating} full={full} starSize={starSize} />}
             {numRatings > 0 && showNumRatings && (
                 <Text style={styles.text}>
                     ({numRatings}
@@ -49,10 +52,10 @@ export function StarRating({
     );
 }
 
-export function Stars({ avgRating, full = true }: StarProps) {
+export function Stars({ avgRating, full = true, starSize = 32 }: StarProps) {
     const stars: React.JSX.Element[] = [];
     const maxStars = full ? 5 : 1;
-    const STAR_SIZE = 32;
+    const STAR_SIZE = starSize;
     if (full) {
         for (let i = 0; i < maxStars; i++) {
             if (i < Math.floor(avgRating)) {
@@ -104,7 +107,7 @@ const styles = StyleSheet.create({
         gap: 7,
     },
     text: {
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontWeight: "500",
         fontSize: 16,
         lineHeight: 18,
@@ -117,7 +120,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         gap: 0,
-        marginTop: -4,
+        marginTop: -8,
     },
     starRow: {
         flexDirection: "row",

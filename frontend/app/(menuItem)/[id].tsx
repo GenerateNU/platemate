@@ -55,7 +55,7 @@ export default function Route() {
                                 <RestaurantIcon color={"#666"} width={20} height={20} />
                                 <TouchableOpacity
                                     onPress={() => {
-                                        router.push("/(restaurant)/s");
+                                        router.push(`/(restaurant)/${menuItem?.restaurantID}`);
                                     }}>
                                     <ThemedText style={styles.restaurantText}>
                                         {menuItem?.restaurantName || "Restaurant Name"}
@@ -102,7 +102,7 @@ export default function Route() {
                             <ReviewFlow
                                 isVisible={isReviewModalVisible}
                                 onClose={() => setIsReviewModalVisible(false)}
-                                restaurantId={menuItem?.restaurantId || ""}
+                                restaurantId={menuItem?.restaurantID || ""}
                                 menuItemName={menuItem?.name || ""}
                                 dishImageUrl={menuItem?.picture || ""}
                             />
