@@ -31,7 +31,7 @@ func (h *Handler) GetLikers(c *fiber.Ctx) error {
 	}
 	var likers []Reviewer
 	var cursor *mongo.Cursor
-	cursor, err = h.service.reviews.Aggregate(context.Background(), []bson.M{
+	cursor, _ = h.service.reviews.Aggregate(context.Background(), []bson.M{
 		{
 			"$match": bson.M{
 				"_id": id,
