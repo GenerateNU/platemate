@@ -4,10 +4,13 @@ import UserInfoRowBase from "../UserInfo/UserInfoRowBase";
 import { ThemedText } from "../themed/ThemedText";
 import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
-import { router, useNavigation } from "expo-router";
-import { ReviewComponentStarIcon } from "../icons/Icons";
+import { router } from "expo-router";
+import { ReviewComponentStarIcon, StarIcon } from "../icons/Icons";
+import Tag from "@/components/ui/Tag";
+import { ThemedTag } from "@/components/themed/ThemedTag";
+import { ThemedView } from "@/components/themed/ThemedView";
 
-type ReviewProps = {
+type Props = {
     plateName: string;
     restaurantName: string;
     tags: string[];
@@ -29,11 +32,12 @@ const ReviewPreview = ({
     authorUsername,
     authorAvatar,
     authorId,
-}: ReviewProps) => {
+}: Props) => {
     return (
         <View
             style={{
-                backgroundColor: Colors["light"].foreground,
+                borderColor: "lightgray",
+                backgroundColor: "#FAFAFA",
                 padding: 16,
                 flex: 1,
                 flexDirection: "column",
@@ -41,17 +45,54 @@ const ReviewPreview = ({
                 borderRadius: 12,
                 paddingTop: 24,
                 width: "100%",
-                height: Dimensions.get("window").height * 0.36,
+                // height: Dimensions.get("window").height * 0.36,
             }}>
-            <UserInfoRowBase
-                name={authorUsername}
-                username={authorUsername || "benjamin petrillamin"}
-                right={<View />}
-                // default profile picture
-                icon={authorAvatar}
-                onPress={() => router.push(`/friend/${authorId}`)}
-            />
-            <View style={{ gap: 10 }}>
+            <ThemedView style={{ width: "100%" }}>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        width: "100%",
+                        paddingRight: 10,
+                        backgroundColor: "#fafafa",
+                    }}>
+                    <View style={{ flex: 1 }}>
+                        <UserInfoRowBase
+                            name={authorName || "Author Name"}
+                            username={authorUsername}
+                            icon={authorAvatar}
+                            onPress={() => router.push(`/(profile)/${authorId}`)}
+                            right={null}
+                        />
+                    </View>
+
+                    <View
+                        style={{
+                            position: "absolute",
+                            top: 2,
+                            right: 4,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            paddingHorizontal: 0,
+                            paddingVertical: 2,
+                            borderRadius: 12,
+                            zIndex: 1,
+                        }}>
+                        <ThemedText
+                            style={{
+                                fontSize: 18,
+                                fontWeight: "500",
+                                marginTop: 4,
+                                marginRight: 4,
+                            }}>
+                            {rating}
+                        </ThemedText>
+                        <StarIcon width={24} height={24} filled={true} />
+                    </View>
+                </View>
+            </ThemedView>
+            <View style={{ gap: 8 }}>
                 <View style={styles.plateInfoContainer}>
                     <View style={styles.nameContainer}>
                         <ThemedText type="subtitle" style={[styles.nameText, { fontWeight: 700 }]}>
@@ -61,19 +102,19 @@ const ReviewPreview = ({
                             {restaurantName}
                         </ThemedText>
                     </View>
-                    <View style={styles.numericalRatingContainer}>
-                        <ThemedText style={[styles.nameText, { fontWeight: 400 }]}>{rating}</ThemedText>
-                        <ReviewComponentStarIcon width={35} height={35} style={{ marginBottom: -5 }} />
-                    </View>
                 </View>
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.scrollableTags}>
                     {tags.map((tag, index) => (
-                        <Text key={index} style={styles.tag}>
-                            {tag}
-                        </Text>
+                        <ThemedTag
+                            key={index}
+                            title={tag}
+                            backgroundColor={"#FFCF0F"}
+                            textColor={"#000"}
+                            textStyle={{ paddingVertical: 0, fontSize: 12 }}
+                        />
                     ))}
                 </ScrollView>
                 <ThemedText type="default" style={styles.contentContainer} numberOfLines={3} ellipsizeMode="tail">
@@ -81,14 +122,15 @@ const ReviewPreview = ({
                 </ThemedText>
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
-                    <TouchableOpacity>
-                        <Entypo name="arrow-with-circle-up" size={32} color="black" />
+                <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
+                    {/* <TouchableOpacity>
+                        <Entypo name="arrow-up" size={24} color="gray" />
                     </TouchableOpacity>
                     <ThemedText type="default">123</ThemedText>
                     <TouchableOpacity>
-                        <Entypo name="arrow-with-circle-down" size={32} color="black" />
+                        <Entypo name="arrow-down" size={24} color="gray" />
                     </TouchableOpacity>
+                    <ThemedText type="default">0</ThemedText> */}
                 </View>
                 <View>
                     <TouchableOpacity>
@@ -105,7 +147,6 @@ export default ReviewPreview;
 const styles = StyleSheet.create({
     scrollableTags: {
         flexDirection: "row",
-        gap: 8,
     },
     tag: {
         backgroundColor: "#fc0",
@@ -114,14 +155,14 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         borderRadius: 20,
         fontSize: 12,
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontWeight: 500,
     },
     plateInfoContainer: {
         display: "flex",
         flexDirection: "row",
         width: 267,
-        paddingVertical: 3,
+        marginTop: 4,
         paddingRight: 10,
         paddingLeft: 4,
         justifyContent: "space-between",
@@ -130,15 +171,14 @@ const styles = StyleSheet.create({
     nameContainer: {
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
         alignItems: "flex-start",
-        gap: 2,
     },
     nameText: {
         color: "#000",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 16,
         fontStyle: "normal",
+        lineHeight: 18,
     },
     numericalRatingContainer: {
         display: "flex",
@@ -152,9 +192,10 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         color: "#000",
         textOverflow: "ellipsis",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 14,
         fontWeight: 400,
         lineHeight: 16,
+        paddingTop: 4,
     },
 });

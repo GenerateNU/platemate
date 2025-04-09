@@ -50,16 +50,18 @@ const styles = StyleSheet.create({
     },
     nameContainer: {
         color: "#000",
-        fontFamily: "Poppins",
-        fontSize: 14,
+        fontFamily: "Nunito",
+        fontSize: 16,
         fontStyle: "normal",
         fontWeight: 700,
+        lineHeight: 18,
     },
     usernameContainer: {
         color: "#000",
-        fontFamily: "Poppins",
-        fontSize: 10,
+        fontFamily: "Nunito",
+        fontSize: 14,
         fontStyle: "normal",
         fontWeight: 400,
+        lineHeight: 16,
     },
 });

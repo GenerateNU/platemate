@@ -50,15 +50,15 @@ export function StarRating({
 }
 
 export function Stars({ avgRating, full = true }: StarProps) {
-    const STAR_SIZE = 24;
     const stars: React.JSX.Element[] = [];
     const maxStars = full ? 5 : 1;
+    const STAR_SIZE = 32;
     if (full) {
         for (let i = 0; i < maxStars; i++) {
             if (i < Math.floor(avgRating)) {
                 stars.push(<StarIcon key={i} width={STAR_SIZE} height={STAR_SIZE} filled={true} />);
             } else {
-                stars.push(<StarIcon key={i} width={STAR_SIZE} height={STAR_SIZE} filled={true} />);
+                stars.push(<StarIcon key={i} width={STAR_SIZE} height={STAR_SIZE} filled={false} />);
             }
         }
     } else {
@@ -71,9 +71,9 @@ export function Stars({ avgRating, full = true }: StarProps) {
 export function InteractiveStars({
     rating,
     onChange,
-    starSize = 24,
+    starSize = 48,
     activeColor = "#F7B418", // default yellow for interactive instance
-    inactiveColor = "#FFFFFF", // default white for interactive instance
+    inactiveColor = "#000000", // default white for interactive instance
 }: InteractiveStarsProps) {
     const maxStars = 5;
     return (
