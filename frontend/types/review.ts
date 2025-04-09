@@ -18,6 +18,8 @@ export type TReview = {
     comments: any[];
     menuItem: string;
     restaurantId: string;
+    menuItemName: string;
+    restaurantName: string;
     data: {
         id: string;
         rating: {

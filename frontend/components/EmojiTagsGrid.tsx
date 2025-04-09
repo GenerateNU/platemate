@@ -37,11 +37,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         alignItems: "center",
-        justifyContent: "flex-start",
+        justifyContent: "center",
         backgroundColor: "#FFF",
     },
     tag: {
-        marginRight: 25,
-        marginBottom: 24,
+        marginRight: 16,
+        marginBottom: 16,
     },
 });

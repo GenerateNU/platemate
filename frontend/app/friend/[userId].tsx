@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useUser } from "@/context/user-context";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ActivityIndicator, Dimensions, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
@@ -10,12 +9,12 @@ import ProfileIdentity from "@/components/profile/ProfileIdentity";
 import ProfileMetrics from "@/components/profile/ProfileMetrics";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
-import EditFriendSheet from "@/components/profile/followers/FriendProfileOptions";
 import { FollowButton } from "@/components/profile/followers/FollowButton";
 import { useLocalSearchParams } from "expo-router";
 import type { User } from "@/context/user-context";
 import { DEFAULT_PROFILE_PIC } from "@/context/user-context";
 import type { TReview } from "@/types/review";
+import { makeRequest } from "@/api/base";
 
 const { width } = Dimensions.get("window");
 
@@ -45,9 +44,10 @@ const ProfileScreen = () => {
 
             setLoading(true);
             try {
-                const userRes = await fetch(`https://externally-exotic-orca.ngrok-free.app/api/v1/user/${userId}`);
-                const userData = await userRes.json();
-                console.log(userData);
+                const userData = await makeRequest(`/api/v1/user/${userId}`, "GET");
+                if (!userData) {
+                    throw new Error(userData.message || "failed to retrieve ther user");
+                }
                 const newUser: User = {
                     id: userData.id,
                     email: userData.email,
@@ -60,10 +60,10 @@ const ProfileScreen = () => {
                 };
                 setUser(newUser);
 
-                const reviewsRes = await fetch(
-                    `https://externally-exotic-orca.ngrok-free.app/api/v1/review/user/${userId}`,
-                );
-                const reviewData = await reviewsRes.json();
+                const reviewData = await makeRequest(`/api/v1/review/user/${userId}`, "GET");
+                if (!reviewData) {
+                    throw new Error(reviewData.message || "failed to retrieve user reviews");
+                }
                 console.log(reviewData);
                 setUserReviews(reviewData);
             } catch (err) {
@@ -122,7 +122,7 @@ const ProfileScreen = () => {
                     {/* Made a search box with a filter/sort component as its own component */}
                     <SearchBoxFilter
                         placeholder={`Search ${user.name}'s Reviews`}
-                        recent={false}
+                        recent={true}
                         onSubmit={() => console.log("submit")}
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}

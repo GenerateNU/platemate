@@ -11,13 +11,14 @@ export function useRecentSearch(searchSet: string = "") {
         }
         // @ts-ignore
         setRecents(async () => {
+            console.log("fetching recents for ", searchSet);
             const recents = await asyncStorage.getItem(searchSet);
             if (recents) {
                 console.log("found recent searches");
                 console.log(recents);
                 return JSON.parse(recents);
             } else {
-                console.log("didn't find search set");
+                console.log("didn't find search set for ", searchSet);
                 return [];
             }
         });

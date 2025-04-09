@@ -278,3 +278,49 @@ func (h *Handler) Logout(c *fiber.Ctx) error {
 	}
 	return c.SendString("Logout Successful")
 }
+
+// CheckEmailExists checks if an email already exists in the database
+func (h *Handler) CheckEmailExists(c *fiber.Ctx) error {
+	email := c.Query("email")
+	if email == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Email parameter is required",
+			"exists":  false,
+		})
+	}
+
+	exists, err := h.service.CheckEmailExists(email)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to check email",
+			"exists":  false,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"exists": exists,
+	})
+}
+
+// CheckUsernameExists checks if a username already exists in the database
+func (h *Handler) CheckUsernameExists(c *fiber.Ctx) error {
+	username := c.Query("username")
+	if username == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Username parameter is required",
+			"exists":  false,
+		})
+	}
+
+	exists, err := h.service.CheckUsernameExists(username)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to check username",
+			"exists":  false,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"exists": exists,
+	})
+}

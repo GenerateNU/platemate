@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { ThemedView } from "@/components/themed/ThemedView";
 import ReviewDetail from "@/components/review/ReviewDetail";
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -8,6 +8,7 @@ import { StarRating } from "@/components/ui/StarReview";
 import React, { useEffect } from "react";
 import { TReview } from "@/types/review";
 import { getReviewById } from "@/api/reviews";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ReviewDocument = {
     _id: string;
@@ -110,8 +111,10 @@ export default function Route() {
         console.log("Downvote");
     };
 
+    const insets = useSafeAreaInsets();
+
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom + 24 }]}>
             <ThemedView style={styles.content}>
                 {/* Header */}
                 <View style={styles.header}>
@@ -126,12 +129,38 @@ export default function Route() {
                     <View style={styles.userInfoLeft}>
                         <Image source={{ uri: review?.reviewer.pfp }} style={styles.profilePicture} />
                         <View>
-                            <ThemedText style={styles.userName}>{review?.reviewer.id}</ThemedText>
+                            <ThemedText style={styles.userName}>{review?.reviewer.username}</ThemedText>
                             <ThemedText style={styles.userHandle}>@{review?.reviewer.username}</ThemedText>
                         </View>
                     </View>
                 </View>
-
+                <View style={{ paddingBottom: 12 }}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            router.push(`/(menuItem)/${review?.menuItem}`);
+                        }}>
+                        <ThemedText type="title">{review?.menuItemName}</ThemedText>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            router.push(`/(restaurant)/${review?.restaurantId}`);
+                        }}>
+                        <ThemedText type="default">at {review?.restaurantName}</ThemedText>
+                    </TouchableOpacity>
+                </View>
+                {/* Tags */}
+                <View style={styles.tagsContainer}>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.scrollableTags}>
+                        {mockReview.tags.map((tag, index) => (
+                            <ThemedText key={index} style={styles.tag}>
+                                {tag}
+                            </ThemedText>
+                        ))}
+                    </ScrollView>
+                </View>
                 {/* Ratings Grid */}
                 <View style={styles.ratingsGridContainer}>
                     <View style={styles.ratingsGrid}>
@@ -176,20 +205,6 @@ export default function Route() {
                             </View>
                         </View>
                     </View>
-                </View>
-
-                {/* Tags */}
-                <View style={styles.tagsContainer}>
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={styles.scrollableTags}>
-                        {mockReview.tags.map((tag, index) => (
-                            <ThemedText key={index} style={styles.tag}>
-                                {tag}
-                            </ThemedText>
-                        ))}
-                    </ScrollView>
                 </View>
 
                 {/* Content */}

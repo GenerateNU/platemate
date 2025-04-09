@@ -13,26 +13,6 @@ export default function IndexLayout() {
             <Stack
                 screenOptions={{
                     headerShown: false,
-                    // headerTransparent: true,
-                    // headerBackVisible: false,
-                    // headerLeft: ({ canGoBack }) => {
-                    //     return canGoBack ? (
-                    //         <TouchableOpacity onPress={() => router.back()} style={{ padding: 10 }}>
-                    //             <BackChevron />
-                    //         </TouchableOpacity>
-                    //     ) : null;
-                    // },
-                    // headerTintColor: "#F7B418",
-                    // headerBackButtonDisplayMode: "minimal",
-                    // headerTitleStyle: {
-                    //     fontFamily: "Outfit",
-                    //     fontWeight: "500",
-                    //     fontSize: 18,
-                    //     color: "#333",
-                    // },
-                    // headerStyle: {
-                    //     backgroundColor: "white",
-                    // },
                     headerShadowVisible: false,
                     animation: "slide_from_right",
                 }}>

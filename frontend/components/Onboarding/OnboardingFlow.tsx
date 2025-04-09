@@ -144,8 +144,8 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             restrictions: data.dietaryRestrictions,
             preferences: data.cuisinePreferences,
             // Ensure default values for required fields
-            followingCount: 0,
-            followersCount: 0,
+            followingCount: parseFloat(0),
+            followersCount: parseFloat(0),
             count: 0,
             reviews: [],
             following: [],
@@ -212,7 +212,13 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             case "password":
                 return <PasswordScreen onContinue={handlePasswordSubmit} onBack={handleBack} />;
             case "username":
-                return <UsernameScreen onContinue={handleUsernameSubmit} onBack={handleBack} />;
+                return (
+                    <UsernameScreen
+                        onContinue={handleUsernameSubmit}
+                        onNavigateToLogin={handleNavigateToLogin}
+                        onBack={handleBack}
+                    />
+                );
             case "dietary":
                 return <DietaryRestrictionsScreen onContinue={handleDietarySubmit} onBack={handleBack} />;
             case "cuisine":
