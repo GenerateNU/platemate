@@ -56,15 +56,17 @@ export default function Route() {
                     avatarURL={restaurant?.picture || "https://placehold.co/600x400/png?text=P"}
                 />
             </Skeleton>
-            <ThemedView style={styles.container}>
-                <Skeleton colorMode={"light"} show={restaurant == null}>
-                    <ThemedView>
+            <Skeleton.Group show={restaurant == null}>
+                <ThemedView style={styles.container}>
+                    <Skeleton colorMode={"light"}>
                         <ThemedView style={styles.headerContainer}>
                             <ThemedText style={styles.titleText} numberOfLines={1}>
                                 {restaurant?.name || "Restaurant Name"}
                             </ThemedText>
                         </ThemedView>
+                    </Skeleton>
 
+                    <Skeleton colorMode={"light"}>
                         <ThemedView style={styles.ratingContainer}>
                             <StarRating
                                 avgRating={restaurant?.ratingAvg.overall || 3}
@@ -73,14 +75,18 @@ export default function Route() {
                                 starSize={20}
                             />
                         </ThemedView>
+                    </Skeleton>
 
+                    <Skeleton colorMode={"light"}>
                         <ThemedView style={styles.detailsContainer}>
                             <RestaurantDetailItem
                                 text={formattedAddress || "360 Huntington Ave, Boston, MA 02115"}
                                 icon={"marker"}
                             />
                         </ThemedView>
+                    </Skeleton>
 
+                    <Skeleton colorMode={"light"}>
                         <ScrollView
                             horizontal={true}
                             showsHorizontalScrollIndicator={false}
@@ -91,7 +97,9 @@ export default function Route() {
                                 </View>
                             ))}
                         </ScrollView>
+                    </Skeleton>
 
+                    <Skeleton colorMode={"light"}>
                         <RestaurantReviewSummary
                             rating={restaurant?.ratingAvg.overall}
                             friendsReviewCount={12}
@@ -99,7 +107,9 @@ export default function Route() {
                             maxRating={5}
                             reviewCount={189}
                         />
+                    </Skeleton>
 
+                    <Skeleton colorMode={"light"}>
                         <View style={styles.highlightsContainer}>
                             <HighlightCard
                                 title={"Friend's Fav"}
@@ -113,9 +123,13 @@ export default function Route() {
                             />
                             <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} />
                         </View>
+                    </Skeleton>
 
+                    <Skeleton colorMode={"light"}>
                         <FeedTabs tabs={["Reviews", "Menu"]} activeTab={filterTab} setActiveTab={setFilterTab} />
+                    </Skeleton>
 
+                    <Skeleton colorMode={"light"}>
                         <ThemedView>
                             {filterTab == 0 && (
                                 <>
@@ -146,9 +160,9 @@ export default function Route() {
 
                             {filterTab == 1 && <>{/* TODO MENU ITEM PREVIEW */}</>}
                         </ThemedView>
-                    </ThemedView>
-                </Skeleton>
-            </ThemedView>
+                    </Skeleton>
+                </ThemedView>
+            </Skeleton.Group>
         </ScrollView>
     );
 }
@@ -187,7 +201,7 @@ const styles = StyleSheet.create({
     titleText: {
         fontWeight: "bold",
         fontFamily: "Nunito",
-        fontSize: 24,
+        fontSize: 28,
         paddingTop: 6,
     },
     iconContainer: {
