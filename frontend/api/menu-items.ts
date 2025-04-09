@@ -40,4 +40,4 @@ export const getRestaurantMenuItemsMetrics = async (restaurantId: string): Promi
 
 export const getRandomMenuItems = async (limit: number): Promise<TMenuItem[]> => {
     return await makeRequest(`/api/v1/menu-items/random?limit=${limit}`, "GET");
-}
+};

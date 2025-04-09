@@ -47,10 +47,7 @@ export default function Feed() {
 
     const fetchData = useCallback(async () => {
         try {
-            const [reviewsData, menuItemsData] = await Promise.all([
-                getReviews(2, 20),
-                getRandomMenuItems(20),
-            ]);
+            const [reviewsData, menuItemsData] = await Promise.all([getReviews(2, 20), getRandomMenuItems(20)]);
 
             const fetchedReviews = reviewsData.data as TReview[];
             const fetchedMenuItems = menuItemsData as TMenuItem[];
@@ -116,8 +113,7 @@ export default function Feed() {
                 <TouchableOpacity
                     key={review._id}
                     onPress={() => router.push(`/(review)/${review._id}`)}
-                    style={{ width: 300, marginRight: 16 }}
-                >
+                    style={{ width: 300, marginRight: 16 }}>
                     <ReviewPreview
                         plateName={review.menuItemName || "Unknown Item"}
                         restaurantName={review.restaurantName || "Unknown Restaurant"}
@@ -137,29 +133,28 @@ export default function Feed() {
 
     const ListHeaderComponent = useCallback(
         () => (
-            <ThemedView style={{ width: '100%', alignItems: "center", paddingBottom: 12, gap: 4 }}>
+            <ThemedView style={{ width: "100%", alignItems: "center", paddingBottom: 12, gap: 4 }}>
                 <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
 
-                <ThemedView style={{ width: '100%', marginVertical: 20 }}>
+                <ThemedView style={{ width: "100%", marginVertical: 20 }}>
                     <ThemedView style={{ paddingBottom: 12, paddingHorizontal: 8 }}>
-                        <ThemedText style={{ fontWeight: 'bold', fontSize: 20 }}>Reviews for you</ThemedText>
+                        <ThemedText style={{ fontWeight: "bold", fontSize: 20 }}>Reviews for you</ThemedText>
                     </ThemedView>
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{ paddingLeft: 8, paddingRight: 24 }}
-                    >
+                        contentContainerStyle={{ paddingLeft: 8, paddingRight: 24 }}>
                         {reviews.length > 0 ? (
                             reviews.map(renderReviewItem)
                         ) : (
-                            <ThemedView style={{ padding: 16, alignItems: 'center', justifyContent: 'center' }}>
+                            <ThemedView style={{ padding: 16, alignItems: "center", justifyContent: "center" }}>
                                 <ThemedView>No reviews available</ThemedView>
                             </ThemedView>
                         )}
                     </ScrollView>
                 </ThemedView>
                 <ThemedView style={{ paddingHorizontal: 8, alignSelf: "flex-start" }}>
-                    <ThemedText style={{ fontWeight: 'bold', fontSize: 20 }}>Your friends ate</ThemedText>
+                    <ThemedText style={{ fontWeight: "bold", fontSize: 20 }}>Your friends ate</ThemedText>
                 </ThemedView>
             </ThemedView>
         ),
