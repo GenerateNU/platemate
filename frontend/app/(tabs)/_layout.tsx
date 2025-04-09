@@ -5,7 +5,7 @@ import { Platform, View } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 
-import { HomeNavIcon, SearchNavIcon, MapNavIcon, ProfileNavIcon, RestaurantNavIcon } from "@/components/icons/NavIcons";
+import { HomeNavIcon, SearchNavIcon, RestaurantAnalyticsNavIcon, ProfileNavIcon } from "@/components/icons/NavIcons";
 
 type TabIconProps = {
     IconComponent: FunctionComponent<any>;
@@ -90,10 +90,10 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="map"
+                name="restaurantAnalytics"
                 options={{
                     tabBarIcon: ({ color, focused }) => (
-                        <TabIcon IconComponent={MapNavIcon} color={color} focused={focused} />
+                        <TabIcon IconComponent={RestaurantAnalyticsNavIcon} color={color} focused={focused} />
                     ),
                 }}
             />
@@ -103,15 +103,6 @@ export default function TabLayout() {
                     tabBarIcon: ({ color, focused }) => (
                         <TabIcon IconComponent={ProfileNavIcon} color={color} focused={focused} />
                     ),
-                }}
-            />
-            <Tabs.Screen
-                name="restaurant-analytics"
-                options={{
-                    tabBarIcon: ({ color, focused }) => (
-                        <TabIcon IconComponent={RestaurantNavIcon} color={color} focused={focused} />
-                    ),
-                    title: "Restaurant",
                 }}
             />
         </Tabs>
