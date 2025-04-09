@@ -4,11 +4,16 @@ import ReviewDetail from "@/components/review/ReviewDetail";
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/themed/ThemedText";
-import { StarRating } from "@/components/ui/StarReview";
-import React, { useEffect } from "react";
+import { StarRating, Stars } from "@/components/ui/StarReview";
+import React, { useEffect, useState } from "react";
 import { TReview } from "@/types/review";
 import { getReviewById } from "@/api/reviews";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { getMenuItemById } from "@/api/menu-items";
+import { TMenuItem } from "@/types/menu-item";
+import { getRestaurant } from "@/api/restaurant";
+import { TRestaurant } from "@/types/restaurant";
+import { Skeleton } from "moti/skeleton";
 
 type ReviewDocument = {
     _id: string;
@@ -88,16 +93,76 @@ export default function Route() {
     const { id } = useLocalSearchParams<{
         id: string;
     }>();
-    const [review, setReview] = React.useState<TReview | null>(null);
+    const [review, setReview] = useState<TReview | null>(null);
+    const [menuItem, setMenuItem] = useState<TMenuItem | null>(null);
+    const [restaurant, setRestaurant] = useState<TRestaurant | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const navigation = useNavigation();
+    const insets = useSafeAreaInsets();
 
     useEffect(() => {
-        getReviewById(id).then((res) => {
-            setReview(res);
-        });
+        // Set navigation options early
         navigation.setOptions({ headerShown: false });
-    }, [navigation]);
+
+        // Define an async function to handle the data fetching
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                // Step 1: Fetch the review data
+                if (!id) {
+                    throw new Error("Review ID is required");
+                }
+
+                const reviewData = await getReviewById(id);
+                setReview(reviewData);
+
+                // Step 2: Fetch the menu item if available
+                if (reviewData?.menuItem) {
+                    try {
+                        const menuItemData = await getMenuItemById(reviewData.menuItem);
+                        setMenuItem(menuItemData);
+
+                        // Step 3: Fetch the restaurant if available from the menu item
+                        if (menuItemData?.restaurantId) {
+                            try {
+                                const restaurantData = await getRestaurant(menuItemData.restaurantId);
+                                setRestaurant(restaurantData);
+                            } catch (restError) {
+                                console.error("Error fetching restaurant:", restError);
+                                // Don't set error state here to allow partial data display
+                            }
+                        }
+                    } catch (menuError) {
+                        console.error("Error fetching menu item:", menuError);
+                        // Don't set error state here to allow partial data display
+                    }
+                }
+
+                // Step 3 (alternative): If restaurant ID is available directly from review
+                if (reviewData?.restaurantId && !menuItem?.restaurantId) {
+                    try {
+                        const restaurantData = await getRestaurant(reviewData.restaurantId);
+                        setRestaurant(restaurantData);
+                    } catch (restError) {
+                        console.error("Error fetching restaurant from review:", restError);
+                        // Don't set error state here to allow partial data display
+                    }
+                }
+
+            } catch (mainError) {
+                console.error("Error in data fetching:", mainError);
+                setError(mainError instanceof Error ? mainError.message : "An error occurred");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [id, navigation]);
 
     const handleBack = () => {
         navigation.goBack();
@@ -111,7 +176,32 @@ export default function Route() {
         console.log("Downvote");
     };
 
-    const insets = useSafeAreaInsets();
+    // Content to display if still loading
+    // if (loading) {
+    //     return (
+    //         <ThemedView style={[styles.container, { paddingTop: insets.top, justifyContent: 'center', alignItems: 'center' }]}>
+    //             <Skeleton show={true} colorMode={"light"}>
+    //                 <ThemedText>Loading review...</ThemedText>
+    //             </Skeleton>
+    //         </ThemedView>
+    //     );
+    // }
+
+    // Content to display if there was an error
+    if (error) {
+        return (
+            <ThemedView style={[styles.container, { paddingTop: insets.top, justifyContent: 'center', alignItems: 'center' }]}>
+                <ThemedText style={styles.errorText}>Error: {error}</ThemedText>
+                <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                    <ThemedText>Go back</ThemedText>
+                </TouchableOpacity>
+            </ThemedView>
+        );
+    }
+
+    // Get display names for menu item and restaurant
+    const dishName = menuItem?.name || review?.menuItem || "Unknown Dish";
+    const restaurantName = restaurant?.name || menuItem?.restaurantId || review?.restaurantId || "Unknown Restaurant";
 
     return (
         <ScrollView style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom + 24 }]}>
@@ -121,109 +211,149 @@ export default function Route() {
                     <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                         <Ionicons name="chevron-back" size={24} color="black" />
                     </TouchableOpacity>
-                    <ThemedText style={styles.headerTitle}>Review Detail</ThemedText>
+                    <ThemedText style={styles.headerTitle}>Review for this dish</ThemedText>
                 </View>
 
                 {/* User Info */}
                 <View style={styles.userInfo}>
-                    <View style={styles.userInfoLeft}>
-                        <Image source={{ uri: review?.reviewer.pfp }} style={styles.profilePicture} />
-                        <View>
-                            <ThemedText style={styles.userName}>{review?.reviewer.id}</ThemedText>
-                            <ThemedText style={styles.userHandle}>@{review?.reviewer.username}</ThemedText>
-                        </View>
-                    </View>
+                        <Skeleton.Group show={loading}>
+                            <View style={styles.userInfoLeft}>
+                                <Skeleton colorMode={"light"}>
+                                    <Image
+                                        source={{ uri: review?.reviewer?.pfp || "https://placehold.co/100x100" }}
+                                        style={styles.profilePicture}
+                                    />
+                                </Skeleton>
+                                <Skeleton colorMode={"light"}>
+                                    <ThemedView>
+                                        <ThemedText style={styles.userName}>{review?.reviewer?.name || "User"}</ThemedText>
+                                        <ThemedText style={styles.userHandle}>@{review?.reviewer?.username || "username"}</ThemedText>
+                                    </ThemedView>
+                                </Skeleton>
+                            </View>
+                        </Skeleton.Group>
                 </View>
 
                 {/* Ratings Grid */}
                 <View style={styles.ratingsGridContainer}>
                     <View style={styles.ratingsGrid}>
                         <View style={styles.ratingColumn}>
-                            <View style={styles.ratingBox}>
-                                <ThemedText style={styles.ratingTitle}>Overall</ThemedText>
-                                <StarRating
-                                    avgRating={4.2}
-                                    numRatings={-1}
-                                    showAvgRating={false}
-                                    showNumRatings={false}
-                                />
-                            </View>
-                            <View style={styles.ratingBox}>
-                                <ThemedText style={styles.ratingTitle}>Value</ThemedText>
-                                <StarRating
-                                    avgRating={4.4}
-                                    numRatings={-1}
-                                    showAvgRating={false}
-                                    showNumRatings={false}
-                                />
-                            </View>
+                            <Skeleton show={loading} colorMode={"light"}>
+                                <View style={styles.ratingBox}>
+                                    <ThemedText style={styles.ratingTitle}>Overall</ThemedText>
+                                    <StarRating
+                                        avgRating={review?.rating?.overall || 0}
+                                        numRatings={-1}
+                                        showAvgRating={false}
+                                        showNumRatings={false}
+                                        starDim={20}
+                                    />
+                                    <ThemedText style={styles.ratingDescription}>
+                                        This is the most supreme quality I've ever tasted.
+                                    </ThemedText>
+                                </View>
+                            </Skeleton>
+                            <Skeleton show={loading} colorMode={"light"}>
+                                <View style={styles.ratingBox}>
+                                    <ThemedText style={styles.ratingTitle}>Value</ThemedText>
+                                    <StarRating
+                                        avgRating={review?.rating?.value || 0}
+                                        numRatings={-1}
+                                        showAvgRating={false}
+                                        showNumRatings={false}
+                                        starDim={20}
+                                    />
+                                    <ThemedText style={styles.ratingDescription}>
+                                        Decent, decent. Not too bad.
+                                    </ThemedText>
+                                </View>
+                            </Skeleton>
                         </View>
                         <View style={[styles.ratingColumn, styles.ratingColumnRight]}>
-                            <View style={styles.ratingBox}>
-                                <ThemedText style={styles.ratingTitle}>Taste</ThemedText>
-                                <StarRating
-                                    avgRating={mockReview.ratings.taste}
-                                    numRatings={-1}
-                                    showAvgRating={false}
-                                    showNumRatings={false}
-                                />
-                            </View>
-                            <View style={styles.ratingBox}>
-                                <ThemedText style={styles.ratingTitle}>Portion</ThemedText>
-                                <StarRating
-                                    avgRating={mockReview.ratings.portion}
-                                    numRatings={-1}
-                                    showAvgRating={false}
-                                    showNumRatings={false}
-                                />
-                            </View>
+                            <Skeleton show={loading} colorMode={"light"}>
+                                <View style={styles.ratingBox}>
+                                    <ThemedText style={styles.ratingTitle}>Taste</ThemedText>
+                                    <StarRating
+                                        avgRating={review?.rating?.taste || 0}
+                                        numRatings={-1}
+                                        showAvgRating={false}
+                                        showNumRatings={false}
+                                        starDim={20}
+                                    />
+                                    <ThemedText style={styles.ratingDescription}>
+                                        It was pretty good. I would recommend it overall.
+                                    </ThemedText>
+                                </View>
+                            </Skeleton>
+                            <Skeleton show={loading} colorMode={"light"}>
+                                <View style={styles.ratingBox}>
+                                    <ThemedText style={styles.ratingTitle}>Portion</ThemedText>
+                                    <StarRating
+                                        avgRating={3}
+                                        numRatings={-1}
+                                        showAvgRating={false}
+                                        showNumRatings={false}
+                                        starDim={20}
+                                        full
+                                    />
+                                    <ThemedText style={styles.ratingDescription}>
+                                        S-tier. Would get every time I go here.
+                                    </ThemedText>
+                                </View>
+                            </Skeleton>
                         </View>
                     </View>
                 </View>
 
                 {/* Tags */}
-                <View style={styles.tagsContainer}>
+                {review?.tags && review.tags.length > 0 && (
+                    <View style={styles.tagsContainer}>
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={styles.scrollableTags}>
+                            {review.tags.map((tag, index) => (
+                                <ThemedText key={index} style={styles.tag}>
+                                    {tag}
+                                </ThemedText>
+                            ))}
+                        </ScrollView>
+                    </View>
+                )}
+
+                {/* Content */}
+                <Skeleton show={loading} colorMode={"light"}>
+                    <ThemedView style={{ marginVertical: 4 }}>
+                        <ThemedText type={"subtitle"} style={{ lineHeight: 32, fontSize: 16 }}>Additional notes</ThemedText>
+                        <ThemedText style={styles.reviewContent}>{review?.content || ""}</ThemedText>
+                    </ThemedView>
+                </Skeleton>
+
+                {/* Images */}
+                {review?.images && review.images.length > 0 && (
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={styles.scrollableTags}>
-                        {mockReview.tags.map((tag, index) => (
-                            <ThemedText key={index} style={styles.tag}>
-                                {tag}
-                            </ThemedText>
+                        style={styles.imageScroll}
+                        contentContainerStyle={styles.imageContainer}>
+                        {review.images.map((image, index) => (
+                            <Image key={index} source={{ uri: image }} style={styles.reviewImage} />
                         ))}
                     </ScrollView>
-                </View>
-
-                {/* Content */}
-                <ThemedText style={styles.reviewContent}>{review?.content}</ThemedText>
-
-                {/* Images */}
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={styles.imageScroll}
-                    contentContainerStyle={styles.imageContainer}>
-                    {mockReview.images.map((image, index) => (
-                        <Image key={index} source={{ uri: image }} style={styles.reviewImage} />
-                    ))}
-                </ScrollView>
+                )}
 
                 {/* Action Bar */}
                 <View style={styles.actionBar}>
                     <View style={styles.voteContainer}>
-                        <TouchableOpacity>
-                            <Entypo name="arrow-with-circle-up" size={32} color="black" />
+                        <TouchableOpacity onPress={handleUpvote}>
+                            <Entypo name="arrow-bold-up" size={32} color="black" />
                         </TouchableOpacity>
-                        <ThemedText style={styles.voteCount}>{mockReview.metrics.likes}</ThemedText>
-                        <TouchableOpacity>
-                            <Entypo name="arrow-with-circle-down" size={32} color="black" />
+                        <ThemedText style={styles.voteCount}>{review?.metrics?.likes || 0}</ThemedText>
+                        <TouchableOpacity onPress={handleDownvote}>
+                            <Entypo name="arrow-bold-down" size={32} color="black" />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.actionButtons}>
-                        <TouchableOpacity style={styles.actionButton}>
-                            <Ionicons name="chatbubble-outline" size={24} color="black" />
-                        </TouchableOpacity>
                         <TouchableOpacity style={styles.actionButton}>
                             <Entypo name="dots-three-vertical" size={20} color="black" />
                         </TouchableOpacity>
@@ -238,6 +368,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
+        paddingHorizontal: 12,
     },
     content: {
         padding: 16,
@@ -254,23 +385,36 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "600",
         textAlign: "left",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
+    },
+    errorText: {
+        color: "red",
+        marginBottom: 20,
     },
     userInfo: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 24,
+        marginBottom: 16,
     },
     userInfoLeft: {
         flexDirection: "row",
         alignItems: "center",
+        gap: 4,
     },
     profilePicture: {
         width: 40,
         height: 40,
         borderRadius: 20,
         marginRight: 12,
+    },
+    restaurantInfo: {
+        marginBottom: 20,
+    },
+    restaurantName: {
+        fontSize: 18,
+        fontWeight: "600",
+        fontFamily: "Source Sans 3",
     },
     avatarContainer: {
         width: 40,
@@ -287,20 +431,22 @@ const styles = StyleSheet.create({
     userName: {
         fontSize: 16,
         fontWeight: "600",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
+        lineHeight: 20,
     },
     userHandle: {
         fontSize: 14,
         color: "#666",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
+        lineHeight: 16,
     },
     ratingsGridContainer: {
-        marginBottom: 24,
+        marginBottom: 12,
         width: "100%",
     },
     ratingsGrid: {
         flexDirection: "row",
-        width: "85%",
+        width: "100%",
         gap: 24,
     },
     ratingColumn: {
@@ -312,21 +458,22 @@ const styles = StyleSheet.create({
     },
     ratingBox: {
         gap: 8,
-        minWidth: 120,
+        width: "100%",
+        marginBottom: 10,
     },
     ratingTitle: {
         fontSize: 16,
-        fontWeight: "500",
-        fontFamily: "Source Sans 3",
+        fontWeight: "bold",
+        fontFamily: "Nunito",
     },
     tagsContainer: {
         marginBottom: 24,
     },
     reviewContent: {
         fontSize: 16,
-        lineHeight: 24,
-        marginBottom: 24,
-        fontFamily: "Source Sans 3",
+        lineHeight: 20,
+        marginBottom: 0,
+        fontFamily: "Nunito",
     },
     imageScroll: {
         marginBottom: 24,
@@ -348,7 +495,7 @@ const styles = StyleSheet.create({
     voteContainer: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 12,
+        gap: 8,
     },
     voteCount: {
         fontSize: 16,
@@ -360,10 +507,21 @@ const styles = StyleSheet.create({
     },
     actionButton: {
         padding: 8,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+    },
+    actionCount: {
+        fontSize: 14,
     },
     scrollableTags: {
         flexDirection: "row",
         gap: 8,
+    },
+    ratingDescription: {
+        fontFamily: "Nunito",
+        fontSize: 14,
+        lineHeight: 16,
     },
     tag: {
         backgroundColor: "#fc0",

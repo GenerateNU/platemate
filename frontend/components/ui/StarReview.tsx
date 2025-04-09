@@ -12,6 +12,7 @@ export interface StarReviewProps {
     showAvgRating?: boolean; // Controls display of the average rating number
     showNumRatings?: boolean; // Controls display of the number of ratings
     showNumRatingsText?: boolean; // Controls display of "reviews" text
+    starDim?: number; // size of the star
 }
 
 export interface InteractiveStarsProps {
@@ -25,6 +26,7 @@ export interface InteractiveStarsProps {
 interface StarProps {
     avgRating: number;
     full?: boolean;
+    starDim?: number; // size of the star
 }
 
 export function StarRating({
@@ -34,11 +36,12 @@ export function StarRating({
     showAvgRating = true,
     showNumRatings = true,
     showNumRatingsText = true,
+    starDim = 16, // default size of the star
 }: StarReviewProps) {
     return (
         <View style={styles.container}>
             {avgRating > 0 && showAvgRating && <Text style={styles.text}>{avgRating.toFixed(1)}</Text>}
-            {avgRating > 0 && <Stars avgRating={avgRating} full={full} />}
+            {avgRating > 0 && <Stars avgRating={avgRating} full={full} starDim={starDim} />}
             {numRatings > 0 && showNumRatings && (
                 <Text style={styles.text}>
                     ({numRatings}
@@ -49,19 +52,19 @@ export function StarRating({
     );
 }
 
-export function Stars({ avgRating, full = true }: StarProps) {
+export function Stars({ avgRating, full = true, starDim = 16 }: StarProps) {
     const stars: React.JSX.Element[] = [];
     const maxStars = full ? 5 : 1;
     if (full) {
         for (let i = 0; i < maxStars; i++) {
             if (i < Math.floor(avgRating)) {
-                stars.push(<StarIcon key={i} width={16} height={16} filled={true} />);
+                stars.push(<StarIcon key={i} width={starDim} height={starDim} filled={true} />);
             } else {
-                stars.push(<StarIcon key={i} width={16} height={16} filled={true} />);
+                stars.push(<StarIcon key={i} width={starDim} height={starDim} filled={true} />);
             }
         }
     } else {
-        stars.push(<StarIcon key={0} width={16} height={16} filled={false} />);
+        stars.push(<StarIcon key={0} width={starDim} height={starDim} filled={false} />);
     }
 
     return <View style={styles.starsContainer}>{stars}</View>;

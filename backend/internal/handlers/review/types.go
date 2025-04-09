@@ -83,6 +83,7 @@ type Reviewer struct {
 	ID       primitive.ObjectID `bson:"_id"       json:"_id"`
 	PFP      string             `bson:"pfp"      json:"pfp"`
 	Username string             `bson:"username" json:"username"`
+	Name     string             `bson:"name" json:"name"`
 }
 
 type Commenter struct {
