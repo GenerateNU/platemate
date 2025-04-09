@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "600",
         marginBottom: 16,
-        fontFamily: "Inter",
+        fontFamily: "Nunito",
         color: "#151619",
     },
     sectionContent: {

@@ -14,7 +14,7 @@ const ProfileMetrics = (props: ProfileMetricProps) => {
     const router = useRouter();
     return (
         <ThemedView style={styles.container}>
-            <View style={{ alignItems: "center", marginRight: 24, backgroundColor: "transparent" }}>
+            <View style={{ alignItems: "center", backgroundColor: "transparent" }}>
                 <ThemedText style={styles.statNumber}>{props.numReviews}</ThemedText>
                 <ThemedText style={styles.statLabel}>reviews</ThemedText>
             </View>
@@ -29,7 +29,7 @@ const ProfileMetrics = (props: ProfileMetricProps) => {
                 </TouchableOpacity>
             </View>
 
-            <View style={{ alignItems: "center", marginLeft: 24, backgroundColor: "transparent" }}>
+            <View style={{ alignItems: "center", backgroundColor: "transparent" }}>
                 <ThemedText style={styles.statNumber}>{props.averageRating}</ThemedText>
                 <ThemedText style={styles.statLabel}>avg. rating</ThemedText>
             </View>
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
         paddingTop: 24,
         paddingBottom: 12,
         alignSelf: "center",
+        gap: 24,
         flexDirection: "row",
         backgroundColor: "transparent",
         alignItems: "center",
@@ -50,13 +51,16 @@ const styles = StyleSheet.create({
     statNumber: {
         fontSize: 28,
         fontWeight: 500,
-        fontFamily: "Inter",
+        lineHeight: 32,
+        fontFamily: "Source Sans 3",
         paddingTop: 4,
+        textAlign: "center",
     },
     statLabel: {
         fontSize: 16,
         color: "#727272",
-        fontFamily: "Inter",
+        fontFamily: "Source Sans 3",
+        textAlign: "center",
     },
 });
 

@@ -17,5 +17,19 @@ export type TMenuItem = {
     };
     tags: string[];
     dietaryRestrictions: string[];
-    restaurantId: string;
+    restaurantID: string;
+    restaurantName: string;
+};
+
+export type TMenuItemMetrics = {
+    id: string;
+    name: string;
+    overall_rating: number;
+    taste_rating: number;
+    portion_rating: number;
+    value_rating: number;
+    return_rate: number;
+    review_count: number;
+    popular_tags: string[];
+    dietary_restrictions: string[];
 };

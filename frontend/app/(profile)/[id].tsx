@@ -122,7 +122,7 @@ const ProfileScreen = () => {
                     {/* Made a search box with a filter/sort component as its own component */}
                     <SearchBoxFilter
                         placeholder={`Search ${user.name}'s Reviews`}
-                        recent={true}
+                        recent={false}
                         onSubmit={() => console.log("submit")}
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
@@ -130,8 +130,8 @@ const ProfileScreen = () => {
                     {userReviews.map((review) => (
                         <ReviewPreview
                             key={review._id}
-                            plateName={review.menuItem}
-                            restaurantName={review.restaurantId}
+                            plateName={review.menuItemName}
+                            restaurantName={review.restaurantName}
                             tags={[]}
                             rating={review.rating.overall}
                             content={review.content}

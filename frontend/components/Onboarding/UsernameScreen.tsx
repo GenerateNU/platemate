@@ -69,7 +69,7 @@ export function UsernameScreen({ onContinue, onNavigateToLogin, onBack }: Userna
             </View>
 
             {/* Show username already in use message conditionally */}
-            {usernameExists && (
+            {username.trim() !== "" && usernameExists && (
                 <View style={styles.linkContainer}>
                     <View style={sharedOnboardingStyles.linkContent}>
                         <ThemedText style={styles.warningText}>This username is already in use </ThemedText>
