@@ -49,7 +49,9 @@ export default function Route() {
                     <Skeleton show={loading} colorMode={"light"}>
                         <ThemedView style={styles.headerContainer}>
                             <View style={styles.titleRow}>
-                                <ThemedText style={styles.titleText}>{menuItem?.name}</ThemedText>
+                                <ThemedText style={styles.titleText} numberOfLines={1}>
+                                    {menuItem?.name}
+                                </ThemedText>
                             </View>
                             <View style={styles.restaurantContainer}>
                                 <RestaurantIcon color={"#666"} width={20} height={20} />
@@ -312,6 +314,7 @@ const styles = StyleSheet.create({
     ratingText: {
         fontSize: 24,
         fontWeight: "600",
+        lineHeight: 32,
     },
     reviewCount: {
         color: "#666",

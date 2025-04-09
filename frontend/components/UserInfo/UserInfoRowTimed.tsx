@@ -15,7 +15,7 @@ const UserInfoRowTimed = ({ name, username, time, icon }: Props) => {
         <UserInfoRowBase
             name={name}
             username={username}
-            right={<ThemedText type="caption">{time}hr ago</ThemedText>}
+            right={<ThemedText type="caption">{time} ago</ThemedText>}
             icon={icon}
         />
     );

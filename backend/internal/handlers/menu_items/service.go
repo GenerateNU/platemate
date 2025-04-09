@@ -55,7 +55,7 @@ func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument, er
 		AvgRating:           avgRatingDoc,
 		Reviews:             reviewsObjectID,
 		RestaurantID:        menuItemRequest.RestaurantID,
-		RestaurantName:      menuItemRequest.RestuarantName,
+		RestaurantName:      menuItemRequest.RestaurantName,
 		Description:         menuItemRequest.Description,
 		Location:            menuItemRequest.Location,
 		Tags:                menuItemRequest.Tags,
@@ -98,7 +98,7 @@ func ToMenuItemResponse(menuItem MenuItemDocument) MenuItemResponse {
 			Tags:                menuItem.Tags,
 			DietaryRestrictions: menuItem.DietaryRestrictions,
 			RestaurantID:        menuItem.RestaurantID,
-			RestuarantName: 			menuItem.RestaurantName,
+			RestaurantName:      menuItem.RestaurantName,
 		},
 	}
 }
@@ -250,7 +250,7 @@ func (s *Service) CreateMenuItem(menuItemRequest MenuItemRequest) (MenuItemRespo
 	if errReviewID != nil {
 		return MenuItemResponse{}, errReviewID
 	}
-	errRestaurantID := s.ValidateRestaurantInfo(menuItemDoc.RestaurantID, menuItemRequest.RestuarantName)
+	errRestaurantID := s.ValidateRestaurantInfo(menuItemDoc.RestaurantID, menuItemRequest.RestaurantName)
 	if errRestaurantID != nil {
 		return MenuItemResponse{}, errRestaurantID
 	}
