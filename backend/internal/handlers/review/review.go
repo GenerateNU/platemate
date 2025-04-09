@@ -1,6 +1,7 @@
 package review
 
 import (
+	"context"
 	"errors"
 	"math"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 	"github.com/GenerateNU/platemate/internal/xvalidator"
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -19,6 +21,80 @@ Handler to execute business logic for Review Endpoint
 */
 type Handler struct {
 	service *Service
+}
+
+func (h *Handler) GetLikers(c *fiber.Ctx) error {
+
+	id, err := primitive.ObjectIDFromHex(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+	var likers []Reviewer
+	var cursor *mongo.Cursor
+	cursor, err = h.service.reviews.Aggregate(context.Background(), []bson.M{
+		{
+			"$match": bson.M{
+				"_id": id,
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         "users",
+				"localField":   "likers",
+				"foreignField": "_id",
+				"as":           "likers",
+			},
+		},
+		{
+			"$unwind": "$likers",
+		},
+		{
+			"$replaceRoot": bson.M{
+				"newRoot": "$likers",
+			},
+		},
+	})
+	err = cursor.All(context.Background(), &likers)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+	return c.Status(fiber.StatusOK).JSON(likers)
+}
+
+func (h *Handler) Vote(c *fiber.Ctx) error {
+	id, err := primitive.ObjectIDFromHex(c.Params("id"))
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+	// validate
+	var voteBody VoteBody
+	if err := c.BodyParser(&voteBody); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.InvalidJSON())
+	}
+
+	errs := xvalidator.Validator.Validate(voteBody)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
+	}
+
+	// user id
+	userID, err := primitive.ObjectIDFromHex(voteBody.UserId)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+	var finalVote string
+	finalVote, err = h.service.Vote(id, userID, voteBody.Like)
+
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Review", "id", id.Hex()))
+		}
+		// Central error handler take 500
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(finalVote)
 }
 
 // Create a review
@@ -42,15 +118,19 @@ func (h *Handler) CreateReview(c *fiber.Ctx) error {
 	}
 
 	review = ReviewDocument{
-		Rating:       params.Rating,
-		Picture:      params.Picture,
-		Content:      params.Content,
-		Reviewer:     params.Reviewer,
-		Timestamp:    time.Now(),
-		MenuItem:     menuItemOID,
-		ID:           primitive.NewObjectID(),
-		Comments:     []CommentDocument{},
-		RestaurantID: restaurantOID,
+		Rating:         params.Rating,
+		Picture:        params.Picture,
+		Content:        params.Content,
+		Reviewer:       params.Reviewer,
+		Timestamp:      time.Now(),
+		MenuItem:       menuItemOID,
+		MenuItemName:   params.MenuItemName,
+		RestuarantName: params.RestuarantName,
+		ID:             primitive.NewObjectID(),
+		Comments:       []CommentDocument{},
+		RestaurantID:   restaurantOID,
+		Likes:          0,
+		Likers:         []primitive.ObjectID{},
 	}
 
 	result, err := h.service.InsertReview(review)
@@ -116,7 +196,18 @@ func (h *Handler) GetReview(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
-	review, err := h.service.GetReviewByID(id)
+	// optional user id param
+	userID := c.Query("userId", "")
+	var userObjID *primitive.ObjectID
+	if userID != "" {
+		parsedUserID, err := primitive.ObjectIDFromHex(userID)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+		}
+		userObjID = &parsedUserID
+	}
+
+	review, err := h.service.GetReviewByID(id, userObjID)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Review", "id", id.Hex()))

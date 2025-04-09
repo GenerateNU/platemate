@@ -31,3 +31,20 @@ export async function getReviewById(reviewId: string): Promise<TReview> {
 export async function updateReview(reviewId: string, reviewData: ReviewData) {
     return await makeRequest(`/api/v1/review/${reviewId}`, "PUT", reviewData, "Failed to update review");
 }
+
+// @TODO - type this properly
+export async function getLikers(reviewId: string): Promise<any[]> {
+    return await makeRequest(`/api/v1/review/${reviewId}/like`, "GET", null, "Failed to get likers");
+}
+
+export async function vote(reviewId: string, userId: string, type: number): Promise<string> {
+    return await makeRequest(
+        `/api/v1/review/${reviewId}/vote`,
+        "POST",
+        {
+            like: type,
+            userId: userId,
+        },
+        "Failed to vote",
+    );
+}

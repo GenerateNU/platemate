@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ImageSourcePropType } from "react-native";
+import { View, Text, StyleSheet, ImageSourcePropType, Dimensions } from "react-native";
 import { Avatar } from "./Avatar";
 import LocationIcon from "@/assets/icons/location_on.svg";
 import { Button } from "./Button";
@@ -20,7 +20,7 @@ const UserProfile = ({ imageSource, name, username, location, reviews, friends, 
             {/* Header Section (Avatar, Name, Username, Location, Menu) */}
             <View style={styles.header}>
                 {/* Avatar -- maybe add size tbd */}
-                <Avatar imageSource={imageSource} size={126} />
+                <Avatar imageSource={imageSource} size={128} />
 
                 {/* Profile Info */}
                 <View style={styles.profileInfo}>
@@ -64,7 +64,7 @@ const UserProfile = ({ imageSource, name, username, location, reviews, friends, 
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
+        padding: 16,
         backgroundColor: "#ffffff", // Changed to white
         borderRadius: 0, // Removed border radius
         marginTop: 20,

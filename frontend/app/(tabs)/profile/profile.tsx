@@ -49,7 +49,7 @@ const ProfileScreen = () => {
     if (isLoading) {
         return (
             <ThemedView style={styles.centerContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#ffcf0f" />
                 <ThemedText style={{ marginTop: 10 }}>Loading profile...</ThemedText>
             </ThemedView>
         );
@@ -133,8 +133,9 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        paddingHorizontal: 24,
+        paddingHorizontal: 16,
         backgroundColor: "transparent",
+        paddingTop: Dimensions.get("screen").height * 0.025,
     },
     centerContainer: {
         flex: 1,

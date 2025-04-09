@@ -108,16 +108,15 @@ export default function Feed() {
             } else if (item.type === "menuItem") {
                 const menuItem = item.data as TMenuItem;
                 return (
-                    <TouchableOpacity onPress={() => router.push(`/(menuItem)/${menuItem.id}`)}>
-                        <MenuItemPreview
-                            plateName={menuItem.name || "Unknown Item"}
-                            content={menuItem.description || ""}
-                            tags={menuItem.tags || []}
-                            picture={menuItem.picture || "https://placehold.co/300x200"}
-                            rating={0}
-                            restaurantName={menuItem.restaurantId || "Restaurant Name"}
-                        />
-                    </TouchableOpacity>
+                    <MenuItemPreview
+                        id={menuItem.id}
+                        plateName={menuItem.name || "Unknown Item"}
+                        content={menuItem.description || ""}
+                        tags={menuItem.tags || []}
+                        picture={menuItem.picture || "https://placehold.co/300x200"}
+                        rating={menuItem.avgRating?.overall ?? 0}
+                        restaurantName={menuItem.restaurantName || "Restaurant Name"}
+                    />
                 );
             }
             return null;

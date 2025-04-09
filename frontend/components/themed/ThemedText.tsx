@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         fontFamily: "Nunito",
     },
     title: {
-        fontSize: 32,
+        fontSize: 28,
         fontWeight: "bold",
         fontFamily: "Nunito",
     },
