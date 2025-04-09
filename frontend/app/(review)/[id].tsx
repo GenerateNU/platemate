@@ -60,7 +60,6 @@ export default function Route() {
                         console.error("Error fetching menu item:", menuError);
                     }
                 }
-
             } catch (mainError) {
                 console.error("Error in data fetching:", mainError);
                 setError(mainError instanceof Error ? mainError.message : "An error occurred");
@@ -86,7 +85,8 @@ export default function Route() {
 
     if (error) {
         return (
-            <ThemedView style={[styles.container, { paddingTop: insets.top, justifyContent: 'center', alignItems: 'center' }]}>
+            <ThemedView
+                style={[styles.container, { paddingTop: insets.top, justifyContent: "center", alignItems: "center" }]}>
                 <ThemedText style={styles.errorText}>Error: {error}</ThemedText>
                 <TouchableOpacity style={styles.backButton} onPress={handleBack}>
                     <ThemedText>Go back</ThemedText>
@@ -98,7 +98,6 @@ export default function Route() {
     return (
         <ScrollView style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom + 24 }]}>
             <ThemedView style={styles.content}>
-
                 <View style={styles.header}>
                     <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                         <Ionicons name="chevron-back" size={24} color="black" />
@@ -107,22 +106,24 @@ export default function Route() {
                 </View>
 
                 <View style={styles.userInfo}>
-                        <Skeleton.Group show={loading}>
-                            <View style={styles.userInfoLeft}>
-                                <Skeleton colorMode={"light"}>
-                                    <Image
-                                        source={{ uri: review?.reviewer?.pfp || "https://placehold.co/100x100" }}
-                                        style={styles.profilePicture}
-                                    />
-                                </Skeleton>
-                                <Skeleton colorMode={"light"}>
-                                    <ThemedView>
-                                        <ThemedText style={styles.userName}>{review?.reviewer?.name || "User"}</ThemedText>
-                                        <ThemedText style={styles.userHandle}>@{review?.reviewer?.username || "username"}</ThemedText>
-                                    </ThemedView>
-                                </Skeleton>
-                            </View>
-                        </Skeleton.Group>
+                    <Skeleton.Group show={loading}>
+                        <View style={styles.userInfoLeft}>
+                            <Skeleton colorMode={"light"}>
+                                <Image
+                                    source={{ uri: review?.reviewer?.pfp || "https://placehold.co/100x100" }}
+                                    style={styles.profilePicture}
+                                />
+                            </Skeleton>
+                            <Skeleton colorMode={"light"}>
+                                <ThemedView>
+                                    <ThemedText style={styles.userName}>{review?.reviewer?.name || "User"}</ThemedText>
+                                    <ThemedText style={styles.userHandle}>
+                                        @{review?.reviewer?.username || "username"}
+                                    </ThemedText>
+                                </ThemedView>
+                            </Skeleton>
+                        </View>
+                    </Skeleton.Group>
                 </View>
 
                 <ThemedView style={{ marginBottom: 4, marginTop: 4 }}>
@@ -133,7 +134,12 @@ export default function Route() {
                                 showsHorizontalScrollIndicator={false}
                                 contentContainerStyle={styles.scrollableTags}>
                                 {["warm", "sweet", "tender", "fresh"].map((tag, index) => (
-                                    <ThemedTag key={index} title={tag} backgroundColor={"#E8F5E9"} textColor={"#2E7D32"} />
+                                    <ThemedTag
+                                        key={index}
+                                        title={tag}
+                                        backgroundColor={"#E8F5E9"}
+                                        textColor={"#2E7D32"}
+                                    />
                                 ))}
                             </ScrollView>
                         </View>
@@ -208,7 +214,9 @@ export default function Route() {
 
                 <Skeleton show={loading} colorMode={"light"}>
                     <ThemedView style={{ marginVertical: 4 }}>
-                        <ThemedText type={"subtitle"} style={{ lineHeight: 32, fontSize: 16 }}>Additional notes</ThemedText>
+                        <ThemedText type={"subtitle"} style={{ lineHeight: 32, fontSize: 16 }}>
+                            Additional notes
+                        </ThemedText>
                         <ThemedText style={styles.reviewContent}>{review?.content || ""}</ThemedText>
                     </ThemedView>
                 </Skeleton>

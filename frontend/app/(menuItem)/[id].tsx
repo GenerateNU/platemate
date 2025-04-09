@@ -69,8 +69,12 @@ export default function Route() {
                         <ThemedView style={styles.tagsContainer}>
                             <View style={styles.tagRow}>
                                 {menuItem?.tags.map((tag, index) => (
-                                    <ThemedTag key={index} title={tag} backgroundColor={"#E8F5E9"}
-                                               textColor={"#2E7D32"} />
+                                    <ThemedTag
+                                        key={index}
+                                        title={tag}
+                                        backgroundColor={"#E8F5E9"}
+                                        textColor={"#2E7D32"}
+                                    />
                                 ))}
                             </View>
                         </ThemedView>
@@ -116,8 +120,11 @@ export default function Route() {
                                     subtitle={"100+ friend referrals"}
                                     icon={<PersonWavingIcon />}
                                 />
-                                <HighlightCard title={"Super Stars"} subtitle={"200+ 5-star reviews"}
-                                               icon={<ThumbsUpIcon />} />
+                                <HighlightCard
+                                    title={"Super Stars"}
+                                    subtitle={"200+ 5-star reviews"}
+                                    icon={<ThumbsUpIcon />}
+                                />
                                 <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} />
                             </View>
 
@@ -138,10 +145,16 @@ export default function Route() {
                                 {["My Reviews", "Friends", "All"].map((filter) => (
                                     <Pressable
                                         key={filter}
-                                        style={[styles.filterButton, selectedFilter === filter && styles.filterButtonActive]}
+                                        style={[
+                                            styles.filterButton,
+                                            selectedFilter === filter && styles.filterButtonActive,
+                                        ]}
                                         onPress={() => setSelectedFilter(filter)}>
                                         <ThemedText
-                                            style={[styles.filterText, selectedFilter === filter && styles.filterTextActive]}>
+                                            style={[
+                                                styles.filterText,
+                                                selectedFilter === filter && styles.filterTextActive,
+                                            ]}>
                                             {filter}
                                         </ThemedText>
                                     </Pressable>

@@ -17,33 +17,33 @@ type CreateReviewParams struct {
 }
 
 type ReviewDocument struct {
-	ID           primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	Rating       Rating             `bson:"rating" json:"rating"`
-	Picture      string             `bson:"picture" json:"picture"`
-	Content      string             `bson:"content" json:"content"`
-	Reviewer     Reviewer           `bson:"reviewer" json:"reviewer"`
-	Timestamp    time.Time          `bson:"timestamp" json:"timestamp"`
-	Comments     []CommentDocument  `bson:"comments" json:"comments"`
-	MenuItem     primitive.ObjectID `bson:"menuItem" json:"menuItem"`
-	RestaurantID primitive.ObjectID `bson:"restaurantId" json:"restaurantId"`
-	MenuItemName string 	`bson:"menuitemName" json:"menuItemName"`
-	RestuarantName string 	`bson:"restaurantName" json:"restaurantName"`
+	ID             primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	Rating         Rating             `bson:"rating" json:"rating"`
+	Picture        string             `bson:"picture" json:"picture"`
+	Content        string             `bson:"content" json:"content"`
+	Reviewer       Reviewer           `bson:"reviewer" json:"reviewer"`
+	Timestamp      time.Time          `bson:"timestamp" json:"timestamp"`
+	Comments       []CommentDocument  `bson:"comments" json:"comments"`
+	MenuItem       primitive.ObjectID `bson:"menuItem" json:"menuItem"`
+	RestaurantID   primitive.ObjectID `bson:"restaurantId" json:"restaurantId"`
+	MenuItemName   string             `bson:"menuitemName" json:"menuItemName"`
+	RestuarantName string             `bson:"restaurantName" json:"restaurantName"`
 }
 
 type TopReviewDocument struct {
-	ID           primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	Rating       Rating             `bson:"rating" json:"rating"`
-	Picture      string             `bson:"picture" json:"picture"`
-	Content      string             `bson:"content" json:"content"`
-	Reviewer     Reviewer           `bson:"reviewer" json:"reviewer"`
-	Timestamp    time.Time          `bson:"timestamp" json:"timestamp"`
-	Comments     []CommentDocument  `bson:"comments" json:"comments"`
-	MenuItem     primitive.ObjectID `bson:"menuItem" json:"menuItem"`
-	RestaurantID primitive.ObjectID `bson:"restaurantId" json:"restaurantId"`
-	AverageRate  float64            `bson:"averageRate" json:"averageRate"`
-	Items        []MenuItemDocument `bson:"items" json:"items"`
-	MenuItemName string 	`bson:"menuitemName" json:"menuItemName"`
-	RestuarantName string 	`bson:"restaurantName" json:"restaurantName"`
+	ID             primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	Rating         Rating             `bson:"rating" json:"rating"`
+	Picture        string             `bson:"picture" json:"picture"`
+	Content        string             `bson:"content" json:"content"`
+	Reviewer       Reviewer           `bson:"reviewer" json:"reviewer"`
+	Timestamp      time.Time          `bson:"timestamp" json:"timestamp"`
+	Comments       []CommentDocument  `bson:"comments" json:"comments"`
+	MenuItem       primitive.ObjectID `bson:"menuItem" json:"menuItem"`
+	RestaurantID   primitive.ObjectID `bson:"restaurantId" json:"restaurantId"`
+	AverageRate    float64            `bson:"averageRate" json:"averageRate"`
+	Items          []MenuItemDocument `bson:"items" json:"items"`
+	MenuItemName   string             `bson:"menuitemName" json:"menuItemName"`
+	RestuarantName string             `bson:"restaurantName" json:"restaurantName"`
 }
 
 type MenuItemDocument struct {
@@ -57,7 +57,7 @@ type MenuItemDocument struct {
 	Tags                []string             `bson:"tags"`
 	DietaryRestrictions []string             `bson:"dietaryRestrictions"`
 	RestaurantID        primitive.ObjectID   `bson:"restaurantid"`
-	RestuarantName string 	`bson:"restaurantName" json:"restaurantName"`
+	RestuarantName      string               `bson:"restaurantName" json:"restaurantName"`
 }
 
 type AvgRatingDocument struct {
