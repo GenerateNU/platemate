@@ -88,3 +88,46 @@ export const RestaurantNavIcon = ({ color = "#000", width = 24, height = 24 }) =
         </Svg>
     );
 };
+
+export const RestaurantAnalyticsNavIcon = ({ width = 24, height = 24, color = "black", ...props }) => {
+    return (
+        <Svg width={width} height={height} viewBox="0 0 24 24" fill="none" {...props}>
+            {/* Bar chart icon */}
+            <Path
+                d="M3 3V21H21"
+                stroke={color}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <Path
+                d="M7 16V12"
+                stroke={color}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <Path
+                d="M11 16V10"
+                stroke={color}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <Path
+                d="M15 16V8"
+                stroke={color}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <Path
+                d="M19 16V6"
+                stroke={color}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </Svg>
+    );
+};
