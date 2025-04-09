@@ -69,7 +69,7 @@ type MenuItemDocument struct {
 	Tags                []string             `bson:"tags"`
 	DietaryRestrictions []string             `bson:"dietaryRestrictions"`
 	RestaurantID        primitive.ObjectID   `bson:"restaurantid"`
-	RestuarantName      string               `bson:"restaurantName" json:"restaurantName"`
+	RestaurantName      string               `bson:"restaurantName" json:"restaurantName"`
 }
 
 type AvgRatingDocument struct {
