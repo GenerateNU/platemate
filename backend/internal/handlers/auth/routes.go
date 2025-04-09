@@ -1,10 +1,11 @@
 package auth
 
 import (
+	"log"
+
 	"github.com/GenerateNU/platemate/internal/config"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
 )
 
 /*
@@ -33,6 +34,8 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	route.Post("/register", handler.Register)
 	route.Post("/logout", handler.Logout)
 	route.Post("/refresh", handler.Refresh)
+	route.Get("/check-email", handler.CheckEmailExists)
+	route.Get("/check-username", handler.CheckUsernameExists)
 
 	api := app.Group("/protected")
 	api.Use(handler.AuthenticateMiddleware)

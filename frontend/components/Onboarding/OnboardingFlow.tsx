@@ -212,7 +212,13 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             case "password":
                 return <PasswordScreen onContinue={handlePasswordSubmit} onBack={handleBack} />;
             case "username":
-                return <UsernameScreen onContinue={handleUsernameSubmit} onBack={handleBack} />;
+                return (
+                    <UsernameScreen
+                        onContinue={handleUsernameSubmit}
+                        onNavigateToLogin={handleNavigateToLogin}
+                        onBack={handleBack}
+                    />
+                );
             case "dietary":
                 return <DietaryRestrictionsScreen onContinue={handleDietarySubmit} onBack={handleBack} />;
             case "cuisine":
