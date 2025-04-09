@@ -12,14 +12,15 @@ export const EditProfileButton: React.FC<{ text: string; onPress: () => void }> 
 
 const styles = StyleSheet.create({
     button: {
-        borderRadius: 20,
+        borderRadius: 8,
         paddingHorizontal: 16,
-        paddingVertical: 4,
+        paddingVertical: 8,
         backgroundColor: "#FFCF0F",
         alignSelf: "center",
+        textAlign: "center",
     },
     buttonText: {
-        fontFamily: "Inter",
+        fontFamily: "Source Sans 3",
         fontSize: 14,
         fontWeight: "500",
     },

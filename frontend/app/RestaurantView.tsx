@@ -16,11 +16,13 @@ import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 import { useRouter } from "expo-router";
 import { getRestaurant } from "@/api/restaurant";
 import { TRestaurant } from "@/types/restaurant";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function RestaurantView() {
     const restaurantTags = ["Fast Food", "Fried Chicken", "Chicken Sandwiches", "Order Online"];
     const [activeTab, setActiveTab] = React.useState(0);
     const [filterTab, setFilterTab] = React.useState(0);
+    const insets = useSafeAreaInsets();
 
     const router = useRouter();
 
@@ -43,7 +45,7 @@ export default function RestaurantView() {
         restaurant?.address.zipcode;
 
     return (
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: insets.top }}>
             <BannerAndAvatar
                 bannerURL={"https://shorturl.at/zZdqT"}
                 avatarURL={restaurant?.picture || "https://shorturl.at/Yn9SH"}
@@ -110,7 +112,7 @@ export default function RestaurantView() {
                                     setActiveTab={setActiveTab}
                                 />
                             </ThemedView>
-                            <TouchableOpacity onPress={() => router.push("/(review)/827b36v4b234")}>
+                            <TouchableOpacity onPress={() => router.push(`/(review)/${"827b36v4b234"}` as any)}>
                                 <ReviewPreview
                                     plateName={"Big Whopper"}
                                     restaurantName={"Burger King"}
@@ -128,20 +130,7 @@ export default function RestaurantView() {
                         </>
                     )}
 
-                    {filterTab == 1 && (
-                        <>
-                            <MenuItemPreview
-                                plateName={"Whopper"}
-                                restaurantName={"Burger King"}
-                                tags={["juicy", "fake meat", "unhealthy"]}
-                                rating={4.2}
-                                content={"a juicy burger that is not meant to be consumed"}
-                                picture={
-                                    "https://media-cdn.grubhub.com/image/upload/d_search:browse-images:default.jpg/w_150,q_auto:low,fl_lossy,dpr_2.0,c_fill,f_auto,h_150/yzbd3ocqb3s8o2jkd2jn"
-                                }
-                            />
-                        </>
-                    )}
+                    {filterTab == 1 && <>{/* TODO MENU ITEM PREVIEW */}</>}
                 </ThemedView>
             </ThemedView>
         </ScrollView>

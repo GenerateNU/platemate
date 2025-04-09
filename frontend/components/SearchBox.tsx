@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TextInput, TextInputProps, StyleSheet, View, Dimensions, TouchableOpacity } from "react-native";
+import { TextInput, TextInputProps, StyleSheet, View, Dimensions } from "react-native";
 import { ThemedText } from "./themed/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useRecentSearch } from "@/hooks/useRecentSearch";
-import FontAwesome5 from "@expo/vector-icons/build/FontAwesome5";
 import { FilterIcon } from "@/components/icons/Icons";
 import { useRouter } from "expo-router";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useRecentSearch } from "@/hooks/useRecentSearch";
+import FontAwesome5 from "@expo/vector-icons/build/FontAwesome5";
 
 export interface SearchBoxProps extends TextInputProps {
     value: string;
@@ -18,16 +19,20 @@ export interface SearchBoxProps extends TextInputProps {
 }
 
 export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, filter, ...rest }: SearchBoxProps) {
-    const { getRecents, appendSearch } = useRecentSearch(name);
-    const [inputHeight, setInputHeight] = useState(0);
     const textColor = useThemeColor({ light: "#000", dark: "#fff" }, "text");
     const inputRef = useRef<TextInput>(null);
     const [recentItems, setRecentItems] = useState<string[]>([]);
+    const [showRecents, setShowRecents] = useState(false);
     const router = useRouter();
+    const { getRecents, appendSearch } = useRecentSearch(name);
+    const [inputHeight, setInputHeight] = useState(0);
 
     async function fetchRecents() {
-        if (recent) setRecentItems(await getRecents());
-        else setRecentItems([]);
+        console.log("fetching recents");
+        if (recent) {
+            setRecentItems(await getRecents());
+            setShowRecents(true);
+        } else setRecentItems([]);
     }
 
     async function clearRecents() {
@@ -43,14 +48,12 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, f
     }, [inputRef]);
 
     useEffect(() => {
-        fetchRecents();
-    }, [recent, fetchRecents]);
+        if (recent) {
+            fetchRecents();
+        }
+    }, [recent]);
 
     const onSubmitEditing = () => {
-        if (recent)
-            appendSearch(value).then(() => {
-                fetchRecents();
-            });
         onSubmit();
     };
 
@@ -67,38 +70,41 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, f
                     id={"search-input"}
                     ref={inputRef}
                     onSubmitEditing={onSubmitEditing}
+                    placeholderTextColor={"gray"}
+                    value={value}
                     onFocus={() => fetchRecents()}
                     onBlur={() => clearRecents()}
-                    value={value}
                     onChangeText={onChangeText}
                     {...rest}
-                    style={{ ...styles.input, color: textColor }}
+                    style={{ ...styles.input, color: textColor, fontWeight: 500, fontFamily: "Source Sans 3" }}
                 />
                 {icon && icon}
                 {filter && (
-                    <TouchableOpacity style={styles.icon} onPress={navigateToFilterTab}>
+                    <TouchableOpacity containerStyle={styles.icon} onPress={navigateToFilterTab}>
                         <FilterIcon />
                     </TouchableOpacity>
                 )}
             </View>
-            {recent && (
+            {recent && showRecents && (
                 <View style={{ ...styles.recentsContainer, top: inputHeight }}>
                     {recentItems.map((term: string, index: number) => {
                         return (
                             <TouchableOpacity
-                                key={index}
-                                style={styles.recent}
+                                key={index + term}
+                                containerStyle={styles.recent}
                                 onPress={() => {
                                     console.log("Before updating state:", value); // Log before updating
-                                    inputRef.current?.blur();
                                     onChangeText(term);
-                                    console.log("After updating state:", value); // Log before updating
-
                                     onSubmit();
                                     appendSearch(term);
+                                    setShowRecents(false);
+                                    console.log("After updating state:", value); // Log before updating
+                                    inputRef.current?.blur();
                                 }}>
-                                <FontAwesome5 name="redo" size={12} color="gray" />
-                                <ThemedText style={{ fontFamily: "Source Sans 3" }}>{term}</ThemedText>
+                                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                                    <FontAwesome5 name="redo" size={12} color="gray" />
+                                    <ThemedText style={{ fontFamily: "Source Sans 3" }}>{term}</ThemedText>
+                                </View>
                             </TouchableOpacity>
                         );
                     })}
@@ -122,7 +128,7 @@ const styles = StyleSheet.create({
     recent: {
         width: "100%",
         padding: 16,
-        paddingVertical: 6,
+        paddingVertical: 12,
         backgroundColor: "#ffffff50",
         flex: 1,
         flexDirection: "row",
@@ -133,7 +139,7 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
         alignItems: "center",
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: "#DDD",
         borderRadius: 12,
         paddingHorizontal: 12,

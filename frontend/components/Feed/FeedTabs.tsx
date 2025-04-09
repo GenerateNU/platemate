@@ -14,7 +14,7 @@ export default function FeedTabs({ tabs, activeTab, setActiveTab }: Props) {
                 <TouchableOpacity key={index} style={styles.tab} onPress={() => setActiveTab(index)}>
                     <ThemedText
                         key={index}
-                        type="title"
+                        type="default"
                         style={[styles.tabText, activeTab === index ? styles.activeTabText : styles.inactiveTabText]}>
                         {tab}
                     </ThemedText>
@@ -46,8 +46,7 @@ const styles = StyleSheet.create({
         color: "#727272",
     },
     tabText: {
-        fontSize: 16,
-        fontFamily: "Source Sans 3",
         textAlign: "center",
+        paddingBottom: 8,
     },
 });

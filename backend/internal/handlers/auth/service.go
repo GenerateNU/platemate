@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"errors"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson"
@@ -99,4 +100,28 @@ func (s *Service) GenerateTokens(id string) (string, string, error) {
 func (s *Service) CreateUser(user User) error {
 	_, err := s.users.InsertOne(context.Background(), user)
 	return err
+}
+
+// CheckEmailExists checks if an email already exists in the database
+func (s *Service) CheckEmailExists(email string) (bool, error) {
+	// Find a user with the given email
+	count, err := s.users.CountDocuments(context.Background(), bson.M{"email": email})
+	if err != nil {
+		return false, err
+	}
+
+	// If count > 0, the email exists
+	return count > 0, nil
+}
+
+// CheckUsernameExists checks if a username already exists in the database
+func (s *Service) CheckUsernameExists(username string) (bool, error) {
+	// Find a user with the given username
+	count, err := s.users.CountDocuments(context.Background(), bson.M{"username": username})
+	if err != nil {
+		return false, err
+	}
+
+	// If count > 0, the username exists
+	return count > 0, nil
 }

@@ -154,14 +154,14 @@ export const ChevronLeft = ({ width = 24, height = 24, color = "black" }) => {
     );
 };
 
-export const StarIcon = ({ width = 12, height = 12, color = "#fc0", strokeWidth = 0.8, filled = false, ...props }) => {
+export const StarIcon = ({ width = 12, height = 12, color = "#fc0", strokeWidth = 0.4, filled = false, ...props }) => {
     return (
         <Svg width={width} height={height} viewBox="0 0 12 12" fill="none" {...props}>
             <Path
                 d="M6.83227 5.11626L6.91845 5.4H7.215H9.75247L7.6824 6.87958L7.44749 7.04748L7.5329 7.32331L8.33943 9.92825L6.24181 8.33637L5.9998 8.15271L5.75794 8.33655L3.66606 9.92665L4.4721 7.32331L4.55757 7.04726L4.32235 6.8794L2.24917 5.4H4.785H5.08155L5.16773 5.11626L6 2.37628L6.83227 5.11626Z"
                 stroke={filled ? color : "black"}
                 strokeWidth={strokeWidth}
-                fill={filled ? color : "none"}
+                fill={filled ? color : "white"}
             />
         </Svg>
     );
@@ -218,6 +218,17 @@ export const FilterIcon = ({ width = 18, height = 12, ...props }) => {
             <Path
                 d="M8 12H10C10.55 12 11 11.55 11 11C11 10.45 10.55 10 10 10H8C7.45 10 7 10.45 7 11C7 11.55 7.45 12 8 12ZM0 1C0 1.55 0.45 2 1 2H17C17.55 2 18 1.55 18 1C18 0.45 17.55 0 17 0H1C0.45 0 0 0.45 0 1ZM4 7H14C14.55 7 15 6.55 15 6C15 5.45 14.55 5 14 5H4C3.45 5 3 5.45 3 6C3 6.55 3.45 7 4 7Z"
                 fill="black"
+            />
+        </Svg>
+    );
+};
+
+export const RestaurantIcon = ({ width = 24, height = 24, color = "black" }) => {
+    return (
+        <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
+            <Path
+                d="M20.16 7.8C20.07 7.34 19.66 7 19.18 7H4.82C4.34 7 3.93 7.34 3.84 7.8L3 12V13C3 13.55 3.45 14 4 14V19C4 19.55 4.45 20 5 20H13C13.55 20 14 19.55 14 19V14H18V19C18 19.55 18.45 20 19 20C19.55 20 20 19.55 20 19V14C20.55 14 21 13.55 21 13V12L20.16 7.8ZM12 18H6V14H12V18ZM5 6H19C19.55 6 20 5.55 20 5C20 4.45 19.55 4 19 4H5C4.45 4 4 4.45 4 5C4 5.55 4.45 6 5 6Z"
+                fill={color}
             />
         </Svg>
     );

@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         borderRadius: 20,
         fontSize: 12,
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontWeight: "semibold",
         marginRight: 0,
     },
