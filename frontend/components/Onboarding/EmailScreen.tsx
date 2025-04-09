@@ -70,7 +70,7 @@ export function EmailScreen({ onContinue, onNavigateToLogin, onBack }: EmailScre
             </View>
 
             {/* Show email already in use message conditionally */}
-            {emailExists && (
+            {email.trim() !== "" && emailExists && (
                 <View style={styles.linkContainer}>
                     <View style={sharedOnboardingStyles.linkContent}>
                         <ThemedText style={styles.warningText}>This email is already in use </ThemedText>
