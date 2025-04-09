@@ -60,9 +60,10 @@ Menu Items Service to be used by Menu Items Handler to interact with the
 Database layer of the application
 */
 type Service struct {
-	menuItems *mongo.Collection
-	reviews   *mongo.Collection
-	users     *mongo.Collection
+	menuItems   *mongo.Collection
+	reviews     *mongo.Collection
+	users       *mongo.Collection
+	restaurants *mongo.Collection
 }
 
 type PopularWithFriendsQuery struct {
@@ -81,7 +82,7 @@ type MenuItemDocument struct {
 	Tags                []string             `bson:"tags"`
 	DietaryRestrictions []string             `bson:"dietaryRestrictions"`
 	RestaurantID        primitive.ObjectID   `bson:"restaurantid"`
-	RestaurantName        string   `bson:"restaurantName"`
+	RestaurantName      string               `bson:"restaurantName"`
 }
 
 type AvgRatingDocument struct {
