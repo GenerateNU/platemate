@@ -1,3 +1,5 @@
+import { TMenuItemMetrics } from "./menu-item";
+
 export type TRestaurant = {
     name: string;
     address: {
@@ -19,4 +21,11 @@ export type TRestaurant = {
     picture: string;
     description: string;
     tags: string[];
+};
+
+export type TRestaurantMenuItemsMetrics = {
+    restaurant_id: string;
+    total_items: number;
+    total_reviews: number;
+    menu_item_metrics: TMenuItemMetrics[];
 };
