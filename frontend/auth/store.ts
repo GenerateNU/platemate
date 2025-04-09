@@ -89,7 +89,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
 
             // For simplicity, mark all users as restaurant owners of restaurant #1
             await AsyncStorage.setItem("isRestaurantOwner", "true");
-            await AsyncStorage.setItem("ownedRestaurantId", "1");
+            await AsyncStorage.setItem("ownedRestaurantId", "67e22aaf0387c709ab3f77ec");
 
             set({
                 accessToken,
@@ -99,7 +99,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
                 email: userEmail,
                 // Set as restaurant owner of restaurant #1
                 isRestaurantOwner: true,
-                ownedRestaurantId: "1",
+                ownedRestaurantId: "67e22aaf0387c709ab3f77ec",
             });
 
             return response.data;
@@ -144,7 +144,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
 
                 // For simplicity, mark all users as restaurant owners of restaurant #1
                 await AsyncStorage.setItem("isRestaurantOwner", "true");
-                await AsyncStorage.setItem("ownedRestaurantId", "1");
+                await AsyncStorage.setItem("ownedRestaurantId", "67e22aaf0387c709ab3f77ec");
 
                 set({
                     accessToken,
@@ -154,7 +154,7 @@ const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create<AuthState>((set,
                     email: userEmail,
                     // Set as restaurant owner
                     isRestaurantOwner: true,
-                    ownedRestaurantId: "1",
+                    ownedRestaurantId: "67e22aaf0387c709ab3f77ec",
                 });
             }
 
