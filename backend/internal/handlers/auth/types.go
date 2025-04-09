@@ -31,8 +31,8 @@ type User struct {
 	Email             string               `bson:"email"`
 	Password          string               `bson:"password"`
 	Username          string               `bson:"username"`
-	FollowingCount    int64                `bson:"followingCount"`
-	FollowersCount    int64                `bson:"followerCount"`
+	FollowingCount    int                  `bson:"followingCount"`
+	FollowersCount    int                  `bson:"followerCount"`
 	ProfilePictureURL string               `bson:"profile_picture"`
 	Reviews           []primitive.ObjectID `bson:"reviews"`
 	Count             int                  `bson:"count"`
@@ -55,8 +55,8 @@ type RegisterRequest struct {
 	Email          string    `json:"email" validate:"required,email"`
 	Password       string    `json:"password" validate:"required,min=8"`
 	Username       string    `json:"username" validate:"required"`
-	FollowingCount int64     `json:"followingCount"`
-	FollowersCount int64     `json:"followerCount"`
+	FollowingCount int       `json:"followingCount"`
+	FollowersCount int       `json:"followerCount"`
 	ProfilePicture string    `json:"profile_picture"`
 	Count          int       `json:"count"`
 	RefreshToken   string    `json:"refresh_token"`

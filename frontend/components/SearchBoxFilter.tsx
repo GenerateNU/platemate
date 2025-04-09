@@ -1,15 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { TextInput, StyleSheet, View, Dimensions, TouchableOpacity } from "react-native";
-import { ThemedText } from "./themed/ThemedText";
+import React, { useRef } from "react";
+import { TextInput, StyleSheet, View, TouchableOpacity } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useRecentSearch } from "@/hooks/useRecentSearch";
-import FontAwesome5 from "@expo/vector-icons/build/FontAwesome5";
 import { SearchBoxProps } from "./SearchBox";
 import { SortIcon } from "./icons/Icons";
 
 export function SearchBoxFilter({ value, onChangeText, onSubmit, icon, recent, name, ...rest }: SearchBoxProps) {
-    const { getRecents, appendSearch } = useRecentSearch(name);
-    const [inputHeight, setInputHeight] = useState(0);
     const textColor = useThemeColor({ light: "#000", dark: "#fff" }, "text");
     const inputRef = useRef<TextInput>(null);
     const [recentItems, setRecentItems] = useState<string[]>([]);
@@ -51,9 +46,7 @@ export function SearchBoxFilter({ value, onChangeText, onSubmit, icon, recent, n
                         <TextInput
                             id={"search-input"}
                             ref={inputRef}
-                            onSubmitEditing={onSubmitEditing}
-                            onFocus={() => fetchRecents()}
-                            onBlur={() => clearRecents()}
+                            onSubmitEditing={handleSubmit}
                             value={value}
                             onChangeText={onChangeText}
                             {...rest}
@@ -61,55 +54,16 @@ export function SearchBoxFilter({ value, onChangeText, onSubmit, icon, recent, n
                         />
                         {icon && icon}
                     </View>
-                    {recent && (
-                        <View style={{ ...styles.recentsContainer, top: inputHeight }}>
-                            {recentItems.map((term: string, index: number) => {
-                                return (
-                                    <TouchableOpacity
-                                        key={index}
-                                        style={styles.recent}
-                                        onPress={() => {
-                                            inputRef.current?.blur();
-                                            onChangeText(term);
-                                            onSubmit();
-                                            appendSearch(term);
-                                        }}>
-                                        <FontAwesome5 name="redo" size={12} color="gray" />
-                                        <ThemedText style={{ fontFamily: "Source Sans 3" }}>{term}</ThemedText>
-                                    </TouchableOpacity>
-                                );
-                            })}
-                        </View>
-                    )}
                 </View>
             </View>
-            <SortIcon width={20} height={30} />
+            <TouchableOpacity onPress={() => {}}>
+                <SortIcon width={20} height={30} />
+            </TouchableOpacity>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    recentsContainer: {
-        flexDirection: "column",
-        alignItems: "flex-start",
-        position: "absolute",
-        backgroundColor: "#ffffff",
-        zIndex: 10,
-        paddingBottom: 8,
-        width: "100%",
-        fontFamily: "Source Sans 3",
-    },
-    recent: {
-        width: "100%",
-        padding: 16,
-        paddingVertical: 6,
-        backgroundColor: "#ffffff50",
-        flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        fontFamily: "Source Sans 3",
-    },
     container: {
         flexDirection: "row",
         alignItems: "center",

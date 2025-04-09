@@ -1,9 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { TextInput, TextInputProps, StyleSheet, View, Dimensions, TouchableOpacity } from "react-native";
-import { ThemedText } from "./themed/ThemedText";
+import React, { useRef } from "react";
+import { TextInput, TextInputProps, StyleSheet, View, TouchableOpacity } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useRecentSearch } from "@/hooks/useRecentSearch";
-import FontAwesome5 from "@expo/vector-icons/build/FontAwesome5";
 import { FilterIcon } from "@/components/icons/Icons";
 import { useRouter } from "expo-router";
 
@@ -18,39 +15,11 @@ export interface SearchBoxProps extends TextInputProps {
 }
 
 export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, filter, ...rest }: SearchBoxProps) {
-    const { getRecents, appendSearch } = useRecentSearch(name);
-    const [inputHeight, setInputHeight] = useState(0);
     const textColor = useThemeColor({ light: "#000", dark: "#fff" }, "text");
     const inputRef = useRef<TextInput>(null);
-    const [recentItems, setRecentItems] = useState<string[]>([]);
     const router = useRouter();
 
-    async function fetchRecents() {
-        if (recent) setRecentItems(await getRecents());
-        else setRecentItems([]);
-    }
-
-    async function clearRecents() {
-        setRecentItems([]);
-    }
-
-    useEffect(() => {
-        if (inputRef.current) {
-            inputRef.current?.measureInWindow((height) => {
-                setInputHeight(height + Dimensions.get("window").height * 0.01);
-            });
-        }
-    }, [inputRef]);
-
-    useEffect(() => {
-        fetchRecents();
-    }, [recent, fetchRecents]);
-
     const onSubmitEditing = () => {
-        if (recent)
-            appendSearch(value).then(() => {
-                fetchRecents();
-            });
         onSubmit();
     };
 
@@ -67,12 +36,11 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, f
                     id={"search-input"}
                     ref={inputRef}
                     onSubmitEditing={onSubmitEditing}
-                    onFocus={() => fetchRecents()}
-                    onBlur={() => clearRecents()}
+                    placeholderTextColor={"gray"}
                     value={value}
                     onChangeText={onChangeText}
                     {...rest}
-                    style={{ ...styles.input, color: textColor }}
+                    style={{ ...styles.input, color: textColor, fontWeight: 500, fontFamily: "Source Sans 3" }}
                 />
                 {icon && icon}
                 {filter && (
@@ -81,29 +49,6 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, f
                     </TouchableOpacity>
                 )}
             </View>
-            {recent && (
-                <View style={{ ...styles.recentsContainer, top: inputHeight }}>
-                    {recentItems.map((term: string, index: number) => {
-                        return (
-                            <TouchableOpacity
-                                key={index}
-                                style={styles.recent}
-                                onPress={() => {
-                                    console.log("Before updating state:", value); // Log before updating
-                                    inputRef.current?.blur();
-                                    onChangeText(term);
-                                    console.log("After updating state:", value); // Log before updating
-
-                                    onSubmit();
-                                    appendSearch(term);
-                                }}>
-                                <FontAwesome5 name="redo" size={12} color="gray" />
-                                <ThemedText style={{ fontFamily: "Source Sans 3" }}>{term}</ThemedText>
-                            </TouchableOpacity>
-                        );
-                    })}
-                </View>
-            )}
         </View>
     );
 }
@@ -133,7 +78,7 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
         alignItems: "center",
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: "#DDD",
         borderRadius: 12,
         paddingHorizontal: 12,

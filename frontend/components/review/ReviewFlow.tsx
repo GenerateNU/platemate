@@ -1,8 +1,5 @@
 import React from "react";
-// import { StyleSheet, View, ScrollView, Dimensions } from "react-native";
-import { StyleSheet, ScrollView, Dimensions, Modal } from "react-native";
-import { ThemedText } from "@/components/themed/ThemedText";
-import { ThemedView } from "@/components/themed/ThemedView";
+import { Modal } from "react-native";
 import { MyReview } from "@/components/MyReview";
 
 interface ReviewFlowProps {
@@ -15,7 +12,7 @@ interface ReviewFlowProps {
 
 export function ReviewFlow({ isVisible, onClose, restaurantId, menuItemName, dishImageUrl }: ReviewFlowProps) {
     return (
-        <Modal visible={isVisible} animationType="slide" presentationStyle="fullScreen" onRequestClose={onClose}>
+        <Modal visible={isVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
             <MyReview
                 restaurantId={restaurantId}
                 menuItemName={menuItemName}
@@ -26,32 +23,4 @@ export function ReviewFlow({ isVisible, onClose, restaurantId, menuItemName, dis
     );
 }
 
-// const ReviewFlow = () => {
-//     return (
-//         <ThemedView style={styles.container}>
-//             <ThemedText type="title" style={styles.title}>
-//                 Review Flow
-//             </ThemedText>
-//             <ScrollView contentContainerStyle={styles.scrollContainer}>
-//                 <MyReview />
-//             </ScrollView>
-//         </ThemedView>
-//     );
-// };
-
 export default ReviewFlow;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 24,
-        paddingTop: Dimensions.get("window").height * 0.12,
-        gap: 16,
-    },
-    title: {
-        fontWeight: "700",
-    },
-    scrollContainer: {
-        gap: 16,
-    },
-});
