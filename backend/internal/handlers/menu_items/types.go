@@ -89,3 +89,17 @@ type AvgRatingDocument struct {
 	Overall float64 `bson:"overall"`
 	Return  float64 `bson:"return"` // @TODO: figure out if boolean or number
 }
+
+// MenuItemMetrics represents analytics data for a single menu item
+type MenuItemMetrics struct {
+	ID                  string   `json:"id"`
+	Name                string   `json:"name"`
+	OverallRating       float64  `json:"overall_rating"`
+	TasteRating         float64  `json:"taste_rating"`
+	PortionRating       float64  `json:"portion_rating"`
+	ValueRating         float64  `json:"value_rating"`
+	ReturnRate          float64  `json:"return_rate"`
+	ReviewCount         int      `json:"review_count"`
+	PopularTags         []string `json:"popular_tags"`
+	DietaryRestrictions []string `json:"dietary_restrictions"`
+}

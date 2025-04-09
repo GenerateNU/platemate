@@ -584,3 +584,31 @@ func (s *Service) GetPopularWithFriends(userID primitive.ObjectID, limit int) ([
 
 	return final, nil
 }
+
+// GetMenuItemMetrics retrieves analytics for a specific menu item
+func (s *Service) GetMenuItemMetrics(menuItemID primitive.ObjectID) (*MenuItemMetrics, error) {
+	ctx := context.Background()
+
+	var menuItemDoc MenuItemDocument
+	err := s.menuItems.FindOne(ctx, bson.M{"_id": menuItemID}).Decode(&menuItemDoc)
+	if err != nil {
+		slog.Error("Error finding menu item for metrics", "error", err)
+		return nil, err
+	}
+
+	// Create metrics from the document
+	metrics := &MenuItemMetrics{
+		ID:                  menuItemDoc.ID.Hex(),
+		Name:                menuItemDoc.Name,
+		OverallRating:       menuItemDoc.AvgRating.Overall,
+		TasteRating:         menuItemDoc.AvgRating.Taste,
+		PortionRating:       menuItemDoc.AvgRating.Portion,
+		ValueRating:         menuItemDoc.AvgRating.Value,
+		ReturnRate:          menuItemDoc.AvgRating.Return,
+		ReviewCount:         len(menuItemDoc.Reviews),
+		PopularTags:         menuItemDoc.Tags,
+		DietaryRestrictions: menuItemDoc.DietaryRestrictions,
+	}
+
+	return metrics, nil
+}
