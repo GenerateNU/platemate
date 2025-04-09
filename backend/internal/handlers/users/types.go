@@ -22,6 +22,7 @@ type User struct {
 	Preferences    []string             `bson:"preferences,omitempty"`
 	Restrictions   []string             `bson:"restrictions,omitempty"`
 	TasteProfile   []float64            `bson:"taste_profile,omitempty"`
+	AverageRating  float64              `bson:"averageRating,omitempty"`
 }
 
 type UserResponse struct {
@@ -37,6 +38,7 @@ type UserResponse struct {
 	Preferences    []string  `json:"preferences,omitempty"`
 	Restrictions   []string  `json:"restrictions,omitempty"`
 	TasteProfile   []float64 `json:"taste_profile,omitempty"`
+	AverageRating  float64   `json:"averageRating,omitempty"`
 }
 
 type FollowRequest struct {

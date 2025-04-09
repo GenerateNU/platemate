@@ -93,8 +93,8 @@ export default function Feed() {
                 return (
                     <TouchableOpacity onPress={() => router.push(`/(review)/${review._id}`)}>
                         <ReviewPreview
-                            plateName={review.menuItem || "Unknown Item"}
-                            restaurantName={review.restaurantId || "Unknown Restaurant"}
+                            plateName={review.menuItemName || "Unknown Item"}
+                            restaurantName={review.restaurantName || "Unknown Restaurant"}
                             rating={review.rating?.overall || 0}
                             tags={["Warm", "Tender", "Sweet"]}
                             content={review.content || ""}

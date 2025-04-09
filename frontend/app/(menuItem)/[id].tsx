@@ -59,7 +59,9 @@ export default function Route() {
                                 onPress={() => {
                                     router.push("/(restaurant)/s");
                                 }}>
-                                <ThemedText style={styles.restaurantText}>Restaurant Name</ThemedText>
+                                <ThemedText style={styles.restaurantText}>
+                                    {menuItem?.restaurantName || "Restaurant Name"}
+                                </ThemedText>
                             </TouchableOpacity>
                         </View>
                     </ThemedView>
@@ -91,8 +93,9 @@ export default function Route() {
                         <ReviewFlow
                             isVisible={isReviewModalVisible}
                             onClose={() => setIsReviewModalVisible(false)}
-                            restaurantId="pad-thai-kitche"
-                            menuItemName="Pad Thai"
+                            restaurantId={menuItem?.restaurantId || ""}
+                            menuItemName={menuItem?.name || ""}
+                            dishImageUrl={menuItem?.picture || ""}
                         />
                     </ThemedView>
 

@@ -130,9 +130,8 @@ const ProfileScreen = () => {
                     {userReviews.map((review) => (
                         <ReviewPreview
                             key={review._id}
-                            plateName={review.menuItem}
-                            // we dont have a restaurant name or tags in the defined review type right now
-                            restaurantName={review.restaurantId}
+                            plateName={review.menuItemName}
+                            restaurantName={review.restaurantName}
                             tags={[]}
                             rating={review.rating.overall}
                             content={review.content}
