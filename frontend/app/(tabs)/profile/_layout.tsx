@@ -33,6 +33,7 @@ export default function ProfileLayout() {
                 animation: "slide_from_right",
             }}>
             <Stack.Screen name="profile" options={{ headerShown: false }} />
+            <Stack.Screen name="friend" options={{ headerShown: false }} />
             <Stack.Screen
                 name="settings"
                 options={{

@@ -98,7 +98,7 @@ func ToMenuItemResponse(menuItem MenuItemDocument) MenuItemResponse {
 			Tags:                menuItem.Tags,
 			DietaryRestrictions: menuItem.DietaryRestrictions,
 			RestaurantID:        menuItem.RestaurantID,
-			RestuarantName:      menuItem.RestaurantName,
+			RestuarantName: 			menuItem.RestaurantName,
 		},
 	}
 }
@@ -210,7 +210,7 @@ func (s *Service) UpdateMenuItem(idObj primitive.ObjectID, menuItemRequest MenuI
 	if errReviewID != nil {
 		return MenuItemResponse{}, errReviewID
 	}
-	errRestaurantID := s.ValidateRestaurantInfo(menuItemDoc.RestaurantID, menuItemRequest.RestuarantName)
+	errRestaurantID := s.ValidateRestaurantInfo(menuItemDoc.RestaurantID, menuItemRequest.RestaurantName)
 	if errRestaurantID != nil {
 		return MenuItemResponse{}, errRestaurantID
 	}

@@ -35,13 +35,14 @@ export default function SearchScreen() {
             <ScrollView contentContainerStyle={styles.resultsContainer} showsVerticalScrollIndicator={false}>
                 {searchResults.map((item: TMenuItem, index: number) => (
                     <MenuItemPreview
+                        id={item.id}
                         key={index}
                         plateName={item.name}
                         content={item.description}
                         tags={item.tags}
                         picture={item.picture}
                         rating={item.avgRating?.overall ?? 0}
-                        restaurantName={item.restaurantId}
+                        restaurantName={item.restaurantName || "Restaurant Name"}
                     />
                 ))}
             </ScrollView>
@@ -51,7 +52,8 @@ export default function SearchScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 24,
+        padding: 16,
+        paddingTop: Dimensions.get("screen").height * 0.1,
         flex: 1,
         gap: 16,
     },

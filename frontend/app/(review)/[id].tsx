@@ -1,261 +1,312 @@
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { ThemedView } from "@/components/themed/ThemedView";
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import ReviewDetail from "@/components/review/ReviewDetail";
+import {
+    ActivityIndicator,
+    Image,
+    KeyboardAvoidingView,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarRating } from "@/components/ui/StarReview";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { TReview } from "@/types/review";
 import { getReviewById } from "@/api/reviews";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { getMenuItemById } from "@/api/menu-items";
-import { TMenuItem } from "@/types/menu-item";
-import { getRestaurant } from "@/api/restaurant";
-import { TRestaurant } from "@/types/restaurant";
-import { Skeleton } from "moti/skeleton";
-import { ThemedTag } from "@/components/themed/ThemedTag";
+import { vote } from "@/api/review";
+import { useUser } from "@/context/user-context";
+import { SearchBox } from "@/components/SearchBox";
+import { makeRequest } from "@/api/base";
+import UserInfoRowTimed from "@/components/UserInfo/UserInfoRowTimed";
+
+enum LikeState {
+    LIKED = "LIKE",
+    DISLIKED = "DISLIKE",
+    NOT_LIKED = "NEUTRAL",
+}
 
 export default function Route() {
     const { id } = useLocalSearchParams<{
         id: string;
     }>();
-    const [review, setReview] = useState<TReview | null>(null);
-    const [menuItem, setMenuItem] = useState<TMenuItem | null>(null);
-    const [restaurant, setRestaurant] = useState<TRestaurant | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [review, setReview] = React.useState<TReview | null>(null);
+    const [likeState, setLikeState] = React.useState(LikeState.NOT_LIKED);
+    const { user } = useUser();
+    const [searchText, setSearchText] = React.useState("");
 
     const navigation = useNavigation();
-    const insets = useSafeAreaInsets();
+    const handleSubmit = async () => {
+        console.log("submit");
+        if (!user) return;
+        if (!review) return;
+        let sendComment = await makeRequest(`/api/v1/review/${id}/comments`, "POST", {
+            content: searchText,
+            review: id,
+            user: {
+                _id: user.id,
+                pfp: user.profile_picture,
+                username: user.username,
+            },
+        });
+        // @ts-ignore
+        setReview({
+            ...review,
+            comments: [
+                ...review.comments,
+                {
+                    content: searchText,
+                    user: {
+                        _id: user.id,
+                        pfp: user.profile_picture,
+                        username: user.username,
+                    },
+                    timestamp: new Date(),
+                },
+            ],
+        });
+        setSearchText("");
+    };
 
     useEffect(() => {
-        navigation.setOptions({ headerShown: false });
-
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-
-                if (!id) {
-                    throw new Error("Review ID is required");
-                }
-
-                const reviewData = await getReviewById(id);
-                setReview(reviewData);
-
-                if (reviewData?.menuItem) {
-                    try {
-                        const menuItemData = await getMenuItemById(reviewData.menuItem);
-                        setMenuItem(menuItemData);
-
-                        if (menuItemData?.restaurantId) {
-                            try {
-                                const restaurantData = await getRestaurant(menuItemData.restaurantId);
-                                setRestaurant(restaurantData);
-                            } catch (restError) {
-                                console.error("Error fetching restaurant:", restError);
-                            }
-                        }
-                    } catch (menuError) {
-                        console.error("Error fetching menu item:", menuError);
-                    }
-                }
-            } catch (mainError) {
-                console.error("Error in data fetching:", mainError);
-                setError(mainError instanceof Error ? mainError.message : "An error occurred");
-            } finally {
-                setLoading(false);
+        if (!user) return;
+        getReviewById(id, user.id).then((res) => {
+            setReview(res);
+            if (res.like) {
+                setLikeState(LikeState.LIKED);
             }
-        };
-
-        fetchData();
-    }, [id, navigation]);
+            if (res.dislike) {
+                setLikeState(LikeState.DISLIKED);
+            }
+        });
+        navigation.setOptions({ headerShown: false });
+    }, [navigation]);
 
     const handleBack = () => {
         navigation.goBack();
     };
 
     const handleUpvote = () => {
-        console.log("Upvote");
+        if (!review || !user) return;
+        vote(review._id, user.id, 1).then((res) => {
+            console.log(res);
+            setLikeState(res as LikeState);
+        });
     };
 
     const handleDownvote = () => {
-        console.log("Downvote");
+        if (!review || !user) return;
+        vote(review._id, user.id, -1).then((res) => {
+            console.log(res);
+            setLikeState(res as LikeState);
+        });
     };
 
-    if (error) {
+    const insets = useSafeAreaInsets();
+    if (!review) {
+        // @TODO - handle loading and error state elegantly
         return (
-            <ThemedView
-                style={[styles.container, { paddingTop: insets.top, justifyContent: "center", alignItems: "center" }]}>
-                <ThemedText style={styles.errorText}>Error: {error}</ThemedText>
-                <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-                    <ThemedText>Go back</ThemedText>
-                </TouchableOpacity>
+            <ThemedView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <ActivityIndicator size="large" color="#ffcf0f" />
+                <ThemedText style={{ marginTop: 10 }}>Loading review...</ThemedText>
             </ThemedView>
         );
     }
-
     return (
-        <ScrollView style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom + 24 }]}>
-            <ThemedView style={styles.content}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-                        <Ionicons name="chevron-back" size={24} color="black" />
-                    </TouchableOpacity>
-                    <ThemedText style={styles.headerTitle}>Review for {review?.menuItemName}</ThemedText>
-                </View>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom + 24 }]}>
+            <ScrollView style={{ paddingBottom: 64 }}>
+                <ThemedView style={styles.content}>
+                    {/* Header */}
+                    <View style={styles.header}>
+                        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                            <Ionicons name="chevron-back" size={24} color="black" />
+                        </TouchableOpacity>
+                        <ThemedText style={styles.headerTitle}>Review Detail</ThemedText>
+                    </View>
 
-                <View style={styles.userInfo}>
-                    <Skeleton.Group show={loading}>
+                    {/* User Info */}
+                    <View style={styles.userInfo}>
                         <View style={styles.userInfoLeft}>
-                            <Skeleton colorMode={"light"}>
-                                <Image
-                                    source={{ uri: review?.reviewer?.pfp || "https://placehold.co/100x100" }}
-                                    style={styles.profilePicture}
-                                />
-                            </Skeleton>
-                            <Skeleton colorMode={"light"}>
-                                <ThemedView>
-                                    <ThemedText style={styles.userName}>{review?.reviewer?.name || "User"}</ThemedText>
-                                    <ThemedText style={styles.userHandle}>
-                                        @{review?.reviewer?.username || "username"}
-                                    </ThemedText>
-                                </ThemedView>
-                            </Skeleton>
+                            <Image source={{ uri: review?.reviewer.pfp }} style={styles.profilePicture} />
+                            <View>
+                                <ThemedText style={styles.userName}>{review?.reviewer.username}</ThemedText>
+                                <ThemedText style={styles.userHandle}>@{review?.reviewer.username}</ThemedText>
+                            </View>
                         </View>
-                    </Skeleton.Group>
-                </View>
-
-                <ThemedView style={{ marginBottom: 4, marginTop: 4 }}>
-                    <Skeleton show={loading} colorMode={"light"}>
-                        <View style={styles.tagsContainer}>
-                            <ScrollView
-                                horizontal
-                                showsHorizontalScrollIndicator={false}
-                                contentContainerStyle={styles.scrollableTags}>
-                                {["warm", "sweet", "tender", "fresh"].map((tag, index) => (
-                                    <ThemedTag
-                                        key={index}
-                                        title={tag}
-                                        backgroundColor={"#E8F5E9"}
-                                        textColor={"#2E7D32"}
-                                    />
-                                ))}
-                            </ScrollView>
-                        </View>
-                    </Skeleton>
-                </ThemedView>
-
-                <View style={styles.ratingsGridContainer}>
-                    <View style={styles.ratingsGrid}>
-                        <View style={styles.ratingColumn}>
-                            <Skeleton show={loading} colorMode={"light"}>
+                    </View>
+                    <View style={{ paddingBottom: 12 }}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                router.push(`/(menuItem)/${review?.menuItem}`);
+                            }}>
+                            <ThemedText type="title">{review?.menuItemName}</ThemedText>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => {
+                                router.push(`/(restaurant)/${review?.restaurantId}`);
+                            }}>
+                            <ThemedText type="default">at {review?.restaurantName}</ThemedText>
+                        </TouchableOpacity>
+                    </View>
+                    {/* Tags */}
+                    <View style={styles.tagsContainer}>
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={styles.scrollableTags}>
+                            {[].map((tag, index) => (
+                                <ThemedText key={index} style={styles.tag}>
+                                    {tag}
+                                </ThemedText>
+                            ))}
+                        </ScrollView>
+                    </View>
+                    {/* Ratings Grid */}
+                    <View style={styles.ratingsGridContainer}>
+                        <View style={styles.ratingsGrid}>
+                            <View style={styles.ratingColumn}>
                                 <View style={styles.ratingBox}>
                                     <ThemedText style={styles.ratingTitle}>Overall</ThemedText>
                                     <StarRating
-                                        avgRating={review?.rating?.overall || 0}
+                                        avgRating={review.rating.overall}
                                         numRatings={-1}
                                         showAvgRating={false}
                                         showNumRatings={false}
                                     />
-                                    <ThemedText style={styles.ratingDescription}>
-                                        This is the most supreme quality I've ever tasted.
-                                    </ThemedText>
                                 </View>
-                            </Skeleton>
-                            <Skeleton show={loading} colorMode={"light"}>
                                 <View style={styles.ratingBox}>
                                     <ThemedText style={styles.ratingTitle}>Value</ThemedText>
                                     <StarRating
-                                        avgRating={review?.rating?.value || 0}
+                                        avgRating={review.rating.value}
                                         numRatings={-1}
                                         showAvgRating={false}
                                         showNumRatings={false}
                                     />
-                                    <ThemedText style={styles.ratingDescription}>
-                                        Decent, decent. Not too bad.
-                                    </ThemedText>
                                 </View>
-                            </Skeleton>
-                        </View>
-                        <View style={[styles.ratingColumn, styles.ratingColumnRight]}>
-                            <Skeleton show={loading} colorMode={"light"}>
+                            </View>
+                            <View style={[styles.ratingColumn, styles.ratingColumnRight]}>
                                 <View style={styles.ratingBox}>
                                     <ThemedText style={styles.ratingTitle}>Taste</ThemedText>
                                     <StarRating
-                                        avgRating={review?.rating?.taste || 0}
+                                        avgRating={review.rating.taste}
                                         numRatings={-1}
                                         showAvgRating={false}
                                         showNumRatings={false}
                                     />
-                                    <ThemedText style={styles.ratingDescription}>
-                                        It was pretty good. I would recommend it overall.
-                                    </ThemedText>
                                 </View>
-                            </Skeleton>
-                            <Skeleton show={loading} colorMode={"light"}>
                                 <View style={styles.ratingBox}>
                                     <ThemedText style={styles.ratingTitle}>Portion</ThemedText>
                                     <StarRating
-                                        avgRating={3}
+                                        avgRating={review.rating.portion}
                                         numRatings={-1}
                                         showAvgRating={false}
                                         showNumRatings={false}
-                                        full
                                     />
-                                    <ThemedText style={styles.ratingDescription}>
-                                        S-tier. Would get every time I go here.
-                                    </ThemedText>
                                 </View>
-                            </Skeleton>
+                            </View>
                         </View>
                     </View>
-                </View>
 
-                <Skeleton show={loading} colorMode={"light"}>
-                    <ThemedView style={{ marginVertical: 4 }}>
-                        <ThemedText type={"subtitle"} style={{ lineHeight: 32, fontSize: 16 }}>
-                            Additional notes
-                        </ThemedText>
-                        <ThemedText style={styles.reviewContent}>{review?.content || ""}</ThemedText>
-                    </ThemedView>
-                </Skeleton>
+                    {/* Content */}
+                    <ThemedText type="defaultSemiBold">Thoughts</ThemedText>
+                    <ThemedText style={styles.reviewContent}>{review?.content}</ThemedText>
 
-                {/*/!* Images *!/*/}
-                {/*{review?.images && review.images.length > 0 && (*/}
-                {/*    <ScrollView*/}
-                {/*        horizontal*/}
-                {/*        showsHorizontalScrollIndicator={false}*/}
-                {/*        style={styles.imageScroll}*/}
-                {/*        contentContainerStyle={styles.imageContainer}>*/}
-                {/*        {review.images.map((image, index) => (*/}
-                {/*            <Image key={index} source={{ uri: image }} style={styles.reviewImage} />*/}
-                {/*        ))}*/}
-                {/*    </ScrollView>*/}
-                {/*)}*/}
+                    {/* Images */}
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        style={styles.imageScroll}
+                        contentContainerStyle={styles.imageContainer}>
+                        {[].map((image, index) => (
+                            <Image key={index} source={{ uri: image }} style={styles.reviewImage} />
+                        ))}
+                    </ScrollView>
 
-                <ThemedView style={{ marginVertical: 8 }}>
-                    <Skeleton show={loading} colorMode={"light"}>
-                        <View style={styles.actionBar}>
-                            <View style={styles.voteContainer}>
-                                <TouchableOpacity onPress={handleUpvote}>
-                                    <Entypo name="arrow-bold-up" size={32} color="black" />
-                                </TouchableOpacity>
-                                <ThemedText style={styles.voteCount}>{review?.metrics?.likes || 0}</ThemedText>
-                                <TouchableOpacity onPress={handleDownvote}>
-                                    <Entypo name="arrow-bold-down" size={32} color="black" />
-                                </TouchableOpacity>
-                            </View>
-                            <View style={styles.actionButtons}>
-                                <TouchableOpacity style={styles.actionButton}>
-                                    <Entypo name="dots-three-vertical" size={20} color="black" />
-                                </TouchableOpacity>
-                            </View>
+                    {/* Action Bar */}
+                    <View style={styles.actionBar}>
+                        <View style={styles.voteContainer}>
+                            <TouchableOpacity onPress={handleUpvote}>
+                                <Entypo
+                                    name="arrow-with-circle-up"
+                                    size={32}
+                                    color={likeState === LikeState.LIKED ? "#FFCF0F" : "black"}
+                                />
+                            </TouchableOpacity>
+                            <ThemedText style={styles.voteCount}>{review?.likes}</ThemedText>
+                            <TouchableOpacity onPress={handleDownvote}>
+                                <Entypo
+                                    name="arrow-with-circle-down"
+                                    size={32}
+                                    color={likeState === LikeState.DISLIKED ? "#FFCF0F" : "black"}
+                                />
+                            </TouchableOpacity>
                         </View>
-                    </Skeleton>
+                        <View style={styles.actionButtons}>
+                            <TouchableOpacity style={styles.actionButton}>
+                                <Ionicons name="chatbubble-outline" size={24} color="black" />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.actionButton}>
+                                <Entypo name="dots-three-vertical" size={20} color="black" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    {/* Comments */}
+                    <View style={{ marginTop: 16 }}>
+                        <ThemedText type="defaultSemiBold">Comments</ThemedText>
+                        {review?.comments.map((comment) => (
+                            <View
+                                key={comment._id}
+                                style={{
+                                    borderBottomColor: "#F5f5f5",
+                                    borderBottomWidth: 1,
+                                    paddingVertical: 16,
+                                }}>
+                                <TouchableOpacity onPress={() => router.push(`/friend/${comment.user._id}`)}>
+                                    <UserInfoRowTimed
+                                        name={comment.user.username}
+                                        username={comment.user.username}
+                                        icon={comment.user.pfp}
+                                        time={new Date(new Date() - new Date(comment.timestamp)).getHours()}
+                                    />
+                                </TouchableOpacity>
+                                <ThemedText
+                                    style={{
+                                        paddingVertical: 8,
+                                    }}>
+                                    {comment.content}
+                                </ThemedText>
+                            </View>
+                        ))}
+                    </View>
                 </ThemedView>
-            </ThemedView>
-        </ScrollView>
+            </ScrollView>
+            <KeyboardAvoidingView
+                behavior="padding"
+                style={{
+                    bottom: 32,
+                    position: "absolute",
+                    width: "100%",
+                    backgroundColor: "#fff",
+                    padding: 16,
+                    marginBottom: 32,
+                }}>
+                <View style={{ marginBottom: 16 }}>
+                    <SearchBox
+                        icon={<Ionicons name="chatbubble-outline" size={24} color="black" />}
+                        placeholder="What are your thoughts?"
+                        recent={false}
+                        name="general"
+                        onSubmit={handleSubmit}
+                        value={searchText}
+                        onChangeText={setSearchText}
+                        filter={false}
+                    />
+                </View>
+            </KeyboardAvoidingView>
+        </View>
     );
 }
 
@@ -267,6 +318,7 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: 16,
+        paddingBottom: 256,
     },
     header: {
         flexDirection: "row",
