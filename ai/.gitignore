@@ -1,7 +1,5 @@
 # Ignore the .env file
 .env
-__pycache__/# Ignore the .env file
-.env
 <<<<<<< HEAD
 __pycache__/
 =======
