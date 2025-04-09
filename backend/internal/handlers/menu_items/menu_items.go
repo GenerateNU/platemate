@@ -476,3 +476,23 @@ func (h *Handler) GetPopularWithFriends(c *fiber.Ctx) error {
 
 	return c.JSON(items)
 }
+
+// GetRestaurantMenuItemsMetrics handles requests for metrics of all menu items at a restaurant
+func (h *Handler) GetRestaurantMenuItemsMetrics(c *fiber.Ctx) error {
+	id := c.Params("id")
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	metrics, err := h.service.GetRestaurantMenuItemsMetrics(objID)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Restaurant", "id", id))
+		}
+		slog.Error("Error getting restaurant menu items metrics", "error", err)
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(metrics)
+}

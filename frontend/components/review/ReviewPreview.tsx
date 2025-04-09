@@ -45,7 +45,6 @@ const ReviewPreview = ({
                 borderRadius: 12,
                 paddingTop: 24,
                 width: "100%",
-                // height: Dimensions.get("window").height * 0.36,
             }}>
             <ThemedView style={{ width: "100%" }}>
                 <View
@@ -95,10 +94,10 @@ const ReviewPreview = ({
             <View style={{ gap: 8 }}>
                 <View style={styles.plateInfoContainer}>
                     <View style={styles.nameContainer}>
-                        <ThemedText type="subtitle" style={[styles.nameText, { fontWeight: 700 }]}>
+                        <ThemedText type="subtitle" numberOfLines={1} style={[styles.nameText, { fontWeight: 700 }]}>
                             {plateName}
                         </ThemedText>
-                        <ThemedText type="default" style={[styles.nameText, { fontWeight: 400 }]}>
+                        <ThemedText type="default" numberOfLines={1} style={[styles.nameText, { fontWeight: 400 }]}>
                             {restaurantName}
                         </ThemedText>
                     </View>

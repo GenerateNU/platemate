@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TextInput, TouchableOpacity, Image } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Button } from "../Button";
 import { ThemedText } from "@/components/themed/ThemedText";
