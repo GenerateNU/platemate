@@ -111,7 +111,7 @@ export default function TabLayout() {
                     tabBarIcon: ({ color, focused }) => (
                         <TabIcon IconComponent={RestaurantNavIcon} color={color} focused={focused} />
                     ),
-                    title: "Restaurant"
+                    title: "Restaurant",
                 }}
             />
         </Tabs>

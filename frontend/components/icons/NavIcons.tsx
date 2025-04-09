@@ -60,49 +60,31 @@ export const SearchNavIcon = ({ width = 19, height = 18, color = "black", ...pro
 
 export const RestaurantNavIcon = ({ color = "#000", width = 24, height = 24 }) => {
     return (
-      <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
-        <Path
-          d="M21 9L21 11C21 14.3137 18.3137 17 15 17H9C5.68629 17 3 14.3137 3 11L3 9"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <Path
-          d="M15 17V19C15 20.1046 14.1046 21 13 21H11C9.89543 21 9 20.1046 9 19V17"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <Path
-          d="M12 17V21"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <Path
-          d="M19 9V7C19 4.79086 17.2091 3 15 3H9C6.79086 3 5 4.79086 5 7V9"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <Path
-          d="M8 13H16"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <Path
-          d="M8 9H16"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </Svg>
+        <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
+            <Path
+                d="M21 9L21 11C21 14.3137 18.3137 17 15 17H9C5.68629 17 3 14.3137 3 11L3 9"
+                stroke={color}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <Path
+                d="M15 17V19C15 20.1046 14.1046 21 13 21H11C9.89543 21 9 20.1046 9 19V17"
+                stroke={color}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <Path d="M12 17V21" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <Path
+                d="M19 9V7C19 4.79086 17.2091 3 15 3H9C6.79086 3 5 4.79086 5 7V9"
+                stroke={color}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <Path d="M8 13H16" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <Path d="M8 9H16" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </Svg>
     );
-  };
+};

@@ -109,8 +109,8 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: "Nunito",
         fontWeight: "500",
-        fontSize: 16,
-        lineHeight: 18,
+        fontSize: 14,
+        lineHeight: 16,
         letterSpacing: 0,
         textAlign: "center",
         color: "#285852",

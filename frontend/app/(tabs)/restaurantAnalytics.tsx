@@ -1,6 +1,6 @@
-import React from 'react';
-import RestaurantAnalytics from '../restaurantAnalytics';
+import React from "react";
+import RestaurantAnalytics from "../restaurantAnalytics";
 
 export default function RestaurantAnalyticsTab() {
-  return <RestaurantAnalytics />;
+    return <RestaurantAnalytics />;
 }
