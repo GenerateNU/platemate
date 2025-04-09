@@ -20,6 +20,9 @@ export type TReview = {
     restaurantId: string;
     menuItemName: string;
     restaurantName: string;
+    likes: number;
+    like?: boolean;
+    dislike?: boolean;
     data: {
         id: string;
         rating: {

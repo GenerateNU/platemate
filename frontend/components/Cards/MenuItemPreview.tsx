@@ -1,11 +1,13 @@
-import { Dimensions, Image, Text, View, ScrollView } from "react-native";
+import { Dimensions, Image, Text, View, ScrollView, TouchableOpacity } from "react-native";
 import React from "react";
 import { ThemedText } from "../themed/ThemedText";
 import Entypo from "@expo/vector-icons/build/Entypo";
 import { TrendingIcon } from "@/components/icons/Icons";
+import { router, useRouter } from "expo-router";
 
 type Props = {
     plateName: string;
+    id: string;
     restaurantName: string;
     tags: string[];
     rating: number;
@@ -14,9 +16,14 @@ type Props = {
     picture: string;
 };
 
-const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, picture, trending }: Props) => {
+const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, picture, trending, id }: Props) => {
+    const router = useRouter();
     return (
-        <View
+        <TouchableOpacity
+            onPress={() => {
+                router.push(`/(menuItem)/${id}`);
+                console.log("Pressed!");
+            }}
             style={{
                 flex: 1,
                 flexDirection: "row",
@@ -85,7 +92,7 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
                     borderRadius: 3000,
                 }}
             />
-        </View>
+        </TouchableOpacity>
     );
 };
 

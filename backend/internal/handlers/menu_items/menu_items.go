@@ -284,6 +284,7 @@ func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 		// Invalid ID format
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(errID))
 	}
+
 	menuItem, err := h.service.GetMenuItemById(objID)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
