@@ -1,18 +1,51 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, SafeAreaView } from "react-native";
-import { IconSymbol } from "../components/ui/IconSymbol";
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, SafeAreaView, Alert } from "react-native";
+import { IconSymbol } from "@/components/ui/IconSymbol";
 import { ProgressBar } from "./ProgressBar";
 import { EmojiTagsGrid } from "./EmojiTagsGrid";
 import { InteractiveStars } from "./ui/StarReview";
+import { createReview } from "@/api/review";
+import useAuthStore from "@/auth/store";
 
-export function MyReview() {
+interface MyReviewProps {
+    restaurantId?: string;
+    menuItemName?: string;
+    dishImageUrl?: string;
+    onClose: () => void;
+}
+
+function generateValidObjectId() {
+    const timestamp = Math.floor(new Date().getTime() / 1000).toString(16);
+    const machineId = Math.floor(Math.random() * 16777216)
+        .toString(16)
+        .padStart(6, "0");
+    const processId = Math.floor(Math.random() * 65536)
+        .toString(16)
+        .padStart(4, "0");
+    const counter = Math.floor(Math.random() * 16777216)
+        .toString(16)
+        .padStart(6, "0");
+
+    return timestamp + machineId + processId + counter;
+}
+
+export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: MyReviewProps) {
     const [step, setStep] = useState(1);
+    const user = useAuthStore((state) => state.userId);
 
     // Track star ratings
     const [tasteRating, setTasteRating] = useState(0);
     const [portionRating, setPortionRating] = useState(0);
     const [valueRating, setValueRating] = useState(0);
+    const [overallRating, setOverallRating] = useState(0);
+    const [tasteRatingText, setTasteRatingText] = useState("");
+    const [portionRatingText, setPortionRatingText] = useState("");
+    const [valueRatingText, setValueRatingText] = useState("");
     const [overallText, setOverallText] = useState("");
+    const [returnRating, setReturnRating] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Get the user from Context
 
     // Example tag data for taste/portion/value
     const [tasteTags, setTasteTags] = useState([
@@ -67,20 +100,85 @@ export function MyReview() {
         }
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (step < 4) {
             setStep((prev) => prev + 1);
         } else {
-            // Submit logic here
-            console.log("Submit review!");
+            try {
+                setIsSubmitting(true);
+
+                // For testing: Use hardcoded valid MongoDB ObjectIDs
+                // These are examples - they follow the MongoDB ObjectID format (24 hex chars)
+                const validUserId = "67e300c043b432515e2dd8bb";
+                const validRestaurantId = "64f5a95cc7330b78d33265f1";
+
+                // Generate a fresh ObjectID if needed (for testing only)
+                // const testObjectId = generateValidObjectId();
+
+                // Collect all the selected tags
+                const selectedTasteTags = tasteTags.filter((tag) => tag.selected).map((tag) => tag.text);
+                const selectedPortionTags = portionTags.filter((tag) => tag.selected).map((tag) => tag.text);
+                const selectedValueTags = valueTags.filter((tag) => tag.selected).map((tag) => tag.text);
+
+                // Combine tags for content enhancement
+                let tagDescription = "";
+                if (selectedTasteTags.length > 0) {
+                    tagDescription += `Taste: ${selectedTasteTags.join(", ")}. `;
+                }
+                if (selectedPortionTags.length > 0) {
+                    tagDescription += `Portion: ${selectedPortionTags.join(", ")}. `;
+                }
+                if (selectedValueTags.length > 0) {
+                    tagDescription += `Value: ${selectedValueTags.join(", ")}. `;
+                }
+
+                // Combine user text with tags
+                const finalContent = overallText + (tagDescription ? "\n\n" + tagDescription : "");
+
+                // Create review payload with valid ObjectIds - matching backend API structure
+                const reviewData = {
+                    rating: {
+                        portion: portionRating,
+                        taste: tasteRating,
+                        value: valueRating,
+                        overall: overallRating,
+                        return: overallRating >= 3,
+                    },
+                    picture:
+                        dishImageUrl ||
+                        "https://plus.unsplash.com/premium_photo-1661771822467-e516ca075314?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZGlzaHxlbnwwfHwwfHx8MA%3D%3D",
+                    content: finalContent,
+                    reviewer: {
+                        _id: validUserId, // Use the valid ObjectID here
+                        pfp: "https://i.pinimg.com/736x/b1/6d/2e/b16d2e5e6a0db39e60ac17d0f1865ef8.jpg",
+                        username: "",
+                    },
+                    menuItem: "64f5a95cc7330b78d33265f2", // Use a valid ObjectID for menu item
+                    restaurantId: validRestaurantId, // Use the valid ObjectID here
+                };
+
+                console.log("Submitting review:", JSON.stringify(reviewData));
+
+                await createReview(reviewData);
+                Alert.alert("Success", "Your review has been submitted!");
+                onClose();
+            } catch (error) {
+                // ... error handling (keep as is)
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     };
 
     const handleBack = () => {
-        // Placeholder navigation back action
-        // In your app, you might do something like:
-        // navigation.goBack();
-        console.log("Go back pressed!");
+        //console.log("Go back pressed!");
+        if (step > 1) {
+            setStep((prev) => prev - 1);
+        } else {
+            if (onClose && typeof onClose === "function") {
+                onClose();
+            }
+        }
     };
     // Step content configuration
     const stepContent = [
@@ -113,6 +211,9 @@ export function MyReview() {
             return (
                 <View style={styles.stepContainer}>
                     <Text style={styles.stepTitle}>Overall rating or feedback?</Text>
+                    <View style={styles.starsContainer}>
+                        <InteractiveStars rating={overallRating} onChange={setOverallRating} />
+                    </View>
                     <TextInput
                         style={styles.textInput}
                         placeholder="Let others know what you thought..."
@@ -151,7 +252,6 @@ export function MyReview() {
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>My Review</Text>
             </View>
-
             {/* Progress Bar */}
             <View style={styles.progressContainer}>
                 <ProgressBar progress={getProgressValue()} />
@@ -161,7 +261,9 @@ export function MyReview() {
             <View style={styles.imageContainer}>
                 <Image
                     source={{
-                        uri: "https://s3-alpha-sig.figma.com/img/296c/9b5f/e826d9e1747de9010166f3934746adf1?Expires=1743984000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Gr9ywhylTdZqfzVKJYh1XvcRQk9wD284~bcNy-jZ15dxG~abTxWe9CrFEfy5CvDSwyFzlPcuSGBY7PB5xzJbA67Ig36cXUffXxCUsn6oJiJ~JJihfCY55QE3eS22DaPB2ZJ1cMI7vTQ5duqrA0gEf3fwEQxzGY9heTjrUEBZVg81XezecvSY6II2GDHix~W80NbpDKn9ecJlBcld08Z38-a5aB7XN~YtUKnKMsH2r5CLmT4mej6avtZsgaTnR3zb2V1I1XlRv57siEvNj03TWjnvwrjXMdgsrO4tHXn-UxQmMp~qHUBCebvxMBGTBFR-hFnmHwaIu8W2tp0CnLkMaA__",
+                        uri:
+                            dishImageUrl ||
+                            "https://s3-alpha-sig.figma.com/img/296c/9b5f/e826d9e1747de9010166f3934746adf1?Expires=1743984000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Gr9ywhylTdZqfzVKJYh1XvcRQk9wD284~bcNy-jZ15dxG~abTxWe9CrFEfy5CvDSwyFzlPcuSGBY7PB5xzJbA67Ig36cXUffXxCUsn6oJiJ~JJihfCY55QE3eS22DaPB2ZJ1cMI7vTQ5duqrA0gEf3fwEQxzGY9heTjrUEBZVg81XezecvSY6II2GDHix~W80NbpDKn9ecJlBcld08Z38-a5aB7XN~YtUKnKMsH2r5CLmT4mej6avtZsgaTnR3zb2V1I1XlRv57siEvNj03TWjnvwrjXMdgsrO4tHXn-UxQmMp~qHUBCebvxMBGTBFR-hFnmHwaIu8W2tp0CnLkMaA__",
                     }}
                     style={styles.dishImage}
                 />
@@ -171,7 +273,7 @@ export function MyReview() {
             {renderStep()}
 
             {/* Next / Submit button */}
-            <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+            <TouchableOpacity style={styles.nextButton} onPress={handleNext} disabled={isSubmitting}>
                 <Text style={styles.nextButtonText}>{step === 4 ? "Submit" : "Next"}</Text>
             </TouchableOpacity>
         </SafeAreaView>

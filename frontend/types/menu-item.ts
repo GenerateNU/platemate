@@ -1,4 +1,5 @@
 export type TMenuItem = {
+    id: string;
     name: string;
     picture: string;
     avgRating: {
@@ -17,6 +18,7 @@ export type TMenuItem = {
     tags: string[];
     dietaryRestrictions: string[];
     restaurantId: string;
+    restaurantName: string;
 };
 
 export type TMenuItemMetrics = {

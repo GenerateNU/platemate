@@ -2,38 +2,18 @@ import { ThemedView } from "@/components/themed/ThemedView";
 import { ScrollView, StyleSheet, View, Image, Pressable } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarRating } from "@/components/ui/StarReview";
-import React from "react";
+import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
-// import ReviewDetail from "@/components/review/ReviewDetail";
 import { ThemedTag } from "@/components/themed/ThemedTag";
-// import { RestaurantTags } from "@/components/RestaurantTags";
-import { StatCard } from "@/components/Cards/StatCard";
 import { ReviewButton } from "@/components/review/ReviewButton";
+import { ReviewFlow } from "@/components/review/ReviewFlow";
 import HighlightCard from "@/components/restaurant/HighlightCard";
 import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
 
-// Temporary icons - you may want to create proper icons
-const FriendsIcon = () => (
-    <View style={styles.statsIcon}>
-        <ThemedText>👥</ThemedText>
-    </View>
-);
-
-const StarsIcon = () => (
-    <View style={styles.statsIcon}>
-        <ThemedText>⭐</ThemedText>
-    </View>
-);
-
-const SatisfactionIcon = () => (
-    <View style={styles.statsIcon}>
-        <ThemedText>😊</ThemedText>
-    </View>
-);
-
 export default function MenuItemView() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
+    const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
     const dishTags = [
         {
             title: "Gluten-free",
@@ -162,10 +142,24 @@ export default function MenuItemView() {
                         tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
                         rating={4}
                         content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
+                        authorName={"First Last"}
+                        authorId={""}
+                        authorUsername={"username"}
+                        authorAvatar={"https://placehold.co/600x400/png?text=P"}
                     />
                 </ThemedView>
             </ScrollView>
-            <ReviewButton onPress={() => console.log("Open review flow")} />
+            <ReviewButton
+                restaurantId="pad-thai-kitchen"
+                menuItemName="Pad Thai"
+                onPress={() => setIsReviewModalVisible(true)}
+            />
+            <ReviewFlow
+                isVisible={isReviewModalVisible}
+                onClose={() => setIsReviewModalVisible(false)}
+                restaurantId="pad-thai-kitchen"
+                menuItemName="Pad Thai"
+            />
         </>
     );
 }

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { useUser } from "@/context/user-context";
+import React, { useEffect, useRef, useState } from "react";
+import { DEFAULT_PROFILE_PIC, useUser } from "@/context/user-context";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ActivityIndicator, Dimensions, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
@@ -13,12 +13,15 @@ import { router } from "expo-router";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
+import type { TReview } from "@/types/review";
+import { makeRequest } from "@/api/base";
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = () => {
     const { user, isLoading, error, fetchUserProfile } = useUser();
     const [searchText, setSearchText] = React.useState("");
+    const [userReviews, setUserReviews] = useState<TReview[]>([]);
 
     const editProfileRef = useRef<{ open: () => void; close: () => void }>(null);
 
@@ -27,6 +30,20 @@ const ProfileScreen = () => {
             console.log("User data not available, fetching...");
             fetchUserProfile().then(() => {});
         }
+        const fetchReviews = async () => {
+            if (!user?.id) return;
+
+            try {
+                const reviewData = await makeRequest(`/api/v1/review/user/${user.id}`, "GET");
+                if (!reviewData) {
+                    throw new Error(reviewData.message || "Failed to retrieve user reviews");
+                }
+                setUserReviews(reviewData);
+            } catch (err) {
+                console.error("Failed to fetch user by ID", err);
+            }
+        };
+        fetchReviews();
     }, [user, isLoading]);
 
     if (isLoading) {
@@ -59,29 +76,44 @@ const ProfileScreen = () => {
                 <Ionicons name="menu" size={28} color="#333" />
             </TouchableOpacity>
             <ScrollView style={styles.container}>
-                <ProfileAvatar url={user.profile_picture || "https://shorturl.at/Dhcvo"} />
+                <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
                 <ProfileIdentity name={user.name} username={user.username} />
-                <ProfileMetrics numFriends={100} numReviews={100} averageRating={4.6} />
+                <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
                 <EditProfileButton text={"Edit profile"} onPress={() => router.navigate("/profile/settings")} />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
-                        style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
+                        style={{
+                            fontSize: 24,
+                            fontWeight: "bold",
+                            fontFamily: "Source Sans 3",
+                            marginBottom: 12,
+                            lineHeight: 28,
+                        }}>
                         {user.name.split(" ")[0]}'s Food Journal
                     </ThemedText>
-                    {/* Made a search box with a filter/sort component as its own component */}
+
                     <SearchBoxFilter
                         placeholder="Search my reviews"
-                        recent={true}
+                        name={user.username}
+                        recent={false}
                         onSubmit={() => console.log("submit")}
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
                     />
-                    <ReviewPreview
-                        plateName="Ceasar Salad"
-                        restaurantName="Luigi's"
-                        tags={["Vegan", "Green", "Healthy", "Low Cal"]}
-                        rating={4.5}
-                        content={"It was pretty good."}></ReviewPreview>
+                    {userReviews.map((review) => (
+                        <ReviewPreview
+                            key={review._id}
+                            plateName={review.menuItemName}
+                            restaurantName={review.restaurantName}
+                            tags={[]}
+                            rating={review.rating.overall}
+                            content={review.content}
+                            authorId={user.id}
+                            authorName={user.name}
+                            authorUsername={user.username}
+                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
+                        />
+                    ))}
                 </ThemedView>
             </ScrollView>
             <EditProfileSheet user={user} ref={editProfileRef} />

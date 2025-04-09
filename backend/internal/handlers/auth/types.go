@@ -30,13 +30,20 @@ type User struct {
 	Name              string               `bson:"name"`
 	Email             string               `bson:"email"`
 	Password          string               `bson:"password"`
+	Username          string               `bson:"username"`
 	FollowingCount    int                  `bson:"followingCount"`
-	FollowersCount    int                  `bson:"followersCount"`
+	FollowersCount    int                  `bson:"followerCount"`
 	ProfilePictureURL string               `bson:"profile_picture"`
-	RefreshToken      string               `bson:"refresh_token"`
-	TokenUsed         bool                 `bson:"token_used"`
 	Reviews           []primitive.ObjectID `bson:"reviews"`
 	Count             int                  `bson:"count"`
+	RefreshToken      string               `bson:"refresh_token"`
+	TokenUsed         bool                 `bson:"token_used"`
+	Preferences       []string             `bson:"preferences"`
+	Restrictions      []string             `bson:"restrictions"`
+	Following         []primitive.ObjectID `bson:"following"`
+	Followers         []primitive.ObjectID `bson:"followers"`
+	TasteProfile      []float64            `bson:"taste_profile"`
+	AverageRating     float64              `bson:"averageRating"`
 }
 
 type LoginRequest struct {
@@ -45,9 +52,21 @@ type LoginRequest struct {
 }
 
 type RegisterRequest struct {
-	Name     string `json:"name" validate:"required"`
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=8"`
+	Name           string    `json:"name" validate:"required"`
+	Email          string    `json:"email" validate:"required,email"`
+	Password       string    `json:"password" validate:"required,min=8"`
+	Username       string    `json:"username" validate:"required"`
+	FollowingCount int       `json:"followingCount"`
+	FollowersCount int       `json:"followerCount"`
+	ProfilePicture string    `json:"profile_picture"`
+	Count          int       `json:"count"`
+	RefreshToken   string    `json:"refresh_token"`
+	TokenUsed      bool      `json:"token_used"`
+	Preferences    []string  `json:"preferences"`
+	Restrictions   []string  `json:"restrictions"`
+	Following      []string  `json:"following"`
+	Followers      []string  `json:"followers"`
+	TasteProfile   []float64 `json:"taste_profile"`
 }
 
 type RefreshRequestBody struct {
