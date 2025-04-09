@@ -34,6 +34,7 @@ export const sharedOnboardingStyles = StyleSheet.create({
         paddingHorizontal: 20,
         fontSize: 13,
         color: "#000000",
+        fontFamily: "Nunito",
     },
     button: {
         height: 48,
@@ -46,6 +47,7 @@ export const sharedOnboardingStyles = StyleSheet.create({
         color: "#000000",
         fontSize: 16,
         fontWeight: "600",
+        fontFamily: "Nunito",
     },
     inputContainer: {
         gap: 16,
@@ -59,9 +61,11 @@ export const sharedOnboardingStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
+        fontFamily: "Nunito",
     },
     linkText: {
         fontSize: 13,
+        fontFamily: "Nunito",
     },
     backButton: {
         position: "absolute",

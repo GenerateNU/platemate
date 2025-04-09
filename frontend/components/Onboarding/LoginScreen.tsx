@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TextInput, TouchableOpacity, Image } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Button } from "../Button";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { sharedOnboardingStyles } from "./onboardingStyles";
-
-// TODO: Add logo/branding
 
 interface LoginScreenProps {
     onLogin: (email: string, password: string) => void;
@@ -25,6 +23,10 @@ export function LoginScreen({ onLogin, onNavigateToOnboarding }: LoginScreenProp
     return (
         <ThemedView style={[sharedOnboardingStyles.container]}>
             <View style={sharedOnboardingStyles.content}>
+                <View style={styles.logoContainer}>
+                    <Image source={require("@/assets/brand/wordmark.png")} style={styles.logo} resizeMode="contain" />
+                </View>
+
                 <View style={sharedOnboardingStyles.headerContainer}>
                     <ThemedText style={sharedOnboardingStyles.header}>Login to your account</ThemedText>
                 </View>
@@ -76,5 +78,14 @@ const styles = StyleSheet.create({
         color: "#FFCF0F",
         textDecorationLine: "underline",
         fontSize: 13,
+    },
+    logoContainer: {
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    logo: {
+        width: 264,
+        height: 130,
     },
 });

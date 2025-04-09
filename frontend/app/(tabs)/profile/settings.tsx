@@ -16,12 +16,10 @@ import { makeRequest } from "@/api/base";
 export default function SettingsScreen() {
     const insets = useSafeAreaInsets();
     const router = useRouter();
-    const { email, userId } = useAuthStore();
+    const { email, userId, logout } = useAuthStore();
 
     // const userIdStr = JSON.stringify(userId);
     console.log(userId, email);
-
-    const { logout } = useAuthStore();
 
     const dietaryOptions: Record<string, string> = {
         vegetarian: "Vegetarian",
@@ -142,9 +140,9 @@ export default function SettingsScreen() {
         ],
     };
 
-    const handleLogOut = () => {
-        logout();
-        router.replace("/(onboarding)");
+    const handleLogOut = async () => {
+        await logout();
+        router.push("/(onboarding)");
     };
 
     return (
