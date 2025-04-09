@@ -24,12 +24,12 @@ const styles = StyleSheet.create({
         gap: 4,
         borderRadius: 50,
         marginRight: 8,
+        paddingVertical: 2,
     },
     tagText: {
         fontSize: 14,
         paddingHorizontal: 12,
-        paddingVertical: 4,
-        fontWeight: "500",
-        fontFamily: "Outfit",
+        fontWeight: "600",
+        fontFamily: "Nunito",
     },
 });

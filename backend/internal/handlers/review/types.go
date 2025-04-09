@@ -26,6 +26,8 @@ type ReviewDocument struct {
 	Comments     []CommentDocument  `bson:"comments" json:"comments"`
 	MenuItem     primitive.ObjectID `bson:"menuItem" json:"menuItem"`
 	RestaurantID primitive.ObjectID `bson:"restaurantId" json:"restaurantId"`
+	MenuItemName string 	`bson:"menuitemName" json:"menuItemName"`
+	RestuarantName string 	`bson:"restaurantName" json:"restaurantName"`
 }
 
 type TopReviewDocument struct {
@@ -40,6 +42,8 @@ type TopReviewDocument struct {
 	RestaurantID primitive.ObjectID `bson:"restaurantId" json:"restaurantId"`
 	AverageRate  float64            `bson:"averageRate" json:"averageRate"`
 	Items        []MenuItemDocument `bson:"items" json:"items"`
+	MenuItemName string 	`bson:"menuitemName" json:"menuItemName"`
+	RestuarantName string 	`bson:"restaurantName" json:"restaurantName"`
 }
 
 type MenuItemDocument struct {
@@ -53,6 +57,7 @@ type MenuItemDocument struct {
 	Tags                []string             `bson:"tags"`
 	DietaryRestrictions []string             `bson:"dietaryRestrictions"`
 	RestaurantID        primitive.ObjectID   `bson:"restaurantid"`
+	RestuarantName string 	`bson:"restaurantName" json:"restaurantName"`
 }
 
 type AvgRatingDocument struct {

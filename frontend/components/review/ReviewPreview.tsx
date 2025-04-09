@@ -36,9 +36,8 @@ const ReviewPreview = ({
     return (
         <View
             style={{
-                backgroundColor: "white",
                 borderColor: "lightgray",
-                borderWidth: 1,
+                backgroundColor: "#FAFAFA",
                 padding: 16,
                 flex: 1,
                 flexDirection: "column",
@@ -56,6 +55,7 @@ const ReviewPreview = ({
                         alignItems: "flex-start",
                         width: "100%",
                         paddingRight: 10,
+                        backgroundColor: "#fafafa",
                     }}>
                     <View style={{ flex: 1 }}>
                         <UserInfoRowBase
@@ -111,8 +111,8 @@ const ReviewPreview = ({
                         <ThemedTag
                             key={index}
                             title={tag}
-                            backgroundColor={"#E8F5E9"}
-                            textColor={"#2E7D32"}
+                            backgroundColor={"#FFCF0F"}
+                            textColor={"#000"}
                             textStyle={{ paddingVertical: 0, fontSize: 12 }}
                         />
                     ))}
@@ -123,14 +123,14 @@ const ReviewPreview = ({
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                 <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
-                    <TouchableOpacity>
-                        <Entypo name="arrow-bold-up" size={24} color="black" />
+                    {/* <TouchableOpacity>
+                        <Entypo name="arrow-up" size={24} color="gray" />
                     </TouchableOpacity>
                     <ThemedText type="default">123</ThemedText>
                     <TouchableOpacity>
-                        <Entypo name="arrow-bold-down" size={24} color="black" />
+                        <Entypo name="arrow-down" size={24} color="gray" />
                     </TouchableOpacity>
-                    <ThemedText type="default">0</ThemedText>
+                    <ThemedText type="default">0</ThemedText> */}
                 </View>
                 <View>
                     <TouchableOpacity>

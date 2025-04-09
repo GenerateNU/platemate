@@ -45,6 +45,8 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
     const [returnRating, setReturnRating] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Get the user from Context
+
     // Example tag data for taste/portion/value
     const [tasteTags, setTasteTags] = useState([
         { id: "t1", emoji: "🌶️", text: "Spicy", selected: false },
@@ -142,7 +144,9 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                         overall: overallRating,
                         return: overallRating >= 3,
                     },
-                    picture: dishImageUrl || "",
+                    picture:
+                        dishImageUrl ||
+                        "https://plus.unsplash.com/premium_photo-1661771822467-e516ca075314?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZGlzaHxlbnwwfHwwfHx8MA%3D%3D",
                     content: finalContent,
                     reviewer: {
                         _id: validUserId, // Use the valid ObjectID here
@@ -248,7 +252,6 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>My Review</Text>
             </View>
-
             {/* Progress Bar */}
             <View style={styles.progressContainer}>
                 <ProgressBar progress={getProgressValue()} />

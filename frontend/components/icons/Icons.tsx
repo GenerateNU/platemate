@@ -154,14 +154,14 @@ export const ChevronLeft = ({ width = 24, height = 24, color = "black" }) => {
     );
 };
 
-export const StarIcon = ({ width = 12, height = 12, color = "#fc0", strokeWidth = 0.8, filled = false, ...props }) => {
+export const StarIcon = ({ width = 12, height = 12, color = "#fc0", strokeWidth = 0.4, filled = false, ...props }) => {
     return (
         <Svg width={width} height={height} viewBox="0 0 12 12" fill="none" {...props}>
             <Path
                 d="M6.83227 5.11626L6.91845 5.4H7.215H9.75247L7.6824 6.87958L7.44749 7.04748L7.5329 7.32331L8.33943 9.92825L6.24181 8.33637L5.9998 8.15271L5.75794 8.33655L3.66606 9.92665L4.4721 7.32331L4.55757 7.04726L4.32235 6.8794L2.24917 5.4H4.785H5.08155L5.16773 5.11626L6 2.37628L6.83227 5.11626Z"
                 stroke={filled ? color : "black"}
                 strokeWidth={strokeWidth}
-                fill={filled ? color : "none"}
+                fill={filled ? color : "white"}
             />
         </Svg>
     );

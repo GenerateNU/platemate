@@ -12,7 +12,6 @@ export interface StarReviewProps {
     showAvgRating?: boolean; // Controls display of the average rating number
     showNumRatings?: boolean; // Controls display of the number of ratings
     showNumRatingsText?: boolean; // Controls display of "reviews" text
-    starDim?: number; // size of the star
 }
 
 export interface InteractiveStarsProps {
@@ -26,7 +25,6 @@ export interface InteractiveStarsProps {
 interface StarProps {
     avgRating: number;
     full?: boolean;
-    starDim?: number; // size of the star
 }
 
 export function StarRating({
@@ -36,12 +34,11 @@ export function StarRating({
     showAvgRating = true,
     showNumRatings = true,
     showNumRatingsText = true,
-    starDim = 16, // default size of the star
 }: StarReviewProps) {
     return (
         <View style={styles.container}>
             {avgRating > 0 && showAvgRating && <Text style={styles.text}>{avgRating.toFixed(1)}</Text>}
-            {avgRating > 0 && <Stars avgRating={avgRating} full={full} starDim={starDim} />}
+            {avgRating > 0 && <Stars avgRating={avgRating} full={full} />}
             {numRatings > 0 && showNumRatings && (
                 <Text style={styles.text}>
                     ({numRatings}
@@ -52,19 +49,20 @@ export function StarRating({
     );
 }
 
-export function Stars({ avgRating, full = true, starDim = 16 }: StarProps) {
+export function Stars({ avgRating, full = true }: StarProps) {
     const stars: React.JSX.Element[] = [];
     const maxStars = full ? 5 : 1;
+    const STAR_SIZE = 32;
     if (full) {
         for (let i = 0; i < maxStars; i++) {
             if (i < Math.floor(avgRating)) {
-                stars.push(<StarIcon key={i} width={starDim} height={starDim} filled={true} />);
+                stars.push(<StarIcon key={i} width={STAR_SIZE} height={STAR_SIZE} filled={true} />);
             } else {
-                stars.push(<StarIcon key={i} width={starDim} height={starDim} filled={true} />);
+                stars.push(<StarIcon key={i} width={STAR_SIZE} height={STAR_SIZE} filled={false} />);
             }
         }
     } else {
-        stars.push(<StarIcon key={0} width={starDim} height={starDim} filled={false} />);
+        stars.push(<StarIcon key={0} width={STAR_SIZE} height={STAR_SIZE} filled={false} />);
     }
 
     return <View style={styles.starsContainer}>{stars}</View>;
@@ -73,9 +71,9 @@ export function Stars({ avgRating, full = true, starDim = 16 }: StarProps) {
 export function InteractiveStars({
     rating,
     onChange,
-    starSize = 24,
+    starSize = 48,
     activeColor = "#F7B418", // default yellow for interactive instance
-    inactiveColor = "#FFFFFF", // default white for interactive instance
+    inactiveColor = "#000000", // default white for interactive instance
 }: InteractiveStarsProps) {
     const maxStars = 5;
     return (
