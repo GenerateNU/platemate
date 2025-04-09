@@ -40,13 +40,13 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#000000",
         textAlign: "center",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     subtitle: {
         fontSize: 12,
         color: "#666666",
         textAlign: "center",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
 });
 

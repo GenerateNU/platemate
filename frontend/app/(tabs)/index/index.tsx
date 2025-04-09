@@ -45,8 +45,8 @@ export default function Feed() {
     const fetchData = useCallback(async () => {
         try {
             const [reviewsData, menuItemsData] = await Promise.all([
-                getReviews(1, 10),
-                getMenuItems({ page: 1, limit: 10 }),
+                getReviews(2, 10),
+                getMenuItems({ page: 2, limit: 10 }),
             ]);
 
             const fetchedReviews = reviewsData.data as TReview[];
@@ -93,8 +93,8 @@ export default function Feed() {
                 return (
                     <TouchableOpacity onPress={() => router.push(`/(review)/${review._id}`)}>
                         <ReviewPreview
-                            plateName={review.menuItem || "Unknown Item"}
-                            restaurantName={review.restaurantId || "Unknown Restaurant"}
+                            plateName={review.menuItemName || "Unknown Item"}
+                            restaurantName={review.restaurantName || "Unknown Restaurant"}
                             rating={review.rating?.overall || 0}
                             tags={["Warm", "Tender", "Sweet"]}
                             content={review.content || ""}
@@ -108,16 +108,15 @@ export default function Feed() {
             } else if (item.type === "menuItem") {
                 const menuItem = item.data as TMenuItem;
                 return (
-                    <TouchableOpacity onPress={() => router.push(`/(menuItem)/${menuItem.id}`)}>
-                        <MenuItemPreview
-                            plateName={menuItem.name || "Unknown Item"}
-                            content={menuItem.description || ""}
-                            tags={menuItem.tags || []}
-                            picture={menuItem.picture || "https://placehold.co/300x200"}
-                            rating={0}
-                            restaurantName={menuItem.restaurantId || "Restaurant Name"}
-                        />
-                    </TouchableOpacity>
+                    <MenuItemPreview
+                        id={menuItem.id}
+                        plateName={menuItem.name || "Unknown Item"}
+                        content={menuItem.description || ""}
+                        tags={menuItem.tags || []}
+                        picture={menuItem.picture || "https://placehold.co/300x200"}
+                        rating={menuItem.avgRating?.overall ?? 0}
+                        restaurantName={menuItem.restaurantName || "Restaurant Name"}
+                    />
                 );
             }
             return null;

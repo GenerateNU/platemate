@@ -49,7 +49,7 @@ const ProfileScreen = () => {
     if (isLoading) {
         return (
             <ThemedView style={styles.centerContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#ffcf0f" />
                 <ThemedText style={{ marginTop: 10 }}>Loading profile...</ThemedText>
             </ThemedView>
         );
@@ -94,7 +94,8 @@ const ProfileScreen = () => {
 
                     <SearchBoxFilter
                         placeholder="Search my reviews"
-                        recent={true}
+                        name={user.username}
+                        recent={false}
                         onSubmit={() => console.log("submit")}
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
@@ -102,15 +103,16 @@ const ProfileScreen = () => {
                     {userReviews.map((review) => (
                         <ReviewPreview
                             key={review._id}
-                            plateName={review.menuItem}
-                            restaurantName={review.restaurantId}
+                            plateName={review.menuItemName}
+                            restaurantName={review.restaurantName}
                             tags={[]}
                             rating={review.rating.overall}
                             content={review.content}
                             authorId={user.id}
                             authorName={user.name}
                             authorUsername={user.username}
-                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}></ReviewPreview>
+                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
+                        />
                     ))}
                 </ThemedView>
             </ScrollView>
@@ -131,8 +133,9 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        paddingHorizontal: 24,
+        paddingHorizontal: 16,
         backgroundColor: "transparent",
+        paddingTop: Dimensions.get("screen").height * 0.025,
     },
     centerContainer: {
         flex: 1,

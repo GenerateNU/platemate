@@ -2,6 +2,7 @@ package review
 
 import (
 	"context"
+	"log/slog"
 
 	"go.mongodb.org/mongo-driver/mongo/options"
 
@@ -53,12 +54,53 @@ func (s *Service) GetReviews(page int, limit int) ([]ReviewDocument, int64, erro
 }
 
 // GetReviewByID returns a single review document by its ObjectID
-func (s *Service) GetReviewByID(id primitive.ObjectID) (*ReviewDocument, error) {
+func (s *Service) GetReviewByID(id primitive.ObjectID, userID *primitive.ObjectID) (*ReviewDocument, error) {
 	ctx := context.Background()
 	filter := bson.M{"_id": id}
-
+	var err error
 	var review ReviewDocument
-	err := s.reviews.FindOne(ctx, filter).Decode(&review)
+	if userID != nil {
+		// add the like status to the user
+		pipeline := bson.A{
+			bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}},
+			bson.D{
+				{Key: "$set",
+					Value: bson.D{
+						{Key: "like",
+							Value: bson.D{
+								{Key: "$in",
+									Value: bson.A{
+										userID,
+										"$likers",
+									},
+								},
+							},
+						},
+						{Key: "dislike",
+							Value: bson.D{
+								{Key: "$in",
+									Value: bson.A{
+										userID,
+										"$dislikers",
+									},
+								},
+							},
+						},
+					},
+				},
+			}}
+		cursor, err := s.reviews.Aggregate(ctx, pipeline)
+		if err != nil {
+			slog.Error("Error finding review", "error", err)
+			return nil, err
+		}
+		defer cursor.Close(ctx)
+		cursor.Next(ctx)
+		_ = cursor.Decode(&review)
+	} else {
+		err = s.reviews.FindOne(ctx, filter).Decode(&review)
+	}
+
 	if err == mongo.ErrNoDocuments {
 		return nil, mongo.ErrNoDocuments
 	} else if err != nil {
@@ -106,7 +148,7 @@ func (s *Service) UpdateReview(id primitive.ObjectID, updated ReviewDocument) er
 
 	// Keep original timestamp if not updating
 	if updated.Timestamp.IsZero() {
-		original, err := s.GetReviewByID(id)
+		original, err := s.GetReviewByID(id, nil)
 		if err != nil {
 			return err
 		}
@@ -172,7 +214,7 @@ func (s *Service) DeleteReview(id primitive.ObjectID) error {
 	ctx := context.Background()
 	filter := bson.M{"_id": id}
 	// First, get the review document to remove its ID from the menu item
-	deletedReview, errGet := s.GetReviewByID(id)
+	deletedReview, errGet := s.GetReviewByID(id, nil)
 	if errGet != nil {
 		return errGet
 	}
@@ -508,4 +550,63 @@ func (s *Service) GetTopReviews(userID string) ([]TopReviewDocument, error) {
 	}
 
 	return results, nil
+}
+
+func (s *Service) Vote(reviewID primitive.ObjectID, userID primitive.ObjectID, like int) (string, error) {
+	ctx := context.Background()
+	filter := bson.M{"_id": reviewID}
+	// if we already disliked, we should pull oursevlves
+
+	res := s.reviews.FindOne(ctx, filter)
+	if res.Err() != nil {
+		return "NEUTRAL", res.Err()
+	}
+
+	var reviewDoc ReviewDocument
+	err := res.Decode(&reviewDoc)
+	if err != nil {
+		return "NEUTRAL", err
+	}
+
+	var homeField string = "likers"
+	var finalVote string = "LIKE"
+
+	if like == -1 {
+		homeField = "dislikers"
+		finalVote = "DISLIKE"
+	}
+
+	var update bson.M = bson.M{"$inc": bson.M{"likes": like}, "$push": bson.M{homeField: userID}}
+	// check if we liked
+	for _, liker := range reviewDoc.Likers {
+		if liker == userID {
+			if like == 1 {
+				finalVote = "NEUTRAL"
+				update = bson.M{"$inc": bson.M{"likes": -1}, "$pull": bson.M{"likers": userID}}
+			} else {
+				finalVote = "DISLIKE"
+				update = bson.M{
+					"$inc":  bson.M{"likes": -2},
+					"$pull": bson.M{"likers": userID},
+					"$push": bson.M{"dislikers": userID},
+				}
+			}
+		}
+	}
+	// check if we disliked
+	for _, disliker := range reviewDoc.Dislikers {
+		if disliker == userID {
+			if like == -1 {
+				finalVote = "NEUTRAL"
+				update = bson.M{"$inc": bson.M{"likes": 1}, "$pull": bson.M{"dislikers": userID}}
+			} else {
+
+				finalVote = "LIKE"
+				update = bson.M{"$inc": bson.M{"likes": 2}, "$pull": bson.M{"dislikers": userID}, "$push": bson.M{"likers": userID}}
+			}
+		}
+	}
+
+	_, err = s.reviews.UpdateOne(ctx, filter, update)
+	return finalVote, err
 }

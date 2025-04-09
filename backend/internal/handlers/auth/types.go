@@ -43,6 +43,7 @@ type User struct {
 	Following         []primitive.ObjectID `bson:"following"`
 	Followers         []primitive.ObjectID `bson:"followers"`
 	TasteProfile      []float64            `bson:"taste_profile"`
+	AverageRating     float64              `bson:"averageRating"`
 }
 
 type LoginRequest struct {

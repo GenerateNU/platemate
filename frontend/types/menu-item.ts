@@ -17,5 +17,6 @@ export type TMenuItem = {
     };
     tags: string[];
     dietaryRestrictions: string[];
-    restaurantId: string;
+    restaurantID: string;
+    restaurantName: string;
 };

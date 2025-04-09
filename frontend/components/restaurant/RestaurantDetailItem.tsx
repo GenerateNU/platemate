@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 14,
         color: "black",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontWeight: 500,
     },
 });
