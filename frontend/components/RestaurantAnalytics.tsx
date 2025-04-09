@@ -114,7 +114,7 @@ const RestaurantAnalytics = () => {
     }
 
     return (
-        <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
+        <ThemedView style={[styles.container, { paddingTop: insets.top, marginBottom: 32 }]}>
             <ScrollView
                 style={styles.scrollContainer}
                 contentContainerStyle={styles.contentContainer}
@@ -225,13 +225,14 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     headerTitle: {
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 24,
         fontWeight: "bold",
         color: "#151619",
+        lineHeight: 32,
     },
     headerSubtitle: {
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 16,
         color: "#727272",
     },
@@ -263,15 +264,16 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     summaryCards: {
-        marginBottom: 24,
+        gap: 12,
+        marginBottom: 12,
     },
     summaryRow: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginBottom: 16,
+        gap: 12,
     },
     sectionTitle: {
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 18,
         fontWeight: "bold",
         color: "#151619",
@@ -304,14 +306,14 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     dishName: {
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 16,
         fontWeight: "600",
         color: "#151619",
         marginBottom: 4,
     },
     reviewText: {
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 14,
         color: "#727272",
     },
@@ -324,7 +326,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
     },
     ratingText: {
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 14,
         fontWeight: "bold",
         color: "#F7B418",
@@ -348,10 +350,10 @@ const styles = StyleSheet.create({
         borderRadius: 16,
     },
     dietaryTag: {
-        backgroundColor: "#E8F5E9", // Different color for dietary restrictions
+        backgroundColor: "#E8F5E9",
     },
     tagText: {
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 14,
         fontWeight: "500",
         color: "#151619",

@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useCallback, useContext } from "react";
-import { FlatList, ActivityIndicator, TouchableOpacity, RefreshControl, View } from "react-native";
+import { FlatList, ActivityIndicator, TouchableOpacity, RefreshControl, View, ScrollView } from "react-native";
 
 import { ThemedView } from "@/components/themed/ThemedView";
 import FeedTabs from "@/components/Feed/FeedTabs";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
-import { getMenuItems } from "@/api/menu-items";
+import { getMenuItems, getRandomMenuItems } from "@/api/menu-items";
 import { TMenuItem } from "@/types/menu-item";
 import { TReview } from "@/types/review";
 import { getReviews } from "@/api/reviews";
@@ -14,6 +14,7 @@ import { SearchBox } from "@/components/SearchBox";
 import { SearchIcon } from "@/components/icons/Icons";
 import { FilterContext } from "@/context/filter-context";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ThemedText } from "@/components/themed/ThemedText";
 
 // Define a type for our feed items
 type FeedItem = {
@@ -27,6 +28,8 @@ export default function Feed() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
+    const [reviews, setReviews] = useState<TReview[]>([]);
+    const [menuItems, setMenuItems] = useState<TMenuItem[]>([]);
 
     const insets = useSafeAreaInsets();
     const router = useRouter();
@@ -45,20 +48,18 @@ export default function Feed() {
     const fetchData = useCallback(async () => {
         try {
             const [reviewsData, menuItemsData] = await Promise.all([
-                getReviews(2, 10),
-                getMenuItems({ page: 2, limit: 10 }),
+                getReviews(2, 20),
+                getRandomMenuItems(20),
             ]);
 
             const fetchedReviews = reviewsData.data as TReview[];
             const fetchedMenuItems = menuItemsData as TMenuItem[];
 
-            // Create a new array of FeedItems
+            setReviews(fetchedReviews);
+            setMenuItems(fetchedMenuItems);
+
+            // Create a new array of FeedItems for the vertical list (now only menu items)
             const newFeedItems: FeedItem[] = [
-                ...fetchedReviews.map((review) => ({
-                    id: review._id || `review-${Math.random().toString(36).substr(2, 9)}`,
-                    type: "review" as const,
-                    data: review,
-                })),
                 ...fetchedMenuItems.map((menuItem) => ({
                     id: menuItem.id || `menuItem-${Math.random().toString(36).substr(2, 9)}`,
                     type: "menuItem" as const,
@@ -70,6 +71,8 @@ export default function Feed() {
         } catch (error) {
             console.error("Error fetching data:", error);
             setFeedItems([]);
+            setReviews([]);
+            setMenuItems([]);
         } finally {
             setLoading(false);
             setRefreshing(false);
@@ -88,24 +91,7 @@ export default function Feed() {
 
     const renderItem = useCallback(
         ({ item }: { item: FeedItem }) => {
-            if (item.type === "review") {
-                const review = item.data as TReview;
-                return (
-                    <TouchableOpacity onPress={() => router.push(`/(review)/${review._id}`)}>
-                        <ReviewPreview
-                            plateName={review.menuItemName || "Unknown Item"}
-                            restaurantName={review.restaurantName || "Unknown Restaurant"}
-                            rating={review.rating?.overall || 0}
-                            tags={["Warm", "Tender", "Sweet"]}
-                            content={review.content || ""}
-                            authorName={review.reviewer?.id || "Anonymous"}
-                            authorUsername={review.reviewer?.username || "user"}
-                            authorAvatar={review.reviewer?.pfp || "https://placehold.co/100x100"}
-                            authorId={review.reviewer?.id || "unknown"}
-                        />
-                    </TouchableOpacity>
-                );
-            } else if (item.type === "menuItem") {
+            if (item.type === "menuItem") {
                 const menuItem = item.data as TMenuItem;
                 return (
                     <MenuItemPreview
@@ -124,13 +110,60 @@ export default function Feed() {
         [router],
     );
 
+    const renderReviewItem = useCallback(
+        (review: TReview) => {
+            return (
+                <TouchableOpacity
+                    key={review._id}
+                    onPress={() => router.push(`/(review)/${review._id}`)}
+                    style={{ width: 300, marginRight: 16 }}
+                >
+                    <ReviewPreview
+                        plateName={review.menuItemName || "Unknown Item"}
+                        restaurantName={review.restaurantName || "Unknown Restaurant"}
+                        rating={review.rating?.overall || 0}
+                        tags={["Warm", "Tender", "Sweet"]}
+                        content={review.content || ""}
+                        authorName={review.reviewer.name || "Anonymous"}
+                        authorUsername={review.reviewer?.username || "user"}
+                        authorAvatar={review.reviewer?.pfp || "https://placehold.co/100x100"}
+                        authorId={review.reviewer?.id || "unknown"}
+                    />
+                </TouchableOpacity>
+            );
+        },
+        [router],
+    );
+
     const ListHeaderComponent = useCallback(
         () => (
-            <ThemedView style={{ alignItems: "center", paddingHorizontal: 8, paddingBottom: 12, gap: 12 }}>
+            <ThemedView style={{ width: '100%', alignItems: "center", paddingBottom: 12, gap: 4 }}>
                 <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
+
+                <ThemedView style={{ width: '100%', marginVertical: 20 }}>
+                    <ThemedView style={{ paddingBottom: 12, paddingHorizontal: 8 }}>
+                        <ThemedText style={{ fontWeight: 'bold', fontSize: 20 }}>Reviews for you</ThemedText>
+                    </ThemedView>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{ paddingLeft: 8, paddingRight: 24 }}
+                    >
+                        {reviews.length > 0 ? (
+                            reviews.map(renderReviewItem)
+                        ) : (
+                            <ThemedView style={{ padding: 16, alignItems: 'center', justifyContent: 'center' }}>
+                                <ThemedView>No reviews available</ThemedView>
+                            </ThemedView>
+                        )}
+                    </ScrollView>
+                </ThemedView>
+                <ThemedView style={{ paddingHorizontal: 8, alignSelf: "flex-start" }}>
+                    <ThemedText style={{ fontWeight: 'bold', fontSize: 20 }}>Your friends ate</ThemedText>
+                </ThemedView>
             </ThemedView>
         ),
-        [activeTab],
+        [activeTab, reviews, renderReviewItem],
     );
 
     const keyExtractor = useCallback((item: FeedItem) => item.id, []);

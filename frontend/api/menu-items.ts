@@ -37,3 +37,7 @@ export const getMenuItemById = async (id: string): Promise<TMenuItem> => {
 export const getRestaurantMenuItemsMetrics = async (restaurantId: string): Promise<TRestaurantMenuItemsMetrics> => {
     return await makeRequest(`/api/v1/menu-items/restaurant/${restaurantId}/metrics`, "GET");
 };
+
+export const getRandomMenuItems = async (limit: number): Promise<TMenuItem[]> => {
+    return await makeRequest(`/api/v1/menu-items/random?limit=${limit}`, "GET");
+}

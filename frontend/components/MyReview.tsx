@@ -301,6 +301,7 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 20,
         fontWeight: "bold",
+        fontFamily: "Nunito",
     },
 
     // Progress bar
@@ -331,6 +332,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 16,
         textAlign: "center",
+        fontFamily: "Nunito",
     },
     starsContainer: {
         paddingVertical: 20,
@@ -352,6 +354,7 @@ const styles = StyleSheet.create({
         padding: 16,
         minHeight: 120,
         textAlignVertical: "top",
+        fontFamily: "Nunito",
     },
 
     // Action button
@@ -366,5 +369,6 @@ const styles = StyleSheet.create({
     nextButtonText: {
         fontSize: 16,
         fontWeight: "600",
+        fontFamily: "Nunito",
     },
 });
