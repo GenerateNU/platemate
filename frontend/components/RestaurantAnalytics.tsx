@@ -9,10 +9,11 @@ import { useLocalSearchParams } from "expo-router";
 import { getRestaurantMenuItemsMetrics } from "@/api/menu-items";
 import { TRestaurantMenuItemsMetrics } from "@/types/restaurant";
 import { TMenuItemMetrics } from "@/types/menu-item";
+import useAuthStore from "@/auth/store";
 
 const RestaurantAnalytics = () => {
     const insets = useSafeAreaInsets();
-    const { id } = useLocalSearchParams<{ id: string }>();
+    const { ownedRestaurantId } = useAuthStore();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [metrics, setMetrics] = useState<TRestaurantMenuItemsMetrics | null>(null);
@@ -22,7 +23,7 @@ const RestaurantAnalytics = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!id) {
+            if (!ownedRestaurantId) {
                 setError("No restaurant ID provided");
                 setLoading(false);
                 return;
@@ -31,7 +32,7 @@ const RestaurantAnalytics = () => {
             setLoading(true);
 
             try {
-                const metricsData = await getRestaurantMenuItemsMetrics(id);
+                const metricsData = await getRestaurantMenuItemsMetrics(ownedRestaurantId);
                 setMetrics(metricsData);
 
                 // Calculate average rating across all menu items
@@ -68,7 +69,7 @@ const RestaurantAnalytics = () => {
         };
 
         fetchData();
-    }, [id]);
+    }, [ownedRestaurantId]);
 
     // Render a dish row
     const renderDishRow = (dish: TMenuItemMetrics) => {

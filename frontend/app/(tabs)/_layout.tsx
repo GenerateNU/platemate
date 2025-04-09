@@ -36,7 +36,7 @@ export default function TabLayout() {
     // Get authentication state and restaurant owner status
     const { isAuthenticated, isRestaurantOwner, ownedRestaurantId } = useAuthStore();
     const [showRestaurantAnalyticsTab, setShowRestaurantAnalyticsTab] = useState(false);
-    
+
     // Update tab visibility when auth state changes
     useEffect(() => {
         // Show the restaurant analytics tab only if the user is authenticated and is a restaurant owner
