@@ -48,6 +48,11 @@ export function StarRating({
                     {showNumRatingsText ? " reviews" : ""})
                 </Text>
             )}
+            {numRatings == 0 && showNumRatings && (
+                <Text style={styles.text}>
+                    ({"There are no reviews to be displayed"})
+                </Text>
+            )}
         </View>
     );
 }

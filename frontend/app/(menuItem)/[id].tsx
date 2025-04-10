@@ -2,24 +2,35 @@ import { ThemedView } from "@/components/themed/ThemedView";
 import { ScrollView, StyleSheet, View, Image, Pressable, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarRating } from "@/components/ui/StarReview";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { ThemedTag } from "@/components/themed/ThemedTag";
 import { ReviewButton } from "@/components/review/ReviewButton";
 import HighlightCard from "@/components/restaurant/HighlightCard";
-import { PersonWavingIcon, RestaurantIcon, ThumbsUpIcon } from "@/components/icons/Icons";
+import { PersonWavingIcon, RestaurantIcon, SmileyIcon, ThumbsUpIcon } from "@/components/icons/Icons";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { getMenuItemById } from "@/api/menu-items";
+import { getMenuItemById, getMenuItemReviews } from "@/api/menu-items";
 import { TMenuItem } from "@/types/menu-item";
 import ReviewFlow from "@/components/review/ReviewFlow";
 import AddReviewButton from "@/components/AddReviewButton";
 import { Skeleton } from "moti/skeleton";
+import { useUser } from "@/context/user-context";
+import { getRestaurantFriendsFav, getRestaurantSuperStars } from "@/api/restaurant";
+import { FriendsFavInfo } from "@/types/restaurant";
+import { TReview } from "@/types/review";
 
 export default function Route() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
+    const [friendsFav, setFriendsFav] = useState<FriendsFavInfo>({
+        isFriendsFav: false,
+        numFriends: 0,
+    });
+    const [superStars, setSuperStars] = useState(0); 
+    const [menuItemReviews, setMenuItemReviews] = useState<TReview[]>([])
 
     const { id } = useLocalSearchParams<{ id: string }>();
+    const { user } = useUser();
 
     const navigation = useNavigation();
     const [menuItem, setMenuItem] = useState<TMenuItem | null>(null);
@@ -29,13 +40,42 @@ export default function Route() {
 
     const router = useRouter();
 
+    const fetchData = useCallback(async () => {
+        try {
+            if (!user || !menuItem) {
+                console.log("USER", user);
+                console.log("MENUITEM", menuItem);
+                throw new Error("User and/or menuItem are null. Cannot fetch associated menu item data.");
+            }
+            const [friendsFavData, superStarsData, menuItemReviewData] = await Promise.all([getRestaurantFriendsFav(user.id, menuItem.restaurantID), getRestaurantSuperStars(menuItem.restaurantID), getMenuItemReviews(menuItem.id)]);
+            console.log("MENUITEMID", menuItem);
+            console.log("MENUREVIEWDATA", menuItemReviewData);
+            console.log("FRIENDSFAVDATA", friendsFavData);
+            setFriendsFav(friendsFavData);
+            setSuperStars(superStarsData);
+            setMenuItemReviews(menuItemReviewData);
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [user, menuItem]);
+
     useEffect(() => {
         navigation.setOptions({ headerShown: false });
         getMenuItemById(id).then((data) => {
             setMenuItem(data);
             setLoading(false);
         });
-    }, [navigation]);
+    }, [navigation, id]);
+
+    useEffect(() => {
+        // Only call fetchData when menuItem is initialized
+        if (menuItem) {
+            fetchData();
+        }
+    }, [menuItem, user, fetchData]);
 
     return (
         <>
@@ -119,15 +159,15 @@ export default function Route() {
                             <View style={styles.statsContainer}>
                                 <HighlightCard
                                     title={"Friend's Fav"}
-                                    subtitle={"100+ friend referrals"}
+                                    subtitle={`${friendsFav.numFriends} friend referrals`}
                                     icon={<PersonWavingIcon />}
                                 />
                                 <HighlightCard
                                     title={"Super Stars"}
-                                    subtitle={"200+ 5-star reviews"}
+                                    subtitle={`${superStars} 5-star reviews`}
                                     icon={<ThumbsUpIcon />}
                                 />
-                                <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} />
+                                <HighlightCard title={"Satisfaction"} subtitle={"100% of guests revisited"} icon={<SmileyIcon/>} />
                             </View>
 
                             <View style={styles.sectionHeader}>
@@ -138,8 +178,8 @@ export default function Route() {
                             </View>
                             <View style={styles.reviewStats}>
                                 <View style={styles.ratingContainer}>
-                                    <ThemedText style={styles.ratingText}>4/5</ThemedText>
-                                    <StarRating avgRating={4.2} numRatings={428} showAvgRating={false} />
+                                    <ThemedText style={styles.ratingText}>{menuItem?.avgRating.overall}</ThemedText>
+                                    <StarRating avgRating={menuItem?.avgRating.overall || 0} numRatings={menuItemReviews.length} showAvgRating={false} />
                                 </View>
                             </View>
 
@@ -162,18 +202,22 @@ export default function Route() {
                                     </Pressable>
                                 ))}
                             </View>
-
-                            <ReviewPreview
-                                plateName="Pad Thai"
-                                restaurantName="Pad Thai Kitchen"
-                                tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
-                                rating={4}
-                                content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
-                                authorId={""}
-                                authorUsername={"username"}
-                                authorName={"First Name"}
-                                authorAvatar={"https://placehold.co/600x400/png?text=P"}
-                            />
+                            {menuItemReviews.map((item: TReview, index: number) => (
+                                <TouchableOpacity key={index} onPress={() => router.push(`/(review)/${item._id}`)}>
+                                    <ReviewPreview
+                                        plateName={item.menuItemName}
+                                        restaurantName={item.restaurantName}
+                                        // hard coded tags because we still do not have a tags fields for a review
+                                        tags={["Crunchy", "Fresh"]}
+                                        rating={item.rating.overall}
+                                        content={item.content}
+                                        authorName={item.reviewer.name}
+                                        authorId={item.reviewer.id}
+                                        authorUsername={item.reviewer.username}
+                                        authorAvatar={item.reviewer.pfp}
+                                    />
+                                </TouchableOpacity>
+                            ))} 
                         </ThemedView>
                     </Skeleton>
                 </ThemedView>

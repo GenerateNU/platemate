@@ -50,9 +50,9 @@ export default function Feed() {
     const fetchData = useCallback(async () => {
         try {
             if (!user) {
-                throw new Error("User is null. Cannot fetch friend menu items.");
+                throw new Error("User is null. Cannot fetch friend menu items and reviews.");
             }
-            
+            console.log("user id:", user.id);
             const [reviewsData, menuItemsData] = await Promise.all([getReviews(2, 20), getFriendMenuItems(user.id, 20)]);
 
             const fetchedReviews = reviewsData.data as TReview[];
@@ -84,6 +84,7 @@ export default function Feed() {
     useEffect(() => {
         setLoading(true);
         fetchData();
+        console.log("FMI", menuItems);
     }, [fetchData]);
 
     const onRefresh = useCallback(() => {
@@ -221,18 +222,19 @@ export default function Feed() {
 
                     {menuItems.length > 0 && (
                         <ScrollView contentContainerStyle={{ gap: 16 }} showsVerticalScrollIndicator={false}>
-                            {menuItems.map((item: TMenuItem, index: number) => (
+                            {/* {menuItems.map((item: TMenuItem, index: number) => (
                                 <TouchableOpacity key={index} onPress={() => router.push(`/(menuItem)/${item.id}`)}>
                                     <MenuItemPreview
+                                        id={item.id}
                                         plateName={item.name}
                                         content={item.description}
                                         tags={item.tags}
                                         picture={item.picture}
                                         rating={3}
-                                        restaurantName={item.restaurantId || "Restaurant Name"}
+                                        restaurantName={item.restaurantID || "Restaurant Name"}
                                     />
                                 </TouchableOpacity>
-                            ))}
+                            ))} */}
                         </ScrollView>
                     )}
                 </ThemedView>

@@ -540,7 +540,7 @@ func (s *Service) GetPopularWithFriends(userID primitive.ObjectID, limit int) ([
 						"$match": bson.M{
 							"$expr": bson.M{
 								"$in": bson.A{
-									bson.M{"$toObjectId": "$reviewer.id"},
+									bson.M{"$toObjectId": "$reviewer._id"},
 									"$$friendIDs",
 								},
 							},

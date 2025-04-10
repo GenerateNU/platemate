@@ -1,12 +1,15 @@
 import { SmileyIcon } from "@/components/icons/Icons";
 import { View, Text, StyleSheet } from "react-native";
 
-const HighlightCard = ({
-    icon = <SmileyIcon />,
-    title = "Super Stars",
-    subtitle = "200+ Five Stars",
-    backgroundColor = "#F7F9FC",
-}) => {
+interface HighlightCardProps {
+    title: string;
+    subtitle: string;
+    icon: React.JSX.Element;
+}
+
+const backgroundColor = "#F7F9FC"
+  
+const HighlightCard = ({ title, subtitle, icon }: HighlightCardProps) => {
     return (
         <View style={[styles.container, { backgroundColor }]}>
             <View style={styles.iconContainer}>{icon}</View>

@@ -17,6 +17,7 @@ type MenuItemRequest struct {
 	Name                string             `json:"name"`
 	Picture             string             `json:"picture"`
 	Reviews             []string           `json:"reviews"`
+	AvgRating           AvgRatingDocument  `json:"avgRating"`
 	Description         string             `json:"description"`
 	Location            []float64          `json:"location"`
 	Tags                []string           `json:"tags"`
@@ -86,11 +87,11 @@ type MenuItemDocument struct {
 }
 
 type AvgRatingDocument struct {
-	Portion float64 `bson:"portion"`
-	Taste   float64 `bson:"taste"`
-	Value   float64 `bson:"value"`
-	Overall float64 `bson:"overall"`
-	Return  float64 `bson:"return"` // @TODO: figure out if boolean or number
+	Portion float64 `bson:"portion" json:"portion"`
+	Taste   float64 `bson:"taste" json:"taste"`
+	Value   float64 `bson:"value" json:"value"`
+	Overall float64 `bson:"overall" json:"overall"`
+	Return  float64 `bson:"return" json:"return"` // @TODO: figure out if boolean or number
 }
 
 // MenuItemMetrics represents analytics data for a single menu item

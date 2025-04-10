@@ -8,7 +8,7 @@ import ProfileAvatar from "@/components/profile/ProfileAvatar";
 import ProfileIdentity from "@/components/profile/ProfileIdentity";
 import ProfileMetrics from "@/components/profile/ProfileMetrics";
 import ReviewPreview from "@/components/review/ReviewPreview";
-import { SearchBoxFilter } from "@/components/SearchBoxFilter";
+import { SearchBox } from "@/components/SearchBox";
 import { FollowButton } from "@/components/profile/followers/FollowButton";
 import { useLocalSearchParams } from "expo-router";
 import type { User } from "@/context/user-context";
@@ -120,7 +120,7 @@ const ProfileScreen = () => {
                         {user.name}'s Food Journal
                     </ThemedText>
                     {/* Made a search box with a filter/sort component as its own component */}
-                    <SearchBoxFilter
+                    <SearchBox
                         placeholder={`Search ${user.name}'s Reviews`}
                         recent={true}
                         onSubmit={() => console.log("submit")}

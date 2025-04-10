@@ -9,7 +9,7 @@ import { ThemedTag } from "@/components/themed/ThemedTag";
 import { ReviewButton } from "@/components/review/ReviewButton";
 import { ReviewFlow } from "@/components/review/ReviewFlow";
 import HighlightCard from "@/components/restaurant/HighlightCard";
-import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
+import { PersonWavingIcon, SmileyIcon, ThumbsUpIcon } from "@/components/icons/Icons";
 
 export default function MenuItemView() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
@@ -103,7 +103,7 @@ export default function MenuItemView() {
                             icon={<PersonWavingIcon />}
                         />
                         <HighlightCard title={"Super Stars"} subtitle={"200+ 5-star reviews"} icon={<ThumbsUpIcon />} />
-                        <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} />
+                        <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} icon={<SmileyIcon />} />
                     </View>
 
                     {/* Reviews Section */}

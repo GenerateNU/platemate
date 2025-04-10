@@ -12,7 +12,7 @@ import { EditProfileButton } from "@/components/profile/EditProfileButton";
 import { router } from "expo-router";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/review/ReviewPreview";
-import { SearchBoxFilter } from "@/components/SearchBoxFilter";
+import { SearchBox } from "@/components/SearchBox";
 import type { TReview } from "@/types/review";
 import { makeRequest } from "@/api/base";
 
@@ -92,7 +92,7 @@ const ProfileScreen = () => {
                         {user.name.split(" ")[0]}'s Food Journal
                     </ThemedText>
 
-                    <SearchBoxFilter
+                    <SearchBox
                         placeholder="Search my reviews"
                         name={user.username}
                         recent={false}

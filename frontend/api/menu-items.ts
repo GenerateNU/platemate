@@ -1,4 +1,5 @@
 import { TMenuItem } from "@/types/menu-item";
+import { TReview } from "@/types/review";
 import { makeRequest } from "@/api/base";
 import { TRestaurantMenuItemsMetrics } from "@/types/restaurant";
 
@@ -44,4 +45,8 @@ export const getRandomMenuItems = async (limit: number): Promise<TMenuItem[]> =>
 
 export const getFriendMenuItems = async (id: string, limit: number): Promise<TMenuItem[]> => {
     return await makeRequest(`/api/v1/menu-items/popular-with-friends?userId=${id}&limit=${limit}`, "GET");
+}
+
+export const getMenuItemReviews = async (menuItemId: string): Promise<TReview[]> => {
+    return await makeRequest(`/api/v1/menu-items/${menuItemId}/reviews`, "GET");
 }

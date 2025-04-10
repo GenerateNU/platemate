@@ -29,3 +29,8 @@ export type TRestaurantMenuItemsMetrics = {
     total_reviews: number;
     menu_item_metrics: TMenuItemMetrics[];
 };
+
+export type FriendsFavInfo = {
+    isFriendsFav: boolean;
+    numFriends: number;
+}
