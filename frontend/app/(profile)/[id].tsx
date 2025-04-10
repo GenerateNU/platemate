@@ -17,11 +17,13 @@ import type { User } from "@/context/user-context";
 import { DEFAULT_PROFILE_PIC } from "@/context/user-context";
 import type { TReview } from "@/types/review";
 import { useFollowingStatus } from "@/hooks/useFollowingStatus";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = () => {
     const { userId } = useLocalSearchParams();
+    const insets = useSafeAreaInsets();
     console.log(userId);
     const [searchText, setSearchText] = useState("");
     const editFriend = useRef<{ open: () => void; close: () => void }>(null);
@@ -49,7 +51,7 @@ const ProfileScreen = () => {
 
             setLoading(true);
             try {
-                const userRes = await fetch(`https://externally-exotic-orca.ngrok-free.app/api/v1/user/${userId}`);
+                const userRes = await fetch(`${process.env.EXPO_PUBLIC_BASE_URL}/api/v1/user/${userId}`);
                 const userData = await userRes.json();
                 console.log(userData);
                 const newUser: User = {
@@ -64,9 +66,7 @@ const ProfileScreen = () => {
                 };
                 setUser(newUser);
 
-                const reviewsRes = await fetch(
-                    `https://externally-exotic-orca.ngrok-free.app/api/v1/review/user/${userId}`,
-                );
+                const reviewsRes = await fetch(`${process.env.EXPO_PUBLIC_BASE_URL}/api/v1/review/user/${userId}`);
                 const reviewData = await reviewsRes.json();
                 console.log(reviewData);
                 setUserReviews(reviewData);
@@ -98,60 +98,64 @@ const ProfileScreen = () => {
     // }
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
-            <StatusBar barStyle="dark-content" />
-            <LinearGradient
-                colors={["white", "#FFFCE4"]}
-                style={styles.topOverlay}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-            />
-            <TouchableOpacity
-                onPress={() => {
-                    console.log("Button Pressed!");
-                }}>
-                <Ionicons name="ellipsis-horizontal" size={30} color="#333" />
-            </TouchableOpacity>
-            <ScrollView style={styles.container}>
-                {/* inserted a default profile picture because profile_picture is string | undefined */}
-                <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
-                <ProfileIdentity name={user.name} username={user.username} />
-                <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
-                <FollowButton 
-                    isFollowing={isFollowing} 
-                    userToFollowId={user.id}
-                />                
-                <ThemedView style={styles.reviewsContainer}>
-                    <ThemedText
-                        style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
-                        {user.name}'s Fasdood Journal
-                    </ThemedText>
-                    {/* Made a search box with a filter/sort component as its own component */}
-                    <SearchBoxFilter
-                        placeholder={`Search ${user.name}'s Reviews`}
-                        recent={false}
-                        onSubmit={() => console.log("submit")}
-                        value={searchText}
-                        onChangeText={(text) => setSearchText(text)}
-                    />
-                    {userReviews.map((review) => (
-                        <ReviewPreview
-                            key={review._id}
-                            reviewId={review._id}
-                            likes={review.likes}
-                            plateName={review.menuItemName}
-                            restaurantName={review.restaurantName}
-                            tags={[]}
-                            rating={review.rating.overall}
-                            content={review.content}
-                            authorName={user.name}
-                            authorUsername={user.username}
-                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
-                            authorId={user.id}></ReviewPreview>
-                    ))}
-                </ThemedView>
+        <ThemedView style={{ marginTop: 128 }}>
+            <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
+                <StatusBar barStyle="dark-content" />
+                <LinearGradient
+                    colors={["white", "#FFFCE4"]}
+                    style={styles.topOverlay}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                />
+                <TouchableOpacity
+                    onPress={() => {
+                        console.log("Button Pressed!");
+                    }}>
+                    <Ionicons name="ellipsis-horizontal" size={30} color="#333" />
+                </TouchableOpacity>
+                <ScrollView style={styles.container}>
+                    {/* inserted a default profile picture because profile_picture is string | undefined */}
+                    <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
+                    <ProfileIdentity name={user.name} username={user.username} />
+                    <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
+                    <FollowButton 
+                        isFollowing={isFollowing} 
+                        userToFollowId={user.id}
+                    />                        
+                    <ThemedView style={styles.reviewsContainer}>
+                        <ThemedText
+                            style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
+                            {user.name}'s Fasdood Journal
+                        </ThemedText>
+                        {/* Made a search box with a filter/sort component as its own component */}
+                        <SearchBoxFilter
+                            placeholder={`Search ${user.name}'s Reviews`}
+                            recent={false}
+                            onSubmit={() => console.log("submit")}
+                            value={searchText}
+                            onChangeText={(text) => setSearchText(text)}
+                        />
+                        <ThemedView style={{ gap: 8 }}>
+                            {userReviews.map((review) => (
+                                <ReviewPreview
+                                    key={review._id}
+                                    reviewId={review._id}
+                                    likes={review.likes}
+                                    plateName={review.menuItemName}
+                                    restaurantName={review.restaurantName}
+                                    tags={[]}
+                                    rating={review.rating.overall}
+                                    content={review.content}
+                                    authorName={user.name}
+                                    authorUsername={user.username}
+                                    authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
+                                    authorId={user.id}></ReviewPreview>
+                            ))}
+                        </ThemedView>
+                    </ThemedView>
+                </ScrollView>
             </ScrollView>
-        </ScrollView>
+        </ThemedView>
     );
 };
 

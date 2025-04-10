@@ -15,7 +15,12 @@ import type { User } from "@/context/user-context";
 import { DEFAULT_PROFILE_PIC } from "@/context/user-context";
 import type { TReview } from "@/types/review";
 import { makeRequest } from "@/api/base";
+<<<<<<< HEAD
 import { useFollowingStatus } from "@/hooks/useFollowingStatus";
+=======
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Skeleton } from "moti/skeleton";
+>>>>>>> main
 
 const { width } = Dimensions.get("window");
 
@@ -24,6 +29,7 @@ const ProfileScreen = () => {
     console.log(userId);
     const [searchText, setSearchText] = useState("");
     const editFriend = useRef<{ open: () => void; close: () => void }>(null);
+    const insets = useSafeAreaInsets();
 
     const [user, setUser] = useState<User>({
         id: "",
@@ -94,60 +100,76 @@ const ProfileScreen = () => {
     //     );
     // }
 
+    console.log(user);
+
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
-            <StatusBar barStyle="dark-content" />
-            <LinearGradient
-                colors={["white", "#FFFCE4"]}
-                style={styles.topOverlay}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-            />
-            <TouchableOpacity
-                onPress={() => {
-                    console.log("Button Pressed!");
-                }}>
-                <Ionicons name="ellipsis-horizontal" size={30} color="#333" />
-            </TouchableOpacity>
-            <ScrollView style={styles.container}>
-                {/* inserted a default profile picture because profile_picture is string | undefined */}
-                <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
-                <ProfileIdentity name={user.name} username={user.username} />
-                <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
-                <FollowButton 
-                    isFollowing={isFollowing} 
-                    userToFollowId={user.id}
+        <ScrollView style={{ flex: 1, backgroundColor: "#fff", paddingTop: insets.top }}>
+            <ThemedView>
+                <StatusBar barStyle="dark-content" />
+                <LinearGradient
+                    colors={["white", "#FFFCE4"]}
+                    style={styles.topOverlay}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
                 />
-                <ThemedView style={styles.reviewsContainer}>
-                    <ThemedText
-                        style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
-                        {user.name}'s Food Journal
-                    </ThemedText>
-                    {/* Made a search box with a filter/sort component as its own component */}
-                    <SearchBoxFilter
-                        placeholder={`Search ${user.name}'s Reviews`}
-                        recent={true}
-                        onSubmit={() => console.log("submit")}
-                        value={searchText}
-                        onChangeText={(text) => setSearchText(text)}
+                <TouchableOpacity
+                    onPress={() => {
+                        console.log("Button Pressed!");
+                    }}>
+                    <Ionicons name="ellipsis-horizontal" size={30} color="#333" style={{ left: 24 }} />
+                </TouchableOpacity>
+                <ScrollView style={styles.container}>
+                    {/* inserted a default profile picture because profile_picture is string | undefined */}
+                    <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
+                    <ProfileIdentity name={user.name} username={user.username || "not-displayed"} />
+                    <ProfileMetrics
+                        numFriends={user.followingCount}
+                        numReviews={userReviews.length || 0}
+                        averageRating={4.6}
                     />
-                    {userReviews.map((review) => (
-                        <ReviewPreview
-                            reviewId={review._id}
-                            likes={review.likes}
-                            key={review._id}
-                            plateName={review.menuItemName}
-                            restaurantName={review.restaurantName}
-                            tags={[]}
-                            rating={review.rating.overall}
-                            content={review.content}
-                            authorName={user.name}
-                            authorUsername={user.username}
-                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
-                            authorId={user.id}></ReviewPreview>
-                    ))}
-                </ThemedView>
-            </ScrollView>
+                    <FollowButton 
+                        isFollowing={isFollowing} 
+                        userToFollowId={user.id}
+                    />
+                    <ThemedView style={styles.reviewsContainer}>
+                        <ThemedText
+                            style={{
+                                fontSize: 24,
+                                fontWeight: "bold",
+                                fontFamily: "Nunito",
+                                marginBottom: 8,
+                                lineHeight: 32,
+                            }}>
+                            {user.name}'s Food Journal
+                        </ThemedText>
+                        {/* Made a search box with a filter/sort component as its own component */}
+                        <SearchBoxFilter
+                            placeholder={`Search ${user.name}'s Reviews`}
+                            recent={true}
+                            onSubmit={() => console.log("submit")}
+                            value={searchText}
+                            onChangeText={(text) => setSearchText(text)}
+                        />
+                        <ThemedView style={{ gap: 12, marginTop: 12 }}>
+                            {userReviews.map((review) => (
+                                <ReviewPreview
+                                    reviewId={review._id}
+                                    likes={review.likes}
+                                    key={review._id}
+                                    plateName={review.menuItemName}
+                                    restaurantName={review.restaurantName}
+                                    tags={[]}
+                                    rating={review.rating.overall}
+                                    content={review.content}
+                                    authorName={user.name}
+                                    authorUsername={user.username || "not-displayed"}
+                                    authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
+                                    authorId={user.id}></ReviewPreview>
+                            ))}
+                        </ThemedView>
+                    </ThemedView>
+                </ScrollView>
+            </ThemedView>
         </ScrollView>
     );
 };

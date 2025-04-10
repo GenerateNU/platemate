@@ -32,7 +32,7 @@ export default function ProfileLayout() {
                 headerShadowVisible: false,
                 animation: "slide_from_right",
             }}>
-            <Stack.Screen name="(profile)" options={{ headerShown: false }} />
+            <Stack.Screen name="profile" options={{ headerShown: false }} />
             <Stack.Screen name="friend/[userId]" options={{ headerShown: false }} />
             <Stack.Screen
                 name="settings"

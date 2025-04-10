@@ -63,6 +63,12 @@ const EditProfileSheet = forwardRef<EditProfileSheetRef, { user: User }>(({ user
         [],
     );
 
+    const saveChanges = () => {
+        // Handle saving changes here
+        console.log("Changes saved");
+        closeSheet();
+    };
+
     useImperativeHandle(ref, () => ({
         open: handleOpenBottomSheet,
         close: closeSheet,
@@ -83,7 +89,7 @@ const EditProfileSheet = forwardRef<EditProfileSheetRef, { user: User }>(({ user
                     <ThemedText
                         style={{
                             alignSelf: "flex-start",
-                            fontFamily: "Inter",
+                            fontFamily: "Nunito",
                             fontSize: 24,
                             fontWeight: 600,
                             paddingVertical: 4,
@@ -163,7 +169,7 @@ const EditProfileSheet = forwardRef<EditProfileSheetRef, { user: User }>(({ user
                             <TouchableOpacity style={styles.cancelButton} onPress={() => closeSheet()}>
                                 <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.saveButton}>
+                            <TouchableOpacity style={styles.saveButton} onPress={() => saveChanges()}>
                                 <ThemedText style={styles.saveButtonText}>Save changes</ThemedText>
                             </TouchableOpacity>
                         </View>
@@ -191,7 +197,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: "bold",
         marginBottom: 20,
-        fontFamily: "Outfit",
+        fontFamily: "Nunito",
         alignSelf: "center",
     },
     menuItem: {
@@ -207,7 +213,7 @@ const styles = StyleSheet.create({
     },
     menuText: {
         fontSize: 18,
-        fontFamily: "Outfit",
+        fontFamily: "Nunito",
     },
     hamburgerButton: {
         position: "absolute",
@@ -267,13 +273,13 @@ const styles = StyleSheet.create({
     statNumber: {
         fontSize: 28,
         fontWeight: 500,
-        fontFamily: "Outfit",
+        fontFamily: "Nunito",
         paddingTop: 4,
     },
     statLabel: {
         fontSize: 16,
         color: "#666",
-        fontFamily: "Outfit",
+        fontFamily: "Nunito",
     },
     retryButton: {
         marginTop: 15,
@@ -317,7 +323,7 @@ const styles = StyleSheet.create({
     inputLabel: {
         fontSize: 14,
         marginBottom: 8,
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     textInput: {
         width: "100%",
@@ -327,7 +333,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         paddingHorizontal: 16,
         fontSize: 16,
-        fontFamily: "Inter",
+        fontFamily: "Nunito",
     },
     locationInput: {
         width: "100%",
@@ -340,7 +346,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        fontFamily: "Inter",
+        fontFamily: "Nunito",
     },
     buttonContainer: {
         flexDirection: "row",
@@ -361,7 +367,7 @@ const styles = StyleSheet.create({
     cancelButtonText: {
         fontSize: 16,
         fontWeight: "500",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     saveButton: {
         flex: 1,
@@ -375,7 +381,7 @@ const styles = StyleSheet.create({
     saveButtonText: {
         fontSize: 16,
         fontWeight: "500",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         color: "#000",
     },
     dropdownContainer: {
@@ -408,15 +414,15 @@ const styles = StyleSheet.create({
     },
     dropdownItemSelected: {
         backgroundColor: "rgba(249, 202, 36, 0.1)",
-        fontFamily: "Outfit",
+        fontFamily: "Nunito",
     },
     dropdownText: {
         fontSize: 16,
-        fontFamily: "Inter",
+        fontFamily: "Nunito",
     },
     dropdownTextSelected: {
         fontWeight: "500",
-        fontFamily: "Inter",
+        fontFamily: "Nunito",
     },
 });
 
