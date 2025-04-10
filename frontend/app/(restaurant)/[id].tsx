@@ -10,7 +10,7 @@ import Tag from "@/components/ui/Tag";
 import { StarRating } from "@/components/ui/StarReview";
 import RestaurantReviewSummary from "@/components/restaurant/RestaurantReviewSummary";
 import HighlightCard from "@/components/restaurant/HighlightCard";
-import FeedTabs from "@/components/Feed/FeedTabs";
+import FeedTabs from "@/components/feed/FeedTabs";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";

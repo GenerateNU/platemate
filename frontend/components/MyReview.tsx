@@ -102,6 +102,14 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
 
     const handleNext = async () => {
         if (step < 4) {
+            // Get current step's rating and tags
+            const currentStep = stepContent[step - 1];
+            const hasRating = currentStep.rating > 0;
+            const hasTags = currentStep.tags.some((tag) => tag.selected);
+
+            if (!hasRating || !hasTags) {
+                return;
+            }
             setStep((prev) => prev + 1);
         } else {
             try {
@@ -273,7 +281,19 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
             {renderStep()}
 
             {/* Next / Submit button */}
-            <TouchableOpacity style={styles.nextButton} onPress={handleNext} disabled={isSubmitting}>
+            <TouchableOpacity
+                style={[
+                    styles.nextButton,
+                    step < 4 &&
+                        (!stepContent[step - 1].rating || !stepContent[step - 1].tags.some((tag) => tag.selected)) &&
+                        styles.nextButtonDisabled,
+                ]}
+                onPress={handleNext}
+                disabled={
+                    isSubmitting ||
+                    (step < 4 &&
+                        (!stepContent[step - 1].rating || !stepContent[step - 1].tags.some((tag) => tag.selected)))
+                }>
                 <Text style={styles.nextButtonText}>{step === 4 ? "Submit" : "Next"}</Text>
             </TouchableOpacity>
         </SafeAreaView>
@@ -365,6 +385,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 16,
         marginVertical: 24,
         alignItems: "center",
+    },
+    nextButtonDisabled: {
+        backgroundColor: "#E0E0E0",
     },
     nextButtonText: {
         fontSize: 16,
