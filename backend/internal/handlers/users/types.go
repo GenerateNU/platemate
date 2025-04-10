@@ -46,6 +46,11 @@ type FollowRequest struct {
 	FolloweeId string `json:"followeeId"`
 }
 
+type IsFollowingQuery struct {
+	FollowerId string `query:"followerId" validate:"required"`
+	FolloweeId string `query:"followeeId" validate:"required"`
+}
+
 type GetUserByIdParam struct {
 	UserID string `params:"id" validate:"required"`
 }

@@ -310,3 +310,27 @@ func (h *Handler) DeleteDietaryPreferences(c *fiber.Ctx) error {
 
 	return c.SendStatus(fiber.StatusCreated)
 }
+
+func (h *Handler) IsFollowing(c *fiber.Ctx) error {
+	var query IsFollowingQuery
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	errs := xvalidator.Validator.Validate(query)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
+	}
+
+	isFollowing, err := h.service.IsFollowing(query.FollowerId, query.FolloweeId)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Connection", "users", "specified"))
+		}
+		return err
+	}
+
+	return c.JSON(fiber.Map{
+		"isFollowing": isFollowing,
+	})
+}

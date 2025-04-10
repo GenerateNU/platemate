@@ -238,6 +238,34 @@ func (s *Service) GetUserFollowing(userId string, page, limit int) ([]UserRespon
 	return response, nil
 }
 
+func (s *Service) IsFollowing(followerId, followeeId string) (bool, error) {
+	ctx := context.Background()
+	followerObjID, err := primitive.ObjectIDFromHex(followerId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return false, &badReq
+	}
+
+	followeeObjID, err := primitive.ObjectIDFromHex(followeeId)
+	if err != nil {
+		badReq := xerr.BadRequest(err)
+		return false, &badReq
+	}
+
+	// Check if followeeObjID is in the following array
+	count, err := s.users.CountDocuments(ctx, bson.M{
+		"_id":       followerObjID,
+		"following": bson.M{"$elemMatch": bson.M{"$eq": followeeObjID}},
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	// If count > 0, follower is following followee
+	return count > 0, nil
+}
+
 // CreateConnection creates a new follow relationship between users
 func (s *Service) CreateConnection(followerId, followeeId string) error {
 	ctx := context.Background()

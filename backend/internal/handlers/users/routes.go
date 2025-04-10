@@ -20,6 +20,7 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	user.Get("/:id/following", handler.GetFollowing)
 	user.Post("/follow", handler.FollowUser)
 	user.Delete("/follow", handler.UnfollowUser)
+	user.Get("/following/check", handler.IsFollowing)
 
 	// Item review endpoints
 	item := apiV1.Group("/item")
