@@ -21,29 +21,50 @@ const { width } = Dimensions.get("window");
 const ProfileScreen = () => {
     const { user, isLoading, error, fetchUserProfile } = useUser();
     const [searchText, setSearchText] = React.useState("");
-    const [userReviews, setUserReviews] = useState<TReview[]>([]);
+    const [userReviews, setUserReviews] = useState<TReview[] | null>(null);
 
     const editProfileRef = useRef<{ open: () => void; close: () => void }>(null);
+    const fetchReviews = async () => {
+        if (!user) return;
 
+        try {
+            const reviewData = await makeRequest(`/api/v1/review/user/${user.id}`, "GET");
+            console.log(reviewData);
+            if (!reviewData) {
+                throw new Error(reviewData.message || "Failed to retrieve user reviews");
+            }
+            setUserReviews(reviewData);
+        } catch (err) {
+            console.error("Failed to fetch user by ID", err);
+        }
+    };
+
+    const searchReviews = async () => {
+        if (!user) return;
+
+        try {
+            const reviewData = await makeRequest(`/api/v1/review/user/${user.id}/search?query=${searchText}`, "GET");
+            console.log(reviewData);
+            if (!reviewData) {
+                throw new Error(reviewData.message || "Failed to retrieve user reviews");
+            }
+            setUserReviews(reviewData);
+        } catch (err) {
+            console.error("Failed to fetch user by ID", err);
+        }
+    };
     useEffect(() => {
         if (!user && !isLoading) {
             console.log("User data not available, fetching...");
-            fetchUserProfile().then(() => {});
+            fetchUserProfile().then(() => {
+                console.log("Getting the reviews");
+                fetchReviews();
+            });
         }
-        const fetchReviews = async () => {
-            if (!user?.id) return;
-
-            try {
-                const reviewData = await makeRequest(`/api/v1/review/user/${user.id}`, "GET");
-                if (!reviewData) {
-                    throw new Error(reviewData.message || "Failed to retrieve user reviews");
-                }
-                setUserReviews(reviewData);
-            } catch (err) {
-                console.error("Failed to fetch user by ID", err);
-            }
-        };
-        fetchReviews();
+        if (!userReviews) {
+            console.log("User reviews not available, fetching...");
+            fetchReviews();
+        }
     }, [user, isLoading]);
 
     if (isLoading) {
@@ -96,24 +117,27 @@ const ProfileScreen = () => {
                         placeholder="Search my reviews"
                         name={user.username}
                         recent={false}
-                        onSubmit={() => console.log("submit")}
+                        onSubmit={searchReviews}
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
                     />
-                    {userReviews.map((review) => (
-                        <ReviewPreview
-                            key={review._id}
-                            plateName={review.menuItemName}
-                            restaurantName={review.restaurantName}
-                            tags={[]}
-                            rating={review.rating.overall}
-                            content={review.content}
-                            authorId={user.id}
-                            authorName={user.name}
-                            authorUsername={user.username}
-                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
-                        />
-                    ))}
+                    {userReviews &&
+                        userReviews.map((review) => (
+                            <ReviewPreview
+                                reviewId={review._id}
+                                key={review._id}
+                                likes={review.likes}
+                                plateName={review.menuItemName}
+                                restaurantName={review.restaurantName}
+                                tags={[]}
+                                rating={review.rating.overall}
+                                content={review.content}
+                                authorId={user.id}
+                                authorName={user.name}
+                                authorUsername={user.username}
+                                authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
+                            />
+                        ))}
                 </ThemedView>
             </ScrollView>
             <EditProfileSheet user={user} ref={editProfileRef} />

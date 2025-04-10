@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "../themed/ThemedText";
 import { Avatar } from "../Avatar";
+import { router } from "expo-router";
 
 type Props = {
     name: string;
@@ -13,28 +14,41 @@ type Props = {
     onPress: () => void;
 };
 
-const UserInfoRowBase = ({ name, username, right, icon, large, onPress }: Props) => (
+const UserInfoRowBase = ({ name, username, right, icon, large, onPress, id }: Props) => (
     <View style={{ flexDirection: "row", alignItems: "center", width: "100%" }}>
-        <View style={styles.row}>
-            <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
-                <Avatar imageSource={{ uri: icon }} size={large ? 64 : 48} />
-                <View style={{ gap: 0 }}>
-                    <TouchableOpacity onPress={onPress}>
-                        <ThemedText numberOfLines={1} ellipsizeMode="tail" type="default" style={styles.nameContainer}>
-                            {name}
-                        </ThemedText>
-                        <ThemedText
-                            numberOfLines={1}
-                            ellipsizeMode="tail"
-                            type="caption"
-                            style={styles.usernameContainer}>
-                            @{username}
-                        </ThemedText>
-                    </TouchableOpacity>
+        <TouchableOpacity
+            disabled={id ? false : true}
+            onPress={() => {
+                if (id) {
+                    router.push(`/(profile)/${id}`);
+                    return;
+                }
+            }}>
+            <View style={styles.row}>
+                <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
+                    <Avatar imageSource={{ uri: icon }} size={large ? 64 : 48} />
+                    <View style={{ gap: 0 }}>
+                        <TouchableOpacity onPress={onPress}>
+                            <ThemedText
+                                numberOfLines={1}
+                                ellipsizeMode="tail"
+                                type="default"
+                                style={styles.nameContainer}>
+                                {name}
+                            </ThemedText>
+                            <ThemedText
+                                numberOfLines={1}
+                                ellipsizeMode="tail"
+                                type="caption"
+                                style={styles.usernameContainer}>
+                                @{username}
+                            </ThemedText>
+                        </TouchableOpacity>
+                    </View>
                 </View>
+                {right}
             </View>
-            {right}
-        </View>
+        </TouchableOpacity>
     </View>
 );
 

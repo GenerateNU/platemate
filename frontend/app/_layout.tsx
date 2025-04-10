@@ -46,7 +46,8 @@ export default function RootLayout() {
                                 <Stack>
                                     <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
                                     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                                    <Stack.Screen name="friend" options={{ headerShown: false }} />
+                                    <Stack.Screen name="friend/[userId]" options={{ headerShown: false }} />
+                                    <Stack.Screen name="(profile)" options={{ headerShown: false }} />
                                     <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
                                     <Stack.Screen name="[...missing]" options={{ title: "Not Found" }} />
                                 </Stack>

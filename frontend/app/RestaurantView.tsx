@@ -115,6 +115,7 @@ export default function RestaurantView() {
                             <TouchableOpacity onPress={() => router.push(`/(review)/${"827b36v4b234"}` as any)}>
                                 <ReviewPreview
                                     plateName={"Big Whopper"}
+                                    reviewId={"827b36v4b234"}
                                     restaurantName={"Burger King"}
                                     tags={["juicy", "artificial", "fake meat"]}
                                     rating={4}

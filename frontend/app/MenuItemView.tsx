@@ -146,6 +146,7 @@ export default function MenuItemView() {
                         authorId={""}
                         authorUsername={"username"}
                         authorAvatar={"https://placehold.co/600x400/png?text=P"}
+                        reviewId="64f5a95cc7330b78d33265f1"
                     />
                 </ThemedView>
             </ScrollView>

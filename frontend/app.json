@@ -27,7 +27,7 @@
                 "aps-environment": "development"
             },
             "bundleIdentifier": "com.suntex.platemate",
-            "buildNumber": "4"
+            "buildNumber": "5"
         },
         "android": {
             "adaptiveIcon": {

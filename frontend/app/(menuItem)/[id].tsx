@@ -33,8 +33,8 @@ export default function Route() {
         navigation.setOptions({ headerShown: false });
         getMenuItemById(id).then((data) => {
             setMenuItem(data);
-            setLoading(false);
         });
+        new Promise((resolve) => setTimeout(resolve, 1500)).then(() => setLoading(false));
     }, [navigation]);
 
     return (
@@ -47,67 +47,62 @@ export default function Route() {
                 </Skeleton>
                 <ThemedView style={styles.container}>
                     <Skeleton show={loading} colorMode={"light"}>
-                        <ThemedView style={styles.headerContainer}>
-                            <View style={styles.titleRow}>
-                                <ThemedText style={styles.titleText} numberOfLines={1}>
-                                    {menuItem?.name}
-                                </ThemedText>
-                            </View>
-                            <View style={styles.restaurantContainer}>
-                                <RestaurantIcon color={"#666"} width={20} height={20} />
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        router.push(`/(restaurant)/${menuItem?.restaurantID}`);
-                                    }}>
-                                    <ThemedText style={styles.restaurantText}>
-                                        {menuItem?.restaurantName || "Restaurant Name"}
-                                    </ThemedText>
-                                </TouchableOpacity>
-                            </View>
-                        </ThemedView>
-                    </Skeleton>
-
-                    <Skeleton show={loading} colorMode={"light"}>
-                        <ThemedView style={styles.tagsContainer}>
-                            <View style={styles.tagRow}>
-                                {menuItem?.tags.map((tag, index) => (
-                                    <ThemedTag
-                                        key={index}
-                                        title={tag}
-                                        backgroundColor={"#E8F5E9"}
-                                        textColor={"#2E7D32"}
-                                    />
-                                ))}
-                            </View>
-                        </ThemedView>
-                    </Skeleton>
-
-                    <Skeleton show={loading} colorMode={"light"}>
-                        <ThemedView style={styles.descriptionContainer}>
-                            <ThemedText style={styles.descriptionText}>{menuItem?.description}</ThemedText>
-                            <View style={styles.allergyRow}>
-                                <View style={styles.allergyItemsContainer}>
-                                    <ThemedText style={styles.allergyText} numberOfLines={1}>
-                                        {menuItem?.dietaryRestrictions.join(", ") || "No known allergens."}
+                        <ThemedView>
+                            <ThemedView style={styles.headerContainer}>
+                                <View style={styles.titleRow}>
+                                    <ThemedText style={styles.titleText} numberOfLines={1}>
+                                        {menuItem?.name}
                                     </ThemedText>
                                 </View>
-                                <Pressable style={styles.allergyButton}>
-                                    <ThemedText style={styles.viewAllText}>see allergens</ThemedText>
-                                </Pressable>
-                            </View>
-                        </ThemedView>
-                    </Skeleton>
+                                <View style={styles.restaurantContainer}>
+                                    <RestaurantIcon color={"#666"} width={20} height={20} />
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            router.push(`/(restaurant)/${menuItem?.restaurantID}`);
+                                        }}>
+                                        <ThemedText style={styles.restaurantText}>
+                                            {menuItem?.restaurantName || "Restaurant Name"}
+                                        </ThemedText>
+                                    </TouchableOpacity>
+                                </View>
+                            </ThemedView>
+                            <ThemedView style={styles.tagsContainer}>
+                                <View style={styles.tagRow}>
+                                    {menuItem?.tags.map((tag, index) => (
+                                        <ThemedTag
+                                            key={index}
+                                            title={tag}
+                                            backgroundColor={"#E8F5E9"}
+                                            textColor={"#2E7D32"}
+                                        />
+                                    ))}
+                                </View>
+                            </ThemedView>
 
-                    <Skeleton show={loading} colorMode={"light"}>
-                        <ThemedView style={styles.sectionHeader}>
-                            <AddReviewButton onPress={() => setIsReviewModalVisible(true)} />
-                            <ReviewFlow
-                                isVisible={isReviewModalVisible}
-                                onClose={() => setIsReviewModalVisible(false)}
-                                restaurantId={menuItem?.restaurantID || ""}
-                                menuItemName={menuItem?.name || ""}
-                                dishImageUrl={menuItem?.picture || ""}
-                            />
+                            <ThemedView style={styles.descriptionContainer}>
+                                <ThemedText style={styles.descriptionText}>{menuItem?.description}</ThemedText>
+                                <View style={styles.allergyRow}>
+                                    <View style={styles.allergyItemsContainer}>
+                                        <ThemedText style={styles.allergyText} numberOfLines={1}>
+                                            {menuItem?.dietaryRestrictions.join(", ") || "No known allergens."}
+                                        </ThemedText>
+                                    </View>
+                                    <Pressable style={styles.allergyButton}>
+                                        <ThemedText style={styles.viewAllText}>see allergens</ThemedText>
+                                    </Pressable>
+                                </View>
+                            </ThemedView>
+
+                            <ThemedView style={styles.sectionHeader}>
+                                <AddReviewButton onPress={() => setIsReviewModalVisible(true)} />
+                                <ReviewFlow
+                                    isVisible={isReviewModalVisible}
+                                    onClose={() => setIsReviewModalVisible(false)}
+                                    restaurantId={menuItem?.restaurantID || ""}
+                                    menuItemName={menuItem?.name || ""}
+                                    dishImageUrl={menuItem?.picture || ""}
+                                />
+                            </ThemedView>
                         </ThemedView>
                     </Skeleton>
 
@@ -170,6 +165,7 @@ export default function Route() {
                                 rating={4}
                                 content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
                                 authorId={""}
+                                reviewId="64f5a95cc7330b78d33265f1"
                                 authorUsername={"username"}
                                 authorName={"First Name"}
                                 authorAvatar={"https://placehold.co/600x400/png?text=P"}

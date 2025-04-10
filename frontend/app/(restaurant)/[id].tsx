@@ -30,12 +30,14 @@ export default function Route() {
     }>();
 
     const [restaurant, setRestaurant] = React.useState<TRestaurant | null>(null);
+    const [loading, setLoading] = React.useState(true);
     const navigation = useNavigation();
 
     useEffect(() => {
-        getRestaurant(id).then((res) => {
+        getRestaurant(id).then(async (res) => {
             setRestaurant(res);
         });
+        new Promise((resolve) => setTimeout(resolve, 1500)).then(() => setLoading(false));
         navigation.setOptions({ headerShown: false });
     }, [navigation]);
 
@@ -50,13 +52,13 @@ export default function Route() {
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <Skeleton show={restaurant == null} colorMode={"light"}>
+            <Skeleton show={loading} colorMode={"light"}>
                 <BannerAndAvatar
                     bannerURL={"https://shorturl.at/zZdqT"}
-                    avatarURL={restaurant?.picture || "https://placehold.co/600x400/png?text=P"}
+                    avatarURL={"https://placehold.co/600x400/png?text=P"}
                 />
             </Skeleton>
-            <Skeleton.Group show={restaurant == null}>
+            <Skeleton.Group show={loading}>
                 <ThemedView style={styles.container}>
                     <Skeleton colorMode={"light"}>
                         <ThemedView style={styles.headerContainer}>
@@ -143,6 +145,7 @@ export default function Route() {
                                     <TouchableOpacity onPress={() => router.push("/(review)/827b36v4b234")}>
                                         <ReviewPreview
                                             plateName={"Big Whopper"}
+                                            reviewId={"827b36v4b234"}
                                             restaurantName={"Burger King"}
                                             tags={["juicy", "artificial", "fake meat"]}
                                             rating={4}
@@ -178,6 +181,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        paddingTop: 4,
     },
     detailsContainer: {
         paddingVertical: 4,

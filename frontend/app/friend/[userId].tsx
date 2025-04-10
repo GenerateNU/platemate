@@ -129,6 +129,8 @@ const ProfileScreen = () => {
                     />
                     {userReviews.map((review) => (
                         <ReviewPreview
+                            reviewId={review._id}
+                            likes={review.likes}
                             key={review._id}
                             plateName={review.menuItemName}
                             restaurantName={review.restaurantName}

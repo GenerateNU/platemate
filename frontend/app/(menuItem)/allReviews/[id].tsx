@@ -88,6 +88,7 @@ export default function AllReviews() {
                         authorUsername="johndoe"
                         authorAvatar="https://placehold.co/600x400/png?text=JD"
                         authorId="123"
+                        reviewId="64f5a95cc7330b78d33265f1"
                     />
                 </ThemedView>
             </ScrollView>
