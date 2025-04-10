@@ -4,11 +4,12 @@ import { ThemedText } from "@/components/themed/ThemedText";
 import { useState } from "react";
 import { createFollow, deleteFollow } from "@/api/user";
 import { useUser } from "@/context/user-context";
+import { useEffect } from "react";
 
 export const FollowButton: React.FC<{ isFollowing: boolean, userToFollowId: string }> = ({ isFollowing, userToFollowId }) => {
-    const [isPressed, setIsPressed] = useState(true);
+    const [isPressed, setIsPressed] = useState(isFollowing);
     const [buttonText, setButtonText] = useState(isFollowing ? "Friends" : "Follow");
-    const { user } = useUser(); // Get current user
+    const { user } = useUser();
 
 
     const handlePress = async () => {
@@ -18,18 +19,16 @@ export const FollowButton: React.FC<{ isFollowing: boolean, userToFollowId: stri
         }
 
         if (buttonText == "Friends") {
-            console.log("Unfollowing user with ID:", userToFollowId);
-            console.log("User ID:", user.id);
             setIsPressed(false);
             setButtonText("Follow");
             await deleteFollow(user.id, userToFollowId);
+
             
         } else {
-            console.log("Following user with ID:", userToFollowId);
-            console.log("User ID:", user.id);
             setIsPressed(true);
             setButtonText("Friends");
             await createFollow(user.id, userToFollowId);
+
 
         }
     };

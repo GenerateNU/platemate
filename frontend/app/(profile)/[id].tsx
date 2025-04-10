@@ -80,7 +80,7 @@ const ProfileScreen = () => {
         fetchUserAndReviews();
     }, [userId]);
 
-    if (isLoading) {
+    if (isLoading || followingStatusLoading) {
         return (
             <ThemedView style={styles.centerContainer}>
                 <ActivityIndicator size="large" color="#ffcf0f" />

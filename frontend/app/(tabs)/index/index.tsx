@@ -48,8 +48,6 @@ export default function Feed() {
     }, [handleSearch, router]);
 
     const fetchData = useCallback(async () => {
-        console.log("FETCH DATA STARTING, activeTab:", activeTab);
-        console.log("User object:", user); // Log the entire user object
         try {
             let reviewsData;
             if (activeTab === 0) {
@@ -97,8 +95,11 @@ export default function Feed() {
 
     useEffect(() => {
         setLoading(true);
-        fetchData();
-    }, [fetchData]);
+
+        if (user) {
+            fetchData();
+        }
+    }, [fetchData, user]);
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
