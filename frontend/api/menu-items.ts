@@ -61,3 +61,7 @@ export const getMenuItemReviews = async (menuItemId: string, params?: ReviewQuer
 
     return await makeRequest(path, "GET");
 };
+
+export const getRecommendations = async (userId: string): Promise<TMenuItem[]> => {
+    return await makeRequest(`:4000/reccomendation?user_id=${userId}`, "GET");
+};
