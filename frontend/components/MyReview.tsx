@@ -1,11 +1,22 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, SafeAreaView, Alert } from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    Image,
+    TextInput,
+    TouchableOpacity,
+    SafeAreaView,
+    Alert,
+    ScrollView,
+} from "react-native";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { ProgressBar } from "./ProgressBar";
 import { EmojiTagsGrid } from "./EmojiTagsGrid";
 import { InteractiveStars } from "./ui/StarReview";
 import { createReview } from "@/api/review";
 import useAuthStore from "@/auth/store";
+import { launchImageLibrary, Asset, ImageLibraryOptions } from "react-native-image-picker";
 
 interface MyReviewProps {
     restaurantId?: string;
@@ -98,6 +109,23 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
             default:
                 return 25;
         }
+    };
+
+    // State to store selected images
+    const [selectedImages, setSelectedImages] = useState<Asset[]>([]);
+
+    // Function to handle image selection
+    const handleImagePicker = () => {
+        const options: ImageLibraryOptions = {
+            mediaType: "photo",
+            selectionLimit: 0,
+        };
+        launchImageLibrary(options, (response) => {
+            const assets: Asset[] = response.assets || [];
+            if (assets.length > 0) {
+                setSelectedImages((prevImages) => [...prevImages, ...assets]);
+            }
+        });
     };
 
     const handleNext = async () => {
@@ -222,6 +250,14 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                     <View style={styles.starsContainer}>
                         <InteractiveStars rating={overallRating} onChange={setOverallRating} />
                     </View>
+                    <View style={styles.imagePreviewContainer}>
+                        {selectedImages.map((image, index) => (
+                            <Image key={index} source={{ uri: image.uri }} style={styles.imagePreview} />
+                        ))}
+                        <TouchableOpacity onPress={handleImagePicker} style={styles.addButton}>
+                            <Text style={styles.addButtonText}>+</Text>
+                        </TouchableOpacity>
+                    </View>
                     <TextInput
                         style={styles.textInput}
                         placeholder="Let others know what you thought..."
@@ -253,49 +289,52 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header with back chevron and title */}
-            <View style={styles.header}>
-                <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-                    <IconSymbol name="chevron.left" color="#000" size={24} />
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                {/* Header with back chevron and title */}
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                        <IconSymbol name="chevron.left" color="#000" size={24} />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>My Review</Text>
+                </View>
+                {/* Progress Bar */}
+                <View style={styles.progressContainer}>
+                    <ProgressBar progress={getProgressValue()} />
+                </View>
+
+                {/* Dish image centered */}
+                <View style={styles.imageContainer}>
+                    <Image
+                        source={{
+                            uri:
+                                dishImageUrl ||
+                                "https://s3-alpha-sig.figma.com/img/296c/9b5f/e826d9e1747de9010166f3934746adf1?Expires=1743984000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Gr9ywhylTdZqfzVKJYh1XvcRQk9wD284~bcNy-jZ15dxG~abTxWe9CrFEfy5CvDSwyFzlPcuSGBY7PB5xzJbA67Ig36cXUffXxCUsn6oJiJ~JJihfCY55QE3eS22DaPB2ZJ1cMI7vTQ5duqrA0gEf3fwEQxzGY9heTjrUEBZVg81XezecvSY6II2GDHix~W80NbpDKn9ecJlBcld08Z38-a5aB7XN~YtUKnKMsH2r5CLmT4mej6avtZsgaTnR3zb2V1I1XlRv57siEvNj03TWjnvwrjXMdgsrO4tHXn-UxQmMp~qHUBCebvxMBGTBFR-hFnmHwaIu8W2tp0CnLkMaA__",
+                        }}
+                        style={styles.dishImage}
+                    />
+                </View>
+
+                {/* Step-specific content */}
+                {renderStep()}
+
+                {/* Next / Submit button */}
+                <TouchableOpacity
+                    style={[
+                        styles.nextButton,
+                        step < 4 &&
+                            (!stepContent[step - 1].rating ||
+                                !stepContent[step - 1].tags.some((tag) => tag.selected)) &&
+                            styles.nextButtonDisabled,
+                    ]}
+                    onPress={handleNext}
+                    disabled={
+                        isSubmitting ||
+                        (step < 4 &&
+                            (!stepContent[step - 1].rating || !stepContent[step - 1].tags.some((tag) => tag.selected)))
+                    }>
+                    <Text style={styles.nextButtonText}>{step === 4 ? "Submit" : "Next"}</Text>
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>My Review</Text>
-            </View>
-            {/* Progress Bar */}
-            <View style={styles.progressContainer}>
-                <ProgressBar progress={getProgressValue()} />
-            </View>
-
-            {/* Dish image centered */}
-            <View style={styles.imageContainer}>
-                <Image
-                    source={{
-                        uri:
-                            dishImageUrl ||
-                            "https://s3-alpha-sig.figma.com/img/296c/9b5f/e826d9e1747de9010166f3934746adf1?Expires=1743984000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Gr9ywhylTdZqfzVKJYh1XvcRQk9wD284~bcNy-jZ15dxG~abTxWe9CrFEfy5CvDSwyFzlPcuSGBY7PB5xzJbA67Ig36cXUffXxCUsn6oJiJ~JJihfCY55QE3eS22DaPB2ZJ1cMI7vTQ5duqrA0gEf3fwEQxzGY9heTjrUEBZVg81XezecvSY6II2GDHix~W80NbpDKn9ecJlBcld08Z38-a5aB7XN~YtUKnKMsH2r5CLmT4mej6avtZsgaTnR3zb2V1I1XlRv57siEvNj03TWjnvwrjXMdgsrO4tHXn-UxQmMp~qHUBCebvxMBGTBFR-hFnmHwaIu8W2tp0CnLkMaA__",
-                    }}
-                    style={styles.dishImage}
-                />
-            </View>
-
-            {/* Step-specific content */}
-            {renderStep()}
-
-            {/* Next / Submit button */}
-            <TouchableOpacity
-                style={[
-                    styles.nextButton,
-                    step < 4 &&
-                        (!stepContent[step - 1].rating || !stepContent[step - 1].tags.some((tag) => tag.selected)) &&
-                        styles.nextButtonDisabled,
-                ]}
-                onPress={handleNext}
-                disabled={
-                    isSubmitting ||
-                    (step < 4 &&
-                        (!stepContent[step - 1].rating || !stepContent[step - 1].tags.some((tag) => tag.selected)))
-                }>
-                <Text style={styles.nextButtonText}>{step === 4 ? "Submit" : "Next"}</Text>
-            </TouchableOpacity>
+            </ScrollView>
         </SafeAreaView>
     );
 }
@@ -393,5 +432,34 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "600",
         fontFamily: "Nunito",
+    },
+
+    // Image previews and add button
+    imagePreviewContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 16,
+    },
+    imagePreview: {
+        width: 50,
+        height: 50,
+        borderRadius: 8,
+        marginRight: 8,
+    },
+    addButton: {
+        width: 50,
+        height: 50,
+        borderRadius: 8,
+        backgroundColor: "#E0E0E0",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    addButtonText: {
+        fontSize: 24,
+        color: "#000",
+    },
+    scrollContainer: {
+        paddingBottom: 40,
     },
 });
