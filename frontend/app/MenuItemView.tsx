@@ -213,13 +213,14 @@ export default function MenuItemView() {
                                 key={review._id}
                                 plateName={review.menuItem}
                                 restaurantName="Pad Thai Kitchen"
-                                tags={[]} // You might want to add tags based on the review
+                                tags={[]}
                                 rating={review.rating.overall}
                                 content={review.content}
                                 authorName={review.reviewer.username}
                                 authorId={review.reviewer._id}
                                 authorUsername={review.reviewer.username}
                                 authorAvatar={review.reviewer.pfp || "https://placehold.co/600x400/png?text=P"}
+                                reviewId={""}
                             />
                         ))
                     )}
@@ -400,13 +401,13 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     errorText: {
-        color: 'red',
-        textAlign: 'center',
+        color: "red",
+        textAlign: "center",
         marginVertical: 16,
     },
     noReviewsText: {
-        textAlign: 'center',
+        textAlign: "center",
         marginVertical: 16,
-        color: '#666',
+        color: "#666",
     },
 });
