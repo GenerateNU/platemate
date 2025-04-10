@@ -90,13 +90,13 @@ func (s *Service) GetReviewByID(id primitive.ObjectID, userID *primitive.ObjectI
 				},
 			}}
 		cursor, err := s.reviews.Aggregate(ctx, pipeline)
-		defer cursor.Close(ctx)
 		if err != nil {
 			slog.Error("Error finding review", "error", err)
 			return nil, err
 		}
+		defer cursor.Close(ctx)
 		cursor.Next(ctx)
-		err = cursor.Decode(&review)
+		_ = cursor.Decode(&review)
 	} else {
 		err = s.reviews.FindOne(ctx, filter).Decode(&review)
 	}

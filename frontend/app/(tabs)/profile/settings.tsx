@@ -16,12 +16,10 @@ import { makeRequest } from "@/api/base";
 export default function SettingsScreen() {
     const insets = useSafeAreaInsets();
     const router = useRouter();
-    const { email, userId } = useAuthStore();
+    const { email, userId, logout } = useAuthStore();
 
     // const userIdStr = JSON.stringify(userId);
     console.log(userId, email);
-
-    const { logout } = useAuthStore();
 
     const dietaryOptions: Record<string, string> = {
         vegetarian: "Vegetarian",
@@ -138,13 +136,13 @@ export default function SettingsScreen() {
         ],
         additional: [
             { label: "Blocked Users", onPress: () => console.log("navigating to blocked users") },
-            { label: "Terms and Conditions", onPress: () => console.log("navigating to terms of service") },
+            { label: "Terms and Conditions", onPress: () => router.push("/profile/terms") },
         ],
     };
 
-    const handleLogOut = () => {
-        logout();
-        router.replace("/(onboarding)");
+    const handleLogOut = async () => {
+        await logout();
+        router.push("/(onboarding)");
     };
 
     return (
@@ -171,7 +169,7 @@ export default function SettingsScreen() {
                             editable={false}
                         />
                     </View>
-                    <Text style={styles.resetPasswordText}> Reset Password </Text>
+                    <Text style={styles.resetPasswordText}>Reset Password</Text>
                 </SettingsSection>
                 <SettingsSection title="Dietary Restrictions">
                     {settingsData.dietary.map((item) => (
@@ -229,28 +227,27 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         backgroundColor: "#fff",
+        marginVertical: 32,
     },
     content: {
-        fontFamily: "Inter",
+        fontFamily: "Nunito",
         padding: 20,
     },
     buttonContainer: {
         display: "flex",
-        paddingVertical: 4,
-        paddingHorizontal: 12,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
         justifyContent: "center",
         alignItems: "center",
         gap: 4,
         borderRadius: 25,
         backgroundColor: "#FFCF0F",
         alignSelf: "center",
-        width: 90,
-        height: 30,
     },
     buttonText: {
         color: "#000",
         textAlign: "center",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 14,
         fontStyle: "normal",
         fontWeight: 500,
@@ -276,16 +273,16 @@ const styles = StyleSheet.create({
         width: 382,
     },
     inputLabel: {
-        fontSize: 10,
-        fontFamily: "Inter",
+        fontSize: 14,
+        fontFamily: "Nunito",
         fontStyle: "normal",
         fontWeight: 400,
         lineHeight: 28,
     },
     input: {
         fontSize: 12,
-        height: 35,
-        borderColor: "#D9D9D9",
+        height: 40,
+        borderColor: "black",
         borderWidth: 1,
         borderRadius: 11,
         paddingHorizontal: 10,
@@ -294,6 +291,7 @@ const styles = StyleSheet.create({
         width: 350, // the email and password boxes were not aligning with the toggles
         flexShrink: 0,
         alignItems: "flex-start",
+        fontFamily: "Nunito",
     },
     sectionTitle: {
         fontSize: 20,
@@ -301,13 +299,13 @@ const styles = StyleSheet.create({
         fontStyle: "normal",
         fontWeight: 600,
         lineHeight: 28,
-        fontFamily: "Inter",
+        fontFamily: "Nunito",
     },
     resetPasswordText: {
         color: "#285852",
         textAlign: "right",
-        fontFamily: "Inter",
-        fontSize: 10,
+        fontFamily: "Nunito",
+        fontSize: 14,
         fontStyle: "normal",
         fontWeight: 400,
         lineHeight: 28,

@@ -40,7 +40,7 @@ export default function RootLayout() {
             <AuthInitializer>
                 <UserProvider>
                     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-                        <StatusBar backgroundColor={"black"} animated={true} style={"dark"} translucent={false} />
+                        <StatusBar backgroundColor={"black"} animated={true} style={"auto"} translucent={false} />
                         <GestureHandlerRootView style={{ flex: 1 }}>
                             <BottomSheetModalProvider>
                                 <Stack>

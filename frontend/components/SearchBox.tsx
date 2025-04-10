@@ -76,7 +76,7 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, f
                     onBlur={() => clearRecents()}
                     onChangeText={onChangeText}
                     {...rest}
-                    style={{ ...styles.input, color: textColor, fontWeight: 500, fontFamily: "Source Sans 3" }}
+                    style={{ ...styles.input, color: textColor, fontWeight: 500, fontFamily: "Nunito" }}
                 />
                 {icon && icon}
                 {filter && (
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
         zIndex: 10,
         paddingBottom: 8,
         width: "100%",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     recent: {
         width: "100%",
@@ -134,21 +134,21 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     container: {
         flexDirection: "row",
         alignItems: "center",
-        borderWidth: 2,
-        borderColor: "#DDD",
+        borderWidth: 1,
+        borderColor: "black",
         borderRadius: 12,
         paddingHorizontal: 12,
         paddingVertical: 8,
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     input: {
         flex: 1,
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     icon: {
         marginLeft: 8,

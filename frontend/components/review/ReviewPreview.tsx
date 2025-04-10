@@ -45,7 +45,6 @@ const ReviewPreview = ({
                 borderRadius: 12,
                 paddingTop: 24,
                 width: "100%",
-                // height: Dimensions.get("window").height * 0.36,
             }}>
             <ThemedView style={{ width: "100%" }}>
                 <View
@@ -95,10 +94,10 @@ const ReviewPreview = ({
             <View style={{ gap: 8 }}>
                 <View style={styles.plateInfoContainer}>
                     <View style={styles.nameContainer}>
-                        <ThemedText type="subtitle" style={[styles.nameText, { fontWeight: 700 }]}>
+                        <ThemedText type="subtitle" numberOfLines={1} style={[styles.nameText, { fontWeight: 700 }]}>
                             {plateName}
                         </ThemedText>
-                        <ThemedText type="default" style={[styles.nameText, { fontWeight: 400 }]}>
+                        <ThemedText type="default" numberOfLines={1} style={[styles.nameText, { fontWeight: 400 }]}>
                             {restaurantName}
                         </ThemedText>
                     </View>
@@ -123,14 +122,14 @@ const ReviewPreview = ({
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                 <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
-                    {/* <TouchableOpacity>
+                    <TouchableOpacity>
                         <Entypo name="arrow-up" size={24} color="gray" />
                     </TouchableOpacity>
-                    <ThemedText type="default">123</ThemedText>
+                    <ThemedText type="default">0</ThemedText>
                     <TouchableOpacity>
                         <Entypo name="arrow-down" size={24} color="gray" />
                     </TouchableOpacity>
-                    <ThemedText type="default">0</ThemedText> */}
+                    <ThemedText type="default">0</ThemedText>
                 </View>
                 <View>
                     <TouchableOpacity>
@@ -197,5 +196,6 @@ const styles = StyleSheet.create({
         fontWeight: 400,
         lineHeight: 16,
         paddingTop: 4,
+        paddingHorizontal: 4,
     },
 });

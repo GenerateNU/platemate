@@ -21,7 +21,7 @@ export default function ProfileLayout() {
                 headerTintColor: "#F7B418",
                 headerBackButtonDisplayMode: "minimal",
                 headerTitleStyle: {
-                    fontFamily: "Outfit",
+                    fontFamily: "Nunito",
                     fontWeight: "500",
                     fontSize: 18,
                     color: "#333",
@@ -40,7 +40,7 @@ export default function ProfileLayout() {
                     title: "PlateMate Settings",
                     headerTitleAlign: "left",
                     headerTitleStyle: {
-                        fontFamily: "Inter",
+                        fontFamily: "Nunito",
                         fontWeight: "600",
                         fontSize: 20,
                         color: "#333",
@@ -53,7 +53,20 @@ export default function ProfileLayout() {
                     title: "Your Followers",
                     headerTitleAlign: "left",
                     headerTitleStyle: {
-                        fontFamily: "Inter",
+                        fontFamily: "Nunito",
+                        fontWeight: "600",
+                        fontSize: 20,
+                        color: "#333",
+                    },
+                }}
+            />
+            <Stack.Screen
+                name={"terms"}
+                options={{
+                    title: "Terms of Service",
+                    headerTitleAlign: "left",
+                    headerTitleStyle: {
+                        fontFamily: "Nunito",
                         fontWeight: "600",
                         fontSize: 20,
                         color: "#333",

@@ -637,3 +637,48 @@ func (s *Service) GetPopularWithFriends(userID primitive.ObjectID, limit int) ([
 
 	return final, nil
 }
+
+// GetRestaurantMenuItemsMetrics retrieves metrics for all menu items at a restaurant
+func (s *Service) GetRestaurantMenuItemsMetrics(restaurantID primitive.ObjectID) (*RestaurantMenuItemsMetrics, error) {
+	// ctx := context.Background()
+
+	// Get all menu items for this restaurant using our existing function
+	menuItems, err := s.GetMenuItemByRestaurant(restaurantID)
+	if err != nil {
+		slog.Error("Error finding menu items for restaurant metrics", "error", err)
+		return nil, err
+	}
+
+	// Initialize the response
+	restaurantMetrics := &RestaurantMenuItemsMetrics{
+		RestaurantID:    restaurantID.Hex(),
+		TotalItems:      len(menuItems),
+		TotalReviews:    0,
+		MenuItemMetrics: make([]MenuItemMetrics, 0, len(menuItems)),
+	}
+
+	// Process each menu item
+	for _, menuItem := range menuItems {
+		// Create metrics from the document
+		metrics := MenuItemMetrics{
+			ID:                  menuItem.ID.Hex(),
+			Name:                menuItem.Name,
+			OverallRating:       menuItem.AvgRating.Overall,
+			TasteRating:         menuItem.AvgRating.Taste,
+			PortionRating:       menuItem.AvgRating.Portion,
+			ValueRating:         menuItem.AvgRating.Value,
+			ReturnRate:          menuItem.AvgRating.Return,
+			ReviewCount:         len(menuItem.Reviews),
+			PopularTags:         menuItem.Tags,
+			DietaryRestrictions: menuItem.DietaryRestrictions,
+		}
+
+		// Add to total review count
+		restaurantMetrics.TotalReviews += len(menuItem.Reviews)
+
+		// Add to metrics list
+		restaurantMetrics.MenuItemMetrics = append(restaurantMetrics.MenuItemMetrics, metrics)
+	}
+
+	return restaurantMetrics, nil
+}
