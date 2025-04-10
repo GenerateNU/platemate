@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef} from "react";
 import { TextInput, StyleSheet, View, TouchableOpacity } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { SearchBoxProps } from "./SearchBox";

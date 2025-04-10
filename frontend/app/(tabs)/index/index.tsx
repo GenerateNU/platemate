@@ -5,7 +5,7 @@ import { ThemedView } from "@/components/themed/ThemedView";
 import FeedTabs from "@/components/Feed/FeedTabs";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
-import { getMenuItems, getRandomMenuItems } from "@/api/menu-items";
+import { getMenuItems, getFriendMenuItems } from "@/api/menu-items";
 import { TMenuItem } from "@/types/menu-item";
 import { TReview } from "@/types/review";
 import { getReviews } from "@/api/reviews";
@@ -15,6 +15,7 @@ import { SearchIcon } from "@/components/icons/Icons";
 import { FilterContext } from "@/context/filter-context";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/themed/ThemedText";
+import { useUser } from "@/context/user-context";
 
 // Define a type for our feed items
 type FeedItem = {
@@ -30,6 +31,7 @@ export default function Feed() {
     const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
     const [reviews, setReviews] = useState<TReview[]>([]);
     const [menuItems, setMenuItems] = useState<TMenuItem[]>([]);
+    const { user } = useUser();
 
     const insets = useSafeAreaInsets();
     const router = useRouter();
@@ -47,11 +49,14 @@ export default function Feed() {
 
     const fetchData = useCallback(async () => {
         try {
-            const [reviewsData, menuItemsData] = await Promise.all([getReviews(2, 20), getRandomMenuItems(20)]);
+            if (!user) {
+                throw new Error("User is null. Cannot fetch friend menu items.");
+            }
+            
+            const [reviewsData, menuItemsData] = await Promise.all([getReviews(2, 20), getFriendMenuItems(user.id, 20)]);
 
             const fetchedReviews = reviewsData.data as TReview[];
             const fetchedMenuItems = menuItemsData as TMenuItem[];
-
             setReviews(fetchedReviews);
             setMenuItems(fetchedMenuItems);
 
@@ -74,7 +79,7 @@ export default function Feed() {
             setLoading(false);
             setRefreshing(false);
         }
-    }, []);
+    }, [user]);
 
     useEffect(() => {
         setLoading(true);
@@ -186,7 +191,6 @@ export default function Feed() {
                         filter={true}
                     />
                 </ThemedView>
-                <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
                 <ThemedView style={{ flex: 1, width: "100%", gap: 16 }}>
                     {reviews.length > 0 ? (
                         <ScrollView contentContainerStyle={{ gap: 16 }} showsHorizontalScrollIndicator={false}>
