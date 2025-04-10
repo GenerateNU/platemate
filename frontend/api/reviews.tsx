@@ -10,5 +10,6 @@ export const getReviewById = async (id: string, userId: string): Promise<TReview
 };
 
 export const getFriendsReviews = async (id: string): Promise<TReview[]> => {
-    return await makeRequest(`/api/v1/item/${id}/followReviews`, "GET");
+    return await makeRequest(`/api/v1/reviews/${id}/friendReviews`, "GET");
 };
+

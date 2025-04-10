@@ -3,6 +3,8 @@ package users
 import (
 	"errors"
 
+	"math"
+
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
@@ -129,7 +131,7 @@ func (h *Handler) GetFriendReviews(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 	}
 
-	reviews, err := h.service.GetFriendReviews(userIdObj, query.Page, query.Limit)
+	reviews, totalCount, err := h.service.GetFriendReviews(userIdObj, query.Page, query.Limit)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserId))
@@ -137,7 +139,17 @@ func (h *Handler) GetFriendReviews(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(reviews)
+	response := fiber.Map{
+		"data": reviews,
+		"meta": fiber.Map{
+			"page":       query.Page,
+			"limit":      query.Limit,
+			"total":      totalCount,
+			"totalPages": int(math.Ceil(float64(totalCount) / float64(query.Limit))),
+		},
+	}
+
+	return c.JSON(response)
 
 }
 

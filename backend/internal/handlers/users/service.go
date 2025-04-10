@@ -430,7 +430,7 @@ func (s *Service) GetFollowingReviewsForItem(userId string, menuItemId string) (
 		return nil, err
 	}
 
-	if len(user.Following) == 0 {
+	if len(menuItem.Reviews) == 0 || len(user.Following) == 0 {
 		return []review.ReviewDocument{}, nil
 	}
 
@@ -455,18 +455,25 @@ func (s *Service) GetFollowingReviewsForItem(userId string, menuItemId string) (
 	return reviews, nil
 }
 
-func (s *Service) GetFriendReviews(userObjID primitive.ObjectID, page, limit int) ([]review.ReviewDocument, error) {
+func (s *Service) GetFriendReviews(userObjID primitive.ObjectID, page, limit int) ([]review.ReviewDocument, int64, error) {
 	ctx := context.Background()
 
 	// Get the user's following list
 	var user User
 	err := s.users.FindOne(ctx, bson.M{"_id": userObjID}).Decode(&user)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	if len(user.Following) == 0 {
-		return []review.ReviewDocument{}, nil
+		return []review.ReviewDocument{}, 0, nil
+	}
+
+	totalCount, err := s.reviews.CountDocuments(ctx, bson.M{
+		"reviewer._id": bson.M{"$in": user.Following},
+	})
+	if err != nil {
+		return nil, 0, err
 	}
 
 	// Query reviews that are from user's following
@@ -477,16 +484,16 @@ func (s *Service) GetFriendReviews(userObjID primitive.ObjectID, page, limit int
 		options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}).SetSkip(int64((page-1)*limit)).SetLimit(int64(limit)),
 	)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer reviewsCursor.Close(ctx)
 
 	var reviews []review.ReviewDocument
 	if err = reviewsCursor.All(ctx, &reviews); err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return reviews, nil
+	return reviews, totalCount, nil
 }
 
 // GetFriendReviewsForItem gets reviews for a specific menu item from friends (users that follow each other)

@@ -15,6 +15,9 @@ import { SearchIcon } from "@/components/icons/Icons";
 import { FilterContext } from "@/context/filter-context";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/themed/ThemedText";
+import { getFriendsReviews } from "@/api/reviews";
+import { useUser } from "@/context/user-context";
+
 
 // Define a type for our feed items
 type FeedItem = {
@@ -30,6 +33,7 @@ export default function Feed() {
     const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
     const [reviews, setReviews] = useState<TReview[]>([]);
     const [menuItems, setMenuItems] = useState<TMenuItem[]>([]);
+    const { user } = useUser();
 
     const insets = useSafeAreaInsets();
     const router = useRouter();
@@ -46,10 +50,27 @@ export default function Feed() {
     }, [handleSearch, router]);
 
     const fetchData = useCallback(async () => {
+        console.log("FETCH DATA STARTING, activeTab:", activeTab);
+        console.log("User object:", user); // Log the entire user object
         try {
-            const [reviewsData, menuItemsData] = await Promise.all([getReviews(2, 20), getRandomMenuItems(20)]);
+            let reviewsData;
+            if (activeTab === 0) {
+                if (!user) {
+                    // Fallback to regular reviews if user is not available TODO: maybe better way
+                    const response = await getReviews(1, 20);
+                    reviewsData = response;
+                } else {
+                    const userId = user.id;
+                    reviewsData = await getFriendsReviews(userId);
+                }
 
-            const fetchedReviews = reviewsData.data as TReview[];
+            } else {
+                reviewsData = await getReviews(1, 20);
+
+            }
+
+            const menuItemsData = await getRandomMenuItems(20);
+            const fetchedReviews = reviewsData?.data as TReview[] || [];
             const fetchedMenuItems = menuItemsData as TMenuItem[];
 
             setReviews(fetchedReviews);
@@ -74,7 +95,7 @@ export default function Feed() {
             setLoading(false);
             setRefreshing(false);
         }
-    }, []);
+    }, [activeTab, user]);
 
     useEffect(() => {
         setLoading(true);
@@ -148,7 +169,9 @@ export default function Feed() {
                             reviews.map(renderReviewItem)
                         ) : (
                             <ThemedView style={{ padding: 16, alignItems: "center", justifyContent: "center" }}>
-                                <ThemedView>No reviews available</ThemedView>
+                                <ThemedView style={{ paddingVertical: 20, alignItems: "center" }}>
+                                    <ThemedText>No content available</ThemedText>
+                                </ThemedView>
                             </ThemedView>
                         )}
                     </ScrollView>
@@ -192,13 +215,16 @@ export default function Feed() {
                 renderItem={renderItem}
                 keyExtractor={keyExtractor}
                 ListHeaderComponent={ListHeaderComponent}
+                // ListHeaderComponent={() => ( TODO: DELETE
+                //     <ListHeaderComponent key={activeTab} />
+                //   )}
                 contentContainerStyle={{ paddingBottom: 84 }}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
                 showsVerticalScrollIndicator={false}
                 ListEmptyComponent={
                     <ThemedView style={{ paddingVertical: 20, alignItems: "center" }}>
-                        <ThemedView>No content available</ThemedView>
+                         <ThemedText>No content available</ThemedText>
                     </ThemedView>
                 }
             />
