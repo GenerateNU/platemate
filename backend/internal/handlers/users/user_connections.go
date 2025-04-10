@@ -3,6 +3,8 @@ package users
 import (
 	"errors"
 
+	"math"
+
 	"github.com/GenerateNU/platemate/internal/xerr"
 	"github.com/GenerateNU/platemate/internal/xvalidator"
 	"github.com/gofiber/fiber/v2"
@@ -99,6 +101,56 @@ func (h *Handler) GetFollowing(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(followers)
+}
+
+// GetFriendReviews gets reviews from users that the current user follows
+func (h *Handler) GetFriendReviews(c *fiber.Ctx) error {
+	var query GetFriendReviewsQuery
+
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	query.UserId = c.Params("id")
+	// Set defaults if not provided
+	if query.Page < 1 {
+		query.Page = 1
+	}
+	if query.Limit < 1 {
+		query.Limit = 20
+	}
+
+	// Added structured validation
+	errs := xvalidator.Validator.Validate(query)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
+	}
+
+	userIdObj, err := primitive.ObjectIDFromHex(query.UserId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	reviews, totalCount, err := h.service.GetFriendReviews(userIdObj, query.Page, query.Limit)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserId))
+		}
+		return err
+	}
+
+	response := fiber.Map{
+		"data": reviews,
+		"meta": fiber.Map{
+			"page":       query.Page,
+			"limit":      query.Limit,
+			"total":      totalCount,
+			"totalPages": int(math.Ceil(float64(totalCount) / float64(query.Limit))),
+		},
+	}
+
+	return c.JSON(response)
+
 }
 
 // GetFollowingReviewsForItem gets reviews for a menu item from users that the current user follows
@@ -257,4 +309,28 @@ func (h *Handler) DeleteDietaryPreferences(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusCreated)
+}
+
+func (h *Handler) IsFollowing(c *fiber.Ctx) error {
+	var query IsFollowingQuery
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	errs := xvalidator.Validator.Validate(query)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
+	}
+
+	isFollowing, err := h.service.IsFollowing(query.FollowerId, query.FolloweeId)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Connection", "users", "specified"))
+		}
+		return err
+	}
+
+	return c.JSON(fiber.Map{
+		"isFollowing": isFollowing,
+	})
 }
