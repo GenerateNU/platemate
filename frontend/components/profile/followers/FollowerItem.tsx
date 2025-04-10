@@ -1,7 +1,9 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { FollowButton } from "./FollowButton";
+import { useFollowingStatus } from "@/hooks/useFollowingStatus";
 import { router } from "expo-router";
+
 
 type Follower = {
     id: string;
@@ -15,6 +17,9 @@ type FollowerItemProps = {
 };
 
 const FollowerItem = ({ follower }: FollowerItemProps) => {
+    const { isFollowing, loading } = useFollowingStatus(follower.id);
+
+    
     console.log(follower.id);
     return (
         <TouchableOpacity style={styles.followerItem} onPress={() => router.push(`/friend/${follower.id}`)}>
@@ -23,8 +28,7 @@ const FollowerItem = ({ follower }: FollowerItemProps) => {
                 <Text style={styles.followerUsername}>{follower.username}</Text>
                 <Text style={styles.followerName}>{follower.name}</Text>
             </View>
-            {/* Hard coded "Friends" for now */}
-            <FollowButton text={"Friends"} userToFollowId={follower.id} />
+            <FollowButton isFollowing={isFollowing}  userToFollowId={follower.id} />
         </TouchableOpacity>
     );
 };

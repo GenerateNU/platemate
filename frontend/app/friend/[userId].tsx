@@ -15,11 +15,11 @@ import type { User } from "@/context/user-context";
 import { DEFAULT_PROFILE_PIC } from "@/context/user-context";
 import type { TReview } from "@/types/review";
 import { makeRequest } from "@/api/base";
+import { useFollowingStatus } from "@/hooks/useFollowingStatus";
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = () => {
-    console.log("hi");
     const { userId } = useLocalSearchParams();
     console.log(userId);
     const [searchText, setSearchText] = useState("");
@@ -37,6 +37,8 @@ const ProfileScreen = () => {
     }); //initialziing the user to an empty user
     const [userReviews, setUserReviews] = useState<TReview[]>([]);
     const [isLoading, setLoading] = useState(true);
+    const { isFollowing, loading: followingStatusLoading } = useFollowingStatus(userId as string);
+    
 
     useEffect(() => {
         const fetchUserAndReviews = async () => {
@@ -64,7 +66,6 @@ const ProfileScreen = () => {
                 if (!reviewData) {
                     throw new Error(reviewData.message || "failed to retrieve user reviews");
                 }
-                console.log(reviewData);
                 setUserReviews(reviewData);
             } catch (err) {
                 console.error("Failed to fetch user by ID", err);
@@ -113,7 +114,10 @@ const ProfileScreen = () => {
                 <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
                 <ProfileIdentity name={user.name} username={user.username} />
                 <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
-                <FollowButton text={"Friends"} userToFollowId={user.id} />
+                <FollowButton 
+                    isFollowing={isFollowing} 
+                    userToFollowId={user.id}
+                />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
                         style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>

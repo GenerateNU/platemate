@@ -5,9 +5,9 @@ import { useState } from "react";
 import { createFollow, deleteFollow } from "@/api/user";
 import { useUser } from "@/context/user-context";
 
-export const FollowButton: React.FC<{ text: string, userToFollowId: string }> = ({ text, userToFollowId }) => {
+export const FollowButton: React.FC<{ isFollowing: boolean, userToFollowId: string }> = ({ isFollowing, userToFollowId }) => {
     const [isPressed, setIsPressed] = useState(true);
-    const [buttonText, setButtonText] = useState(text);
+    const [buttonText, setButtonText] = useState(isFollowing ? "Friends" : "Follow");
     const { user } = useUser(); // Get current user
 
 
@@ -23,11 +23,10 @@ export const FollowButton: React.FC<{ text: string, userToFollowId: string }> = 
             setIsPressed(false);
             setButtonText("Follow");
             await deleteFollow(user.id, userToFollowId);
-
+            
         } else {
             console.log("Following user with ID:", userToFollowId);
             console.log("User ID:", user.id);
-
             setIsPressed(true);
             setButtonText("Friends");
             await createFollow(user.id, userToFollowId);
