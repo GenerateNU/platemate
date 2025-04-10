@@ -22,11 +22,11 @@ const styles = StyleSheet.create({
         fontSize: 28,
         paddingTop: 24,
         fontWeight: "bold",
-        fontFamily: "Inter",
+        fontFamily: "Nunito",
     },
     usernameText: {
         alignSelf: "center",
-        fontFamily: "Inter",
+        fontFamily: "Nunito",
     },
 });
 

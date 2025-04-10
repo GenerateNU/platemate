@@ -67,7 +67,7 @@ const ReviewPreview = ({
                                 name={authorName || "Author Name"}
                                 username={authorUsername}
                                 icon={authorAvatar}
-                                onPress={() => router.push(`/(profile)/${authorId}`)}
+                                onPress={() => router.push(`/friend/${authorId}`)}
                                 right={null}
                             />
                         </View>

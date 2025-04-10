@@ -15,6 +15,8 @@ import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
 import type { TReview } from "@/types/review";
 import { makeRequest } from "@/api/base";
+import { Skeleton } from "moti/skeleton";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
@@ -22,6 +24,7 @@ const ProfileScreen = () => {
     const { user, isLoading, error, fetchUserProfile } = useUser();
     const [searchText, setSearchText] = React.useState("");
     const [userReviews, setUserReviews] = useState<TReview[] | null>(null);
+    const insets = useSafeAreaInsets();
 
     const editProfileRef = useRef<{ open: () => void; close: () => void }>(null);
     const fetchReviews = async () => {
@@ -70,8 +73,9 @@ const ProfileScreen = () => {
     if (isLoading) {
         return (
             <ThemedView style={styles.centerContainer}>
-                <ActivityIndicator size="large" color="#ffcf0f" />
-                <ThemedText style={{ marginTop: 10 }}>Loading profile...</ThemedText>
+                <Skeleton show={isLoading} colorMode={"light"}>
+                    <ThemedView style={{ margin: 16, width: "100%", height: "100%" }} />
+                </Skeleton>
             </ThemedView>
         );
     }
@@ -85,7 +89,7 @@ const ProfileScreen = () => {
     }
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
+        <ScrollView style={{ flex: 1, backgroundColor: "#fff", paddingTop: insets.top }}>
             <StatusBar barStyle="dark-content" />
             <LinearGradient
                 colors={["white", "#FFFCE4"]}
@@ -99,14 +103,18 @@ const ProfileScreen = () => {
             <ScrollView style={styles.container}>
                 <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
                 <ProfileIdentity name={user.name} username={user.username} />
-                <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
+                <ProfileMetrics
+                    numFriends={user.followingCount}
+                    numReviews={userReviews?.length || 0}
+                    averageRating={4.6}
+                />
                 <EditProfileButton text={"Edit profile"} onPress={() => router.navigate("/profile/settings")} />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
                         style={{
                             fontSize: 24,
                             fontWeight: "bold",
-                            fontFamily: "Source Sans 3",
+                            fontFamily: "Nunito",
                             marginBottom: 12,
                             lineHeight: 28,
                         }}>
@@ -121,23 +129,25 @@ const ProfileScreen = () => {
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
                     />
-                    {userReviews &&
-                        userReviews.map((review) => (
-                            <ReviewPreview
-                                reviewId={review._id}
-                                key={review._id}
-                                likes={review.likes}
-                                plateName={review.menuItemName}
-                                restaurantName={review.restaurantName}
-                                tags={[]}
-                                rating={review.rating.overall}
-                                content={review.content}
-                                authorId={user.id}
-                                authorName={user.name}
-                                authorUsername={user.username}
-                                authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
-                            />
-                        ))}
+                    <ThemedView style={{ gap: 12, marginTop: 12 }}>
+                        {userReviews &&
+                            userReviews.map((review) => (
+                                <ReviewPreview
+                                    reviewId={review._id}
+                                    key={review._id}
+                                    likes={review.likes}
+                                    plateName={review.menuItemName}
+                                    restaurantName={review.restaurantName}
+                                    tags={[]}
+                                    rating={review.rating.overall}
+                                    content={review.content}
+                                    authorId={user.id}
+                                    authorName={user.name}
+                                    authorUsername={user.username}
+                                    authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
+                                />
+                            ))}
+                    </ThemedView>
                 </ThemedView>
             </ScrollView>
             <EditProfileSheet user={user} ref={editProfileRef} />
@@ -159,7 +169,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 16,
         backgroundColor: "transparent",
-        paddingTop: Dimensions.get("screen").height * 0.025,
+        paddingTop: Dimensions.get("screen").height * 0.001,
     },
     centerContainer: {
         flex: 1,

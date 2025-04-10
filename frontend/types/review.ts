@@ -13,6 +13,7 @@ export type TReview = {
         _id: string;
         pfp: string;
         username: string;
+        name: string;
     };
     timestamp: any;
     comments: any[];

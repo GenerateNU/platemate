@@ -99,10 +99,10 @@ export default function Feed() {
                         likes={review.likes}
                         tags={["Warm", "Tender", "Sweet"]}
                         content={review.content || ""}
-                        authorName={review.reviewer?.id || "Anonymous"}
+                        authorName={review.reviewer?.username || "Anonymous"}
                         authorUsername={review.reviewer?.username || "user"}
                         authorAvatar={review.reviewer.pfp || "https://placehold.co/100x100"}
-                        authorId={review.reviewer?.id || "unknown"}
+                        authorId={review.reviewer?._id || "unknown"}
                     />
                 );
             } else if (item.type === "menuItem") {
