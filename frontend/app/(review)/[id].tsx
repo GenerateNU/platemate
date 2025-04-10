@@ -30,6 +30,12 @@ enum LikeState {
     NOT_LIKED = "NEUTRAL",
 }
 
+const LikeScore = {
+    LIKE: 1,
+    DISLIKE: -1,
+    NEUTRAL: 0,
+};
+
 export default function Route() {
     const { id } = useLocalSearchParams<{
         id: string;
@@ -39,6 +45,7 @@ export default function Route() {
     const { user } = useUser();
     const [searchText, setSearchText] = React.useState("");
     const [loading, setLoading] = React.useState(true);
+    const [scoreWithoutVotes, setScoreWithoutVotes] = React.useState(0);
 
     const navigation = useNavigation();
     const handleSubmit = async () => {
@@ -79,9 +86,11 @@ export default function Route() {
             setReview(res);
             if (res.like) {
                 setLikeState(LikeState.LIKED);
+                setScoreWithoutVotes(res.likes - 1);
             }
             if (res.dislike) {
                 setLikeState(LikeState.DISLIKED);
+                setScoreWithoutVotes(res.likes + 1);
             }
         });
         navigation.setOptions({ headerShown: false });
@@ -239,7 +248,9 @@ export default function Route() {
                                         color={likeState === LikeState.LIKED ? "#FFCF0F" : "black"}
                                     />
                                 </TouchableOpacity>
-                                <ThemedText style={styles.voteCount}>{review?.likes}</ThemedText>
+                                <ThemedText style={styles.voteCount}>
+                                    {scoreWithoutVotes + LikeScore[likeState]}
+                                </ThemedText>
                                 <TouchableOpacity onPress={handleDownvote}>
                                     <Entypo
                                         name="arrow-with-circle-down"

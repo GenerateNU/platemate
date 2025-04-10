@@ -91,19 +91,19 @@ export default function Feed() {
             if (item.type === "review") {
                 const review = item.data as TReview;
                 return (
-                    <TouchableOpacity onPress={() => router.push(`/(review)/${review._id}`)}>
-                        <ReviewPreview
-                            plateName={review.menuItemName || "Unknown Item"}
-                            restaurantName={review.restaurantName || "Unknown Restaurant"}
-                            rating={review.rating?.overall || 0}
-                            tags={["Warm", "Tender", "Sweet"]}
-                            content={review.content || ""}
-                            authorName={review.reviewer?.id || "Anonymous"}
-                            authorUsername={review.reviewer?.username || "user"}
-                            authorAvatar={review.reviewer.pfp || "https://placehold.co/100x100"}
-                            authorId={review.reviewer?.id || "unknown"}
-                        />
-                    </TouchableOpacity>
+                    <ReviewPreview
+                        reviewId={review._id}
+                        plateName={review.menuItemName || "Unknown Item"}
+                        restaurantName={review.restaurantName || "Unknown Restaurant"}
+                        rating={review.rating?.overall || 0}
+                        likes={review.likes}
+                        tags={["Warm", "Tender", "Sweet"]}
+                        content={review.content || ""}
+                        authorName={review.reviewer?.id || "Anonymous"}
+                        authorUsername={review.reviewer?.username || "user"}
+                        authorAvatar={review.reviewer.pfp || "https://placehold.co/100x100"}
+                        authorId={review.reviewer?.id || "unknown"}
+                    />
                 );
             } else if (item.type === "menuItem") {
                 const menuItem = item.data as TMenuItem;

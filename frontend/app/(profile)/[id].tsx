@@ -79,7 +79,7 @@ const ProfileScreen = () => {
     if (isLoading) {
         return (
             <ThemedView style={styles.centerContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#ffcf0f" />
                 <ThemedText style={{ marginTop: 10 }}>Loading profile...</ThemedText>
             </ThemedView>
         );
@@ -117,7 +117,7 @@ const ProfileScreen = () => {
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
                         style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
-                        {user.name}'s Food Journal
+                        {user.name}'s Fasdood Journal
                     </ThemedText>
                     {/* Made a search box with a filter/sort component as its own component */}
                     <SearchBoxFilter
@@ -130,6 +130,8 @@ const ProfileScreen = () => {
                     {userReviews.map((review) => (
                         <ReviewPreview
                             key={review._id}
+                            reviewId={review._id}
+                            likes={review.likes}
                             plateName={review.menuItemName}
                             restaurantName={review.restaurantName}
                             tags={[]}

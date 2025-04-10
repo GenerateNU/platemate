@@ -429,9 +429,9 @@ func (s *Service) updateRestaurantAverageRating(restaurantID primitive.ObjectID)
 }
 
 // GetReviewsByUser retrieves all reviews where reviewer.id matches the provided userID
-func (s *Service) GetReviewsByUser(userID string) ([]ReviewDocument, error) {
+func (s *Service) GetReviewsByUser(userID primitive.ObjectID) ([]ReviewDocument, error) {
 	ctx := context.Background()
-	filter := bson.M{"reviewer.id": userID}
+	filter := bson.M{"reviewer._id": userID}
 
 	cursor, err := s.reviews.Find(ctx, filter)
 	if err != nil {
@@ -453,7 +453,7 @@ func (s *Service) GetReviewsByUser(userID string) ([]ReviewDocument, error) {
 }
 
 // SearchUserReviews fetches reviews from a user, matching the given query in content
-func (s *Service) SearchUserReviews(userID, query string) ([]ReviewDocument, error) {
+func (s *Service) SearchUserReviews(userID primitive.ObjectID, query string) ([]ReviewDocument, error) {
 	ctx := context.Background()
 
 	// Build a filter for:
@@ -463,7 +463,7 @@ func (s *Service) SearchUserReviews(userID, query string) ([]ReviewDocument, err
 	// - comments.content to search replies or discussions under a review
 	// - restaurantId to search with a specific restaurant ID
 	filter := bson.M{
-		"reviewer.id": userID,
+		"reviewer._id": userID,
 		"$or": []bson.M{
 			{"content": bson.M{"$regex": primitive.Regex{Pattern: query, Options: "i"}}},
 			{"menuItem": bson.M{"$regex": primitive.Regex{Pattern: query, Options: "i"}}},

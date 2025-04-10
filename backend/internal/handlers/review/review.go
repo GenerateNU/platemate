@@ -330,9 +330,12 @@ func (h *Handler) GetComments(c *fiber.Ctx) error {
 
 // GetReviewsByUser returns all review documents for a specific user
 func (h *Handler) GetReviewsByUser(c *fiber.Ctx) error {
-	userID := c.Params("userId")
+	userOID, err := primitive.ObjectIDFromHex(c.Params("userId"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
 
-	reviews, err := h.service.GetReviewsByUser(userID)
+	reviews, err := h.service.GetReviewsByUser(userOID)
 	if err != nil {
 		return err
 	}
@@ -342,10 +345,13 @@ func (h *Handler) GetReviewsByUser(c *fiber.Ctx) error {
 
 // SearchUserReviews handles GET /api/v1/review/user/:userId/search?query=...
 func (h *Handler) SearchUserReviews(c *fiber.Ctx) error {
-	userID := c.Params("userId")
+	userOID, err := primitive.ObjectIDFromHex(c.Params("userId"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
 	queryParam := c.Query("query", "") // If query param provided, defaults to empty string
 
-	results, err := h.service.SearchUserReviews(userID, queryParam)
+	results, err := h.service.SearchUserReviews(userOID, queryParam)
 	if err != nil {
 		return err
 	}

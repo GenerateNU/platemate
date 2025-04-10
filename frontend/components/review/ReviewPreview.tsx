@@ -1,10 +1,10 @@
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, Touchable, TouchableOpacity, View } from "react-native";
 import React from "react";
 import UserInfoRowBase from "../UserInfo/UserInfoRowBase";
 import { ThemedText } from "../themed/ThemedText";
 import { Colors } from "@/constants/Colors";
 import Entypo from "@expo/vector-icons/build/Entypo";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { ReviewComponentStarIcon, StarIcon } from "../icons/Icons";
 import Tag from "@/components/ui/Tag";
 import { ThemedTag } from "@/components/themed/ThemedTag";
@@ -20,124 +20,134 @@ type Props = {
     authorUsername: string;
     authorAvatar: string;
     authorId: string;
+    reviewId: string;
+    likes?: number;
 };
 
 const ReviewPreview = ({
+    reviewId,
     plateName,
     restaurantName,
     tags,
     rating,
     content,
     authorName,
+    likes,
     authorUsername,
     authorAvatar,
     authorId,
 }: Props) => {
+    const router = useRouter();
     return (
-        <View
-            style={{
-                borderColor: "lightgray",
-                backgroundColor: "#FAFAFA",
-                padding: 16,
-                flex: 1,
-                flexDirection: "column",
-                gap: 10,
-                borderRadius: 12,
-                paddingTop: 24,
-                width: "100%",
-            }}>
-            <ThemedView style={{ width: "100%" }}>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        width: "100%",
-                        paddingRight: 10,
-                        backgroundColor: "#fafafa",
-                    }}>
-                    <View style={{ flex: 1 }}>
-                        <UserInfoRowBase
-                            name={authorName || "Author Name"}
-                            username={authorUsername}
-                            icon={authorAvatar}
-                            onPress={() => router.push(`/(profile)/${authorId}`)}
-                            right={null}
-                        />
-                    </View>
-
+        <TouchableOpacity onPress={() => router.push(`/(review)/${reviewId}`)}>
+            <View
+                style={{
+                    borderColor: "lightgray",
+                    backgroundColor: "#FAFAFA",
+                    padding: 16,
+                    flex: 1,
+                    flexDirection: "column",
+                    gap: 10,
+                    borderRadius: 12,
+                    paddingTop: 24,
+                    width: "100%",
+                }}>
+                <ThemedView style={{ width: "100%" }}>
                     <View
                         style={{
-                            position: "absolute",
-                            top: 2,
-                            right: 4,
                             flexDirection: "row",
-                            alignItems: "center",
-                            paddingHorizontal: 0,
-                            paddingVertical: 2,
-                            borderRadius: 12,
-                            zIndex: 1,
+                            justifyContent: "space-between",
+                            alignItems: "flex-start",
+                            width: "100%",
+                            paddingRight: 10,
+                            backgroundColor: "#fafafa",
                         }}>
-                        <ThemedText
+                        <View style={{ flex: 1 }}>
+                            <UserInfoRowBase
+                                name={authorName || "Author Name"}
+                                username={authorUsername}
+                                icon={authorAvatar}
+                                onPress={() => router.push(`/(profile)/${authorId}`)}
+                                right={null}
+                            />
+                        </View>
+
+                        <View
                             style={{
-                                fontSize: 18,
-                                fontWeight: "500",
-                                marginTop: 4,
-                                marginRight: 4,
+                                position: "absolute",
+                                top: 2,
+                                right: 4,
+                                flexDirection: "row",
+                                alignItems: "center",
+                                paddingHorizontal: 0,
+                                paddingVertical: 2,
+                                borderRadius: 12,
+                                zIndex: 1,
                             }}>
-                            {rating}
-                        </ThemedText>
-                        <StarIcon width={24} height={24} filled={true} />
+                            <ThemedText
+                                style={{
+                                    fontSize: 18,
+                                    fontWeight: "500",
+                                    marginTop: 4,
+                                    marginRight: 4,
+                                }}>
+                                {rating}
+                            </ThemedText>
+                            <StarIcon width={24} height={24} filled={true} />
+                        </View>
+                    </View>
+                </ThemedView>
+                <View style={{ gap: 8 }}>
+                    <View style={styles.plateInfoContainer}>
+                        <View style={styles.nameContainer}>
+                            <ThemedText
+                                type="subtitle"
+                                numberOfLines={1}
+                                style={[styles.nameText, { fontWeight: 700 }]}>
+                                {plateName}
+                            </ThemedText>
+                            <ThemedText type="default" numberOfLines={1} style={[styles.nameText, { fontWeight: 400 }]}>
+                                {restaurantName}
+                            </ThemedText>
+                        </View>
+                    </View>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.scrollableTags}>
+                        {tags.map((tag, index) => (
+                            <ThemedTag
+                                key={index}
+                                title={tag}
+                                backgroundColor={"#FFCF0F"}
+                                textColor={"#000"}
+                                textStyle={{ paddingVertical: 0, fontSize: 12 }}
+                            />
+                        ))}
+                    </ScrollView>
+                    <ThemedText type="default" style={styles.contentContainer} numberOfLines={3} ellipsizeMode="tail">
+                        {content}
+                    </ThemedText>
+                </View>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
+                        <TouchableOpacity>
+                            <Entypo name="arrow-up" size={24} color="gray" />
+                        </TouchableOpacity>
+                        <ThemedText type="default">{likes || 0}</ThemedText>
+                        <TouchableOpacity>
+                            <Entypo name="arrow-down" size={24} color="gray" />
+                        </TouchableOpacity>
+                        <ThemedText type="default">0</ThemedText>
+                    </View>
+                    <View>
+                        <TouchableOpacity>
+                            <Entypo name="dots-three-vertical" size={16} color="black" />
+                        </TouchableOpacity>
                     </View>
                 </View>
-            </ThemedView>
-            <View style={{ gap: 8 }}>
-                <View style={styles.plateInfoContainer}>
-                    <View style={styles.nameContainer}>
-                        <ThemedText type="subtitle" numberOfLines={1} style={[styles.nameText, { fontWeight: 700 }]}>
-                            {plateName}
-                        </ThemedText>
-                        <ThemedText type="default" numberOfLines={1} style={[styles.nameText, { fontWeight: 400 }]}>
-                            {restaurantName}
-                        </ThemedText>
-                    </View>
-                </View>
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.scrollableTags}>
-                    {tags.map((tag, index) => (
-                        <ThemedTag
-                            key={index}
-                            title={tag}
-                            backgroundColor={"#FFCF0F"}
-                            textColor={"#000"}
-                            textStyle={{ paddingVertical: 0, fontSize: 12 }}
-                        />
-                    ))}
-                </ScrollView>
-                <ThemedText type="default" style={styles.contentContainer} numberOfLines={3} ellipsizeMode="tail">
-                    {content}
-                </ThemedText>
             </View>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
-                    <TouchableOpacity>
-                        <Entypo name="arrow-up" size={24} color="gray" />
-                    </TouchableOpacity>
-                    <ThemedText type="default">0</ThemedText>
-                    <TouchableOpacity>
-                        <Entypo name="arrow-down" size={24} color="gray" />
-                    </TouchableOpacity>
-                    <ThemedText type="default">0</ThemedText>
-                </View>
-                <View>
-                    <TouchableOpacity>
-                        <Entypo name="dots-three-vertical" size={16} color="black" />
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 

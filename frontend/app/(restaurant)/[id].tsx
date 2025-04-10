@@ -143,6 +143,7 @@ export default function Route() {
                                     <TouchableOpacity onPress={() => router.push("/(review)/827b36v4b234")}>
                                         <ReviewPreview
                                             plateName={"Big Whopper"}
+                                            reviewId={"827b36v4b234"}
                                             restaurantName={"Burger King"}
                                             tags={["juicy", "artificial", "fake meat"]}
                                             rating={4}
