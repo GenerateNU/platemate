@@ -1,7 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DEFAULT_PROFILE_PIC, useUser } from "@/context/user-context";
 import { ThemedView } from "@/components/themed/ThemedView";
-import { ActivityIndicator, Dimensions, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
+import {
+    ActivityIndicator,
+    Dimensions,
+    RefreshControl,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    TouchableOpacity,
+} from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,9 +32,11 @@ const ProfileScreen = () => {
     const { user, isLoading, error, fetchUserProfile } = useUser();
     const [searchText, setSearchText] = React.useState("");
     const [userReviews, setUserReviews] = useState<TReview[] | null>(null);
+    const [refreshing, setRefreshing] = useState(false);
     const insets = useSafeAreaInsets();
 
     const editProfileRef = useRef<{ open: () => void; close: () => void }>(null);
+
     const fetchReviews = async () => {
         if (!user) return;
 
@@ -56,6 +66,20 @@ const ProfileScreen = () => {
             console.error("Failed to fetch user by ID", err);
         }
     };
+
+    // Function to handle refresh
+    const onRefresh = async () => {
+        setRefreshing(true);
+        try {
+            await fetchUserProfile();
+            await fetchReviews();
+        } catch (error) {
+            console.error("Error refreshing data:", error);
+        } finally {
+            setRefreshing(false);
+        }
+    };
+
     useEffect(() => {
         if (!user && !isLoading) {
             console.log("User data not available, fetching...");
@@ -72,10 +96,61 @@ const ProfileScreen = () => {
 
     if (isLoading) {
         return (
-            <ThemedView style={styles.centerContainer}>
-                <Skeleton show={isLoading} colorMode={"light"}>
-                    <ThemedView style={{ margin: 16, width: "100%", height: "100%" }} />
-                </Skeleton>
+            <ThemedView style={{ flex: 1, backgroundColor: "#fff" }}>
+                <StatusBar barStyle="dark-content" />
+                <ScrollView style={{ flex: 1, paddingTop: insets.top }}>
+                    <ThemedView style={styles.container}>
+                        {/* Profile Avatar Skeleton */}
+                        <ThemedView style={{ alignItems: "center", marginVertical: 20 }}>
+                            <Skeleton show colorMode="light" width={100} height={100} radius={50} />
+                        </ThemedView>
+
+                        {/* Profile Identity Skeleton */}
+                        <ThemedView style={{ alignItems: "center", marginBottom: 16 }}>
+                            <Skeleton show colorMode="light" width={200} height={24} radius={4} />
+                            <ThemedView style={{ height: 8 }} />
+                            <Skeleton show colorMode="light" width={150} height={18} radius={4} />
+                        </ThemedView>
+
+                        {/* Profile Metrics Skeleton */}
+                        <ThemedView
+                            style={{ flexDirection: "row", justifyContent: "space-around", marginVertical: 16 }}>
+                            <Skeleton show colorMode="light" width={80} height={50} radius={4} />
+                            <Skeleton show colorMode="light" width={80} height={50} radius={4} />
+                            <Skeleton show colorMode="light" width={80} height={50} radius={4} />
+                        </ThemedView>
+
+                        {/* Edit Profile Button Skeleton */}
+                        <ThemedView style={{ alignItems: "center", marginVertical: 12 }}>
+                            <Skeleton show colorMode="light" width={150} height={40} radius={20} />
+                        </ThemedView>
+
+                        {/* Reviews Header Skeleton */}
+                        <ThemedView style={styles.reviewsContainer}>
+                            <Skeleton show colorMode="light" width={200} height={28} radius={4} />
+                            <ThemedView style={{ height: 16 }} />
+
+                            {/* Search Box Skeleton */}
+                            <Skeleton show colorMode="light" width="100%" height={50} radius={8} />
+                            <ThemedView style={{ height: 24 }} />
+
+                            {/* Review Items Skeleton */}
+                            {[1, 2, 3].map((_, index) => (
+                                <ThemedView key={index} style={{ marginBottom: 16 }}>
+                                    <ThemedView style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
+                                        <Skeleton show colorMode="light" width={40} height={40} radius={20} />
+                                        <ThemedView style={{ marginLeft: 8, flex: 1 }}>
+                                            <Skeleton show colorMode="light" width={120} height={18} radius={4} />
+                                            <ThemedView style={{ height: 4 }} />
+                                            <Skeleton show colorMode="light" width={80} height={14} radius={4} />
+                                        </ThemedView>
+                                    </ThemedView>
+                                    <Skeleton show colorMode="light" width="100%" height={80} radius={8} />
+                                </ThemedView>
+                            ))}
+                        </ThemedView>
+                    </ThemedView>
+                </ScrollView>
             </ThemedView>
         );
     }
@@ -89,7 +164,7 @@ const ProfileScreen = () => {
     }
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: "#fff", paddingTop: insets.top }}>
+        <ThemedView style={{ flex: 1, backgroundColor: "#fff" }}>
             <StatusBar barStyle="dark-content" />
             <LinearGradient
                 colors={["white", "#FFFCE4"]}
@@ -97,61 +172,76 @@ const ProfileScreen = () => {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
             />
-            <TouchableOpacity style={styles.hamburgerButton} onPress={() => editProfileRef.current?.open()}>
-                <Ionicons name="menu" size={28} color="#333" />
-            </TouchableOpacity>
-            <ScrollView style={styles.container}>
-                <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
-                <ProfileIdentity name={user.name} username={user.username} />
-                <ProfileMetrics
-                    numFriends={user.followingCount}
-                    numReviews={userReviews?.length || 0}
-                    averageRating={4.6}
-                />
-                <EditProfileButton text={"Edit profile"} onPress={() => router.navigate("/profile/settings")} />
-                <ThemedView style={styles.reviewsContainer}>
-                    <ThemedText
-                        style={{
-                            fontSize: 24,
-                            fontWeight: "bold",
-                            fontFamily: "Nunito",
-                            marginBottom: 12,
-                            lineHeight: 28,
-                        }}>
-                        {user.name.split(" ")[0]}'s Food Journal
-                    </ThemedText>
-
-                    <SearchBoxFilter
-                        placeholder="Search my reviews"
-                        name={user.username}
-                        recent={false}
-                        onSubmit={searchReviews}
-                        value={searchText}
-                        onChangeText={(text) => setSearchText(text)}
+            <ScrollView
+                style={{ flex: 1, paddingTop: insets.top }}
+                contentContainerStyle={{ paddingBottom: 20 }}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor="#333"
+                        colors={["#333"]}
+                        progressBackgroundColor="#FFFCE4"
+                        // Increased offset to move spinner further down
+                        progressViewOffset={60}
                     />
-                    <ThemedView style={{ gap: 12, marginTop: 12 }}>
-                        {userReviews &&
-                            userReviews.map((review) => (
-                                <ReviewPreview
-                                    reviewId={review._id}
-                                    key={review._id}
-                                    likes={review.likes}
-                                    plateName={review.menuItemName}
-                                    restaurantName={review.restaurantName}
-                                    tags={[]}
-                                    rating={review.rating.overall}
-                                    content={review.content}
-                                    authorId={user.id}
-                                    authorName={user.name}
-                                    authorUsername={user.username}
-                                    authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
-                                />
-                            ))}
+                }>
+                <TouchableOpacity style={styles.hamburgerButton} onPress={() => editProfileRef.current?.open()}>
+                    <Ionicons name="menu" size={28} color="#333" />
+                </TouchableOpacity>
+                <ThemedView style={styles.container}>
+                    <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
+                    <ProfileIdentity name={user.name} username={user.username} />
+                    <ProfileMetrics
+                        numFriends={user.followingCount}
+                        numReviews={userReviews?.length || 0}
+                        averageRating={4.6}
+                    />
+                    <EditProfileButton text={"Edit profile"} onPress={() => router.navigate("/profile/settings")} />
+                    <ThemedView style={styles.reviewsContainer}>
+                        <ThemedText
+                            style={{
+                                fontSize: 24,
+                                fontWeight: "bold",
+                                fontFamily: "Nunito",
+                                marginBottom: 12,
+                                lineHeight: 28,
+                            }}>
+                            {user.name.split(" ")[0]}'s Food Journal
+                        </ThemedText>
+
+                        <SearchBoxFilter
+                            placeholder="Search my reviews"
+                            name={user.username}
+                            recent={false}
+                            onSubmit={searchReviews}
+                            value={searchText}
+                            onChangeText={(text) => setSearchText(text)}
+                        />
+                        <ThemedView style={{ gap: 12, marginTop: 12 }}>
+                            {userReviews &&
+                                userReviews.map((review) => (
+                                    <ReviewPreview
+                                        reviewId={review._id}
+                                        key={review._id}
+                                        likes={review.likes}
+                                        plateName={review.menuItemName}
+                                        restaurantName={review.restaurantName}
+                                        tags={[]}
+                                        rating={review.rating.overall}
+                                        content={review.content}
+                                        authorId={user.id}
+                                        authorName={user.name}
+                                        authorUsername={user.username}
+                                        authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
+                                    />
+                                ))}
+                        </ThemedView>
                     </ThemedView>
                 </ThemedView>
             </ScrollView>
             <EditProfileSheet user={user} ref={editProfileRef} />
-        </ScrollView>
+        </ThemedView>
     );
 };
 
@@ -179,6 +269,7 @@ const styles = StyleSheet.create({
     },
     reviewsContainer: {
         marginVertical: 24,
+        paddingHorizontal: 12,
     },
     topOverlay: {
         position: "absolute",
