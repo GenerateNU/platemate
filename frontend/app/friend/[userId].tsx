@@ -113,7 +113,7 @@ const ProfileScreen = () => {
                 <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
                 <ProfileIdentity name={user.name} username={user.username} />
                 <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
-                <FollowButton text={"Friends"} />
+                <FollowButton text={"Friends"} userToFollowId={user.id} />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
                         style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>

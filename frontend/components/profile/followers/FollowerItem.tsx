@@ -24,7 +24,7 @@ const FollowerItem = ({ follower }: FollowerItemProps) => {
                 <Text style={styles.followerName}>{follower.name}</Text>
             </View>
             {/* Hard coded "Friends" for now */}
-            <FollowButton text={"Friends"} />
+            <FollowButton text={"Friends"} userToFollowId={follower.id} />
         </TouchableOpacity>
     );
 };
