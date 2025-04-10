@@ -7,6 +7,7 @@ import {
     KeyboardAvoidingView,
     ScrollView,
     StyleSheet,
+    Touchable,
     TouchableOpacity,
     View,
 } from "react-native";
@@ -142,13 +143,15 @@ export default function Route() {
 
                         {/* User Info */}
                         <View style={styles.userInfo}>
-                            <View style={styles.userInfoLeft}>
-                                <Image source={{ uri: review?.reviewer.pfp }} style={styles.profilePicture} />
-                                <View>
-                                    <ThemedText style={styles.userName}>{review?.reviewer.username}</ThemedText>
-                                    <ThemedText style={styles.userHandle}>@{review?.reviewer.username}</ThemedText>
+                            <TouchableOpacity onPress={() => router.push(`/friend/${review?.reviewer._id}`)}>
+                                <View style={styles.userInfoLeft}>
+                                    <Image source={{ uri: review?.reviewer.pfp }} style={styles.profilePicture} />
+                                    <View>
+                                        <ThemedText style={styles.userName}>{review?.reviewer.username}</ThemedText>
+                                        <ThemedText style={styles.userHandle}>@{review?.reviewer.username}</ThemedText>
+                                    </View>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         </View>
                         <View style={{ paddingBottom: 12 }}>
                             <TouchableOpacity

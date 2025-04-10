@@ -10,10 +10,9 @@ export type TReview = {
     picture: string;
     content: string;
     reviewer: {
-        id: string;
+        _id: string;
         pfp: string;
         username: string;
-        name: string;
     };
     timestamp: any;
     comments: any[];
