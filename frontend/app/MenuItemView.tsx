@@ -2,7 +2,7 @@ import { ThemedView } from "@/components/themed/ThemedView";
 import { ScrollView, StyleSheet, View, Image, Pressable } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarRating } from "@/components/ui/StarReview";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { ThemedTag } from "@/components/themed/ThemedTag";
@@ -10,10 +10,36 @@ import { ReviewButton } from "@/components/review/ReviewButton";
 import { ReviewFlow } from "@/components/review/ReviewFlow";
 import HighlightCard from "@/components/restaurant/HighlightCard";
 import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
+import { getMenuItemReviews } from "@/api/menu-items";
+
+interface Review {
+    _id: string;
+    rating: {
+        portion: number;
+        taste: number;
+        value: number;
+        overall: number;
+        return: boolean;
+    };
+    picture: string;
+    content: string;
+    reviewer: {
+        _id: string;
+        pfp: string;
+        username: string;
+    };
+    timestamp: string;
+    comments: any[];
+    menuItem: string;
+    restaurantId: string;
+}
 
 export default function MenuItemView() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
     const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const dishTags = [
         {
             title: "Gluten-free",
@@ -31,6 +57,32 @@ export default function MenuItemView() {
             textColor: "#2E7D32",
         },
     ];
+
+    // Assuming we get the menuItemId from route params or props
+    const menuItemId = "your-menu-item-id"; // Replace this with actual menu item ID
+
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                setLoading(true);
+                let sortBy = "timestamp";
+                if (selectedFilter === "My Reviews") {
+                    // You might want to pass the current user's ID here
+                    const userReviews = await getMenuItemReviews(menuItemId, { userID: "current-user-id" });
+                    setReviews(userReviews);
+                } else {
+                    const allReviews = await getMenuItemReviews(menuItemId);
+                    setReviews(allReviews);
+                }
+            } catch (err) {
+                setError(err instanceof Error ? err.message : "Failed to fetch reviews");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchReviews();
+    }, [menuItemId, selectedFilter]);
 
     return (
         <>
@@ -116,7 +168,7 @@ export default function MenuItemView() {
                     <View style={styles.reviewStats}>
                         <View style={styles.ratingContainer}>
                             <ThemedText style={styles.ratingText}>4/5</ThemedText>
-                            <StarRating avgRating={4} numRatings={428} showAvgRating={false} />
+                            <StarRating avgRating={4} numRatings={reviews.length} showAvgRating={false} />
                         </View>
                     </View>
 
@@ -148,6 +200,29 @@ export default function MenuItemView() {
                         authorAvatar={"https://placehold.co/600x400/png?text=P"}
                         reviewId="64f5a95cc7330b78d33265f1"
                     />
+                    {/* Reviews List */}
+                    {loading ? (
+                        <ThemedText>Loading reviews...</ThemedText>
+                    ) : error ? (
+                        <ThemedText style={styles.errorText}>{error}</ThemedText>
+                    ) : reviews.length === 0 ? (
+                        <ThemedText style={styles.noReviewsText}>No reviews yet</ThemedText>
+                    ) : (
+                        reviews.map((review) => (
+                            <ReviewPreview
+                                key={review._id}
+                                plateName={review.menuItem}
+                                restaurantName="Pad Thai Kitchen"
+                                tags={[]} // You might want to add tags based on the review
+                                rating={review.rating.overall}
+                                content={review.content}
+                                authorName={review.reviewer.username}
+                                authorId={review.reviewer._id}
+                                authorUsername={review.reviewer.username}
+                                authorAvatar={review.reviewer.pfp || "https://placehold.co/600x400/png?text=P"}
+                            />
+                        ))
+                    )}
                 </ThemedView>
             </ScrollView>
             <ReviewButton
@@ -323,5 +398,15 @@ const styles = StyleSheet.create({
     },
     tagRow: {
         flexDirection: "row",
+    },
+    errorText: {
+        color: 'red',
+        textAlign: 'center',
+        marginVertical: 16,
+    },
+    noReviewsText: {
+        textAlign: 'center',
+        marginVertical: 16,
+        color: '#666',
     },
 });

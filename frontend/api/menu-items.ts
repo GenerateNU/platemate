@@ -2,6 +2,11 @@ import { TMenuItem } from "@/types/menu-item";
 import { makeRequest } from "@/api/base";
 import { TRestaurantMenuItemsMetrics } from "@/types/restaurant";
 
+interface ReviewQueryParams {
+    userID?: string;
+    sortBy?: "portion" | "taste" | "value" | "overall" | "timestamp";
+}
+
 export const getMenuItems = async ({
     name,
     tags,
@@ -40,4 +45,19 @@ export const getRestaurantMenuItemsMetrics = async (restaurantId: string): Promi
 
 export const getRandomMenuItems = async (limit: number): Promise<TMenuItem[]> => {
     return await makeRequest(`/api/v1/menu-items/random?limit=${limit}`, "GET");
+};
+
+export const getMenuItemReviews = async (menuItemId: string, params?: ReviewQueryParams) => {
+    const queryParams = new URLSearchParams();
+    if (params?.userID) {
+        queryParams.append("userID", params.userID);
+    }
+    if (params?.sortBy) {
+        queryParams.append("sortBy", params.sortBy);
+    }
+
+    const queryString = queryParams.toString();
+    const path = `/api/v1/menu-items/${menuItemId}/reviews${queryString ? `?${queryString}` : ""}`;
+
+    return await makeRequest(path, "GET");
 };

@@ -1,6 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 
-const baseUrl = "https://57a7-2601-19b-480-4dc0-f909-8c1c-d184-ab76.ngrok-free.app"; // will need to be changed to actual URl and store in .env
+const baseUrl = process.env.EXPO_PUBLIC_BASE_URL;
 
 async function useLogin() {
     return { login: login, register: register };
