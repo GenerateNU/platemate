@@ -17,3 +17,10 @@ export async function deleteFollow(followerId: string, followeeId: string) {
       "Failed to unfollow user"
   );
 }
+
+export async function getFollowingCheck(followerId: string, followeeId: string): Promise<{ isFollowing: boolean }>{
+  return await makeRequest(
+      `/api/v1/user/following/check?followeeId=${followeeId}&followerId=${followerId}`, 
+      "GET"
+  );
+}
