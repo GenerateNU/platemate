@@ -31,7 +31,6 @@ export default function Feed() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
-    const [reviews, setReviews] = useState<TReview[]>([]);
     const { user } = useUser();
 
     const insets = useSafeAreaInsets();
@@ -68,8 +67,7 @@ export default function Feed() {
 
             }
 
-            const menuItemsData = await getMenuItems({ page: 1, limit: 10 }),
-            ;
+            const menuItemsData = await getMenuItems({ page: 1, limit: 10 });
             const fetchedReviews = reviewsData?.data as TReview[] || [];
             const fetchedMenuItems = menuItemsData as TMenuItem[];
 
@@ -120,10 +118,10 @@ export default function Feed() {
                         likes={review.likes}
                         tags={["Warm", "Tender", "Sweet"]}
                         content={review.content || ""}
-                        authorName={review.reviewer?.id || "Anonymous"}
+                        authorName={review.reviewer?._id || "Anonymous"}
                         authorUsername={review.reviewer?.username || "user"}
                         authorAvatar={review.reviewer.pfp || "https://placehold.co/100x100"}
-                        authorId={review.reviewer?.id || "unknown"}
+                        authorId={review.reviewer?._id || "unknown"}
                     />
                 );
             } else if (item.type === "menuItem") {
