@@ -101,6 +101,46 @@ func (h *Handler) GetFollowing(c *fiber.Ctx) error {
 	return c.JSON(followers)
 }
 
+// GetFriendReviews gets reviews from users that the current user follows
+func (h *Handler) GetFriendReviews(c *fiber.Ctx) error {
+	var query GetFriendReviewsQuery
+
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	query.UserId = c.Params("id")
+	// Set defaults if not provided
+	if query.Page < 1 {
+		query.Page = 1
+	}
+	if query.Limit < 1 {
+		query.Limit = 20
+	}
+
+	// Added structured validation
+	errs := xvalidator.Validator.Validate(query)
+	if len(errs) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(errs)
+	}
+
+	userIdObj, err := primitive.ObjectIDFromHex(query.UserId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	reviews, err := h.service.GetFriendReviews(userIdObj, query.Page, query.Limit)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("User", "id", query.UserId))
+		}
+		return err
+	}
+
+	return c.JSON(reviews)
+
+}
+
 // GetFollowingReviewsForItem gets reviews for a menu item from users that the current user follows
 func (h *Handler) GetFollowingReviewsForItem(c *fiber.Ctx) error {
 

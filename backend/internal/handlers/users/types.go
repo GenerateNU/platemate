@@ -70,6 +70,11 @@ type ReviewQuery struct {
 	ItemId string `params:"id" validate:"required"`
 }
 
+type GetFriendReviewsQuery struct {
+	PaginationQuery
+	UserId string `params:"id" validate:"required"`
+}
+
 type PostDietaryPreferencesQuery struct {
 	Preference string `json:"preference"`
 }
