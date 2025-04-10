@@ -2,18 +2,32 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { useState } from "react";
+import { createFollow, deleteFollow } from "@/api/user";
+import { useUser } from "@/context/user-context";
+import { useEffect } from "react";
 
-export const FollowButton: React.FC<{ text: string }> = ({ text }) => {
-    const [isPressed, setIsPressed] = useState(true);
-    const [buttonText, setButtonText] = useState(text);
+export const FollowButton: React.FC<{ isFollowing: boolean; userToFollowId: string }> = ({
+    isFollowing,
+    userToFollowId,
+}) => {
+    const [isPressed, setIsPressed] = useState(isFollowing);
+    const [buttonText, setButtonText] = useState(isFollowing ? "Friends" : "Follow");
+    const { user } = useUser();
 
-    const handlePress = () => {
+    const handlePress = async () => {
+        if (!user) {
+            console.log("User must be logged in to follow others");
+            return;
+        }
+
         if (buttonText == "Friends") {
             setIsPressed(false);
             setButtonText("Follow");
+            await deleteFollow(user.id, userToFollowId);
         } else {
             setIsPressed(true);
             setButtonText("Friends");
+            await createFollow(user.id, userToFollowId);
         }
     };
 

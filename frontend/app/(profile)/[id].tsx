@@ -16,17 +16,19 @@ import { useLocalSearchParams } from "expo-router";
 import type { User } from "@/context/user-context";
 import { DEFAULT_PROFILE_PIC } from "@/context/user-context";
 import type { TReview } from "@/types/review";
+import { useFollowingStatus } from "@/hooks/useFollowingStatus";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = () => {
-    console.log("hi");
     const { userId } = useLocalSearchParams();
     const insets = useSafeAreaInsets();
     console.log(userId);
     const [searchText, setSearchText] = useState("");
     const editFriend = useRef<{ open: () => void; close: () => void }>(null);
+
+    const { isFollowing, loading: followingStatusLoading } = useFollowingStatus(userId as string);
 
     const [user, setUser] = useState<User>({
         id: "",
@@ -76,7 +78,7 @@ const ProfileScreen = () => {
         fetchUserAndReviews();
     }, [userId]);
 
-    if (isLoading) {
+    if (isLoading || followingStatusLoading) {
         return (
             <ThemedView style={styles.centerContainer}>
                 <ActivityIndicator size="large" color="#ffcf0f" />
@@ -114,7 +116,7 @@ const ProfileScreen = () => {
                     <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
                     <ProfileIdentity name={user.name} username={user.username} />
                     <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
-                    <FollowButton text={"Friends"} />
+                    <FollowButton isFollowing={isFollowing} userToFollowId={user.id} />
                     <ThemedView style={styles.reviewsContainer}>
                         <ThemedText
                             style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
