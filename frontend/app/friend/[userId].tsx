@@ -15,12 +15,9 @@ import type { User } from "@/context/user-context";
 import { DEFAULT_PROFILE_PIC } from "@/context/user-context";
 import type { TReview } from "@/types/review";
 import { makeRequest } from "@/api/base";
-<<<<<<< HEAD
 import { useFollowingStatus } from "@/hooks/useFollowingStatus";
-=======
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Skeleton } from "moti/skeleton";
->>>>>>> main
 
 const { width } = Dimensions.get("window");
 
