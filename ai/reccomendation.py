@@ -106,7 +106,7 @@ def reccomend(user_id):
    reccomendations = []
    for item in top:
       print(item["_id"])
-      top_similar = requests.get(f"http://137.184.211.229/api/v1/review/user/{user['_id']}/top?limit=20")
+      top_similar = requests.get(f"http://137.184.211.229:8080/api/v1/review/user/{user['_id']}/top?limit=20")
       top_similar = top_similar.json()
       # get the ids of the menu items that are returned in the top 20 similar reviews
       menu_items = [review["items"][0]["ID"] for review in top_similar]
