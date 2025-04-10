@@ -6,11 +6,13 @@ import { createFollow, deleteFollow } from "@/api/user";
 import { useUser } from "@/context/user-context";
 import { useEffect } from "react";
 
-export const FollowButton: React.FC<{ isFollowing: boolean, userToFollowId: string }> = ({ isFollowing, userToFollowId }) => {
+export const FollowButton: React.FC<{ isFollowing: boolean; userToFollowId: string }> = ({
+    isFollowing,
+    userToFollowId,
+}) => {
     const [isPressed, setIsPressed] = useState(isFollowing);
     const [buttonText, setButtonText] = useState(isFollowing ? "Friends" : "Follow");
     const { user } = useUser();
-
 
     const handlePress = async () => {
         if (!user) {
@@ -22,14 +24,10 @@ export const FollowButton: React.FC<{ isFollowing: boolean, userToFollowId: stri
             setIsPressed(false);
             setButtonText("Follow");
             await deleteFollow(user.id, userToFollowId);
-
-            
         } else {
             setIsPressed(true);
             setButtonText("Friends");
             await createFollow(user.id, userToFollowId);
-
-
         }
     };
 

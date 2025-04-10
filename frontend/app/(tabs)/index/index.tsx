@@ -18,7 +18,6 @@ import { ThemedText } from "@/components/themed/ThemedText";
 import { getFriendsReviews } from "@/api/reviews";
 import { useUser } from "@/context/user-context";
 
-
 // Define a type for our feed items
 type FeedItem = {
     id: string;
@@ -59,14 +58,12 @@ export default function Feed() {
                     const userId = user.id;
                     reviewsData = await getFriendsReviews(userId);
                 }
-
             } else {
                 reviewsData = await getReviews(1, 10);
-
             }
 
             const menuItemsData = await getMenuItems({ page: 1, limit: 10 });
-            const fetchedReviews = reviewsData?.data as TReview[] || [];
+            const fetchedReviews = (reviewsData?.data as TReview[]) || [];
             const fetchedMenuItems = menuItemsData as TMenuItem[];
 
             // Create a new array of FeedItems
@@ -184,16 +181,13 @@ export default function Feed() {
                 renderItem={renderItem}
                 keyExtractor={keyExtractor}
                 ListHeaderComponent={ListHeaderComponent}
-                // ListHeaderComponent={() => ( TODO: DELETE
-                //     <ListHeaderComponent key={activeTab} />
-                //   )}
                 contentContainerStyle={{ paddingBottom: 84 }}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
                 showsVerticalScrollIndicator={false}
                 ListEmptyComponent={
                     <ThemedView style={{ paddingVertical: 20, alignItems: "center" }}>
-                         <ThemedText>No content available</ThemedText>
+                        <ThemedText>No content available</ThemedText>
                     </ThemedView>
                 }
             />

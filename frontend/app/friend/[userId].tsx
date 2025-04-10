@@ -41,7 +41,6 @@ const ProfileScreen = () => {
     const [userReviews, setUserReviews] = useState<TReview[]>([]);
     const [isLoading, setLoading] = useState(true);
     const { isFollowing, loading: followingStatusLoading } = useFollowingStatus(userId as string);
-    
 
     useEffect(() => {
         const fetchUserAndReviews = async () => {
@@ -124,10 +123,7 @@ const ProfileScreen = () => {
                         numReviews={userReviews.length || 0}
                         averageRating={4.6}
                     />
-                    <FollowButton 
-                        isFollowing={isFollowing} 
-                        userToFollowId={user.id}
-                    />
+                    <FollowButton isFollowing={isFollowing} userToFollowId={user.id} />
                     <ThemedView style={styles.reviewsContainer}>
                         <ThemedText
                             style={{

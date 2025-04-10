@@ -29,8 +29,6 @@ const ProfileScreen = () => {
     const editFriend = useRef<{ open: () => void; close: () => void }>(null);
 
     const { isFollowing, loading: followingStatusLoading } = useFollowingStatus(userId as string);
-    
-  
 
     const [user, setUser] = useState<User>({
         id: "",
@@ -118,10 +116,7 @@ const ProfileScreen = () => {
                     <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
                     <ProfileIdentity name={user.name} username={user.username} />
                     <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
-                    <FollowButton 
-                        isFollowing={isFollowing} 
-                        userToFollowId={user.id}
-                    />                        
+                    <FollowButton isFollowing={isFollowing} userToFollowId={user.id} />
                     <ThemedView style={styles.reviewsContainer}>
                         <ThemedText
                             style={{ fontSize: 24, fontWeight: "bold", fontFamily: "Source Sans 3", marginBottom: 16 }}>
