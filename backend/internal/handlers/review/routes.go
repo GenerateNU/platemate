@@ -26,6 +26,10 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	review.Delete("/:id", handler.DeleteReview)
 	review.Get("/:id/comments", handler.GetComments)
 	review.Post("/:id/comments", handler.CreateComment)
+
+	review.Post("/:id/vote", handler.Vote)
+	review.Get("/:id/vote", handler.GetLikers)
+
 	review.Get("/user/:userId", handler.GetReviewsByUser)
 	review.Get("/user/:userId/search", handler.SearchUserReviews)
 

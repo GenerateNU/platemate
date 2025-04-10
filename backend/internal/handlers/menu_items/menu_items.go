@@ -284,6 +284,7 @@ func (h *Handler) GetMenuItemById(c *fiber.Ctx) error {
 		// Invalid ID format
 		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(errID))
 	}
+
 	menuItem, err := h.service.GetMenuItemById(objID)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
@@ -345,7 +346,9 @@ func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 		if errors.Is(err, ErrInvalidID) {
 			return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 		}
-		return err
+		if errors.Is(err, ErrInvalidRestaurantInfo) {
+			return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+		}
 	}
 	return c.Status(fiber.StatusOK).JSON(createdMenuItem)
 }
@@ -374,6 +377,9 @@ func (h *Handler) UpdateMenuItem(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Menu item", "id", id))
 		}
 		if errors.Is(err, ErrInvalidID) {
+			return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+		}
+		if errors.Is(err, ErrInvalidRestaurantInfo) {
 			return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 		}
 		return err
@@ -469,4 +475,24 @@ func (h *Handler) GetPopularWithFriends(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(items)
+}
+
+// GetRestaurantMenuItemsMetrics handles requests for metrics of all menu items at a restaurant
+func (h *Handler) GetRestaurantMenuItemsMetrics(c *fiber.Ctx) error {
+	id := c.Params("id")
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
+	}
+
+	metrics, err := h.service.GetRestaurantMenuItemsMetrics(objID)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.Status(fiber.StatusNotFound).JSON(xerr.NotFound("Restaurant", "id", id))
+		}
+		slog.Error("Error getting restaurant menu items metrics", "error", err)
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(metrics)
 }

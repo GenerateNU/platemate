@@ -36,18 +36,17 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     title: {
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: "bold",
         color: "#000000",
         textAlign: "center",
-        marginBottom: 4,
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     subtitle: {
         fontSize: 12,
         color: "#666666",
         textAlign: "center",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
 });
 

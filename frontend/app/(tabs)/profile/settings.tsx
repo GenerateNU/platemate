@@ -10,80 +10,96 @@ import SettingsMenuItem from "@/components/profile/settings/SettingsMenuItem";
 import { TSettingsData } from "@/types/settingsData";
 import useAuthStore from "@/auth/store";
 import { Button } from "@/components/Button";
+import axios from "axios";
+import { makeRequest } from "@/api/base";
 
 export default function SettingsScreen() {
     const insets = useSafeAreaInsets();
     const router = useRouter();
-    const { email } = useAuthStore();
+    const { email, userId, logout } = useAuthStore();
 
-    const { logout } = useAuthStore();
+    // const userIdStr = JSON.stringify(userId);
+    console.log(userId, email);
 
-    const dietaryOptions = [
-        "vegetarian",
-        "vegan",
-        "nutFree",
-        "shellfishAllergy",
-        "glutenFree",
-        "dairyFree",
-        "kosher",
-        "halal",
-        "pescatarian",
-        "keto",
-        "diabetic",
-        "soyFree",
-        "porkFree",
-        "beefFree",
-    ];
-
-    const [settings, setSettings] = useState<Record<string, boolean>>(
-        Object.fromEntries(dietaryOptions.map((option) => [option, false])),
-    );
-
-    // useEffect(() => {
-    //     const fetchPreferences = async () => {
-    //         try {
-    //             const userData = await fetchUserProfile(); // Fetch user profile using the context function
-
-    //             if (!userData) return; // Ensure userData exists before proceeding
-
-    //             const userRestrictions: string[] = userData.preferences || [];
-
-    //             // Convert restrictions array to object { vegetarian: true, glutenFree: true, keto: true, ... }
-    //             const updatedSettings = dietaryOptions.reduce((acc, option) => {
-    //                 acc[option] = userRestrictions.includes(option);
-    //                 return acc;
-    //             }, {} as Record<string, boolean>);
-
-    //             setSettings(updatedSettings);
-    //         } catch (error) {
-    //             console.error("Error fetching user preferences:", error);
-    //         }
-    //     };
-
-    //     fetchPreferences();
-    // }, [fetchUserProfile]);
-
-    // i dont think this updates it if you exit settings, should i save toggle states in AsyncStorage?
-    const updateSetting = (key: string, value: boolean) => {
-        setSettings((prevSettings) => ({
-            ...prevSettings,
-            [`${key}`]: value,
-        }));
+    const dietaryOptions: Record<string, string> = {
+        vegetarian: "Vegetarian",
+        vegan: "Vegan",
+        nutFree: "Nut-free",
+        shellfishAllergy: "Shellfish Allergy",
+        glutenFree: "Gluten-free",
+        dairyFree: "Dairy-free",
+        kosher: "Kosher",
+        halal: "Halal",
+        pescatarian: "Pescatarian",
+        keto: "Keto",
+        diabetic: "Diabetic",
+        soyFree: "Soy-free",
+        porkFree: "Pork-free",
+        beefFree: "Beef-free",
     };
 
-    // const updateSetting = async (key: string, value: boolean) => {
-    //     try {
-    //         const updatedSettings = { ...settings, [key]: value };
-    //         setSettings(updatedSettings);
+    const [dietaryPreferences, setDietaryPreferences] = useState<string[]>([]);
 
-    //         // Send updated preferences to the server
-    //         await axios.put(`${process.env.API_BASE_URL}/api/v1/user/${userId}`, {
-    //             preferences: { restrictions: Object.keys(updatedSettings).filter((k) => updatedSettings[k]) },
-    //         });
-    //     } catch (error) {
-    //         console.error("Error saving setting:", error);
-    //     }
-    // };
+    const [settings, setSettings] = useState<Record<string, boolean>>(
+        Object.fromEntries(Object.values(dietaryOptions).map((option) => [option, false])),
+    );
+
+    useEffect(() => {
+        console.log("fetched preferences!");
+        const fetchDietaryPreferences = async () => {
+            const preferencesData = await makeRequest(`/api/v1/settings/${userId}/dietaryPreferences`, "GET");
+            if (!preferencesData) {
+                throw new Error(preferencesData.message || "failed to fetch dietary preferences");
+            }
+            setDietaryPreferences(preferencesData);
+        };
+
+        fetchDietaryPreferences();
+        console.log(dietaryPreferences);
+    }, [userId]);
+
+    useEffect(() => {
+        console.log("reloaded!");
+        console.log(dietaryPreferences);
+        setSettings(
+            Object.fromEntries(
+                Object.keys(dietaryOptions).map((option) => [
+                    option,
+                    dietaryPreferences.includes(dietaryOptions[option]),
+                ]),
+            ),
+        );
+    }, [dietaryPreferences]);
+
+    const updateSetting = (key: string, value: boolean) => {
+        if (value == true) {
+            setDietaryPreferences((prevRestrictions) => [...prevRestrictions, dietaryOptions[key]]);
+            handleAddDietaryPreference(key);
+        } else {
+            setDietaryPreferences((prevRestrictions) =>
+                prevRestrictions.filter((item) => item !== dietaryOptions[key]),
+            );
+            handleRemoveDietaryPreference(key);
+        }
+    };
+
+    const handleAddDietaryPreference = async (preference: string) => {
+        await makeRequest(
+            `/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
+            "POST",
+            null,
+            "Failed to add dietary preference",
+        );
+    };
+
+    const handleRemoveDietaryPreference = async (preference: string) => {
+        await makeRequest(
+            `/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
+            "DELETE",
+            null,
+            "Failed to remove dietary preference",
+        );
+    };
 
     const settingsData: TSettingsData = {
         credentials: [
@@ -113,22 +129,20 @@ export default function SettingsScreen() {
         account: [
             {
                 label: "View Friends",
-                onPress: () => router.push("/(tabs)/profile/followers"),
+                //confused...
+                onPress: () => router.push(`/profile/friends?userId=${userId}`),
                 showChevron: true,
-            },
-            {
-                label: "Logout",
-                onPress: () => {
-                    logout();
-                    router.replace("/(onboarding)");
-                },
-                showChevron: false,
             },
         ],
         additional: [
             { label: "Blocked Users", onPress: () => console.log("navigating to blocked users") },
-            { label: "Terms and Conditions", onPress: () => console.log("navigating to terms of service") },
+            { label: "Terms and Conditions", onPress: () => router.push("/profile/terms") },
         ],
+    };
+
+    const handleLogOut = async () => {
+        await logout();
+        router.push("/(onboarding)");
     };
 
     return (
@@ -155,7 +169,7 @@ export default function SettingsScreen() {
                             editable={false}
                         />
                     </View>
-                    <Text style={styles.resetPasswordText}> Reset Password </Text>
+                    <Text style={styles.resetPasswordText}>Reset Password</Text>
                 </SettingsSection>
                 <SettingsSection title="Dietary Restrictions">
                     {settingsData.dietary.map((item) => (
@@ -196,7 +210,12 @@ export default function SettingsScreen() {
                     ))}
                 </SettingsSection>
 
-                <Button title="Log Out" containerStyle={styles.buttonContainer} textStyle={styles.buttonText} />
+                <Button
+                    title="Log Out"
+                    containerStyle={styles.buttonContainer}
+                    textStyle={styles.buttonText}
+                    onPress={handleLogOut}
+                />
 
                 <View style={{ height: insets.bottom + 50 }} />
             </View>
@@ -208,28 +227,27 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         backgroundColor: "#fff",
+        marginVertical: 32,
     },
     content: {
-        fontFamily: "Inter",
+        fontFamily: "Nunito",
         padding: 20,
     },
     buttonContainer: {
         display: "flex",
-        paddingVertical: 4,
-        paddingHorizontal: 12,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
         justifyContent: "center",
         alignItems: "center",
         gap: 4,
         borderRadius: 25,
-        backgroundColor: "#285852",
+        backgroundColor: "#FFCF0F",
         alignSelf: "center",
-        width: 100,
-        height: 30,
     },
     buttonText: {
-        color: "#FFF",
+        color: "#000",
         textAlign: "center",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 14,
         fontStyle: "normal",
         fontWeight: 500,
@@ -255,16 +273,16 @@ const styles = StyleSheet.create({
         width: 382,
     },
     inputLabel: {
-        fontSize: 10,
-        fontFamily: "Inter",
+        fontSize: 14,
+        fontFamily: "Nunito",
         fontStyle: "normal",
         fontWeight: 400,
         lineHeight: 28,
     },
     input: {
         fontSize: 12,
-        height: 35,
-        borderColor: "#D9D9D9",
+        height: 40,
+        borderColor: "black",
         borderWidth: 1,
         borderRadius: 11,
         paddingHorizontal: 10,
@@ -273,6 +291,7 @@ const styles = StyleSheet.create({
         width: 350, // the email and password boxes were not aligning with the toggles
         flexShrink: 0,
         alignItems: "flex-start",
+        fontFamily: "Nunito",
     },
     sectionTitle: {
         fontSize: 20,
@@ -280,13 +299,13 @@ const styles = StyleSheet.create({
         fontStyle: "normal",
         fontWeight: 600,
         lineHeight: 28,
-        fontFamily: "Inter",
+        fontFamily: "Nunito",
     },
     resetPasswordText: {
         color: "#285852",
         textAlign: "right",
-        fontFamily: "Inter",
-        fontSize: 10,
+        fontFamily: "Nunito",
+        fontSize: 14,
         fontStyle: "normal",
         fontWeight: 400,
         lineHeight: 28,

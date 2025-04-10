@@ -2,19 +2,18 @@ import { ThemedView } from "@/components/themed/ThemedView";
 import { ScrollView, StyleSheet, View, Image, Pressable } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarRating } from "@/components/ui/StarReview";
-import React from "react";
+import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
-// import ReviewDetail from "@/components/review/ReviewDetail";
 import { ThemedTag } from "@/components/themed/ThemedTag";
-// import { RestaurantTags } from "@/components/RestaurantTags";
-import { StatCard } from "@/components/Cards/StatCard";
 import { ReviewButton } from "@/components/review/ReviewButton";
+import { ReviewFlow } from "@/components/review/ReviewFlow";
 import HighlightCard from "@/components/restaurant/HighlightCard";
 import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
 
 export default function MenuItemView() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
+    const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
     const dishTags = [
         {
             title: "Gluten-free",
@@ -147,10 +146,21 @@ export default function MenuItemView() {
                         authorId={""}
                         authorUsername={"username"}
                         authorAvatar={"https://placehold.co/600x400/png?text=P"}
+                        reviewId="64f5a95cc7330b78d33265f1"
                     />
                 </ThemedView>
             </ScrollView>
-            <ReviewButton onPress={() => console.log("Open review flow")} />
+            <ReviewButton
+                restaurantId="pad-thai-kitchen"
+                menuItemName="Pad Thai"
+                onPress={() => setIsReviewModalVisible(true)}
+            />
+            <ReviewFlow
+                isVisible={isReviewModalVisible}
+                onClose={() => setIsReviewModalVisible(false)}
+                restaurantId="pad-thai-kitchen"
+                menuItemName="Pad Thai"
+            />
         </>
     );
 }

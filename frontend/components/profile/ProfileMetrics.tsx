@@ -1,7 +1,8 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { ThemedView } from "@/components/themed/ThemedView";
 import React from "react";
+import { useRouter } from "expo-router";
 
 type ProfileMetricProps = {
     numFriends: number;
@@ -10,19 +11,25 @@ type ProfileMetricProps = {
 };
 
 const ProfileMetrics = (props: ProfileMetricProps) => {
+    const router = useRouter();
     return (
         <ThemedView style={styles.container}>
-            <View style={{ alignItems: "center", marginRight: 24, backgroundColor: "transparent" }}>
+            <View style={{ alignItems: "center", backgroundColor: "transparent" }}>
                 <ThemedText style={styles.statNumber}>{props.numReviews}</ThemedText>
                 <ThemedText style={styles.statLabel}>reviews</ThemedText>
             </View>
 
             <View style={{ alignItems: "center", backgroundColor: "transparent" }}>
-                <ThemedText style={styles.statNumber}>{props.numFriends}</ThemedText>
-                <ThemedText style={styles.statLabel}>friends</ThemedText>
+                <TouchableOpacity
+                    onPress={() => {
+                        router.push("/(tabs)/profile/friends");
+                    }}>
+                    <ThemedText style={styles.statNumber}>{props.numFriends}</ThemedText>
+                    <ThemedText style={styles.statLabel}>friends</ThemedText>
+                </TouchableOpacity>
             </View>
 
-            <View style={{ alignItems: "center", marginLeft: 24, backgroundColor: "transparent" }}>
+            <View style={{ alignItems: "center", backgroundColor: "transparent" }}>
                 <ThemedText style={styles.statNumber}>{props.averageRating}</ThemedText>
                 <ThemedText style={styles.statLabel}>avg. rating</ThemedText>
             </View>
@@ -35,6 +42,7 @@ const styles = StyleSheet.create({
         paddingTop: 24,
         paddingBottom: 12,
         alignSelf: "center",
+        gap: 24,
         flexDirection: "row",
         backgroundColor: "transparent",
         alignItems: "center",
@@ -43,13 +51,16 @@ const styles = StyleSheet.create({
     statNumber: {
         fontSize: 28,
         fontWeight: 500,
-        fontFamily: "Inter",
+        lineHeight: 32,
+        fontFamily: "Source Sans 3",
         paddingTop: 4,
+        textAlign: "center",
     },
     statLabel: {
         fontSize: 16,
         color: "#727272",
-        fontFamily: "Inter",
+        fontFamily: "Source Sans 3",
+        textAlign: "center",
     },
 });
 

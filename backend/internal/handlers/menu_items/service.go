@@ -19,10 +19,11 @@ func NewService(collections map[string]*mongo.Collection) *Service {
 	if collections["menuItems"] == nil {
 		slog.Info("menuItems collection is nil!")
 	}
-	return &Service{collections["menuItems"], collections["reviews"], collections["users"]}
+	return &Service{collections["menuItems"], collections["reviews"], collections["users"], collections["restaurants"]}
 }
 
 var ErrInvalidID = errors.New("the provided hex string is not a valid ObjectID")
+var ErrInvalidRestaurantInfo = errors.New("the provided restaurant ID and name do not match the restaurant in the database")
 
 const MAX_SIMILAR_ITEMS = 5
 
@@ -54,6 +55,7 @@ func ParseMenuItemRequest(menuItemRequest MenuItemRequest) (MenuItemDocument, er
 		AvgRating:           avgRatingDoc,
 		Reviews:             reviewsObjectID,
 		RestaurantID:        menuItemRequest.RestaurantID,
+		RestaurantName:      menuItemRequest.RestaurantName,
 		Description:         menuItemRequest.Description,
 		Location:            menuItemRequest.Location,
 		Tags:                menuItemRequest.Tags,
@@ -96,8 +98,37 @@ func ToMenuItemResponse(menuItem MenuItemDocument) MenuItemResponse {
 			Tags:                menuItem.Tags,
 			DietaryRestrictions: menuItem.DietaryRestrictions,
 			RestaurantID:        menuItem.RestaurantID,
+			RestaurantName:      menuItem.RestaurantName,
 		},
 	}
+}
+
+// Checks that the restaurant ID and name match the restaurant in the database
+func (s *Service) ValidateRestaurantInfo(restaurantID primitive.ObjectID, restaurantName string) error {
+	var restaurantDoc struct {
+		Name string `bson:"name"`
+	}
+
+	err := s.restaurants.FindOne(
+		context.Background(),
+		bson.M{"_id": restaurantID},
+		options.FindOne().SetProjection(bson.M{"name": 1}),
+	).Decode(&restaurantDoc)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return fmt.Errorf("restaurant with ID %s not found", restaurantID.Hex())
+		}
+		return fmt.Errorf("error finding restaurant: %w", err)
+	}
+
+	// Check if the provided name matches the restaurant's name
+	if restaurantDoc.Name != restaurantName {
+		return fmt.Errorf("restaurant name '%s' does not match the restaurant with ID %s (actual name: '%s'): %w",
+			restaurantName, restaurantID.Hex(), restaurantDoc.Name, ErrInvalidRestaurantInfo)
+	}
+
+	return nil
 }
 
 func (s *Service) GetMenuItems(menuItemsQuery MenuItemsQuery) ([]MenuItemResponse, error) {
@@ -179,10 +210,28 @@ func (s *Service) UpdateMenuItem(idObj primitive.ObjectID, menuItemRequest MenuI
 	if errReviewID != nil {
 		return MenuItemResponse{}, errReviewID
 	}
+	errRestaurantID := s.ValidateRestaurantInfo(menuItemDoc.RestaurantID, menuItemRequest.RestaurantName)
+	if errRestaurantID != nil {
+		return MenuItemResponse{}, errRestaurantID
+	}
+
+	updateDoc := bson.M{
+		"name":                menuItemDoc.Name,
+		"picture":             menuItemDoc.Picture,
+		"avgRating":           menuItemDoc.AvgRating,
+		"reviews":             menuItemDoc.Reviews,
+		"restaurantID":        menuItemDoc.RestaurantID,
+		"restaurantName":      menuItemDoc.RestaurantName,
+		"description":         menuItemDoc.Description,
+		"location":            menuItemDoc.Location,
+		"tags":                menuItemDoc.Tags,
+		"dietaryRestrictions": menuItemDoc.DietaryRestrictions,
+	}
+
 	errUpdate := s.menuItems.FindOneAndUpdate(
 		context.Background(),
-		bson.M{"_id": idObj},        // filter to match the document
-		bson.M{"$set": menuItemDoc}, // update the document
+		bson.M{"_id": idObj},      // filter to match the document
+		bson.M{"$set": updateDoc}, // update the document
 		options.FindOneAndUpdate().SetReturnDocument(options.After), // return the updated document
 	).Decode(&menuItemDoc)
 
@@ -200,6 +249,10 @@ func (s *Service) CreateMenuItem(menuItemRequest MenuItemRequest) (MenuItemRespo
 	menuItemDoc, errReviewID := ParseMenuItemRequest(menuItemRequest)
 	if errReviewID != nil {
 		return MenuItemResponse{}, errReviewID
+	}
+	errRestaurantID := s.ValidateRestaurantInfo(menuItemDoc.RestaurantID, menuItemRequest.RestaurantName)
+	if errRestaurantID != nil {
+		return MenuItemResponse{}, errRestaurantID
 	}
 	slog.Info("doc", "menuItemDocument", menuItemDoc)
 
@@ -583,4 +636,49 @@ func (s *Service) GetPopularWithFriends(userID primitive.ObjectID, limit int) ([
 	}
 
 	return final, nil
+}
+
+// GetRestaurantMenuItemsMetrics retrieves metrics for all menu items at a restaurant
+func (s *Service) GetRestaurantMenuItemsMetrics(restaurantID primitive.ObjectID) (*RestaurantMenuItemsMetrics, error) {
+	// ctx := context.Background()
+
+	// Get all menu items for this restaurant using our existing function
+	menuItems, err := s.GetMenuItemByRestaurant(restaurantID)
+	if err != nil {
+		slog.Error("Error finding menu items for restaurant metrics", "error", err)
+		return nil, err
+	}
+
+	// Initialize the response
+	restaurantMetrics := &RestaurantMenuItemsMetrics{
+		RestaurantID:    restaurantID.Hex(),
+		TotalItems:      len(menuItems),
+		TotalReviews:    0,
+		MenuItemMetrics: make([]MenuItemMetrics, 0, len(menuItems)),
+	}
+
+	// Process each menu item
+	for _, menuItem := range menuItems {
+		// Create metrics from the document
+		metrics := MenuItemMetrics{
+			ID:                  menuItem.ID.Hex(),
+			Name:                menuItem.Name,
+			OverallRating:       menuItem.AvgRating.Overall,
+			TasteRating:         menuItem.AvgRating.Taste,
+			PortionRating:       menuItem.AvgRating.Portion,
+			ValueRating:         menuItem.AvgRating.Value,
+			ReturnRate:          menuItem.AvgRating.Return,
+			ReviewCount:         len(menuItem.Reviews),
+			PopularTags:         menuItem.Tags,
+			DietaryRestrictions: menuItem.DietaryRestrictions,
+		}
+
+		// Add to total review count
+		restaurantMetrics.TotalReviews += len(menuItem.Reviews)
+
+		// Add to metrics list
+		restaurantMetrics.MenuItemMetrics = append(restaurantMetrics.MenuItemMetrics, metrics)
+	}
+
+	return restaurantMetrics, nil
 }

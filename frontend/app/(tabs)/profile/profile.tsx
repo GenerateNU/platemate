@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { useUser } from "@/context/user-context";
+import React, { useEffect, useRef, useState } from "react";
+import { DEFAULT_PROFILE_PIC, useUser } from "@/context/user-context";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ActivityIndicator, Dimensions, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
@@ -13,26 +13,64 @@ import { router } from "expo-router";
 import EditProfileSheet from "@/components/profile/EditProfileSheet";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { SearchBoxFilter } from "@/components/SearchBoxFilter";
+import type { TReview } from "@/types/review";
+import { makeRequest } from "@/api/base";
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = () => {
     const { user, isLoading, error, fetchUserProfile } = useUser();
     const [searchText, setSearchText] = React.useState("");
+    const [userReviews, setUserReviews] = useState<TReview[] | null>(null);
 
     const editProfileRef = useRef<{ open: () => void; close: () => void }>(null);
+    const fetchReviews = async () => {
+        if (!user) return;
 
+        try {
+            const reviewData = await makeRequest(`/api/v1/review/user/${user.id}`, "GET");
+            console.log(reviewData);
+            if (!reviewData) {
+                throw new Error(reviewData.message || "Failed to retrieve user reviews");
+            }
+            setUserReviews(reviewData);
+        } catch (err) {
+            console.error("Failed to fetch user by ID", err);
+        }
+    };
+
+    const searchReviews = async () => {
+        if (!user) return;
+
+        try {
+            const reviewData = await makeRequest(`/api/v1/review/user/${user.id}/search?query=${searchText}`, "GET");
+            console.log(reviewData);
+            if (!reviewData) {
+                throw new Error(reviewData.message || "Failed to retrieve user reviews");
+            }
+            setUserReviews(reviewData);
+        } catch (err) {
+            console.error("Failed to fetch user by ID", err);
+        }
+    };
     useEffect(() => {
         if (!user && !isLoading) {
             console.log("User data not available, fetching...");
-            fetchUserProfile().then(() => {});
+            fetchUserProfile().then(() => {
+                console.log("Getting the reviews");
+                fetchReviews();
+            });
+        }
+        if (!userReviews) {
+            console.log("User reviews not available, fetching...");
+            fetchReviews();
         }
     }, [user, isLoading]);
 
     if (isLoading) {
         return (
             <ThemedView style={styles.centerContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#ffcf0f" />
                 <ThemedText style={{ marginTop: 10 }}>Loading profile...</ThemedText>
             </ThemedView>
         );
@@ -59,9 +97,9 @@ const ProfileScreen = () => {
                 <Ionicons name="menu" size={28} color="#333" />
             </TouchableOpacity>
             <ScrollView style={styles.container}>
-                <ProfileAvatar url={user.profile_picture || "https://shorturl.at/Dhcvo"} />
+                <ProfileAvatar url={user.profile_picture || DEFAULT_PROFILE_PIC} />
                 <ProfileIdentity name={user.name} username={user.username} />
-                <ProfileMetrics numFriends={100} numReviews={100} averageRating={4.6} />
+                <ProfileMetrics numFriends={user.followingCount} numReviews={100} averageRating={4.6} />
                 <EditProfileButton text={"Edit profile"} onPress={() => router.navigate("/profile/settings")} />
                 <ThemedView style={styles.reviewsContainer}>
                     <ThemedText
@@ -77,36 +115,29 @@ const ProfileScreen = () => {
 
                     <SearchBoxFilter
                         placeholder="Search my reviews"
-                        recent={true}
-                        onSubmit={() => console.log("submit")}
+                        name={user.username}
+                        recent={false}
+                        onSubmit={searchReviews}
                         value={searchText}
                         onChangeText={(text) => setSearchText(text)}
                     />
-
-                    <ThemedView style={{ gap: 8, marginTop: 12 }}>
-                        <ReviewPreview
-                            plateName="Pad Thai"
-                            restaurantName="Pad Thai Kitchen"
-                            tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
-                            rating={4}
-                            content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
-                            authorId={""}
-                            authorUsername={"username"}
-                            authorName={"First Name"}
-                            authorAvatar={"https://placehold.co/600x400/png?text=P"}
-                        />
-                        <ReviewPreview
-                            plateName="Pad Thai"
-                            restaurantName="Pad Thai Kitchen"
-                            tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
-                            rating={4}
-                            content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
-                            authorId={""}
-                            authorUsername={"username"}
-                            authorName={"First Name"}
-                            authorAvatar={"https://placehold.co/600x400/png?text=P"}
-                        />
-                    </ThemedView>
+                    {userReviews &&
+                        userReviews.map((review) => (
+                            <ReviewPreview
+                                reviewId={review._id}
+                                key={review._id}
+                                likes={review.likes}
+                                plateName={review.menuItemName}
+                                restaurantName={review.restaurantName}
+                                tags={[]}
+                                rating={review.rating.overall}
+                                content={review.content}
+                                authorId={user.id}
+                                authorName={user.name}
+                                authorUsername={user.username}
+                                authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
+                            />
+                        ))}
                 </ThemedView>
             </ScrollView>
             <EditProfileSheet user={user} ref={editProfileRef} />
@@ -126,8 +157,9 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        paddingHorizontal: 24,
+        paddingHorizontal: 16,
         backgroundColor: "transparent",
+        paddingTop: Dimensions.get("screen").height * 0.025,
     },
     centerContainer: {
         flex: 1,

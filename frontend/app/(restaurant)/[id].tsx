@@ -16,6 +16,7 @@ import MenuItemPreview from "@/components/Cards/MenuItemPreview";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { getRestaurant } from "@/api/restaurant";
 import { TRestaurant } from "@/types/restaurant";
+import { Skeleton } from "moti/skeleton";
 
 export default function Route() {
     const restaurantTags = ["Fast Food", "Fried Chicken", "Chicken Sandwiches", "Order Online"];
@@ -29,119 +30,142 @@ export default function Route() {
     }>();
 
     const [restaurant, setRestaurant] = React.useState<TRestaurant | null>(null);
+    const [loading, setLoading] = React.useState(true);
     const navigation = useNavigation();
 
     useEffect(() => {
-        getRestaurant(id).then((res) => {
+        getRestaurant(id).then(async (res) => {
             setRestaurant(res);
         });
+        new Promise((resolve) => setTimeout(resolve, 1500)).then(() => setLoading(false));
         navigation.setOptions({ headerShown: false });
     }, [navigation]);
 
-    const formattedAddress = "123 Roadname St, City, State 02114";
+    const formattedAddress =
+        restaurant?.address.street +
+        ", " +
+        restaurant?.address.city +
+        ", " +
+        restaurant?.address.state +
+        " " +
+        restaurant?.address.zip;
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <BannerAndAvatar
-                bannerURL={"https://shorturl.at/zZdqT"}
-                avatarURL={restaurant?.picture || "https://placehold.co/600x400/png?text=P"}
-            />
-            <ThemedView style={styles.container}>
-                <ThemedView style={styles.headerContainer}>
-                    <ThemedText style={styles.titleText}>{restaurant?.name || "Restaurant Name"}</ThemedText>
-                    <View style={styles.iconContainer}>
-                        <PhoneIcon />
-                        <WebsiteIcon />
-                    </View>
-                </ThemedView>
-
-                <ThemedView style={styles.ratingContainer}>
-                    <StarRating avgRating={1.9} numRatings={500} full={true} />
-                </ThemedView>
-
-                <ThemedView style={styles.detailsContainer}>
-                    <RestaurantDetailItem
-                        text={formattedAddress || "360 Huntington Ave, Boston, MA 02115"}
-                        icon={"marker"}
-                    />
-                    <RestaurantDetailItem text={"Open | Closes 8 PM"} icon={"clock"} />
-                </ThemedView>
-
-                <ScrollView
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.tagsScrollViewContent}>
-                    {restaurant?.tags.map((tag, index) => (
-                        <View key={index} style={index < restaurantTags.length - 1 ? styles.tagWrapper : null}>
-                            <Tag text={tag} />
-                        </View>
-                    ))}
-                </ScrollView>
-
-                <RestaurantReviewSummary
-                    rating={restaurant?.ratingAvg.overall}
-                    friendsReviewCount={12}
-                    highlight={"This is a really good dish. I liked the part when the chef added the sauce..."}
-                    maxRating={5}
-                    reviewCount={189}
+            <Skeleton show={loading} colorMode={"light"}>
+                <BannerAndAvatar
+                    bannerURL={"https://shorturl.at/zZdqT"}
+                    avatarURL={"https://placehold.co/600x400/png?text=P"}
                 />
+            </Skeleton>
+            <Skeleton.Group show={loading}>
+                <ThemedView style={styles.container}>
+                    <Skeleton colorMode={"light"}>
+                        <ThemedView style={styles.headerContainer}>
+                            <ThemedText style={styles.titleText} numberOfLines={1}>
+                                {restaurant?.name || "Restaurant Name"}
+                            </ThemedText>
+                        </ThemedView>
+                    </Skeleton>
 
-                <View style={styles.highlightsContainer}>
-                    <HighlightCard
-                        title={"Friend's Fave"}
-                        subtitle={"100+ friend referrals"}
-                        icon={<PersonWavingIcon />}
-                    />
-                    <HighlightCard title={"Super Stars"} subtitle={"200+ 5-star reviews"} icon={<ThumbsUpIcon />} />
-                    <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} />
-                </View>
-
-                <FeedTabs tabs={["Reviews", "Menu"]} activeTab={filterTab} setActiveTab={setFilterTab} />
-
-                <ThemedView>
-                    {filterTab == 0 && (
-                        <>
-                            <ThemedView style={{ paddingVertical: 12 }}>
-                                <FeedTabs
-                                    tabs={["Friends", "Top Reviews", "My Reviews"]}
-                                    activeTab={activeTab}
-                                    setActiveTab={setActiveTab}
-                                />
-                            </ThemedView>
-                            <TouchableOpacity onPress={() => router.push("/(review)/827b36v4b234")}>
-                                <ReviewPreview
-                                    plateName={"Big Whopper"}
-                                    restaurantName={"Burger King"}
-                                    tags={["juicy", "artificial", "fake meat"]}
-                                    rating={4}
-                                    content={
-                                        "This is fake meat and is not good for you. Not sure why we are even serving it."
-                                    }
-                                    authorName={"First Last"}
-                                    authorAvatar={"https://placehold.co/600x400/png?text=P"}
-                                    authorUsername={"username"}
-                                    authorId={""}
-                                />
-                            </TouchableOpacity>
-                        </>
-                    )}
-
-                    {filterTab == 1 && (
-                        <>
-                            <MenuItemPreview
-                                plateName={"Whopper"}
-                                restaurantName={"Burger King"}
-                                tags={["juicy", "fake meat", "unhealthy"]}
-                                rating={4.2}
-                                content={"a juicy burger that is not meant to be consumed"}
-                                picture={
-                                    "https://media-cdn.grubhub.com/image/upload/d_search:browse-images:default.jpg/w_150,q_auto:low,fl_lossy,dpr_2.0,c_fill,f_auto,h_150/yzbd3ocqb3s8o2jkd2jn"
-                                }
+                    <Skeleton colorMode={"light"}>
+                        <ThemedView style={styles.ratingContainer}>
+                            <StarRating
+                                avgRating={restaurant?.ratingAvg.overall || 3}
+                                numRatings={500}
+                                full={true}
+                                starSize={20}
                             />
-                        </>
-                    )}
+                        </ThemedView>
+                    </Skeleton>
+
+                    <Skeleton colorMode={"light"}>
+                        <ThemedView style={styles.detailsContainer}>
+                            <RestaurantDetailItem
+                                text={formattedAddress || "360 Huntington Ave, Boston, MA 02115"}
+                                icon={"marker"}
+                            />
+                        </ThemedView>
+                    </Skeleton>
+
+                    <Skeleton colorMode={"light"}>
+                        <ScrollView
+                            horizontal={true}
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={styles.tagsScrollViewContent}>
+                            {restaurant?.tags.map((tag, index) => (
+                                <View key={index} style={index < restaurantTags.length - 1 ? styles.tagWrapper : null}>
+                                    <Tag text={tag} />
+                                </View>
+                            ))}
+                        </ScrollView>
+                    </Skeleton>
+
+                    <Skeleton colorMode={"light"}>
+                        <RestaurantReviewSummary
+                            rating={restaurant?.ratingAvg.overall}
+                            friendsReviewCount={12}
+                            highlight={"This is a really good dish. I liked the part when the chef added the sauce..."}
+                            maxRating={5}
+                            reviewCount={189}
+                        />
+                    </Skeleton>
+
+                    <Skeleton colorMode={"light"}>
+                        <View style={styles.highlightsContainer}>
+                            <HighlightCard
+                                title={"Friend's Fav"}
+                                subtitle={"100+ friend referrals"}
+                                icon={<PersonWavingIcon />}
+                            />
+                            <HighlightCard
+                                title={"Super Stars"}
+                                subtitle={"200+ 5-star reviews"}
+                                icon={<ThumbsUpIcon />}
+                            />
+                            <HighlightCard title={"Satisfaction"} subtitle={"70% of guests revisited"} />
+                        </View>
+                    </Skeleton>
+
+                    <Skeleton colorMode={"light"}>
+                        <FeedTabs tabs={["Reviews", "Menu"]} activeTab={filterTab} setActiveTab={setFilterTab} />
+                    </Skeleton>
+
+                    <Skeleton colorMode={"light"}>
+                        <ThemedView>
+                            {filterTab == 0 && (
+                                <>
+                                    <ThemedView style={{ paddingVertical: 12 }}>
+                                        <FeedTabs
+                                            tabs={["Friends", "Top Reviews", "My Reviews"]}
+                                            activeTab={activeTab}
+                                            setActiveTab={setActiveTab}
+                                        />
+                                    </ThemedView>
+                                    <TouchableOpacity onPress={() => router.push("/(review)/827b36v4b234")}>
+                                        <ReviewPreview
+                                            plateName={"Big Whopper"}
+                                            reviewId={"827b36v4b234"}
+                                            restaurantName={"Burger King"}
+                                            tags={["juicy", "artificial", "fake meat"]}
+                                            rating={4}
+                                            content={
+                                                "This is fake meat and is not good for you. Not sure why we are even serving it."
+                                            }
+                                            authorName={"First Last"}
+                                            authorAvatar={"https://placehold.co/600x400/png?text=P"}
+                                            authorUsername={"username"}
+                                            authorId={""}
+                                        />
+                                    </TouchableOpacity>
+                                </>
+                            )}
+
+                            {filterTab == 1 && <>{/* TODO MENU ITEM PREVIEW */}</>}
+                        </ThemedView>
+                    </Skeleton>
                 </ThemedView>
-            </ThemedView>
+            </Skeleton.Group>
         </ScrollView>
     );
 }
@@ -157,6 +181,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        paddingTop: 4,
     },
     detailsContainer: {
         paddingVertical: 4,
@@ -169,6 +194,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         paddingTop: 8,
         paddingBottom: 12,
+        gap: 4,
     },
     tagWrapper: {
         marginRight: 4,
@@ -178,7 +204,7 @@ const styles = StyleSheet.create({
     },
     titleText: {
         fontWeight: "bold",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         fontSize: 28,
         paddingTop: 6,
     },

@@ -8,12 +8,12 @@ export const FollowButton: React.FC<{ text: string }> = ({ text }) => {
     const [buttonText, setButtonText] = useState(text);
 
     const handlePress = () => {
-        if (buttonText == "Following") {
+        if (buttonText == "Friends") {
             setIsPressed(false);
             setButtonText("Follow");
         } else {
             setIsPressed(true);
-            setButtonText("Following");
+            setButtonText("Friends");
         }
     };
 

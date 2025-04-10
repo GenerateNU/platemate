@@ -15,7 +15,7 @@ export function ThemedText({ style, lightColor, darkColor, type = "default", ...
         <Text
             style={[
                 { color },
-                { fontFamily: "Source Sans 3" },
+                { fontFamily: "Nunito" },
                 type === "default" ? styles.default : undefined,
                 type === "title" ? styles.title : undefined,
                 type === "sectionTitle" ? styles.sectionTitle : undefined,
@@ -34,39 +34,38 @@ const styles = StyleSheet.create({
     default: {
         fontSize: 16,
         lineHeight: 24,
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     defaultSemiBold: {
         fontSize: 16,
         lineHeight: 24,
         fontWeight: "600",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     title: {
-        fontSize: 32,
+        fontSize: 28,
         fontWeight: "bold",
-        lineHeight: 32,
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     subtitle: {
         fontSize: 20,
         fontWeight: "bold",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     sectionTitle: {
         fontSize: 24,
         fontWeight: "bold",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     caption: {
         fontSize: 14,
         fontWeight: "regular",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
     link: {
         lineHeight: 30,
         fontSize: 16,
         color: "#0a7ea4",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
     },
 });

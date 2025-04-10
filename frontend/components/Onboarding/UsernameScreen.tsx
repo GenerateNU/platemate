@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Button } from "../Button";
@@ -7,15 +7,36 @@ import { ThemedView } from "@/components/themed/ThemedView";
 import { OnboardingProgress } from "./OnboardingProgress";
 import { sharedOnboardingStyles } from "./onboardingStyles";
 import { ChevronLeft } from "@/components/icons/Icons";
+import useAuthStore from "@/auth/store";
 
 interface UsernameScreenProps {
     onContinue: (username: string) => void;
+    onNavigateToLogin: () => void;
     onBack: () => void;
 }
 
-export function UsernameScreen({ onContinue, onBack }: UsernameScreenProps) {
+export function UsernameScreen({ onContinue, onNavigateToLogin, onBack }: UsernameScreenProps) {
     const [username, setUsername] = useState("");
+    const [usernameExists, setUsernameExists] = useState(false);
+    const [isChecking, setIsChecking] = useState(false);
     const { colors } = useTheme();
+    const { checkUsernameExists } = useAuthStore();
+
+    // Debounce username check to avoid too many requests
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            if (username && isValidUsername(username)) {
+                setIsChecking(true);
+                const exists = await checkUsernameExists(username);
+                setUsernameExists(exists);
+                setIsChecking(false);
+            } else {
+                setUsernameExists(false);
+            }
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [username]);
 
     const handleContinue = () => {
         onContinue(username);
@@ -47,17 +68,24 @@ export function UsernameScreen({ onContinue, onBack }: UsernameScreenProps) {
                 />
             </View>
 
-            {/* TODO: This should only come up once we have checked auth etc... */}
-            <View style={styles.linkContainer}>
-                <ThemedText style={styles.inUseText}>This username is already in use </ThemedText>
-            </View>
+            {/* Show username already in use message conditionally */}
+            {username.trim() !== "" && usernameExists && (
+                <View style={styles.linkContainer}>
+                    <View style={sharedOnboardingStyles.linkContent}>
+                        <ThemedText style={styles.warningText}>This username is already in use </ThemedText>
+                        <TouchableOpacity onPress={onNavigateToLogin}>
+                            <ThemedText style={styles.warningLinkText}>Sign in</ThemedText>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
 
             <Button
-                title="Continue"
+                title={isChecking ? "Checking..." : "Continue"}
                 onPress={handleContinue}
                 containerStyle={sharedOnboardingStyles.button}
                 textStyle={sharedOnboardingStyles.buttonText}
-                disabled={!isValidUsername(username)}
+                disabled={!isValidUsername(username) || isChecking || usernameExists}
             />
             <OnboardingProgress currentStep={4} totalSteps={6} />
         </ThemedView>
@@ -71,6 +99,15 @@ const styles = StyleSheet.create({
         textAlign: "left",
         marginTop: 8,
     },
+    warningText: {
+        color: "#D32246",
+        fontSize: 13,
+    },
+    warningLinkText: {
+        color: "#D32246",
+        fontSize: 13,
+        textDecorationLine: "underline",
+    },
     inUseText: {
         paddingBottom: 180,
         marginTop: -180,
@@ -79,9 +116,9 @@ const styles = StyleSheet.create({
         color: "#D32246",
     },
     linkContainer: {
+        paddingBottom: 180,
+        marginTop: -180,
         alignItems: "flex-start",
-        paddingLeft: 4,
-        marginTop: -20,
-        paddingBottom: 20,
+        paddingLeft: 8,
     },
 });
