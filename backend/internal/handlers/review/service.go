@@ -491,10 +491,10 @@ func (s *Service) SearchUserReviews(userID primitive.ObjectID, query string) ([]
 	return results, nil
 }
 
-func (s *Service) GetTopReviews(userID string) ([]TopReviewDocument, error) {
+func (s *Service) GetTopReviews(userID primitive.ObjectID) ([]TopReviewDocument, error) {
 	ctx := context.Background()
 	cursor, err := s.reviews.Aggregate(ctx, bson.A{
-		bson.D{{Key: "$match", Value: bson.D{{Key: "reviewer.id", Value: userID}}}},
+		bson.D{{Key: "$match", Value: bson.D{{Key: "reviewer._id", Value: userID}}}},
 		bson.D{
 			{Key: "$lookup",
 				Value: bson.D{

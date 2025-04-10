@@ -361,8 +361,12 @@ func (h *Handler) SearchUserReviews(c *fiber.Ctx) error {
 
 func (h *Handler) GetTopReviews(c *fiber.Ctx) error {
 	userID := c.Params("userId")
+	userOID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
 
-	reviews, err := h.service.GetTopReviews(userID)
+	reviews, err := h.service.GetTopReviews(userOID)
 	if err != nil {
 		return err
 	}

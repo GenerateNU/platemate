@@ -1,5 +1,5 @@
 # Build stage
-FROM golang:1.23.4 AS builder
+FROM golang:1.23.4-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -16,7 +16,7 @@ COPY . .
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o /app/backend ./cmd/server/main.go
 
 # Final stage
-FROM ubuntu:latest
+FROM alpine:latest
 
 # Update and install ca-certificates for HTTPS
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
