@@ -13,7 +13,7 @@ func (s *Service) GetPresignedUrl(inputs *GetParams) (*DownloadUrl, error) {
 	req, err := s.Presigner.PresignGetObject(context.Background(), &s3.GetObjectInput{
 		Bucket: aws.String(inputs.Bucket),
 		Key:    aws.String(inputs.Key),
-	}, s3.WithPresignExpires(time.Hour*24*30))
+	}, s3.WithPresignExpires(time.Hour*24*6))
 	if err != nil {
 		return nil, err
 	}
