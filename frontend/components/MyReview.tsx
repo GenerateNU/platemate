@@ -210,17 +210,17 @@ export function MyReview({ restaurantId, menuItemName, menuItemId, dishImageUrl,
                     content: buildReviewContent(),
                     reviewer: {
                         _id: userId,
-                        pfp: user.profile_picture,
-                        username: user.username,
+                        pfp: user?.profile_picture || "",
+                        username: user?.username || "",
+                        name: user?.name || user?.username || "",
                     },
-                    menuItem: menuItemId,
-                    restaurantId: restaurantId,
+                    menuItem: menuItemId || "",
+                    restaurantId: restaurantId || "",
                     menuItemName: menuItemName || "",
                     restaurantName: restaurantName || "",
-                    additionalImages: uploadedImageUrls.slice(1),
                 };
 
-                console.log(reviewData);
+                console.log("Submitting review data:", JSON.stringify(reviewData, null, 2));
 
                 // Submit review
                 const response = await createReview(reviewData);

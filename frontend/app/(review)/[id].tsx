@@ -83,7 +83,7 @@ export default function Route() {
 
     useEffect(() => {
         if (!user) return;
-        getReviewById(id, user.id).then((res) => {
+        getReviewById(id).then((res) => {
             setReview(res);
             if (res.like) {
                 setLikeState(LikeState.LIKED);
