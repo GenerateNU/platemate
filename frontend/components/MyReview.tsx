@@ -17,6 +17,7 @@ import { InteractiveStars } from "./ui/StarReview";
 import { createReview } from "@/api/review";
 import useAuthStore from "@/auth/store";
 import * as ImagePicker from "expo-image-picker";
+import axios from "axios";
 
 interface MyReviewProps {
     restaurantId?: string;
@@ -135,6 +136,39 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
         }
     };
 
+    const uploadImageToS3 = async (image: ImagePicker.ImagePickerAsset) => {
+        try {
+            // Get file extension from URI
+            const fileExtension = image.uri.split(".").pop();
+            const fileType = `image/${fileExtension}`;
+
+            // Get presigned URL from backend
+            const presignedUrlResponse = await axios.get("/api/s3/presigned-url", {
+                params: { fileType },
+            });
+
+            const { uploadUrl, key } = presignedUrlResponse.data;
+
+            // Upload image to S3
+            const response = await fetch(image.uri);
+            const blob = await response.blob();
+
+            await fetch(uploadUrl, {
+                method: "PUT",
+                body: blob,
+                headers: {
+                    "Content-Type": fileType,
+                },
+            });
+
+            // Return the S3 URL for the uploaded image
+            return `https://${process.env.NEXT_PUBLIC_S3_BUCKET}.s3.amazonaws.com/${key}`;
+        } catch (error) {
+            console.error("Error uploading image to S3:", error);
+            throw error;
+        }
+    };
+
     const handleNext = async () => {
         if (step < 4) {
             // Get current step's rating and tags
@@ -150,13 +184,12 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
             try {
                 setIsSubmitting(true);
 
+                // Upload images to S3 and get URLs
+                const uploadedImageUrls = await Promise.all(selectedImages.map(uploadImageToS3));
+
                 // For testing: Use hardcoded valid MongoDB ObjectIDs
-                // These are examples - they follow the MongoDB ObjectID format (24 hex chars)
                 const validUserId = "67e300c043b432515e2dd8bb";
                 const validRestaurantId = "64f5a95cc7330b78d33265f1";
-
-                // Generate a fresh ObjectID if needed (for testing only)
-                // const testObjectId = generateValidObjectId();
 
                 // Collect all the selected tags
                 const selectedTasteTags = tasteTags.filter((tag) => tag.selected).map((tag) => tag.text);
@@ -188,16 +221,18 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                         return: overallRating >= 3,
                     },
                     picture:
+                        uploadedImageUrls[0] ||
                         dishImageUrl ||
                         "https://plus.unsplash.com/premium_photo-1661771822467-e516ca075314?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZGlzaHxlbnwwfHwwfHx8MA%3D%3D",
                     content: finalContent,
                     reviewer: {
-                        _id: validUserId, // Use the valid ObjectID here
+                        _id: validUserId,
                         pfp: "https://i.pinimg.com/736x/b1/6d/2e/b16d2e5e6a0db39e60ac17d0f1865ef8.jpg",
                         username: "",
                     },
-                    menuItem: "64f5a95cc7330b78d33265f2", // Use a valid ObjectID for menu item
-                    restaurantId: validRestaurantId, // Use the valid ObjectID here
+                    menuItem: "64f5a95cc7330b78d33265f2",
+                    restaurantId: validRestaurantId,
+                    additionalImages: uploadedImageUrls.slice(1), // Store any additional images
                 };
 
                 console.log("Submitting review:", JSON.stringify(reviewData));
@@ -206,7 +241,8 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                 Alert.alert("Success", "Your review has been submitted!");
                 onClose();
             } catch (error) {
-                // ... error handling (keep as is)
+                console.error("Error submitting review:", error);
+                Alert.alert("Error", "Failed to submit review. Please try again.");
             } finally {
                 setIsSubmitting(false);
             }
