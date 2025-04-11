@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { SvgXml } from "react-native-svg";
 
 const OutroSvg = `
@@ -16,14 +16,14 @@ interface ReviewOutroProps {
 export function ReviewOutro({ onDone }: ReviewOutroProps) {
     return (
         <View style={styles.container}>
-            <View style={styles.content}>
+            <ScrollView contentContainerStyle={styles.content}>
                 <SvgXml xml={OutroSvg} width="100" height="100" />
                 <Text style={styles.title}>You're all Set!</Text>
                 <Text style={styles.subtitle}>We appreciate your review!</Text>
                 <TouchableOpacity style={styles.doneButton} onPress={onDone}>
                     <Text style={styles.doneButtonText}>Done</Text>
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
         </View>
     );
 }
@@ -32,13 +32,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#FFF",
-        justifyContent: "center",
-        alignItems: "center",
     },
     content: {
+        flexGrow: 1,
         justifyContent: "center",
         alignItems: "center",
         paddingHorizontal: 16,
+        width: "100%",
     },
     title: {
         fontSize: 32,
@@ -59,9 +59,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFCF0F",
         borderRadius: 20,
         paddingVertical: 16,
-        paddingHorizontal: 68,
-        marginTop: 100,
+        marginHorizontal: 16,
+        marginVertical: 24,
         alignItems: "center",
+        alignSelf: "stretch",
     },
     doneButtonText: {
         fontSize: 16,

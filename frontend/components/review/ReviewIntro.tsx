@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { SvgXml } from "react-native-svg";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 
@@ -24,14 +24,14 @@ export function ReviewIntro({ menuItemName, onStart, onBack }: ReviewIntroProps)
                     <IconSymbol name="chevron.left" color="#000" size={24} />
                 </TouchableOpacity>
             </View>
-            <View style={styles.content}>
+            <ScrollView contentContainerStyle={styles.content}>
                 <SvgXml xml={shareReviewSvg} width="110" height="110" />
                 <Text style={styles.title}>Share Your Review</Text>
                 <Text style={styles.subtitle}>Share your thoughts on {menuItemName}!</Text>
                 <TouchableOpacity style={styles.startButton} onPress={onStart}>
                     <Text style={styles.startButtonText}>Start your review</Text>
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
         </View>
     );
 }
@@ -51,10 +51,11 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     content: {
-        flex: 1,
+        flexGrow: 1,
         justifyContent: "center",
         alignItems: "center",
         paddingHorizontal: 16,
+        width: "100%",
     },
     title: {
         fontSize: 32,
@@ -75,9 +76,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFCF0F",
         borderRadius: 20,
         paddingVertical: 16,
-        paddingHorizontal: 68,
-        marginTop: 100,
+        marginHorizontal: 16,
+        marginVertical: 24,
         alignItems: "center",
+        alignSelf: "stretch",
     },
     startButtonText: {
         fontSize: 16,
