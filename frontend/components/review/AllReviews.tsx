@@ -3,23 +3,32 @@ import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { Ionicons } from "@expo/vector-icons";
-import ReviewPreview from "./ReviewPreview";
 import { ReviewButton } from "@/components/review/ReviewButton";
 import { ReviewFlow } from "@/components/review/ReviewFlow";
+import { TMenuItem } from "@/types/menu-item";
+import { useRouter } from "expo-router";
+import { EdgeInsets } from "react-native-safe-area-context";
 
-export default function AllReviews() {
+interface AllReviewsProps {
+    menuItem: TMenuItem;
+    navigation: ReturnType<typeof useRouter>;
+    insets: EdgeInsets;
+}
+
+export default function AllReviews({ menuItem, navigation, insets }: AllReviewsProps) {
     const [selectedMainFilter, setSelectedMainFilter] = React.useState("My Reviews");
     const [selectedSubFilter, setSelectedSubFilter] = React.useState("Portion");
     const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
 
     const handleBack = () => {
-        // Navigation logic here
-        console.log("Go back");
+        navigation.back();
     };
 
     return (
-        <>
-            <ScrollView style={styles.container}>
+        <ThemedView style={styles.container}>
+            <ScrollView
+                style={[styles.scrollView, { paddingTop: insets.top }]}
+                contentContainerStyle={[styles.scrollViewContent, { paddingBottom: insets.bottom }]}>
                 <ThemedView style={styles.content}>
                     {/* Header */}
                     <View style={styles.header}>
@@ -70,28 +79,33 @@ export default function AllReviews() {
 
                     {/* Sample Review Preview */}
                     {/* <ReviewPreview
-                        plateName="Pad Thai"
-                        restaurantName="Pad Thai Kitchen"
-                        tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
-                        rating={4}
+                        plateName={menuItem.name}
+                        restaurantName={menuItem.restaurantName}
+                        tags={menuItem.tags}
+                        rating={menuItem.avgRating.overall}
                         content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
                     /> */}
                 </ThemedView>
             </ScrollView>
-            <ReviewButton
-                restaurantId="pad-thai-kitchen"
-                menuItemName="Pad Thai"
-                onPress={() => setIsReviewModalVisible(true)}
-            />
+
+            {/* Review Button positioned with safe area */}
+            <View style={[styles.reviewButtonContainer, { paddingBottom: insets.bottom }]}>
+                <ReviewButton
+                    restaurantId={menuItem.restaurantID}
+                    menuItemName={menuItem.name}
+                    onPress={() => setIsReviewModalVisible(true)}
+                />
+            </View>
+
             <ReviewFlow
                 isVisible={isReviewModalVisible}
                 onClose={() => setIsReviewModalVisible(false)}
-                restaurantId="pad-thai-kitchen"
-                restaurantName="Pad Thai Kitchen"
-                menuItemId="pad-thai"
-                menuItemName="Pad Thai"
+                restaurantId={menuItem.restaurantID}
+                restaurantName={menuItem.restaurantName}
+                menuItemId={menuItem.id}
+                menuItemName={menuItem.name}
             />
-        </>
+        </ThemedView>
     );
 }
 
@@ -136,5 +150,17 @@ const styles = StyleSheet.create({
     },
     filterTextActive: {
         fontWeight: "600",
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollViewContent: {
+        flexGrow: 1,
+    },
+    reviewButtonContainer: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 0,
     },
 });
