@@ -269,7 +269,6 @@ const styles = StyleSheet.create({
     },
     reviewsContainer: {
         marginVertical: 24,
-        paddingHorizontal: 12,
     },
     topOverlay: {
         position: "absolute",
