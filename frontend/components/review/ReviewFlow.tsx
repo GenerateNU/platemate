@@ -22,6 +22,7 @@ export function ReviewFlow({
     dishImageUrl,
 }: ReviewFlowProps) {
     const [step, setStep] = useState(0);
+    console.log(menuItemId);
 
     const handleStartReview = () => {
         setStep(1);

@@ -160,6 +160,7 @@ export default function MenuItemView() {
                 onClose={() => setIsReviewModalVisible(false)}
                 restaurantId="pad-thai-kitchen"
                 menuItemName="Pad Thai"
+                menuItemId={""}
             />
         </>
     );

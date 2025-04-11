@@ -19,6 +19,7 @@ import useAuthStore from "@/auth/store";
 import * as ImagePicker from "expo-image-picker";
 import { uploadMultipleImagesToS3 } from "@/utils/s3uploads";
 import { getRestaurant } from "@/api/restaurant";
+import { getUserById } from "@/api/auth";
 
 interface MyReviewProps {
     restaurantId?: string;
@@ -46,16 +47,24 @@ function generateValidObjectId() {
 
 export function MyReview({ restaurantId, menuItemName, menuItemId, dishImageUrl, onClose, onSubmit }: MyReviewProps) {
     const [step, setStep] = useState(1);
-    const user = useAuthStore((state) => state.userId);
+    const [user, setUser] = useState<any | null>(null);
     const [restaurantName, setRestaurantName] = useState("");
+    const { userId } = useAuthStore();
 
     useEffect(() => {
+        console.log(userId);
+        getUserById(userId || "")
+            .then((user) => {
+                console.log(user);
+                setUser(user);
+            })
+            .catch((e) => console.log(e));
         if (restaurantId) {
             getRestaurant(restaurantId).then((restaurant) => {
                 setRestaurantName(restaurant.name);
             });
         }
-    }, [restaurantId]);
+    }, [restaurantId, userId]);
 
     // Track star ratings
     const [tasteRating, setTasteRating] = useState(0);
@@ -201,8 +210,8 @@ export function MyReview({ restaurantId, menuItemName, menuItemId, dishImageUrl,
                     content: buildReviewContent(),
                     reviewer: {
                         _id: userId,
-                        pfp: "https://i.pinimg.com/736x/b1/6d/2e/b16d2e5e6a0db39e60ac17d0f1865ef8.jpg",
-                        username: "",
+                        pfp: user.profile_picture,
+                        username: user.username,
                     },
                     menuItem: menuItemId,
                     restaurantId: restaurantId,
@@ -210,6 +219,8 @@ export function MyReview({ restaurantId, menuItemName, menuItemId, dishImageUrl,
                     restaurantName: restaurantName || "",
                     additionalImages: uploadedImageUrls.slice(1),
                 };
+
+                console.log(reviewData);
 
                 // Submit review
                 const response = await createReview(reviewData);
