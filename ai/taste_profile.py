@@ -5,8 +5,10 @@ from reccomendation import g_db, get_embedding, vectorQuery
 import requests
 from transformers import pipeline
 
+stream = g_db.reviews.watch()
+
 pipe = pipeline("text-classification", model="lvwerra/distilbert-imdb")
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn", max_length=100)
+summarizer = pipeline("summarization", model="facebook/bart-base", max_length=50)
 
 def generate_review_sentiments():
    reviews = g_db.reviews.find()
@@ -25,16 +27,28 @@ def generate_menu_item_summaries():
    # get all menu items
    menu_items = g_db.menuItems.find()
    for menu_item in menu_items:
-      reviews = g_db.reviews.find({"menuItem": menu_item["_id"]})
-      reviews = list(reviews)
-      if len(reviews) == 0:
-         continue
-      else:
-        # summarize the reviews
-        summary = summarizer("\n".join([review["content"] for review in reviews]))
-        print(summary)
-        g_db.menuItems.update_one({"_id": menu_item["_id"]}, {"$set": {"summary": summary[0]["summary_text"]}})
+      generate_summaries_by_id(str(menu_item["_id"]))
 
+
+def generate_summaries_by_id(id):
+   print(id)
+   print(type(id))
+   menu_item = g_db.menuItems.find_one({"_id": id})
+   if menu_item is None:
+      print("Menu item not found")
+      return
+   reviews = g_db.reviews.find({"menuItem": menu_item["_id"]})
+   reviews = list(reviews)
+   if len(reviews) == 0:
+      print("this is the first review")
+      g_db.menuItems.update_one({"_id": menu_item["_id"]}, {"$set": {"summary": ""}})
+      return
+   else:
+      # summarize the reviews
+      print("Generating the review.")
+      summary = summarizer("\n".join([review["content"] for review in reviews]))
+      print(summary)
+      g_db.menuItems.update_one({"_id": menu_item["_id"]}, {"$set": {"summary": summary[0]["summary_text"]}})
 # generate_review_sentiments()
 # generate_menu_item_summaries()
 
@@ -77,3 +91,14 @@ def create_user_taste_profiles():
 
     embeddings = get_embedding(user_taste_profile)
     g_db.users.update_one({"_id": user["_id"]}, {"$set": {"taste_profile": embeddings}})
+
+
+for change in stream:
+    if change["operationType"] == "insert" or change["operationType"] == "delete":
+      doc = change["fullDocument"]
+      print(doc)
+      generate_summaries_by_id(doc["menuItem"])
+      print("summaries generated for " + doc["menuitemName"])
+
+      #   generate_review_summaries()
+      #   generate_menu_item_summaries()

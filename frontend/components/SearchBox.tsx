@@ -86,7 +86,7 @@ export function SearchBox({ value, onChangeText, onSubmit, icon, recent, name, f
                 )}
             </View>
             {recent && showRecents && (
-                <View style={{ ...styles.recentsContainer, top: inputHeight }}>
+                <View style={{ ...styles.recentsContainer, top: inputHeight + 8 }}>
                     {recentItems.map((term: string, index: number) => {
                         return (
                             <TouchableOpacity
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
         borderColor: "black",
         borderRadius: 12,
         paddingHorizontal: 12,
-        paddingVertical: 8,
+        paddingVertical: 12,
         fontFamily: "Nunito",
     },
     input: {

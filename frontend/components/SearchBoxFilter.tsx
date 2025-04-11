@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         borderColor: "#DDD",
         borderRadius: 12,
         paddingHorizontal: 12,
-        paddingVertical: 8,
+        paddingVertical: 12,
         fontFamily: "Source Sans 3",
     },
     input: {

@@ -186,7 +186,7 @@ export default function Feed() {
     return (
         <ThemedView style={{ paddingTop: insets.top, paddingHorizontal: 24, flex: 1 }}>
             <ThemedView style={{ alignItems: "center", paddingHorizontal: 0, paddingVertical: 12, gap: 12 }}>
-                <ThemedView style={{ width: "100%" }}>
+                <View style={{ width: "100%" }}>
                     <SearchBox
                         icon={<SearchIcon />}
                         placeholder="What are you hungry for?"
@@ -197,7 +197,7 @@ export default function Feed() {
                         onChangeText={setSearchText}
                         filter={true}
                     />
-                </ThemedView>
+                </View>
             </ThemedView>
             <FlatList
                 data={feedItems}
