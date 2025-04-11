@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Modal } from "react-native";
 import { MyReview } from "@/components/MyReview";
 import { ReviewIntro } from "./ReviewIntro";
+import { ReviewOutro } from "./ReviewOutro";
 
 interface ReviewFlowProps {
     isVisible: boolean;
@@ -22,17 +23,24 @@ export function ReviewFlow({ isVisible, onClose, restaurantId, menuItemName, dis
         setStep(0);
     };
 
+    const handleReviewSubmit = () => {
+        setStep(2);
+    };
+
     return (
         <Modal visible={isVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
             {step === 0 ? (
                 <ReviewIntro menuItemName={menuItemName} onStart={handleStartReview} onBack={onClose} />
-            ) : (
+            ) : step === 1 ? (
                 <MyReview
                     restaurantId={restaurantId}
                     menuItemName={menuItemName}
                     dishImageUrl={dishImageUrl}
                     onClose={handleBackToIntro}
+                    onSubmit={handleReviewSubmit}
                 />
+            ) : (
+                <ReviewOutro onDone={onClose} />
             )}
         </Modal>
     );

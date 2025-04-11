@@ -24,6 +24,7 @@ interface MyReviewProps {
     menuItemName?: string;
     dishImageUrl?: string;
     onClose: () => void;
+    onSubmit: () => void;
 }
 
 function generateValidObjectId() {
@@ -41,7 +42,7 @@ function generateValidObjectId() {
     return timestamp + machineId + processId + counter;
 }
 
-export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: MyReviewProps) {
+export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose, onSubmit }: MyReviewProps) {
     const [step, setStep] = useState(1);
     const user = useAuthStore((state) => state.userId);
 
@@ -239,7 +240,7 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
 
                 await createReview(reviewData);
                 Alert.alert("Success", "Your review has been submitted!");
-                onClose();
+                onSubmit();
             } catch (error) {
                 console.error("Error submitting review:", error);
                 Alert.alert("Error", "Failed to submit review. Please try again.");

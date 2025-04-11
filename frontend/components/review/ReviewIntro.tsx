@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
         fontFamily: "Nunito",
     },
     subtitle: {
-        fontSize: 18,
+        fontSize: 16,
         color: "#666",
         marginBottom: 24,
         textAlign: "center",
