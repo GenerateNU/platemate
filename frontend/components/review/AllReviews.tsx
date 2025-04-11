@@ -6,6 +6,9 @@ import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "./ReviewPreview";
 import { ReviewButton } from "@/components/review/ReviewButton";
 import { ReviewFlow } from "@/components/review/ReviewFlow";
+import { getUserReviews, getFriendsReviews, getReviews } from "@/api/reviews";
+import { TReview } from "@/types/review";
+import useAuthStore from "@/auth/store";
 import { useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
@@ -14,18 +17,58 @@ export default function AllReviews() {
     const [selectedMainFilter, setSelectedMainFilter] = React.useState("My Reviews");
     const [selectedSubFilter, setSelectedSubFilter] = React.useState("Portion");
     const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
-    const { id } = useLocalSearchParams<{ id: string }>();
+    const [reviews, setReviews] = useState<TReview[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const insets = useSafeAreaInsets();
-    const navigation = useNavigation();
+    const { userId } = useAuthStore();
+
+    // TODO: Get the actual user ID from your auth context/state
+    const currentUserId = userId || "";
+
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                if (selectedMainFilter === "My Reviews") {
+                    const userReviews = await getUserReviews(currentUserId);
+                    setReviews(userReviews);
+                } else if (selectedMainFilter === "Friends") {
+                    // TODO: Implement friends reviews fetch
+                    const friendReviews = await getFriendsReviews(currentUserId);
+                    setReviews(friendReviews);
+                } else {
+                    const allReviews = await getReviews();
+                    setReviews(allReviews.data);
+                }
+            } catch (err) {
+                setError(err instanceof Error ? err.message : "Failed to fetch reviews");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchReviews();
+    }, [selectedMainFilter, currentUserId]);
 
     const handleBack = () => {
         navigation.goBack();
     };
 
-    useEffect(() => {
-        navigation.setOptions({ headerShown: false });
-    }, []);
+    // Sort reviews based on selectedSubFilter
+    const sortedReviews = [...reviews].sort((a, b) => {
+        if (selectedSubFilter === "Portion") {
+            return b.rating.portion - a.rating.portion;
+        } else if (selectedSubFilter === "Taste") {
+            return b.rating.taste - a.rating.taste;
+        } else if (selectedSubFilter === "Value") {
+            return b.rating.value - a.rating.value;
+        } else {
+            return b.rating.overall - a.rating.overall;
+        }
+    });
 
     return (
         <>
@@ -78,14 +121,30 @@ export default function AllReviews() {
                         ))}
                     </View>
 
-                    {/* Sample Review Preview */}
-                    {/* <ReviewPreview
-                        plateName="Pad Thai"
-                        restaurantName="Pad Thai Kitchen"
-                        tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
-                        rating={4}
-                        content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
-                    /> */}
+                    {/* Reviews List */}
+                    {loading ? (
+                        <ThemedText style={styles.messageText}>Loading reviews...</ThemedText>
+                    ) : error ? (
+                        <ThemedText style={styles.errorText}>{error}</ThemedText>
+                    ) : sortedReviews.length === 0 ? (
+                        <ThemedText style={styles.messageText}>No reviews found</ThemedText>
+                    ) : (
+                        sortedReviews.map((review) => (
+                            <ReviewPreview
+                                key={review._id}
+                                reviewId={review._id}
+                                plateName={review.menuItemName}
+                                restaurantName={review.restaurantName}
+                                tags={[]}
+                                rating={review.rating.overall}
+                                content={review.content}
+                                authorName={review.reviewer.username}
+                                authorId={review.reviewer._id}
+                                authorUsername={review.reviewer.username}
+                                authorAvatar={review.reviewer.pfp || "https://placehold.co/600x400/png?text=P"}
+                            />
+                        ))
+                    )}
                 </ThemedView>
             </ScrollView>
             <View style={[styles.reviewButtonContainer, { paddingBottom: insets.bottom }]}>
@@ -147,6 +206,16 @@ const styles = StyleSheet.create({
     },
     filterTextActive: {
         fontWeight: "600",
+    },
+    messageText: {
+        textAlign: "center",
+        marginVertical: 20,
+        color: "#666",
+    },
+    errorText: {
+        textAlign: "center",
+        marginVertical: 20,
+        color: "red",
     },
     reviewButtonContainer: {
         position: "absolute",

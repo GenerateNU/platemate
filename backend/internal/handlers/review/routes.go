@@ -18,6 +18,14 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	// Add review group under API Version 1
 	review := apiV1.Group("/review")
 
+	
+		// get a user's reviews for a restaurant
+		review.Get("/:rid/user/:uid/reviews", handler.GetUserReviewsByRestaurant)
+	
+		// get all reviews for a restaurant
+		review.Get("/:rid/reviews", handler.GetAllReviewsByRestaurant)
+
+		
 	review.Post("/", handler.CreateReview)
 	review.Get("/", handler.GetReviews)
 	review.Get("/:id", handler.GetReview)

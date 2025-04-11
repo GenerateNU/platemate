@@ -28,4 +28,6 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	rest.Post("/:id/menu-items", handler.AddMenuItem) // POST /api/v1/restaurant/:id/menu-items
 	rest.Get("/:rid/super-stars", handler.GetSuperStars)
 	rest.Get("/:uid/:rid", handler.GetRestaurantFriendsFav)
+
+
 }
