@@ -20,6 +20,8 @@ import { Skeleton } from "moti/skeleton";
 import { getRestaurantReviews, getRestaurantReviewsByUser, getReviews } from "@/api/reviews";
 import { TReview } from "@/types/review";
 import { useUser } from "@/context/user-context";
+import { TMenuItem } from "@/types/menu-item";
+import { getMenuItemsByRestaurant } from "@/api/menu-items";
 
 export default function Route() {
     const restaurantTags = ["Fast Food", "Fried Chicken", "Chicken Sandwiches", "Order Online"];
@@ -39,6 +41,7 @@ export default function Route() {
     const { user } = useUser();
 
     const [restaurant, setRestaurant] = React.useState<TRestaurant | null>(null);
+    const [menuItems, setMenuItems] = React.useState<TMenuItem[]>([]);
     const [loading, setLoading] = React.useState(true);
     const navigation = useNavigation();
 
@@ -55,6 +58,10 @@ export default function Route() {
         getRestaurantReviews(id).then((res) => {
             console.log(res);
             setReviews(res);
+        });
+
+        getMenuItemsByRestaurant(id).then((res) => {
+            setMenuItems(res);
         });
 
         getRestaurantReviewsByUser(id, user.id).then((res) => {
@@ -200,7 +207,24 @@ export default function Route() {
                                     </>
                                 ))}
 
-                            {filterTab == 1 && <>{/* TODO MENU ITEM PREVIEW */}</>}
+                            {filterTab == 1 && (
+                                <>
+                                    {menuItems.map((item, index) => {
+                                        return (
+                                            <MenuItemPreview
+                                                key={index}
+                                                plateName={item["Name"]}
+                                                picture={item["Picture"]}
+                                                id={item["ID"]}
+                                                restaurantName={item["RestaurantName"]}
+                                                tags={item["Tags"]}
+                                                rating={item["AvgRating"]["Overall"]}
+                                                content={item["Description"]}
+                                            />
+                                        );
+                                    })}
+                                </>
+                            )}
                         </ThemedView>
                     </Skeleton>
                 </ThemedView>
