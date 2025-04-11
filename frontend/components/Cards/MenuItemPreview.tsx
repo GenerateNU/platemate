@@ -74,11 +74,11 @@ const MenuItemPreview = ({ plateName, restaurantName, tags, rating, content, pic
                     </ScrollView>
 
                     <View style={{ flexDirection: "row", gap: 12 }}>
-                        <ThemedText type="default">Overall Rating {rating}</ThemedText>
+                        <ThemedText type="default">Overall Rating: {rating}</ThemedText>
                     </View>
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                         <Entypo name="location-pin" size={24} color="black" />
-                        <ThemedText type="default" style={{ fontFamily: "Source Sans 3" }}>
+                        <ThemedText type="default" numberOfLines={1} style={{ fontFamily: "Source Sans 3" }}>
                             {restaurantName}
                         </ThemedText>
                     </View>
