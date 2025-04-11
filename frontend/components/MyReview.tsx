@@ -31,7 +31,7 @@ function generateValidObjectId() {
 
 export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: MyReviewProps) {
     const [step, setStep] = useState(1);
-    const user = useAuthStore((state) => state.userId);
+    const userId = useAuthStore((state) => state.userId);
 
     // Track star ratings
     const [tasteRating, setTasteRating] = useState(0);
@@ -44,8 +44,6 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
     const [overallText, setOverallText] = useState("");
     const [returnRating, setReturnRating] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    // Get the user from Context
 
     // Example tag data for taste/portion/value
     const [tasteTags, setTasteTags] = useState([
@@ -107,13 +105,11 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
             try {
                 setIsSubmitting(true);
 
-                // For testing: Use hardcoded valid MongoDB ObjectIDs
-                // These are examples - they follow the MongoDB ObjectID format (24 hex chars)
-                const validUserId = "67e300c043b432515e2dd8bb";
-                const validRestaurantId = "64f5a95cc7330b78d33265f1";
-
-                // Generate a fresh ObjectID if needed (for testing only)
-                // const testObjectId = generateValidObjectId();
+                // Ensure we have a valid user ID
+                if (!userId) {
+                    Alert.alert("Error", "You must be logged in to submit a review");
+                    return;
+                }
 
                 // Collect all the selected tags
                 const selectedTasteTags = tasteTags.filter((tag) => tag.selected).map((tag) => tag.text);
@@ -149,12 +145,14 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                         "https://plus.unsplash.com/premium_photo-1661771822467-e516ca075314?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZGlzaHxlbnwwfHwwfHx8MA%3D%3D",
                     content: finalContent,
                     reviewer: {
-                        _id: validUserId, // Use the valid ObjectID here
+                        _id: userId,
                         pfp: "https://i.pinimg.com/736x/b1/6d/2e/b16d2e5e6a0db39e60ac17d0f1865ef8.jpg",
                         username: "",
                     },
                     menuItem: "64f5a95cc7330b78d33265f2", // Use a valid ObjectID for menu item
-                    restaurantId: validRestaurantId, // Use the valid ObjectID here
+                    restaurantId: restaurantId, // Use the provided restaurant ID
+                    menuItemName: menuItemName,
+                    restaurantName: "Test Restaurant" // You might want to pass this as a prop too
                 };
 
                 console.log("Submitting review:", JSON.stringify(reviewData));
