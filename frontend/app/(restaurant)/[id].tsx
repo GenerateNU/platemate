@@ -48,8 +48,8 @@ export default function Route() {
         <ScrollView showsVerticalScrollIndicator={false}>
             <Skeleton show={loading} colorMode={"light"}>
                 <BannerAndAvatar
-                    bannerURL={"https://shorturl.at/zZdqT"}
-                    avatarURL={"https://placehold.co/600x400/png?text=P"}
+                    bannerURL={restaurant?.banner || "https://placehold.co/600x400/png?text=B"}
+                    avatarURL={restaurant?.picture || "https://placehold.co/600x400/png?text=P"}
                 />
             </Skeleton>
             <Skeleton.Group show={loading}>
