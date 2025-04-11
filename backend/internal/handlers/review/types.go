@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type CreateReviewParams struct {
@@ -134,14 +133,4 @@ type CommentPipelineEntry struct {
 }
 type CommentPipelineResult struct {
 	Comments []CommentPipelineEntry `bson:"comments" json:"comments"`
-}
-
-/*
-Review Service to be used by Review Handler to interact with the
-Database layer of the application
-*/
-type Service struct {
-	reviews     *mongo.Collection
-	restaurants *mongo.Collection
-	menuItems   *mongo.Collection
 }

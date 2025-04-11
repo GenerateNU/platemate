@@ -13,12 +13,24 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+/*
+Review Service to be used by Review Handler to interact with the
+Database layer of the application
+*/
+type Service struct {
+	reviews     *mongo.Collection
+	restaurants *mongo.Collection
+	menuItems   *mongo.Collection
+	users       *mongo.Collection
+}
+
 // NewService receives the map of collections and picks out reviews
 func NewService(collections map[string]*mongo.Collection) *Service {
 	return &Service{
 		reviews:     collections["reviews"],
 		restaurants: collections["restaurants"],
 		menuItems:   collections["menuItems"],
+		users:       collections["users"],
 	}
 }
 
@@ -124,6 +136,15 @@ func (s *Service) InsertReview(r ReviewDocument) (*ReviewDocument, error) {
 	// Cast the inserted ID to ObjectID
 	r.ID = result.InsertedID.(primitive.ObjectID)
 
+	// Update the user's reviews array
+	_, err = s.users.UpdateOne(ctx,
+		bson.M{"_id": r.Reviewer.ID},
+		bson.M{"$push": bson.M{"reviews": r.ID}},
+	)
+	if err != nil {
+		return &r, err
+	}
+
 	// Update restaurant's average review
 	if err := s.updateRestaurantAverageRating(r.RestaurantID); err != nil {
 		return &r, err
@@ -223,6 +244,15 @@ func (s *Service) DeleteReview(id primitive.ObjectID) error {
 		return err
 	}
 
+	// Remove the review ID from the user's reviews array
+	_, err = s.users.UpdateOne(ctx,
+		bson.M{"_id": deletedReview.Reviewer.ID},
+		bson.M{"$pull": bson.M{"reviews": id}},
+	)
+	if err != nil {
+		return err
+	}
+
 	// Remove the review ID from the menu item's reviews array
 	if err := s.removeMenuItemReview(*deletedReview); err != nil {
 		return err
@@ -237,7 +267,6 @@ func (s *Service) DeleteReview(id primitive.ObjectID) error {
 		return err
 	}
 	return nil
-
 }
 
 // CreateComment adds a new comment to a review
@@ -457,7 +486,7 @@ func (s *Service) SearchUserReviews(userID primitive.ObjectID, query string) ([]
 	ctx := context.Background()
 
 	// Build a filter for:
-	// - THIS user’s reviews
+	// - THIS user's reviews
 	// - "content" that (case-insensitive) matches "query"
 	// - menuitem
 	// - comments.content to search replies or discussions under a review
