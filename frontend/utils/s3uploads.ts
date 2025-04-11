@@ -1,9 +1,9 @@
-import axios from 'axios';
-import { ImagePickerAsset } from 'expo-image-picker';
+import axios from "axios";
+import { ImagePickerAsset } from "expo-image-picker";
 
 interface S3UploadResponse {
-  url: string;
-  key: string;
+    url: string;
+    key: string;
 }
 
 /**
@@ -12,24 +12,24 @@ interface S3UploadResponse {
  * @returns The corresponding MIME type
  */
 export const getMimeType = (fileExtension?: string): string => {
-  if (!fileExtension) return 'application/octet-stream';
-  
-  const ext = fileExtension.toLowerCase();
-  switch (ext) {
-    case 'jpg':
-    case 'jpeg':
-      return 'image/jpeg';
-    case 'png':
-      return 'image/png';
-    case 'gif':
-      return 'image/gif';
-    case 'webp':
-      return 'image/webp';
-    case 'pdf':
-      return 'application/pdf';
-    default:
-      return `image/${ext}`;
-  }
+    if (!fileExtension) return "application/octet-stream";
+
+    const ext = fileExtension.toLowerCase();
+    switch (ext) {
+        case "jpg":
+        case "jpeg":
+            return "image/jpeg";
+        case "png":
+            return "image/png";
+        case "gif":
+            return "image/gif";
+        case "webp":
+            return "image/webp";
+        case "pdf":
+            return "application/pdf";
+        default:
+            return `image/${ext}`;
+    }
 };
 
 /**
@@ -40,32 +40,32 @@ export const getMimeType = (fileExtension?: string): string => {
  * @returns A promise that resolves when the upload is complete
  */
 export const uploadFileWithPresignedUrl = async (
-  fileUri: string,
-  presignedUrl: string,
-  contentType: string,
+    fileUri: string,
+    presignedUrl: string,
+    contentType: string,
 ): Promise<void> => {
-  // Get the file data as a blob
-  const response = await fetch(fileUri);
-  const blob = await response.blob();
+    // Get the file data as a blob
+    const response = await fetch(fileUri);
+    const blob = await response.blob();
 
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('PUT', presignedUrl, true);
-    xhr.setRequestHeader('Content-Type', contentType);
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("PUT", presignedUrl, true);
+        xhr.setRequestHeader("Content-Type", contentType);
 
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        resolve();
-      } else {
-        reject(new Error(`Upload failed: ${xhr.status} ${xhr.statusText}`));
-      }
-    };
+        xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                resolve();
+            } else {
+                reject(new Error(`Upload failed: ${xhr.status} ${xhr.statusText}`));
+            }
+        };
 
-    xhr.onerror = () => reject(new Error('Network error during upload'));
-    xhr.onabort = () => reject(new Error('Upload aborted'));
+        xhr.onerror = () => reject(new Error("Network error during upload"));
+        xhr.onabort = () => reject(new Error("Upload aborted"));
 
-    xhr.send(blob);
-  });
+        xhr.send(blob);
+    });
 };
 
 /**
@@ -73,31 +73,31 @@ export const uploadFileWithPresignedUrl = async (
  * @param fileType The MIME type of the file
  * @returns The presigned URL and key
  */
-export const getPresignedUploadUrl = async (fileType: string): Promise<{uploadUrl: string, key: string}> => {
-  try {
-    const { data } = await axios.post(
-      `${process.env.EXPO_PUBLIC_BASE_URL}/api/v1/assets/upload`,
-      {},
-      {
-        params: { fileType },
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      },
-    );
+export const getPresignedUploadUrl = async (fileType: string): Promise<{ uploadUrl: string; key: string }> => {
+    try {
+        const { data } = await axios.post(
+            `${process.env.EXPO_PUBLIC_BASE_URL}/api/v1/assets/upload`,
+            {},
+            {
+                params: { fileType },
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+            },
+        );
 
-    const { upload_url: uploadUrl, key } = data;
+        const { upload_url: uploadUrl, key } = data;
 
-    if (!uploadUrl || !key) {
-      throw new Error('Invalid presigned URL response');
+        if (!uploadUrl || !key) {
+            throw new Error("Invalid presigned URL response");
+        }
+
+        return { uploadUrl, key };
+    } catch (error) {
+        console.error("Error getting presigned URL:", error);
+        throw error;
     }
-
-    return { uploadUrl, key };
-  } catch (error) {
-    console.error('Error getting presigned URL:', error);
-    throw error;
-  }
 };
 
 /**
@@ -106,24 +106,24 @@ export const getPresignedUploadUrl = async (fileType: string): Promise<{uploadUr
  * @returns The URL of the uploaded image
  */
 export const uploadImageToS3 = async (image: ImagePickerAsset): Promise<string> => {
-  try {
-    // Get file extension and proper MIME type
-    const fileExtension = image.uri.split('.').pop()?.toLowerCase();
-    const fileType = getMimeType(fileExtension);
+    try {
+        // Get file extension and proper MIME type
+        const fileExtension = image.uri.split(".").pop()?.toLowerCase();
+        const fileType = getMimeType(fileExtension);
 
-    // Get presigned URL from backend
-    const { uploadUrl, key } = await getPresignedUploadUrl(fileType);
+        // Get presigned URL from backend
+        const { uploadUrl, key } = await getPresignedUploadUrl(fileType);
 
-    // Upload file to S3 using the presigned URL
-    await uploadFileWithPresignedUrl(image.uri, uploadUrl, fileType);
+        // Upload file to S3 using the presigned URL
+        await uploadFileWithPresignedUrl(image.uri, uploadUrl, fileType);
 
-    // Construct and return the final S3 URL
-    const bucketDomain = uploadUrl.split('/')[2];
-    return `https://${bucketDomain}/${key}`;
-  } catch (error) {
-    console.error('Error uploading image to S3:', error);
-    throw error;
-  }
+        // Construct and return the final S3 URL
+        const bucketDomain = uploadUrl.split("/")[2];
+        return `https://${bucketDomain}/${key}`;
+    } catch (error) {
+        console.error("Error uploading image to S3:", error);
+        throw error;
+    }
 };
 
 /**
@@ -132,13 +132,13 @@ export const uploadImageToS3 = async (image: ImagePickerAsset): Promise<string> 
  * @returns Array of uploaded image URLs
  */
 export const uploadMultipleImagesToS3 = async (images: ImagePickerAsset[]): Promise<string[]> => {
-  if (images.length === 0) return [];
+    if (images.length === 0) return [];
 
-  try {
-    const uploadPromises = images.map(uploadImageToS3);
-    return await Promise.all(uploadPromises);
-  } catch (error) {
-    console.error('Error uploading multiple images:', error);
-    throw error;
-  }
+    try {
+        const uploadPromises = images.map(uploadImageToS3);
+        return await Promise.all(uploadPromises);
+    } catch (error) {
+        console.error("Error uploading multiple images:", error);
+        throw error;
+    }
 };
