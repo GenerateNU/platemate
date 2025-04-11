@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ImagePickerAsset } from "expo-image-picker";
+import { makeRequest } from "@/api/base";
 
 interface S3UploadResponse {
     url: string;
@@ -117,9 +118,11 @@ export const uploadImageToS3 = async (image: ImagePickerAsset): Promise<string> 
         // Upload file to S3 using the presigned URL
         await uploadFileWithPresignedUrl(image.uri, uploadUrl, fileType);
 
-        // Construct and return the final S3 URL without any query parameters
-        const bucketUrl = process.env.EXPO_PUBLIC_S3_BUCKET_URL || uploadUrl.split("?")[0];
-        return `${bucketUrl}/${key}`;
+        const res = await makeRequest(`/api/v1/assets/${key}/url`, "GET");
+        const { download_url } = res;
+
+        console.log("DOWNLOAD URL", download_url);
+        return download_url;
     } catch (error) {
         console.error("Error uploading image to S3:", error);
         throw error;

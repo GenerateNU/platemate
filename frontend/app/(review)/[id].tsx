@@ -241,6 +241,12 @@ export default function Route() {
                             ))}
                         </ScrollView>
 
+                        {review.picture && (
+                            <ThemedView style={styles.imageContainer}>
+                                <Image source={{ uri: review.picture }} style={styles.reviewImage} />
+                            </ThemedView>
+                        )}
+
                         {/* Action Bar */}
                         <View style={styles.actionBar}>
                             <View style={styles.voteContainer}>

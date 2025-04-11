@@ -197,6 +197,8 @@ export function MyReview({ restaurantId, menuItemName, menuItemId, dishImageUrl,
                     }
                 }
 
+                console.log(uploadedImageUrls);
+
                 // Prepare review data
                 const reviewData = {
                     rating: {
