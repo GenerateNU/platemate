@@ -8,6 +8,7 @@ import { ReviewButton } from "@/components/review/ReviewButton";
 import { ReviewFlow } from "@/components/review/ReviewFlow";
 import { getUserReviews, getFriendsReviews, getReviews } from "@/api/reviews";
 import { TReview } from "@/types/review";
+import useAuthStore from "@/auth/store";
 
 export default function AllReviews() {
     const [selectedMainFilter, setSelectedMainFilter] = React.useState("My Reviews");
@@ -17,8 +18,10 @@ export default function AllReviews() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const { userId } = useAuthStore();
+
     // TODO: Get the actual user ID from your auth context/state
-    const currentUserId = "your-user-id";
+    const currentUserId = userId || "";
 
     useEffect(() => {
         const fetchReviews = async () => {

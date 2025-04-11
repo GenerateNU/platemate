@@ -11,6 +11,7 @@ import { ReviewFlow } from "@/components/review/ReviewFlow";
 import HighlightCard from "@/components/restaurant/HighlightCard";
 import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
 import { getMenuItemReviews } from "@/api/menu-items";
+import useAuthStore from "@/auth/store";
 
 interface Review {
     _id: string;
@@ -40,6 +41,7 @@ export default function MenuItemView() {
     const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const { userId } = useAuthStore();
     const dishTags = [
         {
             title: "Gluten-free",
@@ -59,7 +61,7 @@ export default function MenuItemView() {
     ];
 
     // Assuming we get the menuItemId from route params or props
-    const menuItemId = "your-menu-item-id"; // Replace this with actual menu item ID
+    const menuItemId = "67e331d0f958ba76a112cc26 "; // Replace this with actual menu item ID
 
     useEffect(() => {
         const fetchReviews = async () => {
@@ -68,7 +70,7 @@ export default function MenuItemView() {
                 let sortBy = "timestamp";
                 if (selectedFilter === "My Reviews") {
                     // You might want to pass the current user's ID here
-                    const userReviews = await getMenuItemReviews(menuItemId, { userID: "current-user-id" });
+                    const userReviews = await getMenuItemReviews(menuItemId, { userID: userId || "" });
                     setReviews(userReviews);
                 } else {
                     const allReviews = await getMenuItemReviews(menuItemId);
