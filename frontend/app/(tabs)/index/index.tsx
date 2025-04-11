@@ -95,7 +95,7 @@ export default function Feed() {
                     // use the recommendations endpoint to get the top 10 items
                     const topItems = await getRecommendations(user?.id);
                     // convert top items _id to id
-                    topItems.forEach((item) => (item.id = item._id));
+                    topItems.forEach((item) => (item.id = item.id));
                     console.log(topItems);
                     setFeedItems(topItems.map((item) => ({ id: item.id, type: "menuItem", data: item })));
                     break;
