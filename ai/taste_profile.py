@@ -11,7 +11,9 @@ pipe = pipeline("text-classification", model="lvwerra/distilbert-imdb")
 summarizer = pipeline("summarization", model="facebook/bart-base", max_length=50)
 
 def generate_review_sentiments():
-   reviews = g_db.reviews.find()
+   reviews = g_db.reviews.find({
+      "sentiment": {"$exists": False}
+   })
    for review in reviews:
       print(review)
       review_text = review["content"]
@@ -25,9 +27,10 @@ def generate_review_sentiments():
     
 def generate_menu_item_summaries():
    # get all menu items
-   menu_items = g_db.menuItems.find()
+   menu_items = g_db.menuItems.find({
+      "summary": {"$exists": False}})
    for menu_item in menu_items:
-      generate_summaries_by_id(str(menu_item["_id"]))
+      generate_summaries_by_id(menu_item["_id"])
 
 
 def generate_summaries_by_id(id):
@@ -49,12 +52,14 @@ def generate_summaries_by_id(id):
       summary = summarizer("\n".join([review["content"] for review in reviews]))
       print(summary)
       g_db.menuItems.update_one({"_id": menu_item["_id"]}, {"$set": {"summary": summary[0]["summary_text"]}})
-# generate_review_sentiments()
-# generate_menu_item_summaries()
+generate_review_sentiments()
+generate_menu_item_summaries()
 
 def create_menu_taste_profiles():
-  # get all menu items with summaries
-  menu_items = g_db.menuItems.find({"summary": {"$exists": True}})
+  # get all menu items with summaries and no taste profile
+  menu_items = g_db.menuItems.find(
+     {"summary": {"$exists": True}, "taste_profile": {"$exists": False}}
+     )
   for menu_item in menu_items:
     print(menu_item)
     menu_taste_profile = menu_item["summary"] + menu_item["description"]
@@ -62,7 +67,7 @@ def create_menu_taste_profiles():
     embeddings = get_embedding(menu_taste_profile)
     g_db.menuItems.update_one({"_id": menu_item["_id"]}, {"$set": {"taste_profile": embeddings}})
   
-# create_menu_taste_profiles()
+create_menu_taste_profiles()
 
 def create_user_taste_profiles():
   # get all users
@@ -93,12 +98,12 @@ def create_user_taste_profiles():
     g_db.users.update_one({"_id": user["_id"]}, {"$set": {"taste_profile": embeddings}})
 
 
-for change in stream:
-    if change["operationType"] == "insert" or change["operationType"] == "delete":
-      doc = change["fullDocument"]
-      print(doc)
-      generate_summaries_by_id(doc["menuItem"])
-      print("summaries generated for " + doc["menuitemName"])
+# for change in stream:
+#     if change["operationType"] == "insert" or change["operationType"] == "delete":
+#       doc = change["fullDocument"]
+#       print(doc)
+#       generate_summaries_by_id(doc["menuItem"])
+#       print("summaries generated for " + doc["menuitemName"])
 
       #   generate_review_summaries()
       #   generate_menu_item_summaries()
