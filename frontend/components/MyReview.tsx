@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -16,7 +16,7 @@ import { EmojiTagsGrid } from "./EmojiTagsGrid";
 import { InteractiveStars } from "./ui/StarReview";
 import { createReview } from "@/api/review";
 import useAuthStore from "@/auth/store";
-import { launchImageLibrary, Asset, ImageLibraryOptions } from "react-native-image-picker";
+import * as ImagePicker from "expo-image-picker";
 
 interface MyReviewProps {
     restaurantId?: string;
@@ -112,20 +112,27 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
     };
 
     // State to store selected images
-    const [selectedImages, setSelectedImages] = useState<Asset[]>([]);
+    const [selectedImages, setSelectedImages] = useState<ImagePicker.ImagePickerAsset[]>([]);
 
-    // Function to handle image selection
-    const handleImagePicker = () => {
-        const options: ImageLibraryOptions = {
-            mediaType: "photo",
-            selectionLimit: 0,
-        };
-        launchImageLibrary(options, (response) => {
-            const assets: Asset[] = response.assets || [];
-            if (assets.length > 0) {
-                setSelectedImages((prevImages) => [...prevImages, ...assets]);
+    useEffect(() => {
+        (async () => {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== "granted") {
+                Alert.alert("Sorry, we need camera roll permissions to make this work!");
             }
+        })();
+    }, []);
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsMultipleSelection: true,
+            quality: 1,
         });
+
+        if (!result.canceled) {
+            setSelectedImages((prevImages) => [...prevImages, ...result.assets]);
+        }
     };
 
     const handleNext = async () => {
@@ -252,9 +259,14 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                     </View>
                     <View style={styles.imagePreviewContainer}>
                         {selectedImages.map((image, index) => (
-                            <Image key={index} source={{ uri: image.uri }} style={styles.imagePreview} />
+                            <View key={index} style={styles.imageWrapper}>
+                                <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+                                <TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
+                                    <IconSymbol name="xmark" color="#FFF" size={16} />
+                                </TouchableOpacity>
+                            </View>
                         ))}
-                        <TouchableOpacity onPress={handleImagePicker} style={styles.addButton}>
+                        <TouchableOpacity onPress={pickImage} style={styles.addButton}>
                             <Text style={styles.addButtonText}>+</Text>
                         </TouchableOpacity>
                     </View>
@@ -285,6 +297,11 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                 </View>
             </View>
         );
+    };
+
+    // Add remove image function
+    const removeImage = (index: number) => {
+        setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
     };
 
     return (
@@ -325,12 +342,15 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                             (!stepContent[step - 1].rating ||
                                 !stepContent[step - 1].tags.some((tag) => tag.selected)) &&
                             styles.nextButtonDisabled,
+                        step === 4 && overallRating === 0 && styles.nextButtonDisabled,
                     ]}
                     onPress={handleNext}
                     disabled={
                         isSubmitting ||
                         (step < 4 &&
-                            (!stepContent[step - 1].rating || !stepContent[step - 1].tags.some((tag) => tag.selected)))
+                            (!stepContent[step - 1].rating ||
+                                !stepContent[step - 1].tags.some((tag) => tag.selected))) ||
+                        (step === 4 && overallRating === 0)
                     }>
                     <Text style={styles.nextButtonText}>{step === 4 ? "Submit" : "Next"}</Text>
                 </TouchableOpacity>
@@ -440,6 +460,21 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginBottom: 16,
+    },
+    imageWrapper: {
+        position: "relative",
+        marginRight: 8,
+    },
+    removeButton: {
+        position: "absolute",
+        top: -8,
+        right: -8,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        borderRadius: 12,
+        width: 24,
+        height: 24,
+        alignItems: "center",
+        justifyContent: "center",
     },
     imagePreview: {
         width: 50,
