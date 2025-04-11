@@ -182,10 +182,7 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose, on
                         overall: overallRating,
                         return: overallRating >= 3,
                     },
-                    picture:
-                        uploadedImageUrls[0] ||
-                        dishImageUrl ||
-                        "https://plus.unsplash.com/premium_photo-1661771822467-e516ca075314?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZGlzaHxlbnwwfHwwfHx8MA%3D%3D",
+                    picture: uploadedImageUrls[0] || dishImageUrl || "",
                     content: buildReviewContent(),
                     reviewer: {
                         _id: useAuthStore.getState().userId || "67e300c043b432515e2dd8bb", // Fallback ID
