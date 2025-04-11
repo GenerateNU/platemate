@@ -8,13 +8,22 @@ import { createReview } from "@/api/review";
 import useAuthStore from "@/auth/store";
 
 interface MyReviewProps {
-    restaurantId?: string;
-    menuItemName?: string;
+    restaurantId: string;
+    restaurantName: string;
+    menuItemId: string;
+    menuItemName: string;
     dishImageUrl?: string;
     onClose: () => void;
 }
 
-export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: MyReviewProps) {
+export function MyReview({
+    restaurantId,
+    restaurantName,
+    menuItemId,
+    menuItemName,
+    dishImageUrl,
+    onClose,
+}: MyReviewProps) {
     const [step, setStep] = useState(1);
     const userId = useAuthStore((state) => state.userId);
 
@@ -130,10 +139,10 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                         pfp: "https://i.pinimg.com/736x/b1/6d/2e/b16d2e5e6a0db39e60ac17d0f1865ef8.jpg",
                         username: "",
                     },
-                    menuItem: "64f5a95cc7330b78d33265f2", // Use a valid ObjectID for menu item
-                    restaurantId: restaurantId, // Use the provided restaurant ID
+                    menuItem: menuItemId,
+                    restaurantId: restaurantId,
                     menuItemName: menuItemName,
-                    restaurantName: "Test Restaurant", // You might want to pass this as a prop too
+                    restaurantName: restaurantName,
                 };
 
                 console.log("Submitting review:", JSON.stringify(reviewData));
