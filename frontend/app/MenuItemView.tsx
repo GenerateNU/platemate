@@ -2,7 +2,7 @@ import { ThemedView } from "@/components/themed/ThemedView";
 import { ScrollView, StyleSheet, View, Image, Pressable } from "react-native";
 import { ThemedText } from "@/components/themed/ThemedText";
 import { StarRating } from "@/components/ui/StarReview";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import { ThemedTag } from "@/components/themed/ThemedTag";
@@ -10,10 +10,15 @@ import { ReviewButton } from "@/components/review/ReviewButton";
 import { ReviewFlow } from "@/components/review/ReviewFlow";
 import HighlightCard from "@/components/restaurant/HighlightCard";
 import { PersonWavingIcon, ThumbsUpIcon } from "@/components/icons/Icons";
+import { useLocalSearchParams } from "expo-router";
+import { getMenuItemById } from "@/api/menu-items";
+import { TMenuItem } from "@/types/menu-item";
 
 export default function MenuItemView() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
     const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+    const [menuItem, setMenuItem] = useState<TMenuItem | null>(null);
+    const { id } = useLocalSearchParams<{ id: string }>();
     const dishTags = [
         {
             title: "Gluten-free",
@@ -31,6 +36,14 @@ export default function MenuItemView() {
             textColor: "#2E7D32",
         },
     ];
+
+    useEffect(() => {
+        if (id) {
+            getMenuItemById(id).then((data) => {
+                setMenuItem(data);
+            });
+        }
+    }, [id]);
 
     return (
         <>
@@ -151,17 +164,17 @@ export default function MenuItemView() {
                 </ThemedView>
             </ScrollView>
             <ReviewButton
-                restaurantId="pad-thai-kitchen"
-                menuItemName="Pad Thai"
+                restaurantId={menuItem?.restaurantID || ""}
+                menuItemName={menuItem?.name || ""}
                 onPress={() => setIsReviewModalVisible(true)}
             />
             <ReviewFlow
                 isVisible={isReviewModalVisible}
                 onClose={() => setIsReviewModalVisible(false)}
-                restaurantId="pad-thai-kitchen"
-                restaurantName="Pad Thai Kitchen"
-                menuItemId="pad-thai"
-                menuItemName="Pad Thai"
+                restaurantId={menuItem?.restaurantID || ""}
+                restaurantName={menuItem?.restaurantName || ""}
+                menuItemId={menuItem?.id || ""}
+                menuItemName={menuItem?.name || ""}
             />
         </>
     );
