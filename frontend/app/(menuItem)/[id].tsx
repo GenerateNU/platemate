@@ -10,7 +10,7 @@ import { ReviewButton } from "@/components/review/ReviewButton";
 import HighlightCard from "@/components/restaurant/HighlightCard";
 import { PersonWavingIcon, RestaurantIcon, ThumbsUpIcon } from "@/components/icons/Icons";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { getMenuItemById } from "@/api/menu-items";
+import { getMenuItemById, getMenuItemReviews } from "@/api/menu-items";
 import { TMenuItem } from "@/types/menu-item";
 import ReviewFlow from "@/components/review/ReviewFlow";
 import AddReviewButton from "@/components/AddReviewButton";
@@ -20,6 +20,8 @@ export default function Route() {
     const [selectedFilter, setSelectedFilter] = React.useState("My Reviews");
 
     const { id } = useLocalSearchParams<{ id: string }>();
+
+    const [reviews, setReviews] = useState<TReview[]>([]);
 
     const navigation = useNavigation();
     const [menuItem, setMenuItem] = useState<TMenuItem | null>(null);
@@ -34,7 +36,11 @@ export default function Route() {
         getMenuItemById(id).then((data) => {
             setMenuItem(data);
         });
-        new Promise((resolve) => setTimeout(resolve, 1500)).then(() => setLoading(false));
+
+        getMenuItemReviews(id).then((data) => {
+            setReviews(data);
+        });
+        new Promise((resolve) => setTimeout(resolve, 500)).then(() => setLoading(false));
     }, [navigation]);
 
     return (
@@ -101,6 +107,7 @@ export default function Route() {
                                     restaurantId={menuItem?.restaurantID || ""}
                                     menuItemName={menuItem?.name || ""}
                                     dishImageUrl={menuItem?.picture || ""}
+                                    menuItemId={menuItem?.id || ""}
                                 />
                             </ThemedView>
                         </ThemedView>
@@ -134,7 +141,7 @@ export default function Route() {
                             <View style={styles.reviewStats}>
                                 <View style={styles.ratingContainer}>
                                     <ThemedText style={styles.ratingText}>4/5</ThemedText>
-                                    <StarRating avgRating={4.2} numRatings={428} showAvgRating={false} />
+                                    <StarRating avgRating={4.2} numRatings={4} showAvgRating={false} />
                                 </View>
                             </View>
 
@@ -158,18 +165,21 @@ export default function Route() {
                                 ))}
                             </View>
 
-                            <ReviewPreview
-                                plateName="Pad Thai"
-                                restaurantName="Pad Thai Kitchen"
-                                tags={["Vegan", "Healthy", "Green", "Low-Cal"]}
-                                rating={4}
-                                content="The Buddha Bowl at Green Garden exceeded my expectations! Fresh ingredients, perfectly balanced flavors, and generous portions make this a must-try for health-conscious diners. The avocado was perfectly ripe, and the quinoa was cooked to perfection. I especially loved the homemade tahini dressing."
-                                authorId={""}
-                                reviewId="64f5a95cc7330b78d33265f1"
-                                authorUsername={"username"}
-                                authorName={"First Name"}
-                                authorAvatar={"https://placehold.co/600x400/png?text=P"}
-                            />
+                            {reviews.map((review) => (
+                                <ReviewPreview
+                                    key={review._id}
+                                    reviewId={review._id}
+                                    plateName={review.menuItemName}
+                                    authorId={review.reviewer._id}
+                                    authorUsername={review.reviewer.username}
+                                    restaurantName={review.restaurantName}
+                                    tags={[]}
+                                    rating={review.rating.overall}
+                                    content={review.content}
+                                    authorName={review.reviewer.username}
+                                    authorAvatar={review.reviewer.pfp || "https://placehold.co/600x400/png?text=P"}
+                                />
+                            ))}
                         </ThemedView>
                     </Skeleton>
                 </ThemedView>

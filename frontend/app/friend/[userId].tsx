@@ -133,7 +133,7 @@ const ProfileScreen = () => {
                                 marginBottom: 8,
                                 lineHeight: 32,
                             }}>
-                            {user.name}'s Food Journal
+                            🍽️ {user.name}'s Food Journal
                         </ThemedText>
                         {/* Made a search box with a filter/sort component as its own component */}
                         <SearchBoxFilter

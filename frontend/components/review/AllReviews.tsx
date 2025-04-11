@@ -9,6 +9,9 @@ import { ReviewFlow } from "@/components/review/ReviewFlow";
 import { getUserReviews, getFriendsReviews, getReviews } from "@/api/reviews";
 import { TReview } from "@/types/review";
 import useAuthStore from "@/auth/store";
+import { useLocalSearchParams } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNavigation } from "expo-router";
 
 export default function AllReviews() {
     const [selectedMainFilter, setSelectedMainFilter] = React.useState("My Reviews");
@@ -51,8 +54,7 @@ export default function AllReviews() {
     }, [selectedMainFilter, currentUserId]);
 
     const handleBack = () => {
-        // Navigation logic here
-        console.log("Go back");
+        navigation.goBack();
     };
 
     // Sort reviews based on selectedSubFilter
@@ -71,7 +73,7 @@ export default function AllReviews() {
     return (
         <>
             <ScrollView style={styles.container}>
-                <ThemedView style={styles.content}>
+                <ThemedView style={[styles.content, { paddingTop: insets.top }]}>
                     {/* Header */}
                     <View style={styles.header}>
                         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
@@ -145,16 +147,19 @@ export default function AllReviews() {
                     )}
                 </ThemedView>
             </ScrollView>
-            <ReviewButton
-                restaurantId="pad-thai-kitchen"
-                menuItemName="Pad Thai"
-                onPress={() => setIsReviewModalVisible(true)}
-            />
+            <View style={[styles.reviewButtonContainer, { paddingBottom: insets.bottom }]}>
+                <ReviewButton
+                    restaurantId="pad-thai-kitchen"
+                    menuItemName="Pad Thai"
+                    onPress={() => setIsReviewModalVisible(true)}
+                />
+            </View>
             <ReviewFlow
                 isVisible={isReviewModalVisible}
                 onClose={() => setIsReviewModalVisible(false)}
                 restaurantId="pad-thai-kitchen"
                 menuItemName="Pad Thai"
+                menuItemId={id}
             />
         </>
     );
@@ -211,5 +216,12 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginVertical: 20,
         color: "red",
+    },
+    reviewButtonContainer: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: 16,
     },
 });

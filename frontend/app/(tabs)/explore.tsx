@@ -211,6 +211,12 @@ export default function UserSearchScreen() {
             ) : (
                 <FlatList
                     data={filteredUsers}
+                    style={{
+                        backgroundColor: "#fff",
+                        borderRadius: 30,
+                        paddingTop: 32,
+                        transform: [{ translateY: -32 }],
+                    }}
                     renderItem={renderUserItem}
                     keyExtractor={(item) => item.ID}
                     contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 40 }]}
@@ -228,7 +234,7 @@ export default function UserSearchScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#F9CA24",
     },
     header: {
         padding: 16,
@@ -337,7 +343,7 @@ const styles = StyleSheet.create({
     },
     userUsername: {
         fontSize: 14,
-        color: "#F9CA24",
+        color: "#7a7a7a",
         fontFamily: "Nunito",
     },
     statsContainer: {

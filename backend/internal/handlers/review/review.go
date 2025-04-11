@@ -3,6 +3,7 @@ package review
 import (
 	"context"
 	"errors"
+	"fmt"
 	"math"
 	"strconv"
 	"time"
@@ -372,5 +373,48 @@ func (h *Handler) GetTopReviews(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(reviews)
+}
 
+func (h *Handler) GetUserReviewsByRestaurant(c *fiber.Ctx) error {
+	userID := c.Params("uid")
+	userOID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+	rid := c.Params("rid")
+	ridOID, err := primitive.ObjectIDFromHex(rid)
+	if err != nil {
+		return err
+	}
+
+	// print both ids
+	fmt.Println(userOID)
+	fmt.Println(ridOID)
+	cursor := h.service.GetUserReviewsByRestaurant(userOID, ridOID)
+	defer cursor.Close(context.Background())
+
+	var reviews []ReviewDocument = make([]ReviewDocument, 0)
+	if err := cursor.All(context.Background(), &reviews); err != nil {
+		return err
+	}
+
+	return c.JSON(&reviews)
+}
+
+func (h *Handler) GetAllReviewsByRestaurant(c *fiber.Ctx) error {
+	rid := c.Params("rid")
+	ridOID, err := primitive.ObjectIDFromHex(rid)
+	if err != nil {
+		return err
+	}
+
+	cursor := h.service.GetAllReviewsByRestaurant(ridOID)
+	defer cursor.Close(context.Background())
+
+	var reviews []ReviewDocument = make([]ReviewDocument, 0)
+	if err := cursor.All(context.Background(), &reviews); err != nil {
+		return err
+	}
+
+	return c.JSON(&reviews)
 }

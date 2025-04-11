@@ -610,3 +610,27 @@ func (s *Service) Vote(reviewID primitive.ObjectID, userID primitive.ObjectID, l
 	_, err = s.reviews.UpdateOne(ctx, filter, update)
 	return finalVote, err
 }
+
+func (s *Service) GetUserReviewsByRestaurant(uid primitive.ObjectID, rid primitive.ObjectID) *mongo.Cursor {
+	ctx := context.Background()
+	filter := bson.M{"reviewer._id": uid, "restaurantId": rid}
+
+	cursor, err := s.reviews.Find(ctx, filter)
+	if err != nil {
+		return nil
+	}
+	return cursor
+}
+
+func (s *Service) GetAllReviewsByRestaurant(rid primitive.ObjectID) *mongo.Cursor {
+	ctx := context.Background()
+	filter := bson.M{"restaurantId": rid}
+
+	cursor, err := s.reviews.Find(ctx, filter)
+	if err != nil {
+		return nil
+	}
+	return cursor
+}
+
+

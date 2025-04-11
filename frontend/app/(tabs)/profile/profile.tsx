@@ -218,24 +218,26 @@ const ProfileScreen = () => {
                             value={searchText}
                             onChangeText={(text) => setSearchText(text)}
                         />
-                        <ThemedView style={{ gap: 12, marginTop: 12 }}>
+                        <ThemedView style={{ gap: 12, marginTop: 12, marginBottom: 64 }}>
                             {userReviews &&
-                                userReviews.map((review) => (
-                                    <ReviewPreview
-                                        reviewId={review._id}
-                                        key={review._id}
-                                        likes={review.likes}
-                                        plateName={review.menuItemName}
-                                        restaurantName={review.restaurantName}
-                                        tags={[]}
-                                        rating={review.rating.overall}
-                                        content={review.content}
-                                        authorId={user.id}
-                                        authorName={user.name}
-                                        authorUsername={user.username}
-                                        authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
-                                    />
-                                ))}
+                                userReviews
+                                    .reverse()
+                                    .map((review) => (
+                                        <ReviewPreview
+                                            reviewId={review._id}
+                                            key={review._id}
+                                            likes={review.likes}
+                                            plateName={review.menuItemName}
+                                            restaurantName={review.restaurantName}
+                                            tags={[]}
+                                            rating={review.rating.overall}
+                                            content={review.content}
+                                            authorId={user.id}
+                                            authorName={user.name}
+                                            authorUsername={user.username}
+                                            authorAvatar={user.profile_picture || DEFAULT_PROFILE_PIC}
+                                        />
+                                    ))}
                         </ThemedView>
                     </ThemedView>
                 </ThemedView>
@@ -269,7 +271,6 @@ const styles = StyleSheet.create({
     },
     reviewsContainer: {
         marginVertical: 24,
-        paddingHorizontal: 12,
     },
     topOverlay: {
         position: "absolute",

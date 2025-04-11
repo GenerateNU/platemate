@@ -33,7 +33,7 @@ export const FollowButton: React.FC<{ isFollowing: boolean; userToFollowId: stri
 
     return (
         <TouchableOpacity
-            style={[styles.button, { backgroundColor: isPressed ? "#FFFCE4" : "#FFCF0F" }]} // set color dynamically
+            style={[styles.button, { backgroundColor: isPressed ? "#FFFCE4" : "#FFCF0F" }]}
             onPress={handlePress}>
             <ThemedText style={styles.buttonText}>{buttonText}</ThemedText>
         </TouchableOpacity>
@@ -44,14 +44,18 @@ const styles = StyleSheet.create({
     button: {
         borderWidth: 1,
         borderColor: "#000",
-        borderRadius: 20,
-        paddingHorizontal: 16,
-        paddingVertical: 4,
+        borderRadius: 25,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
         alignSelf: "center",
+        minWidth: 100,
+        textAlign: "center",
     },
     buttonText: {
-        fontFamily: "Inter",
-        fontSize: 14,
-        fontWeight: "500",
+        fontFamily: "Nunito",
+        textAlign: "center",
+        fontSize: 16,
+        fontWeight: "600",
+        flexShrink: 0,
     },
 });

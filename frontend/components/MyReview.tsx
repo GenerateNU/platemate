@@ -1,17 +1,33 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, SafeAreaView, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+    View,
+    Text,
+    StyleSheet,
+    Image,
+    TextInput,
+    TouchableOpacity,
+    SafeAreaView,
+    Alert,
+    ScrollView,
+} from "react-native";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { ProgressBar } from "./ProgressBar";
 import { EmojiTagsGrid } from "./EmojiTagsGrid";
 import { InteractiveStars } from "./ui/StarReview";
 import { createReview } from "@/api/review";
 import useAuthStore from "@/auth/store";
+import * as ImagePicker from "expo-image-picker";
+import { uploadMultipleImagesToS3 } from "@/utils/s3uploads";
+import { getRestaurant } from "@/api/restaurant";
+import { getUserById } from "@/api/auth";
 
 interface MyReviewProps {
     restaurantId?: string;
     menuItemName?: string;
+    menuItemId?: string;
     dishImageUrl?: string;
     onClose: () => void;
+    onSubmit: () => void;
 }
 
 function generateValidObjectId() {
@@ -29,9 +45,26 @@ function generateValidObjectId() {
     return timestamp + machineId + processId + counter;
 }
 
-export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: MyReviewProps) {
+export function MyReview({ restaurantId, menuItemName, menuItemId, dishImageUrl, onClose, onSubmit }: MyReviewProps) {
     const [step, setStep] = useState(1);
-    const user = useAuthStore((state) => state.userId);
+    const [user, setUser] = useState<any | null>(null);
+    const [restaurantName, setRestaurantName] = useState("");
+    const { userId } = useAuthStore();
+
+    useEffect(() => {
+        console.log(userId);
+        getUserById(userId || "")
+            .then((user) => {
+                console.log(user);
+                setUser(user);
+            })
+            .catch((e) => console.log(e));
+        if (restaurantId) {
+            getRestaurant(restaurantId).then((restaurant) => {
+                setRestaurantName(restaurant.name);
+            });
+        }
+    }, [restaurantId, userId]);
 
     // Track star ratings
     const [tasteRating, setTasteRating] = useState(0);
@@ -100,42 +133,73 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
         }
     };
 
+    // State to store selected images
+    const [selectedImages, setSelectedImages] = useState<ImagePicker.ImagePickerAsset[]>([]);
+
+    useEffect(() => {
+        (async () => {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== "granted") {
+                Alert.alert("Sorry, we need camera roll permissions to make this work!");
+            }
+        })();
+    }, []);
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsMultipleSelection: true,
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setSelectedImages((prevImages) => [...prevImages, ...result.assets]);
+        }
+    };
+
     const handleNext = async () => {
         if (step < 4) {
+            // Validate current step before proceeding
+            const currentStep = stepContent[step - 1];
+            const hasRating = currentStep.rating > 0;
+            const hasTags = currentStep.tags.some((tag) => tag.selected);
+
+            if (!hasRating || !hasTags) {
+                return;
+            }
             setStep((prev) => prev + 1);
         } else {
+            // Handle final submission
             try {
                 setIsSubmitting(true);
 
-                // For testing: Use hardcoded valid MongoDB ObjectIDs
-                // These are examples - they follow the MongoDB ObjectID format (24 hex chars)
-                const validUserId = "67e300c043b432515e2dd8bb";
-                const validRestaurantId = "64f5a95cc7330b78d33265f1";
+                // We are assuming we can proceed without checking this user id because it should already be taken care of
+                // by the auth provider at this point in the app, we just have to assert its non-null so the type checker doesn't yell
+                const userId = useAuthStore.getState().userId!;
 
-                // Generate a fresh ObjectID if needed (for testing only)
-                // const testObjectId = generateValidObjectId();
-
-                // Collect all the selected tags
-                const selectedTasteTags = tasteTags.filter((tag) => tag.selected).map((tag) => tag.text);
-                const selectedPortionTags = portionTags.filter((tag) => tag.selected).map((tag) => tag.text);
-                const selectedValueTags = valueTags.filter((tag) => tag.selected).map((tag) => tag.text);
-
-                // Combine tags for content enhancement
-                let tagDescription = "";
-                if (selectedTasteTags.length > 0) {
-                    tagDescription += `Taste: ${selectedTasteTags.join(", ")}. `;
+                // Upload images to S3 in parallel using our utility function
+                let uploadedImageUrls: string[] = [];
+                if (selectedImages.length > 0) {
+                    try {
+                        uploadedImageUrls = await uploadMultipleImagesToS3(selectedImages);
+                    } catch (uploadError) {
+                        console.error("Failed to upload images:", uploadError);
+                        Alert.alert(
+                            "Upload Error",
+                            "Some images failed to upload. Would you like to continue with your review?",
+                            [
+                                { text: "Cancel", style: "cancel" },
+                                { text: "Continue", style: "default" },
+                            ],
+                            { cancelable: false },
+                        );
+                        // Continue with submission even if images fail
+                    }
                 }
-                if (selectedPortionTags.length > 0) {
-                    tagDescription += `Portion: ${selectedPortionTags.join(", ")}. `;
-                }
-                if (selectedValueTags.length > 0) {
-                    tagDescription += `Value: ${selectedValueTags.join(", ")}. `;
-                }
 
-                // Combine user text with tags
-                const finalContent = overallText + (tagDescription ? "\n\n" + tagDescription : "");
+                console.log(uploadedImageUrls);
 
-                // Create review payload with valid ObjectIds - matching backend API structure
+                // Prepare review data
                 const reviewData = {
                     rating: {
                         portion: portionRating,
@@ -144,30 +208,57 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                         overall: overallRating,
                         return: overallRating >= 3,
                     },
-                    picture:
-                        dishImageUrl ||
-                        "https://plus.unsplash.com/premium_photo-1661771822467-e516ca075314?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZGlzaHxlbnwwfHwwfHx8MA%3D%3D",
-                    content: finalContent,
+                    picture: uploadedImageUrls[0] || dishImageUrl || "",
+                    content: buildReviewContent(),
                     reviewer: {
-                        _id: validUserId, // Use the valid ObjectID here
-                        pfp: "https://i.pinimg.com/736x/b1/6d/2e/b16d2e5e6a0db39e60ac17d0f1865ef8.jpg",
-                        username: "",
+                        _id: userId,
+                        pfp: user?.profile_picture || "",
+                        username: user?.username || "",
+                        name: user?.name || user?.username || "",
                     },
-                    menuItem: "64f5a95cc7330b78d33265f2", // Use a valid ObjectID for menu item
-                    restaurantId: validRestaurantId, // Use the valid ObjectID here
+                    menuItem: menuItemId || "",
+                    restaurantId: restaurantId || "",
+                    menuItemName: menuItemName || "",
+                    restaurantName: restaurantName || "",
                 };
 
-                console.log("Submitting review:", JSON.stringify(reviewData));
+                console.log("Submitting review data:", JSON.stringify(reviewData, null, 2));
 
-                await createReview(reviewData);
+                // Submit review
+                const response = await createReview(reviewData);
+                console.log("Review submitted successfully:", response);
                 Alert.alert("Success", "Your review has been submitted!");
-                onClose();
+                onSubmit();
             } catch (error) {
-                // ... error handling (keep as is)
+                console.error("Error submitting review:", error);
+                Alert.alert("Error", "Failed to submit review. Please try again.");
             } finally {
                 setIsSubmitting(false);
             }
         }
+    };
+
+    // Helper function to build review content with tags
+    const buildReviewContent = () => {
+        // Collect selected tags
+        const selectedTasteTags = tasteTags.filter((tag) => tag.selected).map((tag) => tag.text);
+        const selectedPortionTags = portionTags.filter((tag) => tag.selected).map((tag) => tag.text);
+        const selectedValueTags = valueTags.filter((tag) => tag.selected).map((tag) => tag.text);
+
+        // Build tag description
+        let tagDescription = "";
+        if (selectedTasteTags.length > 0) {
+            tagDescription += `Taste: ${selectedTasteTags.join(", ")}. `;
+        }
+        if (selectedPortionTags.length > 0) {
+            tagDescription += `Portion: ${selectedPortionTags.join(", ")}. `;
+        }
+        if (selectedValueTags.length > 0) {
+            tagDescription += `Value: ${selectedValueTags.join(", ")}. `;
+        }
+
+        // Combine user text with tags
+        return overallText + (tagDescription ? "\n\n" + tagDescription : "");
     };
 
     const handleBack = () => {
@@ -214,6 +305,19 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                     <View style={styles.starsContainer}>
                         <InteractiveStars rating={overallRating} onChange={setOverallRating} />
                     </View>
+                    <View style={styles.imagePreviewContainer}>
+                        {selectedImages.map((image, index) => (
+                            <View key={index} style={styles.imageWrapper}>
+                                <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+                                <TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
+                                    <IconSymbol name="xmark" color="#FFF" size={16} />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                        <TouchableOpacity onPress={pickImage} style={styles.addButton}>
+                            <Text style={styles.addButtonText}>+</Text>
+                        </TouchableOpacity>
+                    </View>
                     <TextInput
                         style={styles.textInput}
                         placeholder="Let others know what you thought..."
@@ -243,39 +347,62 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
         );
     };
 
+    // Add remove image function
+    const removeImage = (index: number) => {
+        setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    };
+
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header with back chevron and title */}
-            <View style={styles.header}>
-                <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-                    <IconSymbol name="chevron.left" color="#000" size={24} />
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                {/* Header with back chevron and title */}
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                        <IconSymbol name="chevron.left" color="#000" size={24} />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>My Review</Text>
+                </View>
+                {/* Progress Bar */}
+                <View style={styles.progressContainer}>
+                    <ProgressBar progress={getProgressValue()} />
+                </View>
+
+                {/* Dish image centered */}
+                <View style={styles.imageContainer}>
+                    <Image
+                        source={{
+                            uri:
+                                dishImageUrl ||
+                                "https://s3-alpha-sig.figma.com/img/296c/9b5f/e826d9e1747de9010166f3934746adf1?Expires=1743984000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Gr9ywhylTdZqfzVKJYh1XvcRQk9wD284~bcNy-jZ15dxG~abTxWe9CrFEfy5CvDSwyFzlPcuSGBY7PB5xzJbA67Ig36cXUffXxCUsn6oJiJ~JJihfCY55QE3eS22DaPB2ZJ1cMI7vTQ5duqrA0gEf3fwEQxzGY9heTjrUEBZVg81XezecvSY6II2GDHix~W80NbpDKn9ecJlBcld08Z38-a5aB7XN~YtUKnKMsH2r5CLmT4mej6avtZsgaTnR3zb2V1I1XlRv57siEvNj03TWjnvwrjXMdgsrO4tHXn-UxQmMp~qHUBCebvxMBGTBFR-hFnmHwaIu8W2tp0CnLkMaA__",
+                        }}
+                        style={styles.dishImage}
+                    />
+                </View>
+
+                {/* Step-specific content */}
+                {renderStep()}
+
+                {/* Next / Submit button */}
+                <TouchableOpacity
+                    style={[
+                        styles.nextButton,
+                        step < 4 &&
+                            (!stepContent[step - 1].rating ||
+                                !stepContent[step - 1].tags.some((tag) => tag.selected)) &&
+                            styles.nextButtonDisabled,
+                        step === 4 && overallRating === 0 && styles.nextButtonDisabled,
+                    ]}
+                    onPress={handleNext}
+                    disabled={
+                        isSubmitting ||
+                        (step < 4 &&
+                            (!stepContent[step - 1].rating ||
+                                !stepContent[step - 1].tags.some((tag) => tag.selected))) ||
+                        (step === 4 && overallRating === 0)
+                    }>
+                    <Text style={styles.nextButtonText}>{step === 4 ? "Submit" : "Next"}</Text>
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>My Review</Text>
-            </View>
-            {/* Progress Bar */}
-            <View style={styles.progressContainer}>
-                <ProgressBar progress={getProgressValue()} />
-            </View>
-
-            {/* Dish image centered */}
-            <View style={styles.imageContainer}>
-                <Image
-                    source={{
-                        uri:
-                            dishImageUrl ||
-                            "https://s3-alpha-sig.figma.com/img/296c/9b5f/e826d9e1747de9010166f3934746adf1?Expires=1743984000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Gr9ywhylTdZqfzVKJYh1XvcRQk9wD284~bcNy-jZ15dxG~abTxWe9CrFEfy5CvDSwyFzlPcuSGBY7PB5xzJbA67Ig36cXUffXxCUsn6oJiJ~JJihfCY55QE3eS22DaPB2ZJ1cMI7vTQ5duqrA0gEf3fwEQxzGY9heTjrUEBZVg81XezecvSY6II2GDHix~W80NbpDKn9ecJlBcld08Z38-a5aB7XN~YtUKnKMsH2r5CLmT4mej6avtZsgaTnR3zb2V1I1XlRv57siEvNj03TWjnvwrjXMdgsrO4tHXn-UxQmMp~qHUBCebvxMBGTBFR-hFnmHwaIu8W2tp0CnLkMaA__",
-                    }}
-                    style={styles.dishImage}
-                />
-            </View>
-
-            {/* Step-specific content */}
-            {renderStep()}
-
-            {/* Next / Submit button */}
-            <TouchableOpacity style={styles.nextButton} onPress={handleNext} disabled={isSubmitting}>
-                <Text style={styles.nextButtonText}>{step === 4 ? "Submit" : "Next"}</Text>
-            </TouchableOpacity>
+            </ScrollView>
         </SafeAreaView>
     );
 }
@@ -366,9 +493,56 @@ const styles = StyleSheet.create({
         marginVertical: 24,
         alignItems: "center",
     },
+    nextButtonDisabled: {
+        backgroundColor: "#E0E0E0",
+    },
     nextButtonText: {
         fontSize: 16,
         fontWeight: "600",
         fontFamily: "Nunito",
+    },
+
+    // Image previews and add button
+    imagePreviewContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 16,
+    },
+    imageWrapper: {
+        position: "relative",
+        marginRight: 8,
+    },
+    removeButton: {
+        position: "absolute",
+        top: -8,
+        right: -8,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        borderRadius: 12,
+        width: 24,
+        height: 24,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    imagePreview: {
+        width: 50,
+        height: 50,
+        borderRadius: 8,
+        marginRight: 8,
+    },
+    addButton: {
+        width: 50,
+        height: 50,
+        borderRadius: 8,
+        backgroundColor: "#E0E0E0",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    addButtonText: {
+        fontSize: 24,
+        color: "#000",
+    },
+    scrollContainer: {
+        paddingBottom: 40,
     },
 });
