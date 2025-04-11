@@ -5,9 +5,9 @@ import (
 )
 
 type RestaurantDocument struct {
-	ID   primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	Name string             `bson:"name"         json:"name"`
-
+	ID      primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	Name    string             `bson:"name"         json:"name"`
+	Banner  string             `bson:"banner"       json:"banner"`
 	Address struct {
 		Street   string    `bson:"street"   json:"street"`
 		Zipcode  string    `bson:"zipcode"  json:"zipcode"`
