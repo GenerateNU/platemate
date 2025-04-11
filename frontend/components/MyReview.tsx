@@ -17,7 +17,7 @@ import { InteractiveStars } from "./ui/StarReview";
 import { createReview } from "@/api/review";
 import useAuthStore from "@/auth/store";
 import * as ImagePicker from "expo-image-picker";
-import axios from "axios";
+import { uploadMultipleImagesToS3 } from "@/utils/s3uploads";
 
 interface MyReviewProps {
     restaurantId?: string;
@@ -137,42 +137,9 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose, on
         }
     };
 
-    const uploadImageToS3 = async (image: ImagePicker.ImagePickerAsset) => {
-        try {
-            // Get file extension from URI
-            const fileExtension = image.uri.split(".").pop();
-            const fileType = `image/${fileExtension}`;
-
-            // Get presigned URL from backend
-            const presignedUrlResponse = await axios.get("/api/s3/presigned-url", {
-                params: { fileType },
-            });
-
-            const { uploadUrl, key } = presignedUrlResponse.data;
-
-            // Upload image to S3
-            const response = await fetch(image.uri);
-            const blob = await response.blob();
-
-            await fetch(uploadUrl, {
-                method: "PUT",
-                body: blob,
-                headers: {
-                    "Content-Type": fileType,
-                },
-            });
-
-            // Return the S3 URL for the uploaded image
-            return `https://${process.env.NEXT_PUBLIC_S3_BUCKET}.s3.amazonaws.com/${key}`;
-        } catch (error) {
-            console.error("Error uploading image to S3:", error);
-            throw error;
-        }
-    };
-
     const handleNext = async () => {
         if (step < 4) {
-            // Get current step's rating and tags
+            // Validate current step before proceeding
             const currentStep = stepContent[step - 1];
             const hasRating = currentStep.rating > 0;
             const hasTags = currentStep.tags.some((tag) => tag.selected);
@@ -182,37 +149,31 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose, on
             }
             setStep((prev) => prev + 1);
         } else {
+            // Handle final submission
             try {
                 setIsSubmitting(true);
 
-                // Upload images to S3 and get URLs
-                const uploadedImageUrls = await Promise.all(selectedImages.map(uploadImageToS3));
-
-                // For testing: Use hardcoded valid MongoDB ObjectIDs
-                const validUserId = "67e300c043b432515e2dd8bb";
-                const validRestaurantId = "64f5a95cc7330b78d33265f1";
-
-                // Collect all the selected tags
-                const selectedTasteTags = tasteTags.filter((tag) => tag.selected).map((tag) => tag.text);
-                const selectedPortionTags = portionTags.filter((tag) => tag.selected).map((tag) => tag.text);
-                const selectedValueTags = valueTags.filter((tag) => tag.selected).map((tag) => tag.text);
-
-                // Combine tags for content enhancement
-                let tagDescription = "";
-                if (selectedTasteTags.length > 0) {
-                    tagDescription += `Taste: ${selectedTasteTags.join(", ")}. `;
-                }
-                if (selectedPortionTags.length > 0) {
-                    tagDescription += `Portion: ${selectedPortionTags.join(", ")}. `;
-                }
-                if (selectedValueTags.length > 0) {
-                    tagDescription += `Value: ${selectedValueTags.join(", ")}. `;
+                // Upload images to S3 in parallel using our utility function
+                let uploadedImageUrls: string[] = [];
+                if (selectedImages.length > 0) {
+                    try {
+                        uploadedImageUrls = await uploadMultipleImagesToS3(selectedImages);
+                    } catch (uploadError) {
+                        console.error("Failed to upload images:", uploadError);
+                        Alert.alert(
+                            "Upload Error",
+                            "Some images failed to upload. Would you like to continue with your review?",
+                            [
+                                { text: "Cancel", style: "cancel" },
+                                { text: "Continue", style: "default" },
+                            ],
+                            { cancelable: false },
+                        );
+                        // Continue with submission even if images fail
+                    }
                 }
 
-                // Combine user text with tags
-                const finalContent = overallText + (tagDescription ? "\n\n" + tagDescription : "");
-
-                // Create review payload with valid ObjectIds - matching backend API structure
+                // Prepare review data
                 const reviewData = {
                     rating: {
                         portion: portionRating,
@@ -225,20 +186,20 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose, on
                         uploadedImageUrls[0] ||
                         dishImageUrl ||
                         "https://plus.unsplash.com/premium_photo-1661771822467-e516ca075314?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZGlzaHxlbnwwfHwwfHx8MA%3D%3D",
-                    content: finalContent,
+                    content: buildReviewContent(),
                     reviewer: {
-                        _id: validUserId,
+                        _id: useAuthStore.getState().userId || "67e300c043b432515e2dd8bb", // Fallback ID
                         pfp: "https://i.pinimg.com/736x/b1/6d/2e/b16d2e5e6a0db39e60ac17d0f1865ef8.jpg",
                         username: "",
                     },
                     menuItem: "64f5a95cc7330b78d33265f2",
-                    restaurantId: validRestaurantId,
-                    additionalImages: uploadedImageUrls.slice(1), // Store any additional images
+                    restaurantId: restaurantId || "64f5a95cc7330b78d33265f1",
+                    additionalImages: uploadedImageUrls.slice(1),
                 };
 
-                console.log("Submitting review:", JSON.stringify(reviewData));
-
-                await createReview(reviewData);
+                // Submit review
+                const response = await createReview(reviewData);
+                console.log("Review submitted successfully:", response);
                 Alert.alert("Success", "Your review has been submitted!");
                 onSubmit();
             } catch (error) {
@@ -248,6 +209,29 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose, on
                 setIsSubmitting(false);
             }
         }
+    };
+
+    // Helper function to build review content with tags
+    const buildReviewContent = () => {
+        // Collect selected tags
+        const selectedTasteTags = tasteTags.filter((tag) => tag.selected).map((tag) => tag.text);
+        const selectedPortionTags = portionTags.filter((tag) => tag.selected).map((tag) => tag.text);
+        const selectedValueTags = valueTags.filter((tag) => tag.selected).map((tag) => tag.text);
+
+        // Build tag description
+        let tagDescription = "";
+        if (selectedTasteTags.length > 0) {
+            tagDescription += `Taste: ${selectedTasteTags.join(", ")}. `;
+        }
+        if (selectedPortionTags.length > 0) {
+            tagDescription += `Portion: ${selectedPortionTags.join(", ")}. `;
+        }
+        if (selectedValueTags.length > 0) {
+            tagDescription += `Value: ${selectedValueTags.join(", ")}. `;
+        }
+
+        // Combine user text with tags
+        return overallText + (tagDescription ? "\n\n" + tagDescription : "");
     };
 
     const handleBack = () => {
