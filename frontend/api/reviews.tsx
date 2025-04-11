@@ -5,10 +5,10 @@ export const getReviews = async (page: number = 1, limit: number = 20): Promise<
     return await makeRequest(`/api/v1/review?page=${page}&limit=${limit}`, "GET");
 };
 
-export const getReviewById = async (id: string, userId: string): Promise<TReview> => {
-    return await makeRequest(`/api/v1/review/${id}?userId=${userId}`, "GET");
+export const getReviewById = async (id: string): Promise<TReview> => {
+    return await makeRequest(`/api/v1/review/${id}`, "GET");
 };
 
 export const getFriendsReviews = async (id: string): Promise<TReview[]> => {
-    return await makeRequest(`/api/v1/item/${id}/followReviews`, "GET");
+    return await makeRequest(`/api/v1/reviews/${id}/friendReviews`, "GET");
 };

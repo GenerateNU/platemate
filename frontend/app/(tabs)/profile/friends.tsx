@@ -80,8 +80,8 @@ export default function FriendsScreen() {
 
         return (
             <View style={styles.footerLoader}>
-                <ActivityIndicator size="small" color="#F7B418" />
-                <Text style={styles.loadingMoreText}>Loading more followers...</Text>
+                <ActivityIndicator size="small" color="#FFCA28" />
+                <Text style={styles.loadingMoreText}>Loading more friends...</Text>
             </View>
         );
     };
@@ -98,20 +98,21 @@ export default function FriendsScreen() {
     };
 
     return (
-        <View style={[styles.container, { paddingTop: 32 }]}>
+        <View style={styles.container}>
+            <View style={{ height: insets.top + 64 }} />
             <View style={styles.searchContainer}>
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Search friends"
                     value={searchQuery}
                     onChangeText={setSearchQuery}
-                    placeholderTextColor="#727272"
+                    placeholderTextColor="rgba(0, 0, 0, 0.38)"
                 />
             </View>
 
             {loading && page === 1 ? (
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#F7B418" />
+                    <ActivityIndicator size="large" color="#FFCA28" />
                     <Text style={styles.loadingText}>Loading friends...</Text>
                 </View>
             ) : (
@@ -127,9 +128,11 @@ export default function FriendsScreen() {
                         </View>
                     }
                     ListHeaderComponent={
-                        <Text style={styles.followersCount}>
-                            {friends.length} {friends.length === 1 ? "Friend" : "Friends"}
-                        </Text>
+                        <View style={styles.headerContainer}>
+                            <Text style={styles.followersCount}>
+                                {friends.length} {friends.length === 1 ? "Friend" : "Friends"}
+                            </Text>
+                        </View>
                     }
                     ListFooterComponent={
                         <>
@@ -151,46 +154,64 @@ export default function FriendsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: "#FAFAFA",
     },
     searchContainer: {
         padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: "#F0F0F0",
+        backgroundColor: "#FFFFFF",
+        elevation: 2,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
     },
     searchInput: {
         backgroundColor: "#F5F5F5",
-        borderRadius: 8,
+        borderRadius: 4,
         padding: 12,
-        fontFamily: "Inter",
+        fontFamily: "Roboto",
         fontSize: 16,
+        color: "rgba(0, 0, 0, 0.87)",
+    },
+    headerContainer: {
+        backgroundColor: "#FFFFFF",
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+        marginBottom: 8,
+        elevation: 1,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 1,
     },
     listContainer: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        gap: 3,
-        alignSelf: "stretch",
-        width: "100%",
+        paddingBottom: 8,
     },
     followersCount: {
         fontSize: 16,
-        fontWeight: 700,
-        marginBottom: 16,
-        color: "#151619",
-        fontFamily: "Inter",
-        lineHeight: 20,
-        letterSpacing: -0.165,
+        fontWeight: "500",
+        color: "rgba(0, 0, 0, 0.87)",
+        fontFamily: "Roboto",
     },
     emptyContainer: {
         alignItems: "center",
         justifyContent: "center",
-        padding: 20,
+        padding: 32,
+        backgroundColor: "#FFFFFF",
+        marginTop: 8,
+        borderRadius: 8,
+        marginHorizontal: 16,
     },
     emptyText: {
         fontSize: 16,
-        color: "#727272",
-        fontFamily: "Outfit",
+        color: "rgba(0, 0, 0, 0.6)",
+        fontFamily: "Roboto",
     },
     loadingContainer: {
         flex: 1,
@@ -198,30 +219,38 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     loadingText: {
-        marginTop: 12,
+        marginTop: 16,
         fontSize: 16,
-        color: "#727272",
-        fontFamily: "Outfit",
+        color: "rgba(0, 0, 0, 0.6)",
+        fontFamily: "Roboto",
     },
     footerLoader: {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
         paddingVertical: 16,
+        backgroundColor: "#FFFFFF",
+        marginTop: 8,
+        borderRadius: 8,
+        marginHorizontal: 16,
     },
     loadingMoreText: {
-        marginLeft: 8,
+        marginLeft: 12,
         fontSize: 14,
-        color: "#727272",
-        fontFamily: "Outfit",
+        color: "rgba(0, 0, 0, 0.6)",
+        fontFamily: "Roboto",
     },
     noMoreDataContainer: {
         alignItems: "center",
         paddingVertical: 16,
+        backgroundColor: "#FFFFFF",
+        marginTop: 8,
+        borderRadius: 8,
+        marginHorizontal: 16,
     },
     noMoreDataText: {
         fontSize: 14,
-        color: "#727272",
-        fontFamily: "Outfit",
+        color: "rgba(0, 0, 0, 0.6)",
+        fontFamily: "Roboto",
     },
 });

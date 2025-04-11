@@ -39,7 +39,7 @@ const ProfileMetrics = (props: ProfileMetricProps) => {
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 24,
+        paddingTop: 12,
         paddingBottom: 12,
         alignSelf: "center",
         gap: 24,
@@ -49,17 +49,17 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     statNumber: {
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: 500,
-        lineHeight: 32,
-        fontFamily: "Source Sans 3",
+        lineHeight: 28,
+        fontFamily: "Nunito",
         paddingTop: 4,
         textAlign: "center",
     },
     statLabel: {
         fontSize: 16,
         color: "#727272",
-        fontFamily: "Source Sans 3",
+        fontFamily: "Nunito",
         textAlign: "center",
     },
 });

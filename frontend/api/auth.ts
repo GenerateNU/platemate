@@ -2,7 +2,7 @@ import { makeRequest } from "@/api/base";
 import { LoginRequestBody, RegisterRequestBody } from "@/types/auth";
 
 export async function getUserById(userId: string) {
-    return await makeRequest(`/api/v1/users/${userId}`, "GET");
+    return await makeRequest(`/api/v1/user/${userId}`, "GET");
 }
 
 export async function login(body: LoginRequestBody) {

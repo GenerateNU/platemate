@@ -5,13 +5,22 @@ type Props = {
     tabs: string[];
     activeTab: number;
     setActiveTab: (index: number) => void;
+    callback?: () => void;
 };
 
-export default function FeedTabs({ tabs, activeTab, setActiveTab }: Props) {
+export default function FeedTabs({ tabs, activeTab, setActiveTab, callback }: Props) {
     return (
         <View style={styles.container}>
             {tabs.map((tab, index) => (
-                <TouchableOpacity key={index} style={styles.tab} onPress={() => setActiveTab(index)}>
+                <TouchableOpacity
+                    key={index}
+                    style={styles.tab}
+                    onPress={() => {
+                        setActiveTab(index);
+                        if (callback) {
+                            callback();
+                        }
+                    }}>
                     <ThemedText
                         key={index}
                         type="default"

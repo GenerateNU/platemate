@@ -23,7 +23,7 @@ services:
         container_name: golang-api
         restart: always
         ports:
-            - '8080:8080'
+            - '80:8080'
         volumes:
             - ./backend:/app
         env_file:

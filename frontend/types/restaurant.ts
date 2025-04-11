@@ -2,6 +2,7 @@ import { TMenuItemMetrics } from "./menu-item";
 
 export type TRestaurant = {
     name: string;
+    banner: string;
     address: {
         street: string;
         zipcode: number;

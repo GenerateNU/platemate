@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
+	"time"
 )
 
 func (s *Service) GetPresignedUrl(inputs *GetParams) (*DownloadUrl, error) {
@@ -12,7 +13,7 @@ func (s *Service) GetPresignedUrl(inputs *GetParams) (*DownloadUrl, error) {
 	req, err := s.Presigner.PresignGetObject(context.Background(), &s3.GetObjectInput{
 		Bucket: aws.String(inputs.Bucket),
 		Key:    aws.String(inputs.Key),
-	})
+	}, s3.WithPresignExpires(time.Hour*24*6))
 	if err != nil {
 		return nil, err
 	}

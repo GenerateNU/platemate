@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { ThemedView } from "@/components/themed/ThemedView";
 import { ThemedText } from "@/components/themed/ThemedText";
@@ -6,21 +6,31 @@ import { Ionicons } from "@expo/vector-icons";
 import ReviewPreview from "./ReviewPreview";
 import { ReviewButton } from "@/components/review/ReviewButton";
 import { ReviewFlow } from "@/components/review/ReviewFlow";
+import { useLocalSearchParams } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNavigation } from "expo-router";
 
 export default function AllReviews() {
     const [selectedMainFilter, setSelectedMainFilter] = React.useState("My Reviews");
     const [selectedSubFilter, setSelectedSubFilter] = React.useState("Portion");
     const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+    const { id } = useLocalSearchParams<{ id: string }>();
+
+    const insets = useSafeAreaInsets();
+    const navigation = useNavigation();
 
     const handleBack = () => {
-        // Navigation logic here
-        console.log("Go back");
+        navigation.goBack();
     };
+
+    useEffect(() => {
+        navigation.setOptions({ headerShown: false });
+    }, []);
 
     return (
         <>
             <ScrollView style={styles.container}>
-                <ThemedView style={styles.content}>
+                <ThemedView style={[styles.content, { paddingTop: insets.top }]}>
                     {/* Header */}
                     <View style={styles.header}>
                         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
@@ -78,16 +88,19 @@ export default function AllReviews() {
                     /> */}
                 </ThemedView>
             </ScrollView>
-            <ReviewButton
-                restaurantId="pad-thai-kitchen"
-                menuItemName="Pad Thai"
-                onPress={() => setIsReviewModalVisible(true)}
-            />
+            <View style={[styles.reviewButtonContainer, { paddingBottom: insets.bottom }]}>
+                <ReviewButton
+                    restaurantId="pad-thai-kitchen"
+                    menuItemName="Pad Thai"
+                    onPress={() => setIsReviewModalVisible(true)}
+                />
+            </View>
             <ReviewFlow
                 isVisible={isReviewModalVisible}
                 onClose={() => setIsReviewModalVisible(false)}
                 restaurantId="pad-thai-kitchen"
                 menuItemName="Pad Thai"
+                menuItemId={id}
             />
         </>
     );
@@ -134,5 +147,12 @@ const styles = StyleSheet.create({
     },
     filterTextActive: {
         fontWeight: "600",
+    },
+    reviewButtonContainer: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: 16,
     },
 });
