@@ -17,6 +17,7 @@ import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { getRestaurant } from "@/api/restaurant";
 import { TRestaurant } from "@/types/restaurant";
 import { Skeleton } from "moti/skeleton";
+import { getReviews } from "@/api/reviews";
 
 export default function Route() {
     const restaurantTags = ["Fast Food", "Fried Chicken", "Chicken Sandwiches", "Order Online"];
@@ -41,14 +42,7 @@ export default function Route() {
         navigation.setOptions({ headerShown: false });
     }, [navigation]);
 
-    const formattedAddress =
-        restaurant?.address.street +
-        ", " +
-        restaurant?.address.city +
-        ", " +
-        restaurant?.address.state +
-        " " +
-        restaurant?.address.zip;
+    const formattedAddress = restaurant?.address.street + ", " + restaurant?.address.state;
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -105,7 +99,7 @@ export default function Route() {
                         <RestaurantReviewSummary
                             rating={restaurant?.ratingAvg.overall}
                             friendsReviewCount={12}
-                            highlight={"This is a really good dish. I liked the part when the chef added the sauce..."}
+                            highlight={"Cozy restaurant, friendly and attentive staff. My favorite part was..."}
                             maxRating={5}
                             reviewCount={189}
                         />

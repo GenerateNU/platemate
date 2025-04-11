@@ -46,6 +46,11 @@ type FollowRequest struct {
 	FolloweeId string `json:"followeeId"`
 }
 
+type IsFollowingQuery struct {
+	FollowerId string `query:"followerId" validate:"required"`
+	FolloweeId string `query:"followeeId" validate:"required"`
+}
+
 type GetUserByIdParam struct {
 	UserID string `params:"id" validate:"required"`
 }
@@ -68,6 +73,11 @@ type GetFollowingQuery struct {
 type ReviewQuery struct {
 	UserId string `query:"userId" validate:"required"`
 	ItemId string `params:"id" validate:"required"`
+}
+
+type GetFriendReviewsQuery struct {
+	PaginationQuery
+	UserId string `params:"id" validate:"required"`
 }
 
 type PostDietaryPreferencesQuery struct {

@@ -20,11 +20,15 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	user.Get("/:id/following", handler.GetFollowing)
 	user.Post("/follow", handler.FollowUser)
 	user.Delete("/follow", handler.UnfollowUser)
+	user.Get("/following/check", handler.IsFollowing)
 
 	// Item review endpoints
 	item := apiV1.Group("/item")
 	item.Get("/:id/followReviews", handler.GetFollowingReviewsForItem)
 	item.Get("/:id/friendReviews", handler.GetFriendReviewsForItem)
+
+	reviews := apiV1.Group("/reviews")
+	reviews.Get("/:id/friendReviews", handler.GetFriendReviews)
 
 	app.Get("/api/v1/user", handler.GetUsers) // FOR TESTING PURPOSES ONLY
 

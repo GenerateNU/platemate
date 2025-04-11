@@ -2,7 +2,7 @@
 
 import { ScrollView, View, StyleSheet, TextInput, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "expo-router";
 import ToggleSetting from "@/components/profile/settings/ToggleSetting";
 import SettingsSection from "@/components/profile/settings/SettingsSection";
@@ -10,7 +10,6 @@ import SettingsMenuItem from "@/components/profile/settings/SettingsMenuItem";
 import { TSettingsData } from "@/types/settingsData";
 import useAuthStore from "@/auth/store";
 import { Button } from "@/components/Button";
-import axios from "axios";
 import { makeRequest } from "@/api/base";
 
 export default function SettingsScreen() {
@@ -18,7 +17,6 @@ export default function SettingsScreen() {
     const router = useRouter();
     const { email, userId, logout } = useAuthStore();
 
-    // const userIdStr = JSON.stringify(userId);
     console.log(userId, email);
 
     const dietaryOptions: Record<string, string> = {
@@ -39,67 +37,118 @@ export default function SettingsScreen() {
     };
 
     const [dietaryPreferences, setDietaryPreferences] = useState<string[]>([]);
+    const [settings, setSettings] = useState<Record<string, boolean>>({});
+    const [pendingApiCalls, setPendingApiCalls] = useState<Record<string, boolean>>({});
 
-    const [settings, setSettings] = useState<Record<string, boolean>>(
-        Object.fromEntries(Object.values(dietaryOptions).map((option) => [option, false])),
-    );
-
+    // Initial data fetch
     useEffect(() => {
-        console.log("fetched preferences!");
         const fetchDietaryPreferences = async () => {
-            const preferencesData = await makeRequest(`/api/v1/settings/${userId}/dietaryPreferences`, "GET");
-            if (!preferencesData) {
-                throw new Error(preferencesData.message || "failed to fetch dietary preferences");
+            try {
+                console.log(`Fetching dietary preferences for user: ${userId}`);
+                const preferencesData = await makeRequest(`/api/v1/settings/${userId}/dietaryPreferences`, "GET");
+                console.log("Received preferences data:", preferencesData);
+
+                if (!preferencesData) {
+                    console.warn("No preferences data returned");
+                    setDietaryPreferences([]);
+                    return;
+                }
+
+                setDietaryPreferences(preferencesData);
+            } catch (err) {
+                console.error("Error fetching dietary preferences:", err);
+                setDietaryPreferences([]);
             }
-            setDietaryPreferences(preferencesData);
         };
 
-        fetchDietaryPreferences();
-        console.log(dietaryPreferences);
+        if (userId) {
+            fetchDietaryPreferences();
+        } else {
+            console.log("No userId available for fetching preferences");
+        }
     }, [userId]);
 
     useEffect(() => {
-        console.log("reloaded!");
-        console.log(dietaryPreferences);
-        setSettings(
-            Object.fromEntries(
-                Object.keys(dietaryOptions).map((option) => [
-                    option,
-                    dietaryPreferences.includes(dietaryOptions[option]),
-                ]),
-            ),
+        console.log("Dietary preferences updated:", dietaryPreferences);
+
+        const newSettings = Object.fromEntries(
+            Object.entries(dietaryOptions).map(([key, value]) => [key, dietaryPreferences.includes(value)]),
         );
+
+        newSettings.cameraAccess = settings.cameraAccess || false;
+        newSettings.contactSync = settings.contactSync || false;
+
+        console.log("New settings state:", newSettings);
+        setSettings(newSettings);
     }, [dietaryPreferences]);
 
-    const updateSetting = (key: string, value: boolean) => {
-        if (value == true) {
-            setDietaryPreferences((prevRestrictions) => [...prevRestrictions, dietaryOptions[key]]);
-            handleAddDietaryPreference(key);
-        } else {
-            setDietaryPreferences((prevRestrictions) =>
-                prevRestrictions.filter((item) => item !== dietaryOptions[key]),
-            );
-            handleRemoveDietaryPreference(key);
-        }
-    };
+    const updatePreferenceApi = useCallback(
+        async (key: string, value: boolean) => {
+            if (!userId) {
+                console.log("No userId available");
+                return;
+            }
 
-    const handleAddDietaryPreference = async (preference: string) => {
-        await makeRequest(
-            `/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
-            "POST",
-            null,
-            "Failed to add dietary preference",
-        );
-    };
+            const preference = dietaryOptions[key];
+            if (!preference) {
+                console.log(`No preference found for key: ${key}`);
+                return;
+            }
 
-    const handleRemoveDietaryPreference = async (preference: string) => {
-        await makeRequest(
-            `/api/v1/settings/${userId}/dietaryPreferences?preference=${dietaryOptions[preference]}`,
-            "DELETE",
-            null,
-            "Failed to remove dietary preference",
-        );
-    };
+            console.log(`Updating preference: ${preference} to ${value ? "add" : "remove"}`);
+            setPendingApiCalls((prev) => ({ ...prev, [key]: true }));
+
+            if (value) {
+                const result = await makeRequest(
+                    `/api/v1/settings/${userId}/dietaryPreferences?preference=${preference}`,
+                    "POST",
+                    null,
+                );
+                console.log("Add preference result:", result);
+            } else {
+                const result = await makeRequest(
+                    `/api/v1/settings/${userId}/dietaryPreferences?preference=${preference}`,
+                    "DELETE",
+                    null,
+                );
+                console.log("Remove preference result:", result);
+            }
+            setPendingApiCalls((prev) => ({ ...prev, [key]: false }));
+        },
+        [userId, dietaryOptions],
+    );
+
+    const updateSetting = useCallback(
+        (key: string, value: boolean) => {
+            console.log(`Toggle: ${key} to ${value}`);
+
+            setSettings((prev) => ({ ...prev, [key]: value }));
+
+            if (dietaryOptions[key]) {
+                const preference = dietaryOptions[key];
+                console.log(`Updating dietary preference: ${preference} to ${value ? "enabled" : "disabled"}`);
+
+                if (value) {
+                    setDietaryPreferences((prev) => {
+                        const newPrefs = prev.includes(preference) ? prev : [...prev, preference];
+                        console.log("Updated preferences (add):", newPrefs);
+                        return newPrefs;
+                    });
+                } else {
+                    setDietaryPreferences((prev) => {
+                        const newPrefs = prev.filter((item) => item !== preference);
+                        console.log("Updated preferences (remove):", newPrefs);
+                        return newPrefs;
+                    });
+                }
+
+                updatePreferenceApi(key, value);
+            } else {
+                console.log(`${key} is not a dietary option, no API call needed`);
+            }
+        },
+        [updatePreferenceApi, dietaryOptions],
+    );
 
     const settingsData: TSettingsData = {
         credentials: [
@@ -129,7 +178,6 @@ export default function SettingsScreen() {
         account: [
             {
                 label: "View Friends",
-                //confused...
                 onPress: () => router.push(`/profile/friends?userId=${userId}`),
                 showChevron: true,
             },
@@ -143,6 +191,10 @@ export default function SettingsScreen() {
     const handleLogOut = async () => {
         await logout();
         router.push("/(onboarding)");
+    };
+
+    const handleResetPassword = () => {
+        console.log("Reset password requested");
     };
 
     return (
@@ -169,15 +221,17 @@ export default function SettingsScreen() {
                             editable={false}
                         />
                     </View>
-                    <Text style={styles.resetPasswordText}>Reset Password</Text>
+                    <Text style={styles.resetPasswordText} onPress={handleResetPassword}>
+                        Reset Password
+                    </Text>
                 </SettingsSection>
                 <SettingsSection title="Dietary Restrictions">
                     {settingsData.dietary.map((item) => (
                         <ToggleSetting
                             key={item.key}
                             label={item.label}
-                            value={settings[item.key as keyof typeof settings]}
-                            onToggle={(value) => updateSetting(item.key as keyof typeof settings, value)}
+                            value={settings[item.key] || false}
+                            onToggle={(value) => updateSetting(item.key, value)}
                         />
                     ))}
                 </SettingsSection>
@@ -187,8 +241,8 @@ export default function SettingsScreen() {
                         <ToggleSetting
                             key={item.key}
                             label={item.label}
-                            value={settings[item.key as keyof typeof settings]}
-                            onToggle={(value) => updateSetting(item.key as keyof typeof settings, value)}
+                            value={settings[item.key] || false}
+                            onToggle={(value) => updateSetting(item.key, value)}
                         />
                     ))}
                 </SettingsSection>
@@ -280,7 +334,7 @@ const styles = StyleSheet.create({
         lineHeight: 28,
     },
     input: {
-        fontSize: 12,
+        fontSize: 14,
         height: 40,
         borderColor: "black",
         borderWidth: 1,
@@ -288,7 +342,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         backgroundColor: "white",
         color: "#000000",
-        width: 350, // the email and password boxes were not aligning with the toggles
+        width: 350,
         flexShrink: 0,
         alignItems: "flex-start",
         fontFamily: "Nunito",

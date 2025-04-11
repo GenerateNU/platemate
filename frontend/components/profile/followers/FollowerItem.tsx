@@ -15,92 +15,87 @@ type FollowerItemProps = {
 };
 
 const FollowerItem = ({ follower }: FollowerItemProps) => {
-    console.log(follower.id);
     return (
-        <TouchableOpacity style={styles.followerItem} onPress={() => router.push(`/friend/${follower.id}`)}>
-            <Image source={{ uri: follower.avatar }} style={styles.avatar} />
-            <View style={styles.namesContainer}>
-                <Text style={styles.followerUsername}>{follower.username}</Text>
-                <Text style={styles.followerName}>{follower.name}</Text>
-            </View>
-            {/* Hard coded "Friends" for now */}
-            <FollowButton text={"Friends"} />
-        </TouchableOpacity>
+        <View style={styles.card}>
+            <TouchableOpacity
+                style={styles.followerItem}
+                onPress={() => router.push(`/friend/${follower.id}`)}
+                android_ripple={{ color: "rgba(0, 0, 0, 0.1)" }}>
+                <View style={styles.avatarContainer}>
+                    <Image source={{ uri: follower.avatar }} style={styles.avatar} resizeMode="cover" />
+                </View>
+
+                <View style={styles.namesContainer}>
+                    <Text style={styles.followerName} numberOfLines={1}>
+                        {follower.name}
+                    </Text>
+                    <Text style={styles.followerUsername} numberOfLines={1}>
+                        {follower.username}
+                    </Text>
+                </View>
+
+                <View style={styles.buttonContainer}>
+                    <FollowButton isFollowing={true} userToFollowId={follower.id} />
+                </View>
+            </TouchableOpacity>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
+    card: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: 8,
+        marginVertical: 4,
+        marginHorizontal: 8,
+        elevation: 2,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+        overflow: "hidden",
+    },
     followerItem: {
         flexDirection: "row",
         alignItems: "center",
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: "#F0F0F0",
-        width: "95%",
-        gap: 8,
+        paddingVertical: 16,
+        paddingHorizontal: 16,
+        width: "100%",
+        justifyContent: "space-between",
+    },
+    avatarContainer: {
+        marginRight: 16,
     },
     avatar: {
-        width: 78.897,
-        height: 78.897,
-        borderRadius: 78.897,
-    },
-    followerInfo: {
-        flex: 1,
-        marginLeft: 12,
-    },
-    followerUsername: {
-        color: "#000",
-        fontFamily: "Inter",
-        fontSize: 12,
-        fontStyle: "normal",
-        fontWeight: 400,
-        lineHeight: 20,
-        letterSpacing: -0.132,
-    },
-    followerName: {
-        color: "#000",
-        fontFamily: "Inter",
-        fontSize: 15,
-        fontStyle: "normal",
-        fontWeight: 700,
-        lineHeight: 20,
-        letterSpacing: -0.165,
-    },
-    followButton: {
-        backgroundColor: "#F0F0F0",
-        paddingVertical: 6,
-        paddingHorizontal: 12,
-        borderRadius: 16,
-    },
-    followButtonText: {
-        fontSize: 14,
-        color: "#151619",
-        fontFamily: "Source Sans 3",
-        fontWeight: "500",
+        width: 56,
+        height: 56,
+        borderRadius: 28,
     },
     namesContainer: {
-        display: "flex",
         flex: 1,
-        width: 103,
-        flexDirection: "column",
-        alignItems: "flex-start",
+        justifyContent: "center",
+        marginRight: 8,
     },
-    friendsStatsContainer: {
-        display: "flex",
-        width: 175.295,
-        height: 37,
-        paddingVertical: 6,
-        alignItems: "center",
-        gap: 10,
-        flexShrink: 0,
+    followerName: {
+        color: "rgba(0, 0, 0, 0.87)",
+        fontFamily: "Roboto",
+        fontSize: 16,
+        fontWeight: "500",
+        letterSpacing: 0.15,
+        marginBottom: 2,
     },
-    friendsStatsText: {
-        color: "#000",
-        fontFamily: "Inter",
-        fontSize: 10,
-        fontWeight: 400,
-        lineHeight: 20,
-        letterSpacing: -0.11,
+    followerUsername: {
+        color: "rgba(0, 0, 0, 0.6)",
+        fontFamily: "Roboto",
+        fontSize: 14,
+        fontWeight: "400",
+        letterSpacing: 0.25,
+    },
+    buttonContainer: {
+        marginLeft: 8,
     },
 });
 

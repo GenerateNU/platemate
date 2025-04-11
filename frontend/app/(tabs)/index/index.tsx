@@ -5,7 +5,7 @@ import { ThemedView } from "@/components/themed/ThemedView";
 import FeedTabs from "@/components/feed/FeedTabs";
 import ReviewPreview from "@/components/review/ReviewPreview";
 import MenuItemPreview from "@/components/Cards/MenuItemPreview";
-import { getMenuItems } from "@/api/menu-items";
+import { getMenuItems, getRecommendations } from "@/api/menu-items";
 import { TMenuItem } from "@/types/menu-item";
 import { TReview } from "@/types/review";
 import { getReviews } from "@/api/reviews";
@@ -14,6 +14,10 @@ import { SearchBox } from "@/components/SearchBox";
 import { SearchIcon } from "@/components/icons/Icons";
 import { FilterContext } from "@/context/filter-context";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useAuthStore from "@/auth/store";
+import { ThemedText } from "@/components/themed/ThemedText";
+import { getFriendsReviews } from "@/api/reviews";
+import { useUser } from "@/context/user-context";
 
 // Define a type for our feed items
 type FeedItem = {
@@ -27,6 +31,8 @@ export default function Feed() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
+
+    const { user } = useUser();
 
     const insets = useSafeAreaInsets();
     const router = useRouter();
@@ -43,30 +49,57 @@ export default function Feed() {
     }, [handleSearch, router]);
 
     const fetchData = useCallback(async () => {
+        console.log(activeTab);
         try {
-            const [reviewsData, menuItemsData] = await Promise.all([
-                getReviews(1, 10),
-                getMenuItems({ page: 1, limit: 10 }),
-            ]);
+            let reviewsData;
+            if (activeTab === 0) {
+                if (!user) {
+                    // Fallback to regular reviews if user is not available TODO: maybe better way
+                    const response = await getReviews(1, 10);
+                    reviewsData = response;
+                } else {
+                    const userId = user.id;
+                    reviewsData = await getFriendsReviews(userId);
+                }
+            } else {
+                reviewsData = await getReviews(1, 10);
+            }
 
-            const fetchedReviews = reviewsData.data as TReview[];
+            const menuItemsData = await getMenuItems({ page: 1, limit: 10 });
+            const fetchedReviews = (reviewsData?.data as TReview[]) || [];
             const fetchedMenuItems = menuItemsData as TMenuItem[];
 
-            // Create a new array of FeedItems
-            const newFeedItems: FeedItem[] = [
-                ...fetchedReviews.map((review) => ({
-                    id: review._id || `review-${Math.random().toString(36).substr(2, 9)}`,
-                    type: "review" as const,
-                    data: review,
-                })),
-                ...fetchedMenuItems.map((menuItem) => ({
-                    id: menuItem.id || `menuItem-${Math.random().toString(36).substr(2, 9)}`,
-                    type: "menuItem" as const,
-                    data: menuItem,
-                })),
-            ];
+            switch (activeTab) {
+                case 0:
+                    // Create a new array of FeedItems
+                    const newFeedItems: FeedItem[] = [
+                        ...fetchedReviews.map((review) => ({
+                            id: review._id || `review-${Math.random().toString(36).substr(2, 9)}`,
+                            type: "review" as const,
+                            data: review,
+                        })),
+                        ...fetchedMenuItems.map((menuItem) => ({
+                            id: menuItem.id || `menuItem-${Math.random().toString(36).substr(2, 9)}`,
+                            type: "menuItem" as const,
+                            data: menuItem,
+                        })),
+                    ];
 
-            setFeedItems(newFeedItems);
+                    setFeedItems(newFeedItems);
+                    break;
+                case 1:
+                    if (!user) {
+                        setFeedItems([]);
+                        break;
+                    }
+                    // use the recommendations endpoint to get the top 10 items
+                    const topItems = await getRecommendations(user?.id);
+                    // convert top items _id to id
+                    topItems.forEach((item) => (item.id = item._id));
+                    console.log(topItems);
+                    setFeedItems(topItems.map((item) => ({ id: item.id, type: "menuItem", data: item })));
+                    break;
+            }
         } catch (error) {
             console.error("Error fetching data:", error);
             setFeedItems([]);
@@ -74,12 +107,15 @@ export default function Feed() {
             setLoading(false);
             setRefreshing(false);
         }
-    }, []);
+    }, [activeTab, user]);
 
     useEffect(() => {
         setLoading(true);
-        fetchData();
-    }, [fetchData]);
+
+        if (user) {
+            fetchData();
+        }
+    }, [fetchData, user]);
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -123,11 +159,15 @@ export default function Feed() {
         },
         [router],
     );
-
     const ListHeaderComponent = useCallback(
         () => (
             <ThemedView style={{ alignItems: "center", paddingHorizontal: 8, paddingBottom: 12, gap: 12 }}>
-                <FeedTabs tabs={["Friends", "Recommended"]} activeTab={activeTab} setActiveTab={setActiveTab} />
+                <FeedTabs
+                    tabs={["Friends", "Recommended"]}
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    callback={fetchData}
+                />
             </ThemedView>
         ),
         [activeTab],
@@ -170,7 +210,7 @@ export default function Feed() {
                 showsVerticalScrollIndicator={false}
                 ListEmptyComponent={
                     <ThemedView style={{ paddingVertical: 20, alignItems: "center" }}>
-                        <ThemedView>No content available</ThemedView>
+                        <ThemedText>No content available</ThemedText>
                     </ThemedView>
                 }
             />

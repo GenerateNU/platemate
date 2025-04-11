@@ -33,7 +33,19 @@ export default function ProfileLayout() {
                 animation: "slide_from_right",
             }}>
             <Stack.Screen name="profile" options={{ headerShown: false }} />
-            <Stack.Screen name="friend/[userId]" options={{ headerShown: false }} />
+            <Stack.Screen
+                name="friend/[userId]"
+                options={{
+                    title: "Your Friends",
+                    headerTitleAlign: "left",
+                    headerTitleStyle: {
+                        fontFamily: "Nunito",
+                        fontWeight: "600",
+                        fontSize: 20,
+                        color: "#333",
+                    },
+                }}
+            />
             <Stack.Screen
                 name="settings"
                 options={{
