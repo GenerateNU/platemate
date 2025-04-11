@@ -18,6 +18,7 @@ import { createReview } from "@/api/review";
 import useAuthStore from "@/auth/store";
 import * as ImagePicker from "expo-image-picker";
 import { uploadMultipleImagesToS3 } from "@/utils/s3uploads";
+import { getRestaurant } from "@/api/restaurant";
 
 interface MyReviewProps {
     restaurantId?: string;
@@ -45,6 +46,15 @@ function generateValidObjectId() {
 export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose, onSubmit }: MyReviewProps) {
     const [step, setStep] = useState(1);
     const user = useAuthStore((state) => state.userId);
+    const [restaurantName, setRestaurantName] = useState("");
+
+    useEffect(() => {
+        if (restaurantId) {
+            getRestaurant(restaurantId).then((restaurant) => {
+                setRestaurantName(restaurant.name);
+            });
+        }
+    }, [restaurantId]);
 
     // Track star ratings
     const [tasteRating, setTasteRating] = useState(0);
@@ -191,6 +201,8 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose, on
                     },
                     menuItem: "64f5a95cc7330b78d33265f2",
                     restaurantId: restaurantId || "64f5a95cc7330b78d33265f1",
+                    menuItemName: menuItemName || "",
+                    restaurantName: restaurantName || "",
                     additionalImages: uploadedImageUrls.slice(1),
                 };
 
