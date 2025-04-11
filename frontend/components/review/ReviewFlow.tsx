@@ -9,10 +9,18 @@ interface ReviewFlowProps {
     onClose: () => void;
     restaurantId: string;
     menuItemName: string;
+    menuItemId: string;
     dishImageUrl?: string;
 }
 
-export function ReviewFlow({ isVisible, onClose, restaurantId, menuItemName, dishImageUrl }: ReviewFlowProps) {
+export function ReviewFlow({
+    isVisible,
+    onClose,
+    restaurantId,
+    menuItemName,
+    menuItemId,
+    dishImageUrl,
+}: ReviewFlowProps) {
     const [step, setStep] = useState(0);
 
     const handleStartReview = () => {
@@ -35,6 +43,7 @@ export function ReviewFlow({ isVisible, onClose, restaurantId, menuItemName, dis
                 <MyReview
                     restaurantId={restaurantId}
                     menuItemName={menuItemName}
+                    menuItemId={menuItemId}
                     dishImageUrl={dishImageUrl}
                     onClose={handleBackToIntro}
                     onSubmit={handleReviewSubmit}

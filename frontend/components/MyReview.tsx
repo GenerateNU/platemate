@@ -23,6 +23,7 @@ import { getRestaurant } from "@/api/restaurant";
 interface MyReviewProps {
     restaurantId?: string;
     menuItemName?: string;
+    menuItemId?: string;
     dishImageUrl?: string;
     onClose: () => void;
     onSubmit: () => void;
@@ -43,7 +44,7 @@ function generateValidObjectId() {
     return timestamp + machineId + processId + counter;
 }
 
-export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose, onSubmit }: MyReviewProps) {
+export function MyReview({ restaurantId, menuItemName, menuItemId, dishImageUrl, onClose, onSubmit }: MyReviewProps) {
     const [step, setStep] = useState(1);
     const user = useAuthStore((state) => state.userId);
     const [restaurantName, setRestaurantName] = useState("");
@@ -163,6 +164,10 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose, on
             try {
                 setIsSubmitting(true);
 
+                // We are assuming we can proceed without checking this user id because it should already be taken care of
+                // by the auth provider at this point in the app, we just have to assert its non-null so the type checker doesn't yell
+                const userId = useAuthStore.getState().userId!;
+
                 // Upload images to S3 in parallel using our utility function
                 let uploadedImageUrls: string[] = [];
                 if (selectedImages.length > 0) {
@@ -195,12 +200,12 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose, on
                     picture: uploadedImageUrls[0] || dishImageUrl || "",
                     content: buildReviewContent(),
                     reviewer: {
-                        _id: useAuthStore.getState().userId || "67e300c043b432515e2dd8bb", // Fallback ID
+                        _id: userId,
                         pfp: "https://i.pinimg.com/736x/b1/6d/2e/b16d2e5e6a0db39e60ac17d0f1865ef8.jpg",
                         username: "",
                     },
-                    menuItem: "64f5a95cc7330b78d33265f2",
-                    restaurantId: restaurantId || "64f5a95cc7330b78d33265f1",
+                    menuItem: menuItemId,
+                    restaurantId: restaurantId,
                     menuItemName: menuItemName || "",
                     restaurantName: restaurantName || "",
                     additionalImages: uploadedImageUrls.slice(1),
