@@ -101,6 +101,7 @@ export default function Route() {
                                     restaurantId={menuItem?.restaurantID || ""}
                                     menuItemName={menuItem?.name || ""}
                                     dishImageUrl={menuItem?.picture || ""}
+                                    menuItemId={menuItem?.id || ""}
                                 />
                             </ThemedView>
                         </ThemedView>

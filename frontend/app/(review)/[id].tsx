@@ -83,7 +83,7 @@ export default function Route() {
 
     useEffect(() => {
         if (!user) return;
-        getReviewById(id, user.id).then((res) => {
+        getReviewById(id).then((res) => {
             setReview(res);
             if (res.like) {
                 setLikeState(LikeState.LIKED);
@@ -240,6 +240,12 @@ export default function Route() {
                                 <Image key={index} source={{ uri: image }} style={styles.reviewImage} />
                             ))}
                         </ScrollView>
+
+                        {review.picture && (
+                            <ThemedView style={styles.imageContainer}>
+                                <Image source={{ uri: review.picture }} style={styles.reviewImage} />
+                            </ThemedView>
+                        )}
 
                         {/* Action Bar */}
                         <View style={styles.actionBar}>

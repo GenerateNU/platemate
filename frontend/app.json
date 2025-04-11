@@ -21,7 +21,8 @@
                             "NSTemporaryExceptionAllowsInsecureHTTPLoads": true
                         }
                     }
-                }
+                },
+                "NSPhotoLibraryUsageDescription": "This app requires access to your photo library to upload images."
             },
             "entitlements": {
                 "aps-environment": "development"
@@ -34,7 +35,7 @@
                 "foregroundImage": "./assets/splash-icon.png",
                 "backgroundColor": "#ffffff"
             },
-            "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+            "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "READ_EXTERNAL_STORAGE"]
         },
         "web": {
             "bundler": "metro",

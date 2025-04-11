@@ -17,7 +17,12 @@ export interface ReviewData {
         _id: string;
         pfp?: string;
         username: string;
+        name: string;
     };
+    menuItem: string;
+    restaurantId: string;
+    menuItemName: string;
+    restaurantName: string;
 }
 
 export async function createReview(reviewData: ReviewData) {
