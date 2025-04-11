@@ -12,23 +12,23 @@ interface S3UploadResponse {
  * @returns The corresponding MIME type
  */
 export const getMimeType = (fileExtension?: string): string => {
-    if (!fileExtension) return "application/octet-stream";
+    if (!fileExtension) return "octet-stream";
 
     const ext = fileExtension.toLowerCase();
     switch (ext) {
         case "jpg":
         case "jpeg":
-            return "image/jpeg";
+            return "jpeg";
         case "png":
-            return "image/png";
+            return "png";
         case "gif":
-            return "image/gif";
+            return "gif";
         case "webp":
-            return "image/webp";
+            return "webp";
         case "pdf":
-            return "application/pdf";
+            return "pdf";
         default:
-            return `image/${ext}`;
+            return ext;
     }
 };
 
@@ -117,9 +117,9 @@ export const uploadImageToS3 = async (image: ImagePickerAsset): Promise<string> 
         // Upload file to S3 using the presigned URL
         await uploadFileWithPresignedUrl(image.uri, uploadUrl, fileType);
 
-        // Construct and return the final S3 URL
-        const bucketDomain = uploadUrl.split("/")[2];
-        return `https://${bucketDomain}/${key}`;
+        // Construct and return the final S3 URL without any query parameters
+        const bucketUrl = process.env.EXPO_PUBLIC_S3_BUCKET_URL || uploadUrl.split("?")[0];
+        return `${bucketUrl}/${key}`;
     } catch (error) {
         console.error("Error uploading image to S3:", error);
         throw error;
