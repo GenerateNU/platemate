@@ -7,9 +7,9 @@ import { useUser } from "@/context/user-context";
 import { useEffect } from "react";
 
 export const FollowButton: React.FC<{ isFollowing: boolean; userToFollowId: string }> = ({
-                                                                                             isFollowing,
-                                                                                             userToFollowId,
-                                                                                         }) => {
+    isFollowing,
+    userToFollowId,
+}) => {
     const [isPressed, setIsPressed] = useState(isFollowing);
     const [buttonText, setButtonText] = useState(isFollowing ? "Friends" : "Follow");
     const { user } = useUser();
