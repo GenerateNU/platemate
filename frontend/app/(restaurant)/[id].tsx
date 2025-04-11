@@ -22,6 +22,8 @@ import { TReview } from "@/types/review";
 import { useUser } from "@/context/user-context";
 import { TMenuItem } from "@/types/menu-item";
 import { getMenuItemsByRestaurant } from "@/api/menu-items";
+import { TMenuItem } from "@/types/menu-item";
+import { getMenuItemsByRestaurant } from "@/api/menu-items";
 
 export default function Route() {
     const restaurantTags = ["Fast Food", "Fried Chicken", "Chicken Sandwiches", "Order Online"];
