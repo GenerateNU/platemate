@@ -14,21 +14,6 @@ interface MyReviewProps {
     onClose: () => void;
 }
 
-function generateValidObjectId() {
-    const timestamp = Math.floor(new Date().getTime() / 1000).toString(16);
-    const machineId = Math.floor(Math.random() * 16777216)
-        .toString(16)
-        .padStart(6, "0");
-    const processId = Math.floor(Math.random() * 65536)
-        .toString(16)
-        .padStart(4, "0");
-    const counter = Math.floor(Math.random() * 16777216)
-        .toString(16)
-        .padStart(6, "0");
-
-    return timestamp + machineId + processId + counter;
-}
-
 export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: MyReviewProps) {
     const [step, setStep] = useState(1);
     const userId = useAuthStore((state) => state.userId);
@@ -38,11 +23,7 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
     const [portionRating, setPortionRating] = useState(0);
     const [valueRating, setValueRating] = useState(0);
     const [overallRating, setOverallRating] = useState(0);
-    const [tasteRatingText, setTasteRatingText] = useState("");
-    const [portionRatingText, setPortionRatingText] = useState("");
-    const [valueRatingText, setValueRatingText] = useState("");
     const [overallText, setOverallText] = useState("");
-    const [returnRating, setReturnRating] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Example tag data for taste/portion/value
@@ -152,7 +133,7 @@ export function MyReview({ restaurantId, menuItemName, dishImageUrl, onClose }: 
                     menuItem: "64f5a95cc7330b78d33265f2", // Use a valid ObjectID for menu item
                     restaurantId: restaurantId, // Use the provided restaurant ID
                     menuItemName: menuItemName,
-                    restaurantName: "Test Restaurant" // You might want to pass this as a prop too
+                    restaurantName: "Test Restaurant", // You might want to pass this as a prop too
                 };
 
                 console.log("Submitting review:", JSON.stringify(reviewData));
