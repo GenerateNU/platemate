@@ -85,7 +85,7 @@ export default function Feed() {
         setLoading(true);
         fetchData();
         console.log("FMI", menuItems);
-    }, [fetchData]);
+    }, [fetchData, user]);
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
