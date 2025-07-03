@@ -632,5 +632,3 @@ func (s *Service) GetAllReviewsByRestaurant(rid primitive.ObjectID) *mongo.Curso
 	}
 	return cursor
 }
-
-
