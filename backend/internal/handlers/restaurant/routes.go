@@ -29,5 +29,4 @@ func Routes(app *fiber.App, collections map[string]*mongo.Collection) {
 	rest.Get("/:rid/super-stars", handler.GetSuperStars)
 	rest.Get("/:uid/:rid", handler.GetRestaurantFriendsFav)
 
-
 }

@@ -1,83 +1,780 @@
 {
   "swagger": "2.0",
   "info": {
-    "contact": {},
-    "version": "",
-    "title": ""
+    "title": "PlateMate API",
+    "version": "0.1.0",
+    "description": "Current PlateMate endpoints (work-in-progress). Broken/deprecated routes removed."
   },
+  "host": "localhost:8080",
+  "basePath": "/api/v1",
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "tags": [
+    { "name": "auth" },
+    { "name": "users" },
+    { "name": "reviews" },
+    { "name": "restaurants" },
+    { "name": "menu-items" },
+    { "name": "assets" },
+    { "name": "settings" }
+  ],
   "paths": {
     "/login": {
       "post": {
-        "description": "Logs in a user and returns JWT tokens",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
         "tags": ["auth"],
         "summary": "Authenticate user",
+        "description": "Logs in a user and returns JWT tokens in response headers",
         "parameters": [
           {
-            "description": "User credentials",
-            "name": "request",
             "in": "body",
+            "name": "request",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/auth.LoginRequest"
-            }
+            "schema": { "$ref": "#/definitions/LoginRequest" }
           }
         ],
         "responses": {
           "200": {
             "description": "Tokens in response headers",
-            "schema": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
-            }
+            "schema": { "type": "object", "additionalProperties": { "type": "string" } }
           },
-          "400": {
-            "description": "Invalid request",
-            "schema": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "schema": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
-            }
+          "400": { "description": "Invalid credentials" }
+        }
+      }
+    },
+
+    "/user": {
+      "get": {
+        "tags": ["users"],
+        "summary": "List users",
+        "responses": {
+          "200": {
+            "description": "Array of users",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/User" } }
           }
+        }
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Get user by ID",
+        "parameters": [{ "$ref": "#/parameters/UserIdPath" }],
+        "responses": {
+          "200": { "description": "User", "schema": { "$ref": "#/definitions/UserPublic" } },
+          "404": { "description": "User not found" }
+        }
+      }
+    },
+    "/user/{id}/following": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Get following list for a user",
+        "parameters": [{ "$ref": "#/parameters/UserIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Array of user summaries",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/UserSummary" } }
+          }
+        }
+      }
+    },
+    "/user/follow": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Follow a user",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/UserFollowBody" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Followed" },
+          "400": { "description": "Users cannot follow themselves / invalid ObjectID" }
+        }
+      }
+    },
+    "/user/following/check": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Check if one user follows another",
+        "parameters": [
+          { "name": "sourceId", "in": "query", "type": "string", "required": true, "description": "Follower user ID" },
+          { "name": "targetId", "in": "query", "type": "string", "required": true, "description": "Followed user ID" }
+        ],
+        "responses": {
+          "200": { "description": "Follow check", "schema": { "$ref": "#/definitions/FollowCheck" } }
+        }
+      }
+    },
+
+    "/settings/{id}/dietaryPreferences": {
+      "get": {
+        "tags": ["settings"],
+        "summary": "List dietary preferences for user",
+        "parameters": [{ "$ref": "#/parameters/UserIdPath" }],
+        "responses": {
+          "200": { "description": "Array of strings", "schema": { "type": "array", "items": { "type": "string" } } }
+        }
+      },
+      "post": {
+        "tags": ["settings"],
+        "summary": "Add dietary preferences",
+        "parameters": [
+          { "$ref": "#/parameters/UserIdPath" },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "type": "array", "items": { "type": "string" } }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Updated list" }
+        }
+      },
+      "delete": {
+        "tags": ["settings"],
+        "summary": "Delete all dietary preferences",
+        "parameters": [{ "$ref": "#/parameters/UserIdPath" }],
+        "responses": { "204": { "description": "Deleted" } }
+      }
+    },
+
+    "/assets": {
+      "get": {
+        "tags": ["assets"],
+        "summary": "List asset records known by backend",
+        "responses": {
+          "200": { "description": "Assets", "schema": { "type": "array", "items": { "$ref": "#/definitions/Asset" } } }
+        }
+      }
+    },
+    "/assets/{key}/url": {
+      "get": {
+        "tags": ["assets"],
+        "summary": "Get signed download URL for asset",
+        "parameters": [{ "name": "key", "in": "path", "required": true, "type": "string" }],
+        "responses": {
+          "200": { "description": "Signed URL", "schema": { "$ref": "#/definitions/AssetUrl" } },
+          "404": { "description": "No asset exists" }
+        }
+      }
+    },
+    "/assets/upload": {
+      "post": {
+        "tags": ["assets"],
+        "summary": "Get pre-signed S3 upload URL",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/UploadRequest" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Upload info", "schema": { "$ref": "#/definitions/UploadInfo" } },
+          "400": { "description": "Missing file name or content type" }
+        }
+      }
+    },
+
+    "/review": {
+      "get": {
+        "tags": ["reviews"],
+        "summary": "List all reviews",
+        "responses": {
+          "200": { "description": "Reviews", "schema": { "type": "array", "items": { "$ref": "#/definitions/Review" } } }
+        }
+      },
+      "post": {
+        "tags": ["reviews"],
+        "summary": "Create review",
+        "parameters": [{ "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/ReviewCreate" } }],
+        "responses": { "201": { "description": "Created", "schema": { "$ref": "#/definitions/Review" } } }
+      }
+    },
+    "/review/{id}": {
+      "get": {
+        "tags": ["reviews"],
+        "summary": "Get review by ID",
+        "parameters": [{ "$ref": "#/parameters/ReviewIdPath" }],
+        "responses": {
+          "200": { "description": "Review", "schema": { "$ref": "#/definitions/Review" } },
+          "404": { "description": "Not found" }
+        }
+      },
+      "put": {
+        "tags": ["reviews"],
+        "summary": "Replace review",
+        "parameters": [
+          { "$ref": "#/parameters/ReviewIdPath" },
+          { "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/ReviewCreate" } }
+        ],
+        "responses": { "200": { "description": "Updated" } }
+      },
+      "patch": {
+        "tags": ["reviews"],
+        "summary": "Partially update review",
+        "parameters": [
+          { "$ref": "#/parameters/ReviewIdPath" },
+          { "in": "body", "name": "body", "required": true, "schema": { "type": "object", "additionalProperties": true } }
+        ],
+        "responses": { "200": { "description": "Patched" } }
+      },
+      "delete": {
+        "tags": ["reviews"],
+        "summary": "Delete review",
+        "parameters": [{ "$ref": "#/parameters/ReviewIdPath" }],
+        "responses": { "204": { "description": "Deleted" } }
+      }
+    },
+    "/review/{id}/comments": {
+      "get": {
+        "tags": ["reviews"],
+        "summary": "Get comments for a review",
+        "parameters": [{ "$ref": "#/parameters/ReviewIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Comments",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/Comment" } }
+          }
+        }
+      },
+      "post": {
+        "tags": ["reviews"],
+        "summary": "Create comment on a review",
+        "parameters": [
+          { "$ref": "#/parameters/ReviewIdPath" },
+          { "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/CommentCreate" } }
+        ],
+        "responses": { "201": { "description": "Created", "schema": { "$ref": "#/definitions/Comment" } } }
+      }
+    },
+    "/review/{id}/vote": {
+      "get": {
+        "tags": ["reviews"],
+        "summary": "Get likers/dislikers for a review",
+        "parameters": [{ "$ref": "#/parameters/ReviewIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Users who liked/disliked",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/VoteUser" } }
+          }
+        }
+      },
+      "post": {
+        "tags": ["reviews"],
+        "summary": "Like or dislike review",
+        "parameters": [
+          { "$ref": "#/parameters/ReviewIdPath" },
+          { "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/VoteBody" } }
+        ],
+        "responses": { "200": { "description": "Vote recorded" } }
+      }
+    },
+    "/review/{rid}/user/{uid}/reviews": {
+      "get": {
+        "tags": ["reviews"],
+        "summary": "Get a user's reviews for a restaurant",
+        "parameters": [
+          { "name": "rid", "in": "path", "required": true, "type": "string", "description": "Restaurant ID" },
+          { "name": "uid", "in": "path", "required": true, "type": "string", "description": "User ID" }
+        ],
+        "responses": {
+          "200": { "description": "Reviews", "schema": { "type": "array", "items": { "$ref": "#/definitions/Review" } } }
+        }
+      }
+    },
+    "/review/{rid}/reviews": {
+      "get": {
+        "tags": ["reviews"],
+        "summary": "Get all reviews for a restaurant",
+        "parameters": [{ "name": "rid", "in": "path", "required": true, "type": "string" }],
+        "responses": {
+          "200": { "description": "Reviews", "schema": { "type": "array", "items": { "$ref": "#/definitions/Review" } } }
+        }
+      }
+    },
+    "/review/user/{userid}": {
+      "get": {
+        "tags": ["reviews"],
+        "summary": "Get reviews by user",
+        "parameters": [{ "$ref": "#/parameters/UserIdPath" }],
+        "responses": {
+          "200": { "description": "Reviews", "schema": { "type": "array", "items": { "$ref": "#/definitions/Review" } } }
+        }
+      }
+    },
+    "/review/user/{userid}/search": {
+      "get": {
+        "tags": ["reviews"],
+        "summary": "Search reviews by user",
+        "parameters": [
+          { "$ref": "#/parameters/UserIdPath" },
+          { "name": "q", "in": "query", "type": "string", "required": true }
+        ],
+        "responses": {
+          "200": { "description": "Reviews", "schema": { "type": "array", "items": { "$ref": "#/definitions/Review" } } }
+        }
+      }
+    },
+    "/review/user/{userid}/top": {
+      "get": {
+        "tags": ["reviews"],
+        "summary": "Top reviews by user",
+        "parameters": [{ "$ref": "#/parameters/UserIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Top reviews",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/TopReview" } }
+          }
+        }
+      }
+    },
+
+    "/restaurant/{id}": {
+      "get": {
+        "tags": ["restaurants"],
+        "summary": "Get restaurant by ID",
+        "parameters": [{ "$ref": "#/parameters/RestaurantIdPath" }],
+        "responses": {
+          "200": { "description": "Restaurant", "schema": { "$ref": "#/definitions/Restaurant" } },
+          "404": { "description": "Not found" }
+        }
+      },
+      "put": {
+        "tags": ["restaurants"],
+        "summary": "Replace restaurant",
+        "parameters": [
+          { "$ref": "#/parameters/RestaurantIdPath" },
+          { "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/Restaurant" } }
+        ],
+        "responses": { "200": { "description": "Updated" } }
+      },
+      "patch": {
+        "tags": ["restaurants"],
+        "summary": "Partially update restaurant",
+        "parameters": [
+          { "$ref": "#/parameters/RestaurantIdPath" },
+          { "in": "body", "name": "body", "required": true, "schema": { "type": "object", "additionalProperties": true } }
+        ],
+        "responses": { "200": { "description": "Patched" } }
+      },
+      "delete": {
+        "tags": ["restaurants"],
+        "summary": "Delete restaurant",
+        "parameters": [{ "$ref": "#/parameters/RestaurantIdPath" }],
+        "responses": { "204": { "description": "Deleted" } }
+      }
+    },
+    "/restaurant/{id}/menu-items": {
+      "post": {
+        "tags": ["restaurants"],
+        "summary": "Add menu item to restaurant",
+        "parameters": [
+          { "$ref": "#/parameters/RestaurantIdPath" },
+          { "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/MenuItemCreate" } }
+        ],
+        "responses": {
+          "201": { "description": "Created", "schema": { "$ref": "#/definitions/MenuItem" } },
+          "400": { "description": "Invalid/missing fields" },
+          "404": { "description": "Restaurant ID does not exist" }
+        }
+      }
+    },
+    "/restaurant/{rid}/super-stars": {
+      "get": {
+        "tags": ["restaurants"],
+        "summary": "Get super-star count for restaurant",
+        "parameters": [{ "name": "rid", "in": "path", "type": "string", "required": true }],
+        "responses": { "200": { "description": "Count", "schema": { "type": "integer", "format": "int32" } } }
+      }
+    },
+    "/restaurant/{uid}/{rid}": {
+      "get": {
+        "tags": ["restaurants"],
+        "summary": "Friend favorite & review presence",
+        "parameters": [
+          { "$ref": "#/parameters/UserIdPath" },
+          { "name": "rid", "in": "path", "type": "string", "required": true }
+        ],
+        "responses": { "200": { "description": "Friend stats", "schema": { "$ref": "#/definitions/FriendRestaurantStats" } } }
+      }
+    },
+
+    "/menu-items": {
+      "get": {
+        "tags": ["menu-items"],
+        "summary": "List all menu items",
+        "responses": {
+          "200": {
+            "description": "Menu items",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/MenuItem" } }
+          }
+        }
+      },
+      "post": {
+        "tags": ["menu-items"],
+        "summary": "Create menu item",
+        "parameters": [{ "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/MenuItemCreate" } }],
+        "responses": { "201": { "description": "Created", "schema": { "$ref": "#/definitions/MenuItem" } } }
+      }
+    },
+    "/menu-items/random": {
+      "get": {
+        "tags": ["menu-items"],
+        "summary": "Get random menu items",
+        "responses": {
+          "200": {
+            "description": "Random items",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/MenuItem" } }
+          }
+        }
+      }
+    },
+    "/menu-items/{id}": {
+      "get": {
+        "tags": ["menu-items"],
+        "summary": "Get menu item by ID",
+        "parameters": [{ "$ref": "#/parameters/MenuItemIdPath" }],
+        "responses": { "200": { "description": "Menu item", "schema": { "$ref": "#/definitions/MenuItem" } } }
+      },
+      "put": {
+        "tags": ["menu-items"],
+        "summary": "Replace menu item",
+        "parameters": [
+          { "$ref": "#/parameters/MenuItemIdPath" },
+          { "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/MenuItemCreate" } }
+        ],
+        "responses": { "200": { "description": "Updated" } }
+      },
+      "delete": {
+        "tags": ["menu-items"],
+        "summary": "Delete menu item",
+        "parameters": [{ "$ref": "#/parameters/MenuItemIdPath" }],
+        "responses": { "204": { "description": "Deleted" } }
+      }
+    },
+    "/menu-items/{id}/reviews": {
+      "get": {
+        "tags": ["menu-items"],
+        "summary": "Get reviews for a menu item",
+        "parameters": [{ "$ref": "#/parameters/MenuItemIdPath" }],
+        "responses": {
+          "200": { "description": "Reviews", "schema": { "type": "array", "items": { "$ref": "#/definitions/Review" } } }
+        }
+      }
+    },
+    "/menu-items/{id}/review-pictures": {
+      "get": {
+        "tags": ["menu-items"],
+        "summary": "Get review pictures for a menu item",
+        "parameters": [{ "$ref": "#/parameters/MenuItemIdPath" }],
+        "responses": {
+          "200": { "description": "Array of URLs", "schema": { "type": "array", "items": { "type": "string", "format": "uri" } } }
+        }
+      }
+    },
+    "/menu-items/{id}/similar": {
+      "get": {
+        "tags": ["menu-items"],
+        "summary": "Similar menu items",
+        "parameters": [{ "$ref": "#/parameters/MenuItemIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Array of similar menu items",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/MenuItem" } }
+          }
+        }
+      }
+    },
+    "/menu-items/restaurant/{id}": {
+      "get": {
+        "tags": ["menu-items"],
+        "summary": "Get menu items for a restaurant",
+        "parameters": [{ "$ref": "#/parameters/RestaurantIdPath" }],
+        "responses": {
+          "200": {
+            "description": "Array of menu items (may return null if none)",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/MenuItem" } }
+          }
+        }
+      }
+    },
+    "/menu-items/restaurant/{id}/metrics": {
+      "get": {
+        "tags": ["menu-items"],
+        "summary": "Get menu-item metrics for a restaurant",
+        "parameters": [{ "$ref": "#/parameters/RestaurantIdPath" }],
+        "responses": {
+          "200": { "description": "Metrics", "schema": { "$ref": "#/definitions/MenuItemMetrics" } }
         }
       }
     }
   },
+
+  "parameters": {
+    "UserIdPath": { "name": "id", "in": "path", "required": true, "type": "string", "description": "User/ObjectID" },
+    "ReviewIdPath": { "name": "id", "in": "path", "required": true, "type": "string", "description": "Review/ObjectID" },
+    "RestaurantIdPath": { "name": "id", "in": "path", "required": true, "type": "string", "description": "Restaurant/ObjectID" },
+    "MenuItemIdPath": { "name": "id", "in": "path", "required": true, "type": "string", "description": "MenuItem/ObjectID" }
+  },
+
   "definitions": {
-    "auth.LoginRequest": {
+    "LoginRequest": {
       "type": "object",
       "required": ["email", "password"],
+      "properties": { "email": { "type": "string", "format": "email" }, "password": { "type": "string" } }
+    },
+    "UserSummary": {
+      "type": "object",
       "properties": {
-        "email": {
-          "type": "string"
+        "id": { "type": "string" },
+        "username": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "profile_picture": { "type": "string", "format": "uri" },
+        "followerCount": { "type": "integer" },
+        "followingCount": { "type": "integer" },
+        "reviews": { "type": "array", "items": { "type": "string" } },
+        "count": { "type": "integer" }
+      }
+    },
+    "UserPublic": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "username": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "profile_picture": { "type": "string", "format": "uri" },
+        "followerCount": { "type": "integer" },
+        "followingCount": { "type": "integer" },
+        "count": { "type": "integer" }
+      }
+    },
+    "User": {
+      "allOf": [
+        { "$ref": "#/definitions/UserPublic" },
+        {
+          "type": "object",
+          "properties": {
+            "Password": { "type": "string" },
+            "Following": { "type": "array", "items": { "type": "string" } },
+            "Followers": { "type": "array", "items": { "type": "string" } },
+            "Preferences": { "type": "array", "items": { "type": "string" } },
+            "Restrictions": { "type": "object" },
+            "TasteProfile": { "type": "array", "items": { "type": "number" } },
+            "AverageRating": { "type": "number", "format": "float" }
+          }
+        }
+      ]
+    },
+    "UserFollowBody": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "username": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "profile_picture": { "type": "string" }
+      }
+    },
+    "FollowCheck": { "type": "object", "properties": { "isFollowing": { "type": "boolean" } } },
+
+    "Rating": {
+      "type": "object",
+      "properties": {
+        "portion": { "type": "integer", "format": "int32" },
+        "taste": { "type": "integer", "format": "int32" },
+        "value": { "type": "integer", "format": "int32" },
+        "overall": { "type": "integer", "format": "int32" },
+        "return": { "type": "boolean" }
+      }
+    },
+    "Review": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string" },
+        "rating": { "$ref": "#/definitions/Rating" },
+        "picture": { "type": "string" },
+        "content": { "type": "string" },
+        "reviewer": {
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "pfp": { "type": "string" },
+            "username": { "type": "string" },
+            "name": { "type": "string" }
+          }
         },
-        "password": {
-          "type": "string",
-          "minLength": 8
+        "timestamp": { "type": "string", "format": "date-time" },
+        "comments": { "type": "array", "items": { "$ref": "#/definitions/Comment" } },
+        "menuItem": { "type": "string" },
+        "restaurantId": { "type": "string" },
+        "menuItemName": { "type": "string" },
+        "restaurantName": { "type": "string" },
+        "likes": { "type": "integer" },
+        "likers": { "type": "array", "items": { "type": "string" } },
+        "dislikers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "ReviewCreate": {
+      "type": "object",
+      "required": ["rating", "content", "menuItem", "restaurantId"],
+      "properties": {
+        "rating": { "$ref": "#/definitions/Rating" },
+        "picture": { "type": "string" },
+        "content": { "type": "string" },
+        "menuItem": { "type": "string" },
+        "restaurantId": { "type": "string" }
+      }
+    },
+    "TopReview": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string" },
+        "rating": { "$ref": "#/definitions/Rating" },
+        "picture": { "type": "string" },
+        "content": { "type": "string" },
+        "averageRate": { "type": "number" },
+        "items": { "type": "array", "items": { "$ref": "#/definitions/MenuItem" } },
+        "menuItemName": { "type": "string" },
+        "restaurantName": { "type": "string" }
+      }
+    },
+    "Comment": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string" },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "review": { "type": "string" },
+        "user": {
+          "type": "object",
+          "properties": { "_id": { "type": "string" }, "pfp": { "type": "string" }, "username": { "type": "string" } }
         }
       }
+    },
+    "CommentCreate": { "type": "object", "required": ["content"], "properties": { "content": { "type": "string" } } },
+    "VoteUser": {
+      "type": "object",
+      "properties": { "_id": { "type": "string" }, "pfp": { "type": "string" }, "username": { "type": "string" }, "name": { "type": "string" } }
+    },
+    "VoteBody": { "type": "object", "required": ["action"], "properties": { "action": { "type": "string", "enum": ["like", "dislike"] } } },
+
+    "MenuItem": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "picture": { "type": "string" },
+        "reviews": { "type": "array", "items": { "type": "string" } },
+        "description": { "type": "string" },
+        "location": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "dietaryRestrictions": { "type": "array", "items": { "type": "string" } },
+        "restaurantID": { "type": "string" },
+        "restaurantName": { "type": "string" }
+      }
+    },
+    "MenuItemCreate": {
+      "type": "object",
+      "required": ["name", "restaurantID"],
+      "properties": {
+        "name": { "type": "string" },
+        "picture": { "type": "string" },
+        "reviews": { "type": "array", "items": { "type": "string" } },
+        "description": { "type": "string" },
+        "location": { "type": "array", "items": { "type": "number" } },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "dietaryRestrictions": { "type": "array", "items": { "type": "string" } },
+        "restaurantID": { "type": "string" },
+        "restaurantName": { "type": "string" }
+      }
+    },
+    "MenuItemMetrics": {
+      "type": "object",
+      "properties": {
+        "restaurant_id": { "type": "string" },
+        "total_items": { "type": "integer" },
+        "total_reviews": { "type": "integer" },
+        "menu_item_metrics": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+
+    "Restaurant": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string" },
+        "name": { "type": "string" },
+        "banner": { "type": "string" },
+        "address": { "$ref": "#/definitions/Address" },
+        "menuItems": { "type": "array", "items": { "type": "string" } },
+        "ratingAvg": { "type": "object", "additionalProperties": { "type": "number" } },
+        "style": { "type": "array", "items": { "type": "string" } },
+        "picture": { "type": "string" },
+        "description": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "Address": {
+      "type": "object",
+      "properties": {
+        "street": { "type": "string" },
+        "zipcode": { "type": "string" },
+        "state": { "type": "string" },
+        "location": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 }
+      }
+    },
+    "FriendRestaurantStats": {
+      "type": "object",
+      "properties": { "friends_fav": { "type": "boolean" }, "friends_reviewed": { "type": "integer" } }
+    },
+
+    "Asset": {
+      "type": "object",
+      "properties": {
+        "key": { "type": "string" },
+        "contentType": { "type": "string" },
+        "size": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "AssetUrl": { "type": "object", "properties": { "url": { "type": "string", "format": "uri" } } },
+    "UploadRequest": {
+      "type": "object",
+      "required": ["fileName", "contentType"],
+      "properties": { "fileName": { "type": "string" }, "contentType": { "type": "string" } }
+    },
+    "UploadInfo": {
+      "type": "object",
+      "properties": {
+        "key": { "type": "string" },
+        "uploadUrl": { "type": "string", "format": "uri" },
+        "expiresIn": { "type": "integer" }
+      }
+    },
+
+    "ValidationError": {
+      "type": "object",
+      "properties": {
+        "Error": { "type": "boolean" },
+        "FailedField": { "type": "string" },
+        "Tag": { "type": "string" },
+        "Value": { "type": "string" }
+      }
+    },
+    "ValidationErrorList": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/ValidationError" }
     }
   }
 }
+
