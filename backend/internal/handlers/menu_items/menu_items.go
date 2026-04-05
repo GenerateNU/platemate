@@ -112,7 +112,7 @@ func ValidateAvgRatingRequest(avgRating AvgRatingRequest) error {
 }
 
 func ValidateRating(rating float64) error {
-	if rating <= 1 || rating >= 5 {
+	if rating < 1 || rating > 5 {
 		return fmt.Errorf("rating must be between 1 and 5, but got %f", rating)
 	}
 	return nil
@@ -349,6 +349,7 @@ func (h *Handler) CreateMenuItem(c *fiber.Ctx) error {
 		if errors.Is(err, ErrInvalidRestaurantInfo) {
 			return c.Status(fiber.StatusBadRequest).JSON(xerr.BadRequest(err))
 		}
+		return err
 	}
 	return c.Status(fiber.StatusOK).JSON(createdMenuItem)
 }

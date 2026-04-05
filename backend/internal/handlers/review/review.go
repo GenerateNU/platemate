@@ -306,10 +306,11 @@ func (h *Handler) CreateComment(c *fiber.Ctx) error {
 	err = h.service.CreateComment(comment) // Insert operation
 
 	if err != nil {
-		sErr := err.(mongo.CommandError) // Convert to Command Error
-		if sErr.HasErrorCode(121) {      // Indicates that the document failed validation
-			return xerr.FailedValidation(c, sErr) // Handle the error by returning a 121 and the error message
+		var cmdErr mongo.CommandError
+		if errors.As(err, &cmdErr) && cmdErr.HasErrorCode(121) { // Indicates that the document failed validation
+			return xerr.FailedValidation(c, cmdErr) // Handle the error by returning a 121 and the error message
 		}
+		return err
 	}
 
 	return c.SendStatus(fiber.StatusOK)

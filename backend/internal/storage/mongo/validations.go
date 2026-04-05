@@ -364,6 +364,10 @@ var (
 						"maximum":     5,
 						"description": "Overall rating",
 					},
+					"return": bson.M{
+						"bsonType":    "bool",
+						"description": "Would you return?",
+					},
 				},
 			},
 			"picture": bson.M{
@@ -390,6 +394,10 @@ var (
 					"username": bson.M{
 						"bsonType":    "string",
 						"description": "Username of the reviewer",
+					},
+					"name": bson.M{
+						"bsonType":    "string",
+						"description": "Name of the reviewer",
 					},
 				},
 			},
@@ -440,9 +448,38 @@ var (
 				},
 			},
 			"menuItem": bson.M{
-				//string
+				"bsonType":    "objectId",
+				"description": "ID of the menu item",
+			},
+			"restaurantId": bson.M{
+				"bsonType":    "objectId",
+				"description": "ID of the restaurant",
+			},
+			"menuitemName": bson.M{
 				"bsonType":    "string",
 				"description": "Name of the menu item",
+			},
+			"restaurantName": bson.M{
+				"bsonType":    "string",
+				"description": "Name of the restaurant",
+			},
+			"likes": bson.M{
+				"bsonType":    "int",
+				"description": "Number of likes",
+			},
+			"likers": bson.M{
+				"bsonType": "array",
+				"items": bson.M{
+					"bsonType": "objectId",
+				},
+				"description": "List of user IDs who liked the review",
+			},
+			"dislikers": bson.M{
+				"bsonType": "array",
+				"items": bson.M{
+					"bsonType": "objectId",
+				},
+				"description": "List of user IDs who disliked the review",
 			},
 		}}
 )
